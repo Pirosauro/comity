@@ -1,0 +1,12 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "tsc --build packages",
+    "clean": "tsc --build packages --clean",
+    "dev": "tsc --build packages --watch"
+  },
+  "workspaces": [
+    "examples/*",
+    "packages/*"
+  ]
+}

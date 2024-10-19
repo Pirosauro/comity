@@ -1,0 +1,10 @@
+# NodeJS
+node_modules/
+dist/
+coverage/
+tsconfig.tsbuildinfo
+.wrangler
+.dev.vars
+
+# MacOS
+.DS_Store
