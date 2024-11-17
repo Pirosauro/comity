@@ -8,11 +8,11 @@
     "@comity/graphql": "workspace:*",
     "@envelop/core": "^5.0.2",
     "graphql": "^16.9.0",
-    "hono": "^4.6.5"
+    "hono": "^4.6.10"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20241018.0",
+    "@cloudflare/workers-types": "^4.20241112.0",
     "@hono/vite-cloudflare-pages": "^0.4.2",
-    "wrangler": "^3.81.0"
+    "wrangler": "^3.87.0"
   }
 }
