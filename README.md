@@ -1,5 +1,7 @@
 # 🪷 Comity: Greener Framework for the Web
 
+[![codecov](https://codecov.io/gh/Pirosauro/comity/graph/badge.svg)](https://codecov.io/gh/Pirosauro/comity)
+
 Comity is a fresh approach to building scalable and efficient web applications that prioritize reducing the environmental impact of websites, web apps, and e-commerce platforms. Comity aims to reduce carbon emissions by integrating modern technology and innovative solutions while providing a smmooth development experience.
 
 ## Why Comity?
