@@ -8,8 +8,6 @@ import type {
 } from "hono/types";
 import { Hono } from "hono";
 
-const validMethods = ["get", "post", "put", "delete"];
-
 export class Server<
   E extends Env = BlankEnv,
   S extends Schema = BlankSchema,
@@ -21,7 +19,9 @@ export class Server<
     console.log("\u001B[34mRegistering routes\u001B[0m");
 
     Object.entries(routes).forEach(([route, handler]) => {
-      let [path, method = "get"] = route.split(".");
+      // parse route into path and method
+      const [, path, method = "get"] =
+        route.match(/^(.*?)(?:\.(all|delete|patch|post|put))?$/) || [];
 
       // custom 404 page
       if (path === "/_404") {
@@ -39,16 +39,12 @@ export class Server<
         return ++count;
       }
 
-      // ignore files starting with underscore or invalid
-      // if (file.startsWith('_') || !method || !handler) continue
+      // ignore invalid routes
+      if (!path || path.match(/\/_[^\/]+$/) || !method || !handler) return;
 
-      // normalize method and allow file with extensions on path
-      if (!validMethods.includes(method)) {
-        method = "get";
-      }
-
+      // register route handler on Hono
       this.on(method, path, handler as H);
-      console.log(method.toUpperCase(), path);
+      console.log(method.replace("all", "*").toUpperCase(), path);
 
       count++;
     });

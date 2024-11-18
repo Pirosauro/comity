@@ -17,8 +17,11 @@ describe("Server", () => {
 
   it("should register routes correctly", () => {
     const routes = {
-      "/test.get": jest.fn(),
+      "/test.all": jest.fn(),
+      "/test.delete": jest.fn(),
+      "/test.patch": jest.fn(),
       "/test.post": jest.fn(),
+      "/test.put": jest.fn(),
     };
 
     server.registerRoutes(routes);
@@ -26,10 +29,13 @@ describe("Server", () => {
     expect(console.log).toHaveBeenCalledWith(
       "\u001B[34mRegistering routes\u001B[0m"
     );
-    expect(console.log).toHaveBeenCalledWith("GET", "/test");
+    expect(console.log).toHaveBeenCalledWith("*", "/test");
+    expect(console.log).toHaveBeenCalledWith("DELETE", "/test");
+    expect(console.log).toHaveBeenCalledWith("PATCH", "/test");
     expect(console.log).toHaveBeenCalledWith("POST", "/test");
+    expect(console.log).toHaveBeenCalledWith("PUT", "/test");
     expect(console.log).toHaveBeenCalledWith(
-      "\u001B[33m[OK] 2 routes registered\u001B[0m"
+      "\u001B[33m[OK] 5 routes registered\u001B[0m"
     );
   });
 
@@ -65,16 +71,20 @@ describe("Server", () => {
     );
   });
 
-  it("should default to GET method for invalid methods", () => {
+  it("should default to GET method for not specified methods", () => {
     const routes = {
+      "/test": jest.fn(),
+      "/test.txt": jest.fn(),
       "/test.invalid": jest.fn(),
     };
 
     server.registerRoutes(routes);
 
     expect(console.log).toHaveBeenCalledWith("GET", "/test");
+    expect(console.log).toHaveBeenCalledWith("GET", "/test.txt");
+    expect(console.log).toHaveBeenCalledWith("GET", "/test.invalid");
     expect(console.log).toHaveBeenCalledWith(
-      "\u001B[33m[OK] 1 routes registered\u001B[0m"
+      "\u001B[33m[OK] 3 routes registered\u001B[0m"
     );
   });
 });

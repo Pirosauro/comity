@@ -28,14 +28,23 @@ export const listenMediaOnce = (
  *
  * @param {Element} element - The Element
  * @param {() => void} fn - The callback function
+ * @return {void}
  */
-export const observeOnce = (element: Element, fn: () => void) => {
+export const observeOnce = (element: Element, fn: () => void): void => {
   const options: IntersectionObserverInit = {
     root: null,
     rootMargin: "0px",
     threshold: 0.5,
   };
 
+  /**
+   * Implements IntersectionObserverCallback
+   *
+   * @async
+   * @callback IntersectionObserverCallback
+   * @param {IntersectionObserverEntry[]} entries - The entries
+   * @return {void}
+   */
   const callback: IntersectionObserverCallback = async (entries) => {
     entries.forEach(async (e) => {
       if (!e.isIntersecting) return;
@@ -63,9 +72,10 @@ export const observeOnce = (element: Element, fn: () => void) => {
  * Use idle strategy
  *
  * @param {() => void} fn - The callback function
+ * @return {void}
  */
-export const idle = (fn: () => void) => {
-  "requestIdleCallback" in window
+export const idle = (fn: () => void): void => {
+  typeof window?.requestIdleCallback === "function"
     ? window.requestIdleCallback(fn)
     : setTimeout(fn, 250);
 };

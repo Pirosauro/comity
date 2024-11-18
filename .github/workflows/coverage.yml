@@ -1,0 +1,58 @@
+name: Code Coverage report
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+        name: Checkout
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: 9
+          run_install: false
+
+      - uses: actions/setup-node@v4
+        name: Install Node.js
+        with:
+          node-version-file: ".nvmrc"
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+          # scope: '@hobiri'
+
+      - run: pnpm install --recursive --frozen-lockfile
+        name: Install dependencies
+
+      - name: "@comity/islands - Run tests and generate coverage report"
+        working-directory: ./packages/islands
+        run: pnpm run build && pnpm run test
+
+      # - name: "@comity/react - Run tests and generate coverage report"
+      #   working-directory: ./packages/react
+      #   run: pnpm run build && pnpm run test
+
+      - name: "@comity/islands - Upload coverage to Codecov"
+        uses: codecov/codecov-action@v4
+        working-directory: ./packages/islands
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/lcov.info
+          flags: islands
+
+      # - name: "@comity/react - Upload coverage to Codecov"
+      #   uses: codecov/codecov-action@v4
+      #   working-directory: ./packages/react
+      #   with:
+      #     token: ${{ secrets.CODECOV_TOKEN }}
+      #     files: ./coverage/lcov.info
+      #     flags: react

@@ -84,7 +84,8 @@
     "collectCoverage": true,
     "coverageReporters": [
       "text",
-      "cobertura"
+      "cobertura",
+      "lcov"
     ]
   }
 }
