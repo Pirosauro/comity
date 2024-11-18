@@ -14,8 +14,17 @@ const { getRoutes, comityRoutes } = await import(
 );
 
 describe("getRoutes", () => {
+  let consoleLog;
+
+  beforeEach(() => {
+    consoleLog = console.log;
+    console.log = jest.fn();
+  });
+
   afterEach(() => {
     jest.resetAllMocks();
+
+    console.log = consoleLog;
   });
 
   it("should group and sort files correctly", () => {
@@ -80,19 +89,12 @@ describe("comityRoutes", () => {
   });
 
   it("should return a Vite plugin with the correct name", () => {
-    const originalConsoleLog = console.log;
-    console.log = jest.fn();
-
     const plugin = comityRoutes();
 
     expect(plugin.name).toBe("@comity/vite-routes");
-    console.log = originalConsoleLog;
   });
 
   it("should resolve virtual module id correctly", () => {
-    const originalConsoleLog = console.log;
-    console.log = jest.fn();
-
     const plugin = comityRoutes();
     const resolved = plugin.resolveId("virtual:comity-routes/about.ts");
 
@@ -101,7 +103,6 @@ describe("comityRoutes", () => {
       external: false,
       moduleSideEffects: true,
     });
-    console.log = originalConsoleLog;
   });
 
   it("should load the virtual module correctly", async () => {
@@ -118,15 +119,11 @@ describe("comityRoutes", () => {
     expect(code).toContain("'/': r2,");
   });
 
-  it("should log the correct number of routes", () => {
-    const consoleSpy = jest.spyOn(console, "log");
-
+  it("should register the correct number of routes", () => {
     comityRoutes();
 
-    expect(consoleSpy).toHaveBeenCalledWith(
+    expect(console.log).toHaveBeenCalledWith(
       "\u001B[34m3 routes found\u001B[0m"
     );
-
-    consoleSpy.mockRestore();
   });
 });

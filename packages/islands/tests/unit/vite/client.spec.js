@@ -1,4 +1,4 @@
-import { expect, it } from "@jest/globals";
+import { describe, expect, it } from "@jest/globals";
 import plugin from "../../../dist/vite/client.js";
 
 describe("@comity/vite-client plugin", () => {
