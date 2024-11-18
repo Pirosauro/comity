@@ -43,7 +43,6 @@ jobs:
 
       - name: "@comity/islands - Upload coverage to Codecov"
         uses: codecov/codecov-action@v4
-        working-directory: ./packages/islands
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           working-directory: ./packages/islands
