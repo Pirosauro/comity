@@ -1,0 +1,35 @@
+coverage:
+  status:
+    project:
+      target: 80%
+      threshold: 10%
+    graphql:
+      target: 90%
+      flags:
+        - graphql
+    islands:
+      target: 80%
+      flags:
+        - islands
+    react:
+      target: 70%
+      flags:
+        - react
+
+flags:
+  graphql:
+    paths:
+      - packages/graphql
+  islands:
+    paths:
+      - packages/islands
+  react:
+    paths:
+      - packages/react
+
+ignore:
+  - "tests/"
+  - "docs/"
+  - "**/*.test.*"
+  - "**/*.spec.*"
+  - "**/__tests__/**"
