@@ -1,5 +1,5 @@
-import { describe, expect, it } from "@jest/globals";
-import plugin from "../../../dist/vite/client.js";
+import { describe, expect, it } from "vitest";
+import plugin from "../client.js";
 
 describe("@comity/vite-client plugin", () => {
   it("should return a plugin with the correct name", () => {
@@ -12,6 +12,7 @@ describe("@comity/vite-client plugin", () => {
   it("should set the correct build options", () => {
     const options = { entrypoint: "src/index.ts", assetsDir: "assets" };
     const result = plugin(options);
+    // @ts-ignore
     const config = result.config();
 
     expect(config.build.rollupOptions.input).toEqual(["src/index.ts"]);
@@ -22,6 +23,7 @@ describe("@comity/vite-client plugin", () => {
   it("should set the default assetsDir if not provided", () => {
     const options = { entrypoint: "src/index.ts" };
     const result = plugin(options);
+    // @ts-ignore
     const config = result.config();
 
     expect(config.build.assetsDir).toBe("static");
@@ -33,6 +35,7 @@ describe("@comity/vite-client plugin", () => {
       jsxImportSource: "custom/jsx",
     };
     const result = plugin(options);
+    // @ts-ignore
     const config = result.config();
 
     expect(config.esbuild.jsxImportSource).toBe("custom/jsx");
@@ -41,6 +44,7 @@ describe("@comity/vite-client plugin", () => {
   it("should set the default jsxImportSource if not provided", () => {
     const options = { entrypoint: "src/index.ts" };
     const result = plugin(options);
+    // @ts-ignore
     const config = result.config();
 
     expect(config.esbuild.jsxImportSource).toBe("hono/jsx/dom");

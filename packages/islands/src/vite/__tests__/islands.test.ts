@@ -1,13 +1,13 @@
-import { describe, jest, expect, it } from "@jest/globals";
+import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 
-jest.mock("fdir", () => {
+vi.mock("fdir", () => {
   return {
-    fdir: jest.fn().mockImplementation(() => {}),
+    fdir: vi.fn().mockImplementation(() => {}),
   };
 });
 
 const { fdir } = await import("fdir");
-const { comityIslands } = await import("../../../dist/vite/islands.js");
+const { comityIslands } = await import("../islands.js");
 
 describe("comityIslands", () => {
   const mockOptions = { framework: "react", css: true };
@@ -15,17 +15,17 @@ describe("comityIslands", () => {
 
   beforeEach(async () => {
     fdir.mockImplementation(() => ({
-      withRelativePaths: jest.fn().mockReturnThis(),
-      withMaxDepth: jest.fn().mockReturnThis(),
-      crawl: jest.fn().mockReturnThis(),
-      sync: jest.fn().mockReturnValue(["component.tsx", "component.css"]),
+      withRelativePaths: vi.fn().mockReturnThis(),
+      withMaxDepth: vi.fn().mockReturnThis(),
+      crawl: vi.fn().mockReturnThis(),
+      sync: vi.fn().mockReturnValue(["component.tsx", "component.css"]),
     }));
 
     plugin = comityIslands(mockOptions);
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
   });
 
   it("should have the correct name", () => {

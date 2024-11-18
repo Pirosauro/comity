@@ -1,28 +1,25 @@
-import { describe, jest, expect, it } from "@jest/globals";
 import { resolve } from "node:path";
-import { afterEach } from "node:test";
+import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 
-jest.mock("fdir", () => {
+vi.mock("fdir", () => {
   return {
-    fdir: jest.fn().mockImplementation(() => {}),
+    fdir: vi.fn().mockImplementation(() => {}),
   };
 });
 
 const { fdir } = await import("fdir");
-const { getRoutes, comityRoutes } = await import(
-  "../../../dist/vite/routes.js"
-);
+const { getRoutes, comityRoutes } = await import("../routes.js");
 
 describe("getRoutes", () => {
-  let consoleLog;
+  let consoleLog: typeof console.log;
 
   beforeEach(() => {
     consoleLog = console.log;
-    console.log = jest.fn();
+    console.log = vi.fn();
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
 
     console.log = consoleLog;
   });
@@ -39,10 +36,10 @@ describe("getRoutes", () => {
     ];
 
     fdir.mockImplementation(() => ({
-      withRelativePaths: jest.fn().mockReturnThis(),
-      withMaxDepth: jest.fn().mockReturnThis(),
-      crawl: jest.fn().mockReturnThis(),
-      sync: jest.fn().mockReturnValue(mockFiles),
+      withRelativePaths: vi.fn().mockReturnThis(),
+      withMaxDepth: vi.fn().mockReturnThis(),
+      crawl: vi.fn().mockReturnThis(),
+      sync: vi.fn().mockReturnValue(mockFiles),
     }));
 
     const result = getRoutes("some/path");
@@ -62,10 +59,10 @@ describe("getRoutes", () => {
     const mockFiles = [];
 
     fdir.mockImplementation(() => ({
-      withRelativePaths: jest.fn().mockReturnThis(),
-      withMaxDepth: jest.fn().mockReturnThis(),
-      crawl: jest.fn().mockReturnThis(),
-      sync: jest.fn().mockReturnValue(mockFiles),
+      withRelativePaths: vi.fn().mockReturnThis(),
+      withMaxDepth: vi.fn().mockReturnThis(),
+      crawl: vi.fn().mockReturnThis(),
+      sync: vi.fn().mockReturnValue(mockFiles),
     }));
 
     const result = getRoutes("some/path");
@@ -75,17 +72,24 @@ describe("getRoutes", () => {
 });
 
 describe("comityRoutes", () => {
+  let consoleLog: typeof console.log;
+
   beforeEach(() => {
+    consoleLog = console.log;
+    console.log = vi.fn();
+
     fdir.mockImplementation(() => ({
-      withRelativePaths: jest.fn().mockReturnThis(),
-      withMaxDepth: jest.fn().mockReturnThis(),
-      crawl: jest.fn().mockReturnThis(),
-      sync: jest.fn().mockReturnValue(["index.ts", "about.ts", "blog/[id].ts"]),
+      withRelativePaths: vi.fn().mockReturnThis(),
+      withMaxDepth: vi.fn().mockReturnThis(),
+      crawl: vi.fn().mockReturnThis(),
+      sync: vi.fn().mockReturnValue(["index.ts", "about.ts", "blog/[id].ts"]),
     }));
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
+
+    console.log = consoleLog;
   });
 
   it("should return a Vite plugin with the correct name", () => {
@@ -95,7 +99,7 @@ describe("comityRoutes", () => {
   });
 
   it("should resolve virtual module id correctly", () => {
-    const plugin = comityRoutes();
+    const plugin = comityRoutes() as any;
     const resolved = plugin.resolveId("virtual:comity-routes/about.ts");
 
     expect(resolved).toEqual({
@@ -106,7 +110,7 @@ describe("comityRoutes", () => {
   });
 
   it("should load the virtual module correctly", async () => {
-    const plugin = comityRoutes();
+    const plugin = comityRoutes() as any;
     const code = await plugin.load("\0virtual:comity-routes");
 
     expect(code).toContain(

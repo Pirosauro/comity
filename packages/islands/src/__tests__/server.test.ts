@@ -1,5 +1,5 @@
-import { describe, expect, jest, it } from "@jest/globals";
-import { Server } from "../../dist/server.js";
+import { describe, expect, it, beforeEach, afterEach, vi } from "vitest";
+import { Server } from "../server.js";
 
 describe("Server", () => {
   let server;
@@ -7,7 +7,7 @@ describe("Server", () => {
 
   beforeEach(() => {
     consoleLog = console.log;
-    console.log = jest.fn();
+    console.log = vi.fn();
     server = new Server();
   });
 
@@ -17,11 +17,11 @@ describe("Server", () => {
 
   it("should register routes correctly", () => {
     const routes = {
-      "/test.all": jest.fn(),
-      "/test.delete": jest.fn(),
-      "/test.patch": jest.fn(),
-      "/test.post": jest.fn(),
-      "/test.put": jest.fn(),
+      "/test.all": vi.fn(),
+      "/test.delete": vi.fn(),
+      "/test.patch": vi.fn(),
+      "/test.post": vi.fn(),
+      "/test.put": vi.fn(),
     };
 
     server.registerRoutes(routes);
@@ -41,10 +41,10 @@ describe("Server", () => {
 
   it("should register custom 404 handler", () => {
     const routes = {
-      "/_404": jest.fn(),
+      "/_404": vi.fn(),
     };
 
-    server.notFound = jest.fn();
+    server.notFound = vi.fn();
 
     server.registerRoutes(routes);
 
@@ -57,10 +57,10 @@ describe("Server", () => {
 
   it("should register custom 500 handler", () => {
     const routes = {
-      "/_500": jest.fn(),
+      "/_500": vi.fn(),
     };
 
-    server.onError = jest.fn();
+    server.onError = vi.fn();
 
     server.registerRoutes(routes);
 
@@ -73,9 +73,9 @@ describe("Server", () => {
 
   it("should default to GET method for not specified methods", () => {
     const routes = {
-      "/test": jest.fn(),
-      "/test.txt": jest.fn(),
-      "/test.invalid": jest.fn(),
+      "/test": vi.fn(),
+      "/test.txt": vi.fn(),
+      "/test.invalid": vi.fn(),
     };
 
     server.registerRoutes(routes);

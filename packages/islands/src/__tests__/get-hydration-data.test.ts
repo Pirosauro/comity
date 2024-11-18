@@ -1,5 +1,5 @@
-import { describe, expect, it } from "@jest/globals";
-import { getHydrationData } from "../../dist/get-hydration-data.js";
+import { describe, expect, it } from "vitest";
+import { getHydrationData } from "../get-hydration-data.js";
 
 describe("getHydrationData", () => {
   it("should return correct hydration data with client:load strategy", () => {
@@ -7,7 +7,7 @@ describe("getHydrationData", () => {
       name: "TestComponent",
       framework: "react",
     };
-    const props = { "client:load": true };
+    const props = { "client:load": true as const };
     const expected = {
       name: "TestComponent",
       strategy: { type: "load" },
@@ -23,7 +23,7 @@ describe("getHydrationData", () => {
       name: "TestComponent",
       framework: "react",
     };
-    const props = { "client:visible": true };
+    const props = { "client:visible": true as const };
     const expected = {
       name: "TestComponent",
       strategy: { type: "visible" },
@@ -55,7 +55,7 @@ describe("getHydrationData", () => {
       name: "TestComponent",
       framework: "react",
     };
-    const props = { "client:idle": true };
+    const props = { "client:idle": true as const };
     const expected = {
       name: "TestComponent",
       strategy: { type: "idle" },
@@ -79,12 +79,13 @@ describe("getHydrationData", () => {
       framework: "react",
     };
 
+    // @ts-expect-error
     expect(getHydrationData(component, props)).toEqual(expected);
   });
 
   it("should return default framework if not provided", () => {
     const component = { name: "TestComponent" };
-    const props = { "client:load": true };
+    const props = { "client:load": true as const };
     const expected = {
       name: "TestComponent",
       strategy: { type: "load" },

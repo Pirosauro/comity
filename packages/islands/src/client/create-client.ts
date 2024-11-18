@@ -11,79 +11,90 @@ type Options<C, P> = {
 };
 
 /**
+ * Create a client
  *
  * @param {Options} options - The client's options
+ * @return {Promise<void>}
  */
 export const createClient = async <C, P>({
   debug,
   islands,
   integrations,
-}: Options<C, P>) => {
+}: Options<C, P>): Promise<void> => {
   const components: Record<string, C | undefined> = {};
 
   /**
    * Log a console message
    *
    * @param {string} message - The message to display
+   * @param {"info" | "warn" | "error"} level - The log level
+   * @return {void}
    */
-  const logMessage = (message: string, level: "info" | "warn" | "error") => {
+  const logMessage = (
+    message: string,
+    level: "info" | "warn" | "error"
+  ): void => {
     if (level !== "info" || debug) console[level]("[comity-island] " + message);
   };
 
   /**
    * Load a component
    *
+   * @async
    * @param {string} name - The component name
    * @return {(Promise<C | undefined>)}
    */
   const loadComponent = async (name: string): Promise<C | undefined> => {
     if (!(name in components)) {
       components[name] =
-        name in islands ? (await islands[name]())?.default : undefined;
+        typeof islands?.[name] === "function"
+          ? (await islands[name]())?.default
+          : undefined;
     }
 
     return components[name];
   };
 
-  /**
-   * Initialize islands architecture
-   */
-  const init = () => {
-    document.querySelectorAll("script[data-island]").forEach((e) => {
-      if (!e.textContent) {
-        return;
-      }
-
-      const data: HydrationData = JSON.parse(e.textContent);
-
-      console.log("Initilize", e.getAttribute("data-island"), data);
-    });
-  };
-
-  if (document.readyState === "loading") {
-    // Loading hasn't finished yet
-    document.addEventListener("DOMContentLoaded", init);
-  } else {
-    // `DOMContentLoaded` has already fired
-    init();
-  }
-
   class Island extends HTMLElement {
     #data!: HydrationData | undefined;
 
     /**
-     *
+     * Constructor
      */
     constructor() {
       super();
     }
 
     /**
-     * Mount
+     * @inheritdoc
      */
-    async connectedCallback() {
-      this.#data = await this.init();
+    connectedCallback() {
+      if (document.readyState === "loading") {
+        const initBound = this._init.bind(this);
+        const initOnce = () => {
+          document.removeEventListener("DOMContentLoaded", initOnce);
+          initBound();
+        };
 
+        document.addEventListener("DOMContentLoaded", initOnce);
+      } else {
+        this._init();
+      }
+    }
+
+    /**
+     * Initialize the island
+     *
+     * @returns {void}
+     */
+    _init(): void {
+      // collect information
+      const json = this.querySelector(
+        ":scope > script[data-island]"
+      )?.textContent;
+      this.#data = json ? JSON.parse(json) : {};
+
+      // no information to hydrate
       if (!this.#data?.name) {
         return logMessage(
           "Unable to hydrate Island: missing hydration information",
@@ -93,6 +104,7 @@ export const createClient = async <C, P>({
 
       const { name, strategy } = this.#data;
 
+      // component not found
       if (!(name in islands)) {
         return logMessage(
           'Unable to hydrate Island: component "' + name + '" not found',
@@ -100,6 +112,7 @@ export const createClient = async <C, P>({
         );
       }
 
+      // island is a descendant of another island
       if (this.parentElement?.closest("comity-island")) {
         return logMessage(
           'Island "' + name + '" is a descendant of another island',
@@ -107,28 +120,36 @@ export const createClient = async <C, P>({
         );
       }
 
+      logMessage('Island "' + name + '" initialized', "info");
+
       switch (strategy?.type) {
+        // hydrate on load
         case "load":
-          await this.hydrate();
+          this.hydrate().then(() =>
+            logMessage('Island "' + name + '" hydrated on load', "info")
+          );
           break;
 
+        // hydrate on idle
         case "idle":
           idle(() =>
             this.hydrate().then(() =>
-              logMessage('component "' + name + '" hydrated on IDLE', "info")
+              logMessage('Island "' + name + '" hydrated on idle', "info")
             )
           );
           break;
 
+        // hydrate on media query match
         case "media":
           if (strategy?.value) {
             listenMediaOnce(strategy.value, () =>
               this.hydrate().then(() =>
                 logMessage(
-                  'component "' +
+                  'Island "' +
                     name +
-                    '" hydrated on MEDIA ' +
-                    strategy.value,
+                    '" hydrated on media query match (' +
+                    strategy.value +
+                    ")",
                   "info"
                 )
               )
@@ -136,10 +157,11 @@ export const createClient = async <C, P>({
           }
           break;
 
+        // hydrate on visible
         case "visible":
           observeOnce(this, () =>
             this.hydrate().then(() =>
-              logMessage('component "' + name + '" hydrated on VISIBLE', "info")
+              logMessage('Island "' + name + '" hydrated on visible', "info")
             )
           );
           break;
@@ -147,22 +169,7 @@ export const createClient = async <C, P>({
     }
 
     /**
-     * Init custom web element
-     *
-     * @return {Promise<HydrationData | undefined>}
-     */
-    async init(): Promise<HydrationData | undefined> {
-      return new Promise<HydrationData | undefined>((resolve, reject) => {
-        const json = this.querySelector(
-          ":scope > script[data-island]"
-        )?.textContent;
-
-        json ? resolve(JSON.parse(json)) : reject();
-      });
-    }
-
-    /**
-     * Hydrate
+     * Hydrate the island
      *
      * @return {Promise<void>}
      */
@@ -177,6 +184,7 @@ export const createClient = async <C, P>({
           throw new Error('integration "' + framework + '" is not defined');
         }
 
+        // load component
         const component = await loadComponent(name);
 
         // component not loaded
