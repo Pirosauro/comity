@@ -37,9 +37,13 @@ jobs:
         working-directory: ./packages/islands
         run: pnpm run build && pnpm run test
 
-      # - name: "@comity/react - Run tests and generate coverage report"
-      #   working-directory: ./packages/react
-      #   run: pnpm run build && pnpm run test
+      - name: "@comity/react - Run tests and generate coverage report"
+        working-directory: ./packages/react
+        run: pnpm run build && pnpm run test
+
+      - name: "@comity/graphql - Run tests and generate coverage report"
+        working-directory: ./packages/graphql
+        run: pnpm run build && pnpm run test
 
       - name: "@comity/islands - Upload coverage to Codecov"
         uses: codecov/codecov-action@v4
@@ -49,9 +53,18 @@ jobs:
           directory: ./coverage
           flags: islands
 
-      # - name: "@comity/react - Upload coverage to Codecov"
-      #   uses: codecov/codecov-action@v4
-      #   with:
-      #     token: ${{ secrets.CODECOV_TOKEN }}
-      #     files: ./packages/react/coverage/lcov.info
-      #     flags: react
+      - name: "@comity/react - Upload coverage to Codecov"
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          working-directory: ./packages/react
+          directory: ./coverage
+          flags: react
+
+      - name: "@comity/graphql - Upload coverage to Codecov"
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          working-directory: ./packages/graphql
+          directory: ./coverage
+          flags: graphql
