@@ -73,7 +73,23 @@ export const graphqlHandler = <
       return c.json(new ServiceError("Must provide query string."), 400);
     }
 
-    const schemaValidationErrors = validateSchema(schema);
+    let schemaValidationErrors: readonly GraphQLError[] = [];
+
+    try {
+      schemaValidationErrors = validateSchema(schema);
+    } catch (e) {
+      console.error(e);
+
+      if (e instanceof Error) {
+        const errors = [
+          new GraphQLError(e.message, {
+            originalError: e,
+          }),
+        ];
+
+        schemaValidationErrors = Object.freeze(errors);
+      }
+    }
 
     if (schemaValidationErrors.length > 0) {
       // return 500: Internal Server Error if invalid schema.
