@@ -1,3 +1,4 @@
+import type { Mock } from "vitest";
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 
 vi.mock("fdir", () => {
@@ -9,19 +10,31 @@ vi.mock("fdir", () => {
 const { fdir } = await import("fdir");
 const { comityIslands } = await import("../islands.js");
 
+interface MockOptions {
+  framework: string;
+  css: boolean;
+}
+
+interface Plugin {
+  name: string;
+  resolveId?: (id: string) => string | null;
+  load?: (id: string) => string | null;
+  transform?: (code: string, id: string) => { code: string } | null;
+}
+
 describe("comityIslands", () => {
   const mockOptions = { framework: "react", css: true };
-  let plugin;
+  let plugin: Plugin;
 
   beforeEach(async () => {
-    fdir.mockImplementation(() => ({
+    (fdir as Mock).mockImplementation(() => ({
       withRelativePaths: vi.fn().mockReturnThis(),
       withMaxDepth: vi.fn().mockReturnThis(),
       crawl: vi.fn().mockReturnThis(),
       sync: vi.fn().mockReturnValue(["component.tsx", "component.css"]),
     }));
 
-    plugin = comityIslands(mockOptions);
+    plugin = comityIslands(mockOptions) as Plugin;
   });
 
   afterEach(() => {

@@ -1,6 +1,6 @@
 {
   "name": "@comity/islands",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "type": "module",
   "repository": {
     "type": "git",
@@ -66,7 +66,6 @@
   },
   "devDependencies": {
     "@hono/vite-dev-server": "^0.12.2",
-    "@types/jest": "^29.5.14",
     "@types/node": "^20.17.6",
     "@vitest/coverage-v8": "^2.1.5",
     "jsdom": "^25.0.1",

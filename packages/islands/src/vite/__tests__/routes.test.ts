@@ -1,3 +1,4 @@
+import type { Mock } from "vitest";
 import { resolve } from "node:path";
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 
@@ -35,7 +36,7 @@ describe("getRoutes", () => {
       "folder3/index.ts",
     ];
 
-    fdir.mockImplementation(() => ({
+    (fdir as Mock).mockImplementation(() => ({
       withRelativePaths: vi.fn().mockReturnThis(),
       withMaxDepth: vi.fn().mockReturnThis(),
       crawl: vi.fn().mockReturnThis(),
@@ -58,7 +59,7 @@ describe("getRoutes", () => {
   it("should handle empty directories", () => {
     const mockFiles = [];
 
-    fdir.mockImplementation(() => ({
+    (fdir as Mock).mockImplementation(() => ({
       withRelativePaths: vi.fn().mockReturnThis(),
       withMaxDepth: vi.fn().mockReturnThis(),
       crawl: vi.fn().mockReturnThis(),
@@ -78,7 +79,7 @@ describe("comityRoutes", () => {
     consoleLog = console.log;
     console.log = vi.fn();
 
-    fdir.mockImplementation(() => ({
+    (fdir as Mock).mockImplementation(() => ({
       withRelativePaths: vi.fn().mockReturnThis(),
       withMaxDepth: vi.fn().mockReturnThis(),
       crawl: vi.fn().mockReturnThis(),
