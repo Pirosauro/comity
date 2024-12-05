@@ -21,7 +21,7 @@ export class Server<
     Object.entries(routes).forEach(([route, handler]) => {
       // parse route into path and method
       const [, path, method = "get"] =
-        route.match(/^(.*?)(?:\.(all|delete|patch|post|put))?$/) || [];
+        route.match(/^(.*?)(?:\.(all|delete|get|patch|post|put))?$/) || [];
 
       // custom 404 page
       if (path === "/_404") {
@@ -43,8 +43,14 @@ export class Server<
       if (!path || path.match(/\/_[^\/]+$/) || !method || !handler) return;
 
       // register route handler on Hono
-      this.on(method, path, handler as H);
-      console.log(method.replace("all", "*").toUpperCase(), path);
+      this.on(method, path.replace(/\/index$/, "/"), handler as H);
+      console.log(
+        method
+          .replace("all", "*")
+          .replace(/\/index$/, "/")
+          .toUpperCase(),
+        path
+      );
 
       count++;
     });
