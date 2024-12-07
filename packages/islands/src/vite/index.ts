@@ -1,2 +1,2 @@
-export { comityIslands } from "./islands.js";
-export { comityRoutes } from "./routes.js";
+export { comityIslands } from './islands.js';
+export { comityRoutes } from './routes.js';

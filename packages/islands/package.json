@@ -62,7 +62,7 @@
   },
   "dependencies": {
     "fdir": "^6.4.2",
-    "hono": "^4.6.12"
+    "hono": "^4.6.13"
   },
   "devDependencies": {
     "@hono/vite-dev-server": "^0.12.2",

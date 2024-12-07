@@ -1,9 +1,9 @@
-import type { Context } from "hono";
-import type { Env, MiddlewareHandler } from "hono/types";
-import type { FC, ReactElement, Attributes } from "react";
-import { createContext, createElement, useContext } from "react";
-import { renderToString } from "react-dom/server";
-import { hydrateRoot } from "react-dom/client";
+import type { Context } from 'hono';
+import type { Env, MiddlewareHandler } from 'hono/types';
+import type { FC, ReactElement, Attributes } from 'react';
+import { createContext, createElement, useContext } from 'react';
+import { renderToString } from 'react-dom/server';
+import { hydrateRoot } from 'react-dom/client';
 
 export type Options = {
   docType?: boolean | string;
@@ -31,11 +31,11 @@ const createRenderer =
   async (children: ReactElement, props?: Props) => {
     const node = component ? component({ children, ctx, ...props }) : children;
     const docType =
-      typeof options?.docType === "string"
+      typeof options?.docType === 'string'
         ? options.docType
         : options?.docType === true
-        ? "<!DOCTYPE html>"
-        : "";
+        ? '<!DOCTYPE html>'
+        : '';
     const body =
       docType +
       renderToString(
@@ -69,7 +69,7 @@ export const useRequestContext = <E extends Env = any>(): Context<E> => {
   const ctx = useContext(RequestContext);
 
   if (!ctx) {
-    throw new Error("RequestContext is not provided.");
+    throw new Error('RequestContext is not provided.');
   }
 
   return ctx;

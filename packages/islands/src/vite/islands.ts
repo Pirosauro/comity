@@ -1,5 +1,5 @@
-import type { Plugin } from "vite";
-import { fdir } from "fdir";
+import type { Plugin } from 'vite';
+import { fdir } from 'fdir';
 
 type Options = {
   framework: string;
@@ -7,13 +7,13 @@ type Options = {
 };
 
 export const comityIslands = (options: Options): Plugin => {
-  const virtualModuleId = "virtual:comity-islands";
-  const resolvedVirtualModuleId = "\0" + virtualModuleId;
+  const virtualModuleId = 'virtual:comity-islands';
+  const resolvedVirtualModuleId = '\0' + virtualModuleId;
   //
   const components = new fdir()
     .withRelativePaths()
     .withMaxDepth(10)
-    .crawl("./src/components")
+    .crawl('./src/components')
     .sync();
 
   /**
@@ -40,15 +40,15 @@ export const comityIslands = (options: Options): Plugin => {
    * @return {string}
    */
   const toPascalCase = (s: string): string =>
-    s.replace(/(^\w|-\w)/g, (x: string) => x.replace(/-/, "").toUpperCase());
+    s.replace(/(^\w|-\w)/g, (x: string) => x.replace(/-/, '').toUpperCase());
 
   return {
-    name: "@comity/vite-islands",
+    name: '@comity/vite-islands',
     // enforce: 'post',
 
     resolveId(id) {
       if (id.includes(virtualModuleId)) {
-        return "\0" + id;
+        return '\0' + id;
       }
     },
 
@@ -64,24 +64,24 @@ export const comityIslands = (options: Options): Plugin => {
         );
 
         // js
-        code.push("export default {");
+        code.push('export default {');
         code.push(
           ...components
             .filter((c) => /\.(tsx?|jsx?)$/.test(c))
             .map((c) => `'${hash(c)}': () => import('~/components/${c}'),\n`)
         );
-        code.push("}");
+        code.push('}');
 
-        return code.join("\n");
+        return code.join('\n');
       }
     },
 
     transform(code, id) {
       const file = id.match(/\/src\/components\/(.*\.island\.tsx)$/)?.at(1);
 
-      if (typeof file === "string") {
+      if (typeof file === 'string') {
         const basename = file.split(/[\\/]/).pop() as string;
-        const component = toPascalCase(basename?.replace(".island.tsx", ""));
+        const component = toPascalCase(basename?.replace('.island.tsx', ''));
 
         // add island properties
         code += `\nObject.defineProperty(${component}, 'name', { writable: false, value: '${hash(

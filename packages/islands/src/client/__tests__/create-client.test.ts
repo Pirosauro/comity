@@ -1,8 +1,8 @@
 // @vitest-environment jsdom
-import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
-import { createClient } from "../create-client.js";
+import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
+import { createClient } from '../create-client.js';
 
-describe("createClient", async () => {
+describe('createClient', async () => {
   let readyState: DocumentReadyState;
   let consoleLog: typeof console.log;
   let consoleError: typeof console.error;
@@ -23,14 +23,14 @@ describe("createClient", async () => {
   };
 
   await createClient(options);
-  await window.customElements.whenDefined("comity-island");
+  await window.customElements.whenDefined('comity-island');
 
   function createIsland(params: string) {
-    const customElement = document.createElement("comity-island");
-    const script = document.createElement("script");
+    const customElement = document.createElement('comity-island');
+    const script = document.createElement('script');
 
-    script.setAttribute("data-island", "");
-    script.setAttribute("type", "application/json");
+    script.setAttribute('data-island', '');
+    script.setAttribute('type', 'application/json');
 
     script.textContent = params;
 
@@ -55,9 +55,9 @@ describe("createClient", async () => {
     console.error = consoleError;
     console.info = consoleInfo;
     console.warn = consoleWarn;
-    document.body.innerHTML = "";
+    document.body.innerHTML = '';
 
-    Object.defineProperty(document, "readyState", {
+    Object.defineProperty(document, 'readyState', {
       value: readyState,
       configurable: true,
     });
@@ -108,56 +108,56 @@ describe("createClient", async () => {
   //   expect(mockComponent).toHaveBeenCalled();
   // });
 
-  it("should log a warning if hydration data is missing", async () => {
-    Object.defineProperty(document, "readyState", {
-      value: "complete",
+  it('should log a warning if hydration data is missing', async () => {
+    Object.defineProperty(document, 'readyState', {
+      value: 'complete',
       configurable: true,
     });
 
     const params = {};
 
     createIsland(JSON.stringify(params));
-    document.dispatchEvent(new Event("DOMContentLoaded"));
+    document.dispatchEvent(new Event('DOMContentLoaded'));
 
     expect(console.warn).toHaveBeenCalledWith(
-      "[comity-island] Unable to hydrate Island: missing hydration information"
+      '[comity-island] Unable to hydrate Island: missing hydration information'
     );
   });
 
-  it("should log a warning if component is not found", async () => {
-    Object.defineProperty(document, "readyState", {
-      value: "complete",
+  it('should log a warning if component is not found', async () => {
+    Object.defineProperty(document, 'readyState', {
+      value: 'complete',
       configurable: true,
     });
 
     const params = {
-      name: "NonExistentComponent",
-      framework: "react",
-      strategy: { type: "load" },
+      name: 'NonExistentComponent',
+      framework: 'react',
+      strategy: { type: 'load' },
     };
 
     createIsland(JSON.stringify(params));
-    document.dispatchEvent(new Event("DOMContentLoaded"));
+    document.dispatchEvent(new Event('DOMContentLoaded'));
 
     expect(console.warn).toHaveBeenCalledWith(
       '[comity-island] Unable to hydrate Island: component "NonExistentComponent" not found'
     );
   });
 
-  it("should log an error if integration is not defined", async () => {
-    Object.defineProperty(document, "readyState", {
-      value: "complete",
+  it('should log an error if integration is not defined', async () => {
+    Object.defineProperty(document, 'readyState', {
+      value: 'complete',
       configurable: true,
     });
 
     const params = {
-      name: "TestComponent",
-      framework: "vue",
-      strategy: { type: "load" },
+      name: 'TestComponent',
+      framework: 'vue',
+      strategy: { type: 'load' },
     };
 
     createIsland(JSON.stringify(params));
-    document.dispatchEvent(new Event("DOMContentLoaded"));
+    document.dispatchEvent(new Event('DOMContentLoaded'));
 
     expect(console.error).toHaveBeenCalledWith(
       '[comity-island] Unable to hydrate Island: integration "vue" is not defined'

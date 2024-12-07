@@ -1,5 +1,5 @@
-import type { HydrationData } from "../../types/index.d.js";
-import { idle, observeOnce, listenMediaOnce } from "../strategies.js";
+import type { HydrationData } from '../../types/index.d.js';
+import { idle, observeOnce, listenMediaOnce } from '../strategies.js';
 
 type Options<C, P> = {
   debug: boolean;
@@ -32,9 +32,9 @@ export const createClient = async <C, P>({
    */
   const logMessage = (
     message: string,
-    level: "info" | "warn" | "error"
+    level: 'info' | 'warn' | 'error'
   ): void => {
-    if (level !== "info" || debug) console[level]("[comity-island] " + message);
+    if (level !== 'info' || debug) console[level]('[comity-island] ' + message);
   };
 
   /**
@@ -47,7 +47,7 @@ export const createClient = async <C, P>({
   const loadComponent = async (name: string): Promise<C | undefined> => {
     if (!(name in components)) {
       components[name] =
-        typeof islands?.[name] === "function"
+        typeof islands?.[name] === 'function'
           ? (await islands[name]())?.default
           : undefined;
     }
@@ -69,14 +69,14 @@ export const createClient = async <C, P>({
      * @inheritdoc
      */
     connectedCallback() {
-      if (document.readyState === "loading") {
+      if (document.readyState === 'loading') {
         const initBound = this._init.bind(this);
         const initOnce = () => {
-          document.removeEventListener("DOMContentLoaded", initOnce);
+          document.removeEventListener('DOMContentLoaded', initOnce);
           initBound();
         };
 
-        document.addEventListener("DOMContentLoaded", initOnce);
+        document.addEventListener('DOMContentLoaded', initOnce);
       } else {
         this._init();
       }
@@ -90,15 +90,15 @@ export const createClient = async <C, P>({
     _init(): void {
       // collect information
       const json = this.querySelector(
-        ":scope > script[data-island]"
+        ':scope > script[data-island]'
       )?.textContent;
       this.#data = json ? JSON.parse(json) : {};
 
       // no information to hydrate
       if (!this.#data?.name) {
         return logMessage(
-          "Unable to hydrate Island: missing hydration information",
-          "warn"
+          'Unable to hydrate Island: missing hydration information',
+          'warn'
         );
       }
 
@@ -108,39 +108,39 @@ export const createClient = async <C, P>({
       if (!(name in islands)) {
         return logMessage(
           'Unable to hydrate Island: component "' + name + '" not found',
-          "warn"
+          'warn'
         );
       }
 
       // island is a descendant of another island
-      if (this.parentElement?.closest("comity-island")) {
+      if (this.parentElement?.closest('comity-island')) {
         return logMessage(
           'Island "' + name + '" is a descendant of another island',
-          "info"
+          'info'
         );
       }
 
-      logMessage('Island "' + name + '" initialized', "info");
+      logMessage('Island "' + name + '" initialized', 'info');
 
       switch (strategy?.type) {
         // hydrate on load
-        case "load":
+        case 'load':
           this.hydrate().then(() =>
-            logMessage('Island "' + name + '" hydrated on load', "info")
+            logMessage('Island "' + name + '" hydrated on load', 'info')
           );
           break;
 
         // hydrate on idle
-        case "idle":
+        case 'idle':
           idle(() =>
             this.hydrate().then(() =>
-              logMessage('Island "' + name + '" hydrated on idle', "info")
+              logMessage('Island "' + name + '" hydrated on idle', 'info')
             )
           );
           break;
 
         // hydrate on media query match
-        case "media":
+        case 'media':
           if (strategy?.value) {
             listenMediaOnce(strategy.value, () =>
               this.hydrate().then(() =>
@@ -149,8 +149,8 @@ export const createClient = async <C, P>({
                     name +
                     '" hydrated on media query match (' +
                     strategy.value +
-                    ")",
-                  "info"
+                    ')',
+                  'info'
                 )
               )
             );
@@ -158,10 +158,10 @@ export const createClient = async <C, P>({
           break;
 
         // hydrate on visible
-        case "visible":
+        case 'visible':
           observeOnce(this, () =>
             this.hydrate().then(() =>
-              logMessage('Island "' + name + '" hydrated on visible', "info")
+              logMessage('Island "' + name + '" hydrated on visible', 'info')
             )
           );
           break;
@@ -194,13 +194,13 @@ export const createClient = async <C, P>({
 
         await integration(component, props, this);
       } catch (e: any) {
-        logMessage("Unable to hydrate Island: " + e.message, "error");
+        logMessage('Unable to hydrate Island: ' + e.message, 'error');
       }
     }
   }
 
   // define
-  if ("customElements" in window) {
-    window.customElements.define("comity-island", Island);
+  if ('customElements' in window) {
+    window.customElements.define('comity-island', Island);
   }
 };

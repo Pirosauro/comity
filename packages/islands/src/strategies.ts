@@ -18,9 +18,9 @@ export const listenMediaOnce = (
 
   handler(mediaQuery);
 
-  mediaQuery.addEventListener("change", handler, { once: true });
+  mediaQuery.addEventListener('change', handler, { once: true });
 
-  return () => mediaQuery.removeEventListener("change", handler);
+  return () => mediaQuery.removeEventListener('change', handler);
 };
 
 /**
@@ -33,7 +33,7 @@ export const listenMediaOnce = (
 export const observeOnce = (element: Element, fn: () => void): void => {
   const options: IntersectionObserverInit = {
     root: null,
-    rootMargin: "0px",
+    rootMargin: '0px',
     threshold: 0.5,
   };
 
@@ -75,7 +75,7 @@ export const observeOnce = (element: Element, fn: () => void): void => {
  * @return {void}
  */
 export const idle = (fn: () => void): void => {
-  typeof window?.requestIdleCallback === "function"
+  typeof window?.requestIdleCallback === 'function'
     ? window.requestIdleCallback(fn)
     : setTimeout(fn, 250);
 };

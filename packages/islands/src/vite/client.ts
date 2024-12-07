@@ -1,4 +1,4 @@
-import type { Plugin } from "vite";
+import type { Plugin } from 'vite';
 
 type Options = {
   entrypoint: string;
@@ -8,7 +8,7 @@ type Options = {
 
 export default (options: Options): Plugin => {
   return {
-    name: "@comity/vite-client",
+    name: '@comity/vite-client',
 
     // config
     config: () => {
@@ -17,11 +17,11 @@ export default (options: Options): Plugin => {
           rollupOptions: {
             input: [options?.entrypoint],
           },
-          assetsDir: options?.assetsDir ?? "static",
+          assetsDir: options?.assetsDir ?? 'static',
           manifest: true,
         },
         esbuild: {
-          jsxImportSource: options?.jsxImportSource ?? "hono/jsx/dom",
+          jsxImportSource: options?.jsxImportSource ?? 'hono/jsx/dom',
         },
       };
     },

@@ -23,17 +23,17 @@
   },
   "dependencies": {
     "@comity/islands": "workspace:*",
-    "hono": "^4.6.12",
+    "hono": "^4.6.13",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@hono/vite-dev-server": "^0.12.2",
-    "@testing-library/react": "^16.0.1",
+    "@testing-library/react": "^16.1.0",
     "@types/jest": "^29.5.14",
     "@types/node": "^20.17.9",
-    "@types/react": "^18.3.13",
-    "@types/react-dom": "^18.3.1",
+    "@types/react": "^18.3.14",
+    "@types/react-dom": "^18.3.2",
     "@vitest/coverage-v8": "^2.1.8",
     "jsdom": "^25.0.1",
     "typescript": "^5.7.2",

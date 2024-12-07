@@ -36,7 +36,7 @@
   "dependencies": {
     "@envelop/core": "^5.0.2",
     "graphql": "^16.9.0",
-    "hono": "^4.6.12"
+    "hono": "^4.6.13"
   },
   "devDependencies": {
     "@hono/vite-dev-server": "^0.12.2",

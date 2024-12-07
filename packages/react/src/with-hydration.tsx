@@ -1,6 +1,6 @@
-import type { FC } from "react";
-import type { ClientDirective } from "@comity/islands/types";
-import { getHydrationData } from "@comity/islands";
+import type { FC } from 'react';
+import type { ClientDirective } from '@comity/islands/types';
+import { getHydrationData } from '@comity/islands';
 
 /**
  * Wrap the component into an island
@@ -21,13 +21,12 @@ export function withHydration<P>(
 
     // render
     return (
-      <comity-island style={{ display: "contents" }}>
+      <comity-island style={{ display: 'contents' }}>
         <Component {...data.props} />
         <script
           type="application/json"
           data-island
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
-        ></script>
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}></script>
       </comity-island>
     );
   };

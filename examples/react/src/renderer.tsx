@@ -1,4 +1,4 @@
-import { reactRenderer } from "@comity/react";
+import { reactRenderer } from '@comity/react';
 
 export const renderer = reactRenderer(({ children, title }) => {
   return (

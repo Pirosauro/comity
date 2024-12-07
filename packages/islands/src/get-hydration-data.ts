@@ -3,7 +3,7 @@ import type {
   HydratableComponent,
   HydrationData,
   Strategy,
-} from "../types/index.d.js";
+} from '../types/index.d.js';
 
 /**
  * Look for hydration strategy directive on props
@@ -12,20 +12,20 @@ import type {
  * @return {(Strategy & undefined)}
  */
 function getStrategy<P>(props: P & ClientDirective): Strategy | undefined {
-  if (props["client:load"]) {
-    return { type: "load" };
+  if (props['client:load']) {
+    return { type: 'load' };
   }
-  if (props["client:visible"]) {
-    return { type: "visible" };
+  if (props['client:visible']) {
+    return { type: 'visible' };
   }
-  if (props["client:media"]) {
+  if (props['client:media']) {
     return {
-      type: "media",
-      value: props["client:media"],
+      type: 'media',
+      value: props['client:media'],
     };
   }
-  if (props["client:idle"]) {
-    return { type: "idle" };
+  if (props['client:idle']) {
+    return { type: 'idle' };
   }
 }
 
@@ -37,11 +37,11 @@ function getStrategy<P>(props: P & ClientDirective): Strategy | undefined {
  */
 function getProps<P>(props: P & ClientDirective): P {
   const directives: (keyof ClientDirective)[] = [
-    "client:load",
-    "client:visible",
-    "client:media",
-    "client:idle",
-    "client:none",
+    'client:load',
+    'client:visible',
+    'client:media',
+    'client:idle',
+    'client:none',
   ];
   const result = { ...props };
 
@@ -63,10 +63,10 @@ export function getHydrationData<P>(
   props: P & ClientDirective
 ): HydrationData {
   const strategy = getStrategy<P>(props);
-  const framework = component.framework || "hono";
+  const framework = component.framework || 'hono';
 
   return {
-    name: component.name || "Unknown",
+    name: component.name || 'Unknown',
     strategy,
     props: getProps<P>(props),
     framework,

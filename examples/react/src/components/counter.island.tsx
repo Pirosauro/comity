@@ -1,8 +1,8 @@
-import type { FunctionComponent, PropsWithChildren } from "react";
-import { useState } from "react";
-import { withHydration } from "@comity/react";
-import Badge from "./badge.island.js";
-import style from "./counter.module.css";
+import type { FunctionComponent, PropsWithChildren } from 'react';
+import { useState } from 'react';
+import { withHydration } from '@comity/react';
+import Badge from './badge.island.js';
+import style from './counter.module.css';
 
 export type Props = {
   count: number;
@@ -14,10 +14,10 @@ const BadgeIsland = withHydration(Badge);
 const Counter: FunctionComponent<PropsWithChildren<Props>> = (props) => {
   const [count, setCount] = useState(props.count);
   const onClickHandler = () => {
-    const log = "Click " + count;
+    const log = 'Click ' + count;
 
     setCount(count + 1);
-    console.log(log + " -> " + count);
+    console.log(log + ' -> ' + count);
   };
 
   return (
