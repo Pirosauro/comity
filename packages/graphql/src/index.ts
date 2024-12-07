@@ -1,1 +1,1 @@
-export { graphqlHandler } from "./graphql-handler.js";
+export { graphqlHandler } from './graphql-handler.js';

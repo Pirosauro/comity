@@ -4,8 +4,8 @@ import type {
   ValidationRule,
   FormattedExecutionResult,
   GraphQLFormattedError,
-} from "graphql";
-import type { PluginsType } from "@envelop/core";
+} from 'graphql';
+import type { PluginsType } from '@envelop/core';
 
 export type RootResolver<
   E extends Env = any,
@@ -18,7 +18,6 @@ export type Options<
   P extends string = any,
   I extends Input = {}
 > = {
-  schema: GraphQLSchema;
   rootResolver?: RootResolver<E, P, I>;
   pretty?: boolean;
   validationRules?: ReadonlyArray<ValidationRule>;

@@ -1,7 +1,14 @@
-import { Hono, type Context } from "hono";
-import { buildSchema } from "graphql";
-import { graphqlHandler } from "@comity/graphql";
-import { useLogger } from "@envelop/core";
+import { Hono, type Context } from 'hono';
+import {
+  buildSchema,
+  execute,
+  parse,
+  subscribe,
+  validate,
+  specifiedRules,
+} from 'graphql';
+import { graphqlHandler } from '@comity/graphql';
+import { useLogger, useEngine, useSchema } from '@envelop/core';
 
 const app = new Hono();
 const schema = buildSchema(`
@@ -12,16 +19,20 @@ const schema = buildSchema(`
 
 const rootResolver = (c: Context) => {
   return {
-    hello: () => "Hello World!",
+    hello: () => 'Hello World!',
   };
 };
 
 app.use(
-  "/graphql",
+  '/graphql',
   graphqlHandler({
     schema,
     rootResolver,
-    plugins: [useLogger()],
+    plugins: [
+      useLogger(),
+      useEngine({ parse, validate, specifiedRules, execute, subscribe }),
+      useSchema(schema),
+    ],
   })
 );
 

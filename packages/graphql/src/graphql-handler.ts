@@ -1,20 +1,9 @@
-import type { DocumentNode, FormattedExecutionResult } from "graphql";
-import type { Context, Env, Input, MiddlewareHandler } from "hono";
-import type { Options } from "../types";
-import {
-  execute,
-  parse,
-  subscribe,
-  validate,
-  validateSchema,
-  specifiedRules,
-  getOperationAST,
-  Source,
-  GraphQLError,
-} from "graphql";
-import { envelop, useEngine, useSchema } from "@envelop/core";
-import { ServiceError } from "./service-error.js";
-import { getGraphQLParams } from "./get-graphql-params.js";
+import type { Context, Env, Input, MiddlewareHandler } from 'hono';
+import type { Options } from '../types';
+import { specifiedRules, getOperationAST, Source, GraphQLError } from 'graphql';
+import { envelop } from '@envelop/core';
+import { ServiceError } from './service-error.js';
+import { getGraphQLParams } from './get-graphql-params.js';
 
 export const graphqlHandler = <
   E extends Env = any,
@@ -23,29 +12,20 @@ export const graphqlHandler = <
 >(
   options: Options<E, P, I>
 ): MiddlewareHandler => {
-  const schema = options.schema;
   const pretty = options.pretty ?? false;
   const validationRules = options.validationRules ?? [];
   const plugins = options.plugins ?? [];
 
   // @ts-ignore
-  const getEnveloped = envelop({
-    plugins: [
-      ...plugins,
-      useEngine({ parse, validate, specifiedRules, execute, subscribe }),
-      useSchema(schema),
-    ],
-  });
+  const getEnveloped = envelop({ plugins });
 
   return async (c: Context<E, P, I>) => {
     // GraphQL HTTP only supports GET and POST methods.
-    if (c.req.method !== "GET" && c.req.method !== "POST") {
+    if (c.req.method !== 'GET' && c.req.method !== 'POST') {
       return c.json(
-        new ServiceError("GraphQL only supports GET and POST requests."),
+        new ServiceError('GraphQL only supports GET and POST requests.'),
         405,
-        {
-          Allow: "GET, POST",
-        }
+        { Allow: 'GET, POST' }
       );
     }
 
@@ -70,52 +50,23 @@ export const graphqlHandler = <
     const { query, variables, operationName } = params;
 
     if (query == null) {
-      return c.json(new ServiceError("Must provide query string."), 400);
+      return c.json(new ServiceError('Must provide query string.'), 400);
     }
 
-    let schemaValidationErrors: readonly GraphQLError[] = [];
+    let documentAST: any;
 
     try {
-      schemaValidationErrors = validateSchema(schema);
-    } catch (e) {
-      console.error(e);
-
-      if (e instanceof Error) {
-        const errors = [
-          new GraphQLError(e.message, {
-            originalError: e,
-          }),
-        ];
-
-        schemaValidationErrors = Object.freeze(errors);
-      }
-    }
-
-    if (schemaValidationErrors.length > 0) {
-      // return 500: Internal Server Error if invalid schema.
-      return c.json(
-        new ServiceError(
-          "GraphQL schema validation error.",
-          schemaValidationErrors
-        ),
-        500
-      );
-    }
-
-    let documentAST: DocumentNode;
-
-    try {
-      documentAST = parse(new Source(query, "GraphQL request"));
+      documentAST = parse(new Source(query, 'GraphQL request'));
     } catch (syntaxError: unknown) {
       // return 400: Bad Request if any syntax errors errors exist.
       if (syntaxError instanceof Error) {
-        console.error(`${syntaxError.stack || syntaxError.message}`);
+        console.error(syntaxError);
 
         const e = new GraphQLError(syntaxError.message, {
           originalError: syntaxError,
         });
 
-        return c.json(new ServiceError("GraphQL syntax error.", [e]), 400);
+        return c.json(new ServiceError('GraphQL syntax error.', [e]), 400);
       }
 
       throw syntaxError;
@@ -130,28 +81,28 @@ export const graphqlHandler = <
     if (validationErrors.length > 0) {
       // return 400: Bad Request if any validation errors exist.
       return c.json(
-        new ServiceError("GraphQL validation error.", validationErrors),
+        new ServiceError('GraphQL validation error.', validationErrors),
         400
       );
     }
 
-    if (c.req.method === "GET") {
+    if (c.req.method === 'GET') {
       // Determine if this GET request will perform a non-query.
       const operationAST = getOperationAST(documentAST, operationName);
 
-      if (operationAST && operationAST.operation !== "query") {
+      if (operationAST && operationAST.operation !== 'query') {
         // Otherwise, report a 405: Method Not Allowed error.
         return c.json(
           new ServiceError(
             `Can only perform a ${operationAST.operation} operation from a POST request.`
           ),
           405,
-          { Allow: "POST" }
+          { Allow: 'POST' }
         );
       }
     }
 
-    let result: FormattedExecutionResult;
+    let result: any;
     const { rootResolver } = options;
 
     try {
@@ -175,7 +126,7 @@ export const graphqlHandler = <
 
         // return 400: Bad Request if any execution context errors exist.
         return c.json(
-          new ServiceError("GraphQL execution context error.", [e]),
+          new ServiceError('GraphQL execution context error.', [e]),
           400
         );
       }
@@ -194,7 +145,7 @@ export const graphqlHandler = <
       const payload = JSON.stringify(result, null, pretty ? 2 : 0);
 
       return c.text(payload, 200, {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       });
     } else {
       return c.json(result);

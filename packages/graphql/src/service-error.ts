@@ -1,41 +1,22 @@
-import { GraphQLError, GraphQLFormattedError } from "graphql";
+import { GraphQLError, GraphQLFormattedError } from 'graphql';
 
-// export class ServiceError extends GraphQLError {
-//   extensions: GraphQLErrorExtensions;
-
-//   constructor(
-//     message: string,
-//     extensions: {
-//       code: string;
-//       statusCode: number;
-//       details?: Record<string, any>;
-//     },
-//     error?: Error
-//   ) {
-//     super(message, { originalError: error });
-
-//     this.extensions = extensions;
-//     this.cause = error;
-//   }
-
-//   toString() {
-//     return `Name: ${this.name}, Age: ${this.age}`;
-//   }
-
-//   toJSON() {
-//     return {
-//       message: this.message,
-//       extensions: this.extensions,
-//       cause: this.cause,
-//     };
-//   }
-// }
-
-const isObject = (obj: any) => {
-  return typeof obj === "object" && obj !== null && !Array.isArray(obj);
+/**
+ * Check if it is an object
+ *
+ * @param {any} obj
+ * @returns {boolean}
+ */
+const isObject = (obj: any): boolean => {
+  return typeof obj === 'object' && obj !== null && !Array.isArray(obj);
 };
 
-const parseError = (error: any) => {
+/**
+ * Parse error
+ *
+ * @param {any} error
+ * @returns {Record<string, any>}
+ */
+const parseError = (error: any): Record<string, any> => {
   const props: Record<string, any> = {};
 
   Object.getOwnPropertyNames(error).forEach((key) => {
@@ -45,6 +26,9 @@ const parseError = (error: any) => {
   return props;
 };
 
+/**
+ * Service error
+ */
 export class ServiceError extends AggregateError {
   public constructor(
     message: string,

@@ -1,47 +1,37 @@
-import type { GraphQLParams } from "../types";
-import { parseBody } from "./parse-body.js";
+import type { GraphQLParams } from '../types';
+import { parseRequest } from './parse-request.js';
 
 export const getGraphQLParams = async (
   request: Request
 ): Promise<GraphQLParams> => {
-  const urlData = new URLSearchParams(request.url.split("?")[1]);
-  const bodyData = await parseBody(request);
+  const data: Partial<GraphQLParams> = await parseRequest(request);
 
-  // GraphQL Query string.
-  let query = urlData.get("query") ?? (bodyData.query as string | null);
-
-  if (typeof query !== "string") {
-    query = null;
+  // GraphQL Query string
+  if (typeof data.query !== 'string') {
+    data.query = undefined;
   }
 
-  // Parse the variables if needed.
-  let variables = (urlData.get("variables") ?? bodyData.variables) as {
-    readonly [name: string]: unknown;
-  } | null;
-  if (typeof variables === "string") {
+  // Parse the variables if needed
+  if (typeof data.variables === 'string') {
     try {
-      variables = JSON.parse(variables);
+      data.variables = JSON.parse(data.variables);
     } catch {
-      throw Error("Variables are invalid JSON.");
+      throw Error('Variables are invalid JSON.');
     }
-  } else if (typeof variables !== "object") {
-    variables = null;
+  } else if (typeof data.variables !== 'object') {
+    data.variables = undefined;
   }
 
-  // Name of GraphQL operation to execute.
-  let operationName =
-    urlData.get("operationName") ?? (bodyData.operationName as string | null);
-  if (typeof operationName !== "string") {
-    operationName = null;
+  // Name of GraphQL operation to execute
+  if (typeof data.operationName !== 'string') {
+    data.operationName = undefined;
   }
-
-  const raw = urlData.get("raw") != null || bodyData.raw !== undefined;
 
   const params: GraphQLParams = {
-    query: query,
-    variables: variables,
-    operationName: operationName,
-    raw: raw,
+    query: data.query || null,
+    variables: data.variables || null,
+    operationName: data.operationName || null,
+    raw: data.raw ? true : false,
   };
 
   return params;
