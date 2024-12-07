@@ -26,7 +26,8 @@ export function withHydration<P>(
         <script
           type="application/json"
           data-island
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}></script>
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+        />
       </comity-island>
     );
   };
