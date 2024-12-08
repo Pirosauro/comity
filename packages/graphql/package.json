@@ -1,7 +1,14 @@
 {
   "name": "@comity/graphql",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "type": "module",
+  "author": "Filippo Bovo <hello@filippobovo.com>",
+  "license": "MIT",
+  "keywords": [
+    "hono",
+    "cloudflare",
+    "graphql"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/pirosauro/comity.git"

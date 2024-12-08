@@ -1,7 +1,17 @@
 {
   "name": "@comity/react",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "type": "module",
+  "author": "Filippo Bovo <hello@filippobovo.com>",
+  "license": "MIT",
+  "keywords": [
+    "hono",
+    "cloudflare",
+    "vite",
+    "react",
+    "partial hydration",
+    "island architecture"
+  ],
   "scripts": {
     "build": "tsc",
     "prepublish": "tsc",

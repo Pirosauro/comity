@@ -1,0 +1,30 @@
+{
+  "name": "create-comity",
+  "version": "0.2.1",
+  "description": "Starter for Comity",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "prepublish": "tsc",
+    "clean": "tsc --build --clean",
+    "test": "vitest run --coverage"
+  },
+  "author": "Filippo Bovo <hello@filippobovo.com>",
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "devDependencies": {
+    "@types/ejs": "^3.1.5",
+    "@types/node": "^20.17.9",
+    "@vitest/coverage-v8": "^2.1.8",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  },
+  "dependencies": {
+    "@inquirer/prompts": "^7.2.0",
+    "ejs": "^3.1.10"
+  }
+}
