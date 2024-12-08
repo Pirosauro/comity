@@ -55,7 +55,7 @@ export class Server<
       this.on(
         method,
         path === '/index' ? '/' : path,
-        ...([Array.isArray(handler) ? handler : [handler]] as H[])
+        ...(Array.isArray(handler) ? handler : [handler])
       );
       console.log(
         method.replace('all', '*').toUpperCase(),
