@@ -1,27 +1,9 @@
-import type {
-  GraphQLSchema,
-  DocumentNode,
-  ValidationRule,
-  FormattedExecutionResult,
-  GraphQLFormattedError,
-} from 'graphql';
-import type { PluginsType } from '@envelop/core';
+import type { Optional, Plugin } from '@envelop/core';
 
-export type RootResolver<
-  E extends Env = any,
-  P extends string = any,
-  I extends Input = {}
-> = (c: Context<E, P, I>) => Promise<unknown> | unknown;
-
-export type Options<
-  E extends Env = any,
-  P extends string = any,
-  I extends Input = {}
-> = {
-  rootResolver?: RootResolver<E, P, I>;
-  pretty?: boolean;
+export type Options = {
+  plugins: Optional<Plugin>[];
+  enableInternalTracing?: boolean;
   validationRules?: ReadonlyArray<ValidationRule>;
-  plugins?: PluginsType;
 };
 
 export interface GraphQLParams {

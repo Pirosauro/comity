@@ -72,11 +72,11 @@
   },
   "dependencies": {
     "fdir": "^6.4.2",
-    "hono": "^4.6.13"
+    "hono": "^4.6.14"
   },
   "devDependencies": {
     "@hono/vite-dev-server": "^0.12.2",
-    "@types/node": "^20.17.9",
+    "@types/node": "^20.17.10",
     "@vitest/coverage-v8": "^2.1.8",
     "jsdom": "^25.0.1",
     "typescript": "^5.7.2",
