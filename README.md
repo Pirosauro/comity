@@ -2,7 +2,7 @@
 
 [![codecov](https://codecov.io/gh/Pirosauro/comity/graph/badge.svg)](https://codecov.io/gh/Pirosauro/comity)
 
-Comity is a fresh approach to building scalable and efficient web applications that prioritize reducing the environmental impact of websites, web apps, and e-commerce platforms. Comity aims to reduce carbon emissions by integrating modern technology and innovative solutions while providing a smmooth development experience.
+Comity is a fresh approach to building scalable and efficient web applications that prioritize reducing the environmental impact of websites, web apps, and e-commerce platforms. Comity aims to reduce carbon emissions by integrating modern technology and innovative solutions while providing a smooth development experience.
 
 ## Why Comity?
 
@@ -16,7 +16,7 @@ Virtually everything has a carbon footprint, even the internet, and every byte o
 
 - **Partial Hydration (Islands Architecture)**: Updating only what's necessary ensures utmost efficiency, saving energy and boosting performance.
 
-- **Minimal Learning Curve**: Seamlessly integrates with frameworks you already know and love, like React and Vue, so you can be immediately operative.
+- **Minimal Learning Curve**: Seamlessly integrates with frameworks you already know and love, like React and Vue so that you can be immediately operative.
 
 ## Documentation
 
