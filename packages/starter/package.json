@@ -6,7 +6,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "prepublish": "tsc",
+    "prepublish": "copy-folder ../../templates templates --summary && tsc",
     "clean": "tsc --build --clean",
     "test": "vitest run --coverage"
   },
@@ -20,6 +20,7 @@
     "@types/ejs": "^3.1.5",
     "@types/node": "^20.17.10",
     "@vitest/coverage-v8": "^2.1.8",
+    "copy-folder-util": "^1.1.4",
     "typescript": "^5.7.2",
     "vitest": "^2.1.8"
   },

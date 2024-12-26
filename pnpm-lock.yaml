@@ -12,77 +12,6 @@ importers:
         specifier: ^2.27.11
         version: 2.27.11
 
-  examples/graphql:
-    dependencies:
-      '@comity/graphql':
-        specifier: workspace:*
-        version: link:../../packages/graphql
-      '@envelop/core':
-        specifier: ^5.0.2
-        version: 5.0.2
-      graphql:
-        specifier: ^16.10.0
-        version: 16.10.0
-      hono:
-        specifier: ^4.6.14
-        version: 4.6.14
-    devDependencies:
-      '@cloudflare/workers-types':
-        specifier: ^4.20241224.0
-        version: 4.20241224.0
-      '@hono/vite-cloudflare-pages':
-        specifier: ^0.4.2
-        version: 0.4.2(hono@4.6.14)
-      wrangler:
-        specifier: ^3.99.0
-        version: 3.99.0(@cloudflare/workers-types@4.20241224.0)
-
-  examples/react:
-    dependencies:
-      '@comity/islands':
-        specifier: workspace:*
-        version: link:../../packages/islands
-      '@comity/react':
-        specifier: workspace:*
-        version: link:../../packages/react
-      '@nanostores/react':
-        specifier: ^0.7.3
-        version: 0.7.3(nanostores@0.10.3)(react@18.3.1)
-      hono:
-        specifier: ^4.6.14
-        version: 4.6.14
-      nanostores:
-        specifier: ^0.10.3
-        version: 0.10.3
-      react:
-        specifier: ^18.3.1
-        version: 18.3.1
-      react-dom:
-        specifier: ^18.3.1
-        version: 18.3.1(react@18.3.1)
-    devDependencies:
-      '@cloudflare/workers-types':
-        specifier: ^4.20241224.0
-        version: 4.20241224.0
-      '@hono/vite-cloudflare-pages':
-        specifier: ^0.4.2
-        version: 0.4.2(hono@4.6.14)
-      '@hono/vite-dev-server':
-        specifier: ^0.12.2
-        version: 0.12.2(hono@4.6.14)
-      '@types/react':
-        specifier: ^18.3.18
-        version: 18.3.18
-      '@types/react-dom':
-        specifier: ^18.3.5
-        version: 18.3.5(@types/react@18.3.18)
-      vite:
-        specifier: ^5.4.11
-        version: 5.4.11(@types/node@22.10.2)
-      wrangler:
-        specifier: ^3.99.0
-        version: 3.99.0(@cloudflare/workers-types@4.20241224.0)
-
   packages/graphql:
     dependencies:
       '@envelop/core':
@@ -206,12 +135,86 @@ importers:
       '@vitest/coverage-v8':
         specifier: ^2.1.8
         version: 2.1.8(vitest@2.1.8(@types/node@20.17.10)(jsdom@25.0.1))
+      copy-folder-util:
+        specifier: ^1.1.4
+        version: 1.1.4
       typescript:
         specifier: ^5.7.2
         version: 5.7.2
       vitest:
         specifier: ^2.1.8
         version: 2.1.8(@types/node@20.17.10)(jsdom@25.0.1)
+
+  templates/graphql:
+    dependencies:
+      '@comity/graphql':
+        specifier: workspace:*
+        version: link:../../packages/graphql
+      '@envelop/core':
+        specifier: ^5.0.2
+        version: 5.0.2
+      graphql:
+        specifier: ^16.10.0
+        version: 16.10.0
+      hono:
+        specifier: ^4.6.14
+        version: 4.6.14
+    devDependencies:
+      '@cloudflare/workers-types':
+        specifier: ^4.20241224.0
+        version: 4.20241224.0
+      '@hono/vite-cloudflare-pages':
+        specifier: ^0.4.2
+        version: 0.4.2(hono@4.6.14)
+      wrangler:
+        specifier: ^3.99.0
+        version: 3.99.0(@cloudflare/workers-types@4.20241224.0)
+
+  templates/react:
+    dependencies:
+      '@comity/islands':
+        specifier: workspace:*
+        version: link:../../packages/islands
+      '@comity/react':
+        specifier: workspace:*
+        version: link:../../packages/react
+      '@nanostores/react':
+        specifier: ^0.7.3
+        version: 0.7.3(nanostores@0.10.3)(react@18.3.1)
+      hono:
+        specifier: ^4.6.14
+        version: 4.6.14
+      nanostores:
+        specifier: ^0.10.3
+        version: 0.10.3
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
+    devDependencies:
+      '@cloudflare/workers-types':
+        specifier: ^4.20241224.0
+        version: 4.20241224.0
+      '@hono/vite-cloudflare-pages':
+        specifier: ^0.4.2
+        version: 0.4.2(hono@4.6.14)
+      '@hono/vite-dev-server':
+        specifier: ^0.12.2
+        version: 0.12.2(hono@4.6.14)
+      '@types/react':
+        specifier: ^18.3.18
+        version: 18.3.18
+      '@types/react-dom':
+        specifier: ^18.3.5
+        version: 18.3.5(@types/react@18.3.18)
+      vite:
+        specifier: ^5.4.11
+        version: 5.4.11(@types/node@22.10.2)
+      wrangler:
+        specifier: ^3.99.0
+        version: 3.99.0(@cloudflare/workers-types@4.20241224.0)
 
 packages:
 
@@ -1110,6 +1113,10 @@ packages:
     resolution: {integrity: sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==}
     engines: {node: '>=10'}
 
+  chalk@5.3.0:
+    resolution: {integrity: sha512-dLitG79d+GV1Nb/VYcCDFivJeK1hiukt9QjRNVOsUtTy1rR1YJsmpGGTZ3qJos+uw7WmWF4wUwBd9jxjocFC2w==}
+    engines: {node: ^12.17.0 || ^14.13 || >=16.0.0}
+
   chardet@0.7.0:
     resolution: {integrity: sha512-mT8iDcrh03qDGRRmoA2hmBJnxpllMR+0/0qlzjqZES6NdiWDcZkCNAk4rPFZ9Q85r27unkiNNg8ZOiwZXBHwcA==}
 
@@ -1125,6 +1132,9 @@ packages:
     resolution: {integrity: sha512-NIxF55hv4nSqQswkAeiOi1r83xy8JldOFDTWiug55KBu9Jnblncd2U6ViHmYgHf01TPZS77NJBhBMKdWj9HQMQ==}
     engines: {node: '>=8'}
 
+  cli-argv-util@1.2.6:
+    resolution: {integrity: sha512-TxdSefm6I7eTj7JXOcj34ucba/JcD17Xc8zBBe4bLd0ibL1GBjANhDAB1QjtOrU53d9cdPDzeDcr33okJJ6Q3A==}
+
   cli-width@4.1.0:
     resolution: {integrity: sha512-ouuZd4/dm2Sw5Gmqy6bGyNNNe1qt9RpmxveLSO7KcgsTnU7RXfsw+/bukWGo1abgBiMAic068rclZsO4IWmmxQ==}
     engines: {node: '>= 12'}
@@ -1136,6 +1146,10 @@ packages:
   color-name@1.1.4:
     resolution: {integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==}
 
+  color-support@1.1.3:
+    resolution: {integrity: sha512-qiBjkpbMLO/HL68y+lh4q0/O1MZFj2RX6X/KmMa3+gJD3z+WwI1ZzDHysvqHGS3mP6mznPckpXmw1nI9cJjyRg==}
+    hasBin: true
+
   combined-stream@1.0.8:
     resolution: {integrity: sha512-FQN4MRfuJeHf7cBbBMJFXhKSDq+2kAArBlmRBvcvFE5BB1HZKXtSFASDhdlz9zOYwxh8lDdnvmMOe/+5cdoEdg==}
     engines: {node: '>= 0.8'}
@@ -1146,6 +1160,10 @@ packages:
   cookie@0.7.2:
     resolution: {integrity: sha512-yki5XnKuf750l50uGTllt6kKILY4nQ1eNIQatoXEByZ5dWgnKqbnqmTrBE5B4N7lrMJKQ2ytWMiTO2o0v6Ew/w==}
     engines: {node: '>= 0.6'}
+
+  copy-folder-util@1.1.4:
+    resolution: {integrity: sha512-X4FgLcBc3OGoJKybTWoZr6x/VS/98IwmjQ4LgoDEJhra4WIwClehkFestxakPhdamlNWyyqM9GHpaDhm0UZ0rQ==}
+    hasBin: true
 
   cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
@@ -1282,6 +1300,10 @@ packages:
   external-editor@3.1.0:
     resolution: {integrity: sha512-hMQ4CX1p1izmuLYyZqLMO/qGNw10wSv9QDCPfzXfyFrOaCSSoRfqE1Kf1s5an66J5JZC62NewG+mK49jOCtQew==}
     engines: {node: '>=4'}
+
+  fancy-log@2.0.0:
+    resolution: {integrity: sha512-9CzxZbACXMUXW13tS0tI8XsGGmxWzO2DmYrGuBJOJ8k8q2K7hwfJA5qHjuPPe8wtsco33YR9wc+Rlr5wYFvhSA==}
+    engines: {node: '>=10.13.0'}
 
   fast-glob@3.3.2:
     resolution: {integrity: sha512-oX2ruAFQwf/Orj8m737Y5adxDQO0LAB7/S5MnxCdTNDd4p6BsyIVsv9JQsATbTSq8KHRpLwIHbVlUNatxd+1Ow==}
@@ -1809,6 +1831,10 @@ packages:
   slash@3.0.0:
     resolution: {integrity: sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==}
     engines: {node: '>=8'}
+
+  slash@5.1.0:
+    resolution: {integrity: sha512-ZA6oR3T/pEyuqwMgAKT0/hAv8oAXckzbkmR0UkUosQ+Mc4RxGoJkRmwHgHufaenlyAgE1Mxgpdcrf75y6XcnDg==}
+    engines: {node: '>=14.16'}
 
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
@@ -2954,6 +2980,8 @@ snapshots:
       ansi-styles: 4.3.0
       supports-color: 7.2.0
 
+  chalk@5.3.0: {}
+
   chardet@0.7.0: {}
 
   check-error@2.1.1: {}
@@ -2964,6 +2992,10 @@ snapshots:
 
   ci-info@3.9.0: {}
 
+  cli-argv-util@1.2.6:
+    dependencies:
+      slash: 5.1.0
+
   cli-width@4.1.0: {}
 
   color-convert@2.0.1:
@@ -2972,6 +3004,8 @@ snapshots:
 
   color-name@1.1.4: {}
 
+  color-support@1.1.3: {}
+
   combined-stream@1.0.8:
     dependencies:
       delayed-stream: 1.0.0
@@ -2979,6 +3013,13 @@ snapshots:
   concat-map@0.0.1: {}
 
   cookie@0.7.2: {}
+
+  copy-folder-util@1.1.4:
+    dependencies:
+      chalk: 5.3.0
+      cli-argv-util: 1.2.6
+      fancy-log: 2.0.0
+      slash: 5.1.0
 
   cross-spawn@7.0.6:
     dependencies:
@@ -3126,6 +3167,10 @@ snapshots:
       chardet: 0.7.0
       iconv-lite: 0.4.24
       tmp: 0.0.33
+
+  fancy-log@2.0.0:
+    dependencies:
+      color-support: 1.1.3
 
   fast-glob@3.3.2:
     dependencies:
@@ -3678,6 +3723,8 @@ snapshots:
   signal-exit@4.1.0: {}
 
   slash@3.0.0: {}
+
+  slash@5.1.0: {}
 
   source-map-js@1.2.1: {}
 

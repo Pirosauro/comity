@@ -22,17 +22,16 @@ export const populateProject = async (
 
   // loop each file/folder
   filesToCreate.forEach(async (file) => {
-    const origFilePath = join(templatePath, file);
-
+    const filePath = join(templatePath, file);
     // get stats about the current file
-    const stats = await stat(origFilePath);
+    const stats = await stat(filePath);
 
     // skip files that should not be copied
     if (skipFiles.indexOf(file) > -1) return;
 
     if (stats.isFile()) {
       // read file content and transform it using template engine
-      const contents = render(await readFile(origFilePath, 'utf8'), {
+      const contents = render(await readFile(filePath, 'utf8'), {
         projectName,
       });
       // write file to destination folder
