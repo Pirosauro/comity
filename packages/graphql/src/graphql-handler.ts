@@ -1,4 +1,4 @@
-import type { MiddlewareHandler } from 'hono';
+import type { MiddlewareHandler, Context, Next } from 'hono';
 import type { Options } from '../types';
 import { envelop } from '@envelop/core';
 import { getGraphQLParams } from './get-graphql-params.js';
@@ -12,7 +12,7 @@ export const graphqlHandler = ({
     enableInternalTracing,
   });
 
-  return async (c, next) => {
+  return async (c: Context, next: Next) => {
     // GraphQL HTTP only supports GET and POST methods.
     if (c.req.method !== 'GET' && c.req.method !== 'POST') {
       return next();
