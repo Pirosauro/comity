@@ -22,6 +22,7 @@ describe('graphqlHandler', () => {
       req: { method: 'PUT' },
     };
 
+    // @ts-expect-error
     await handler(c, next);
 
     expect(next).toHaveBeenCalled();
@@ -49,6 +50,7 @@ describe('graphqlHandler', () => {
       operationName: '',
     });
 
+    // @ts-expect-error
     await handler(c, next);
 
     expect(c.json).toHaveBeenCalledWith({
@@ -79,6 +81,7 @@ describe('graphqlHandler', () => {
       operationName: '',
     });
 
+    // @ts-expect-error
     await handler(c, next);
 
     expect(c.json).toHaveBeenCalledWith({ data: 'result' });
