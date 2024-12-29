@@ -29,7 +29,6 @@ const schema = new GraphQLSchema({
 app.use(
   '/graphql',
   graphqlHandler({
-    schema,
     plugins: [
       useLogger(),
       useEngine({ parse, validate, specifiedRules, execute, subscribe }),

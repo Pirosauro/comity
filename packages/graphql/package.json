@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@envelop/core": "^5.0.2",
-    "hono": "^4.6.14"
+    "hono": "^4.6.15"
   },
   "devDependencies": {
     "@hono/vite-dev-server": "^0.12.2",

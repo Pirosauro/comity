@@ -18,12 +18,12 @@ importers:
         specifier: ^5.0.2
         version: 5.0.2
       hono:
-        specifier: ^4.6.14
-        version: 4.6.14
+        specifier: ^4.6.15
+        version: 4.6.15
     devDependencies:
       '@hono/vite-dev-server':
         specifier: ^0.12.2
-        version: 0.12.2(hono@4.6.14)
+        version: 0.12.2(hono@4.6.15)
       '@types/node':
         specifier: ^20.17.10
         version: 20.17.10
@@ -43,12 +43,12 @@ importers:
         specifier: ^6.4.2
         version: 6.4.2
       hono:
-        specifier: ^4.6.14
-        version: 4.6.14
+        specifier: ^4.6.15
+        version: 4.6.15
     devDependencies:
       '@hono/vite-dev-server':
         specifier: ^0.12.2
-        version: 0.12.2(hono@4.6.14)
+        version: 0.12.2(hono@4.6.15)
       '@types/node':
         specifier: ^20.17.10
         version: 20.17.10
@@ -74,8 +74,8 @@ importers:
         specifier: workspace:*
         version: link:../islands
       hono:
-        specifier: ^4.6.14
-        version: 4.6.14
+        specifier: ^4.6.15
+        version: 4.6.15
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -85,7 +85,7 @@ importers:
     devDependencies:
       '@hono/vite-dev-server':
         specifier: ^0.12.2
-        version: 0.12.2(hono@4.6.14)
+        version: 0.12.2(hono@4.6.15)
       '@testing-library/react':
         specifier: ^16.1.0
         version: 16.1.0(@testing-library/dom@10.4.0)(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -157,15 +157,15 @@ importers:
         specifier: ^16.10.0
         version: 16.10.0
       hono:
-        specifier: ^4.6.14
-        version: 4.6.14
+        specifier: ^4.6.15
+        version: 4.6.15
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.20241224.0
         version: 4.20241224.0
       '@hono/vite-cloudflare-pages':
         specifier: ^0.4.2
-        version: 0.4.2(hono@4.6.14)
+        version: 0.4.2(hono@4.6.15)
       wrangler:
         specifier: ^3.99.0
         version: 3.99.0(@cloudflare/workers-types@4.20241224.0)
@@ -182,8 +182,8 @@ importers:
         specifier: ^0.7.3
         version: 0.7.3(nanostores@0.10.3)(react@18.3.1)
       hono:
-        specifier: ^4.6.14
-        version: 4.6.14
+        specifier: ^4.6.15
+        version: 4.6.15
       nanostores:
         specifier: ^0.10.3
         version: 0.10.3
@@ -199,10 +199,10 @@ importers:
         version: 4.20241224.0
       '@hono/vite-cloudflare-pages':
         specifier: ^0.4.2
-        version: 0.4.2(hono@4.6.14)
+        version: 0.4.2(hono@4.6.15)
       '@hono/vite-dev-server':
         specifier: ^0.12.2
-        version: 0.12.2(hono@4.6.14)
+        version: 0.12.2(hono@4.6.15)
       '@types/react':
         specifier: ^18.3.18
         version: 18.3.18
@@ -1250,8 +1250,8 @@ packages:
     resolution: {integrity: sha512-V0hjH4dGPh9Ao5p0MoRY6BVqtwCjhz6vI5LT8AJ55H+4g9/4vbHx1I54fS0XuclLhDHArPQCiMjDxjaL8fPxhw==}
     engines: {node: '>=0.12'}
 
-  es-module-lexer@1.5.4:
-    resolution: {integrity: sha512-MVNK56NiMrOwitFB7cqDwq0CQutbw+0BvLshJSse0MUNU+y1FC3bUS/AQg7oUng+/wKrrki7JfmwtVHkVfPLlw==}
+  es-module-lexer@1.6.0:
+    resolution: {integrity: sha512-qqnD1yMU6tk/jnaMosogGySTZP8YtUgAffA9nMN+E/rjxcfRQ6IEk7IiozUjgxKoFHBGjTLnrHB/YC45r/59EQ==}
 
   esbuild@0.17.19:
     resolution: {integrity: sha512-XQ0jAPFkK/u3LcVRcvVHQcTIqD6E2H1fvZMA5dQPSOWb3suUbWbfbRf94pjc0bNzRYLfIrDRQXr7X+LHIm5oHw==}
@@ -1388,8 +1388,8 @@ packages:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
 
-  hono@4.6.14:
-    resolution: {integrity: sha512-j4VkyUp2xazGJ8eCCLN1Vm/bxdvm/j5ZuU9AIjLu9vapn2M44p9L3Ktr9Vnb2RN2QtcR/wVjZVMlT5k7GJQgPw==}
+  hono@4.6.15:
+    resolution: {integrity: sha512-OiQwvAOAaI2JrABBH69z5rsctHDzFzIKJge0nYXgtzGJ0KftwLWcBXm1upJC23/omNRtnqM0gjRMbtXshPdqhQ==}
     engines: {node: '>=16.9.0'}
 
   html-encoding-sniffer@4.0.0:
@@ -2488,18 +2488,18 @@ snapshots:
 
   '@fastify/busboy@2.1.1': {}
 
-  '@hono/node-server@1.13.7(hono@4.6.14)':
+  '@hono/node-server@1.13.7(hono@4.6.15)':
     dependencies:
-      hono: 4.6.14
+      hono: 4.6.15
 
-  '@hono/vite-cloudflare-pages@0.4.2(hono@4.6.14)':
+  '@hono/vite-cloudflare-pages@0.4.2(hono@4.6.15)':
     dependencies:
-      hono: 4.6.14
+      hono: 4.6.15
 
-  '@hono/vite-dev-server@0.12.2(hono@4.6.14)':
+  '@hono/vite-dev-server@0.12.2(hono@4.6.15)':
     dependencies:
-      '@hono/node-server': 1.13.7(hono@4.6.14)
-      hono: 4.6.14
+      '@hono/node-server': 1.13.7(hono@4.6.15)
+      hono: 4.6.15
       miniflare: 3.20241218.0
       minimatch: 9.0.5
     transitivePeerDependencies:
@@ -3083,7 +3083,7 @@ snapshots:
 
   entities@4.5.0: {}
 
-  es-module-lexer@1.5.4: {}
+  es-module-lexer@1.6.0: {}
 
   esbuild@0.17.19:
     optionalDependencies:
@@ -3266,7 +3266,7 @@ snapshots:
     dependencies:
       function-bind: 1.1.2
 
-  hono@4.6.14: {}
+  hono@4.6.15: {}
 
   html-encoding-sniffer@4.0.0:
     dependencies:
@@ -3853,7 +3853,7 @@ snapshots:
     dependencies:
       cac: 6.7.14
       debug: 4.4.0
-      es-module-lexer: 1.5.4
+      es-module-lexer: 1.6.0
       pathe: 1.1.2
       vite: 5.4.11(@types/node@20.17.10)
     transitivePeerDependencies:

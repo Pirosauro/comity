@@ -23,7 +23,7 @@ jobs:
       - uses: actions/setup-node@v4
         name: Install Node.js
         with:
-          node-version-file: ".nvmrc"
+          node-version-file: '.nvmrc'
           cache: pnpm
           registry-url: https://registry.npmjs.org
           # scope: '@hobiri'
@@ -31,7 +31,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
         name: Install dependencies
 
-      - run: pnpm -r publish --access public --no-git-checks --tag next
+      - run: pnpm -r publish --access public --no-git-checks --tag latest
         name: Publish 🚀
         shell: bash
         env:
