@@ -21,7 +21,9 @@ export class Server<
     Object.entries(routes).forEach(([route, handler]) => {
       // parse route into path and method
       const [, path, method = 'get'] =
-        route.match(/^(.*?)(?:\.(all|delete|get|patch|post|put))?$/) || [];
+        route.match(
+          /^(.*?)(?:\.(all|delete|get|middleware|patch|post|put))?$/
+        ) || [];
 
       // custom 404 page
       if (path === '/_404') {
@@ -39,11 +41,11 @@ export class Server<
         return ++count;
       }
 
-      if (path.endsWith('/_middleware')) {
+      if (path.endsWith('/_middleware') || method === 'middleware') {
         const p = path.replace(/\/_middleware$/, '/*');
 
         this.use(p, handler as H);
-        console.log('MIDDLEWARE', p);
+        console.log('*', p, '(middleware)');
 
         return ++count;
       }
