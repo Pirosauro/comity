@@ -1,3 +1,5 @@
+const regex = /^(\/.*?)(?:\.(all|delete|get|middleware|patch|post|put))?$/i;
+
 /**
  * Normalize path
  *
@@ -5,13 +7,13 @@
  * @return {string}
  */
 export const normalizePath = (str: string): string => {
-  const regex = /^(\/.*?)(?:\.(all|delete|get|patch|post|put))?$/i;
   const replacer = (_: string, p: string, m: string) => {
-    return `${p}.${m || 'get'}`;
+    // normalize method, defaulting to 'all'
+    return `${p}.${m || 'all'}`;
   };
 
   return str
-    .toLowerCase() // lowercase
+    .toLocaleLowerCase() // lowercase
     .substring(0, str.lastIndexOf('.')) // remove extension
     .replace(regex, replacer);
 };
@@ -23,7 +25,6 @@ export const normalizePath = (str: string): string => {
  * @returns {string[]}
  */
 export const sortRoutes = (routes: string[]): string[] => {
-  const regex = /^(.*?)(?:\.(all|delete|get|patch|post|put))?$/i;
   const groups: Record<string, string[]> = {};
 
   // arrange files by folder
@@ -66,8 +67,8 @@ export const sortRoutes = (routes: string[]): string[] => {
             return -1;
           }
 
-          const an = a.toLowerCase().replace(regex, replacer);
-          const bn = b.toLowerCase().replace(regex, replacer);
+          const an = a.toLocaleLowerCase().replace(regex, replacer);
+          const bn = b.toLocaleLowerCase().replace(regex, replacer);
 
           if (an.length === bn.length) {
             return an.localeCompare(bn);

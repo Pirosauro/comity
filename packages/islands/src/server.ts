@@ -16,11 +16,11 @@ export class Server<
   registerRoutes(routes: Record<string, H | ErrorHandler>) {
     let count = 0;
 
-    console.log('\u001B[34mRegistering routes\u001B[0m');
+    console.log('\u001B[34mRegistering routes and middlewares\u001B[0m');
 
     Object.entries(routes).forEach(([route, handler]) => {
       // parse route into path and method
-      const [, path, method = 'get'] =
+      const [, path, method = 'all'] =
         route.match(
           /^(.*?)(?:\.(all|delete|get|middleware|patch|post|put))?$/
         ) || [];
@@ -28,7 +28,7 @@ export class Server<
       // custom 404 page
       if (path === '/_404') {
         this.notFound(handler as NotFoundHandler);
-        console.log('404');
+        console.log('*', '/*', '(404 handler)');
 
         return ++count;
       }
@@ -36,7 +36,7 @@ export class Server<
       // error handling
       if (path === '/_500') {
         this.onError(handler as ErrorHandler);
-        console.log('500');
+        console.log('*', '/*', '(error handler)');
 
         return ++count;
       }
@@ -64,9 +64,13 @@ export class Server<
         path === '/index' ? '/' : path
       );
 
-      count++;
+      ++count;
     });
 
-    console.log('\u001B[33m[OK] ' + count + ' routes registered\u001B[0m');
+    console.log(
+      `\u001B[33m[OK] ${count}/${
+        Object.keys(routes).length
+      } items registered\u001B[0m`
+    );
   }
 }
