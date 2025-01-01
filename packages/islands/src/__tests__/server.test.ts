@@ -28,7 +28,7 @@ describe('Server', () => {
     server.registerRoutes(routes);
 
     expect(console.log).toHaveBeenCalledWith(
-      '\u001B[34mRegistering routes\u001B[0m'
+      '\u001B[34mRegistering routes and middlewares\u001B[0m'
     );
     expect(console.log).toHaveBeenCalledWith('*', '/test');
     expect(console.log).toHaveBeenCalledWith('DELETE', '/test');
@@ -37,7 +37,7 @@ describe('Server', () => {
     expect(console.log).toHaveBeenCalledWith('PUT', '/test');
     expect(console.log).toHaveBeenCalledWith('GET', '/');
     expect(console.log).toHaveBeenCalledWith(
-      '\u001B[33m[OK] 6 routes registered\u001B[0m'
+      '\u001B[33m[OK] 6/6 items registered\u001B[0m'
     );
   });
 
@@ -51,9 +51,9 @@ describe('Server', () => {
     server.registerRoutes(routes);
 
     expect(server.notFound).toHaveBeenCalledWith(routes['/_404']);
-    expect(console.log).toHaveBeenCalledWith('404');
+    expect(console.log).toHaveBeenCalledWith('*', '/*', '(404 handler)');
     expect(console.log).toHaveBeenCalledWith(
-      '\u001B[33m[OK] 1 routes registered\u001B[0m'
+      '\u001B[33m[OK] 1/1 items registered\u001B[0m'
     );
   });
 
@@ -67,13 +67,13 @@ describe('Server', () => {
     server.registerRoutes(routes);
 
     expect(server.onError).toHaveBeenCalledWith(routes['/_500']);
-    expect(console.log).toHaveBeenCalledWith('500');
+    expect(console.log).toHaveBeenCalledWith('*', '/*', '(error handler)');
     expect(console.log).toHaveBeenCalledWith(
-      '\u001B[33m[OK] 1 routes registered\u001B[0m'
+      '\u001B[33m[OK] 1/1 items registered\u001B[0m'
     );
   });
 
-  it('should default to GET method for not specified methods', () => {
+  it('should default to * for not specified methods', () => {
     const routes = {
       '/test': vi.fn(),
       '/test.txt': vi.fn(),
@@ -82,11 +82,11 @@ describe('Server', () => {
 
     server.registerRoutes(routes);
 
-    expect(console.log).toHaveBeenCalledWith('GET', '/test');
-    expect(console.log).toHaveBeenCalledWith('GET', '/test.txt');
-    expect(console.log).toHaveBeenCalledWith('GET', '/test.invalid');
+    expect(console.log).toHaveBeenCalledWith('*', '/test');
+    expect(console.log).toHaveBeenCalledWith('*', '/test.txt');
+    expect(console.log).toHaveBeenCalledWith('*', '/test.invalid');
     expect(console.log).toHaveBeenCalledWith(
-      '\u001B[33m[OK] 3 routes registered\u001B[0m'
+      '\u001B[33m[OK] 3/3 items registered\u001B[0m'
     );
   });
 });

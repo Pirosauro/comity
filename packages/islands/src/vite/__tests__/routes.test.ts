@@ -87,7 +87,9 @@ describe('comityRoutes', () => {
       withRelativePaths: vi.fn().mockReturnThis(),
       withMaxDepth: vi.fn().mockReturnThis(),
       crawl: vi.fn().mockReturnThis(),
-      sync: vi.fn().mockReturnValue(['index.ts', 'about.ts', 'blog/[id].ts']),
+      sync: vi
+        .fn()
+        .mockReturnValue(['index.get.ts', 'about.get.ts', 'blog/[id].get.ts']),
     }));
   });
 
@@ -119,10 +121,14 @@ describe('comityRoutes', () => {
     const code = await plugin.load('\0virtual:comity-routes');
 
     expect(code).toContain(
-      "import r0 from 'virtual:comity-routes/blog/[id].ts'"
+      "import r0 from 'virtual:comity-routes/blog/[id].get.ts'"
     );
-    expect(code).toContain("import r1 from 'virtual:comity-routes/about.ts'");
-    expect(code).toContain("import r2 from 'virtual:comity-routes/index.ts'");
+    expect(code).toContain(
+      "import r1 from 'virtual:comity-routes/about.get.ts'"
+    );
+    expect(code).toContain(
+      "import r2 from 'virtual:comity-routes/index.get.ts'"
+    );
     expect(code).toContain("'/blog/[id].get': r0,");
     expect(code).toContain("'/about.get': r1,");
     expect(code).toContain("'/index.get': r2,");

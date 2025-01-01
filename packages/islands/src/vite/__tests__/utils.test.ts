@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { normalizePath, sortRoutes } from '../utils.js';
 
 describe('normalizePath', () => {
-  it('should normalize paths and filenames to lowercase and add .get if no method is specified', () => {
-    expect(normalizePath('/API/Users.ts')).toBe('/api/users.get');
+  it('should normalize paths and filenames to lowercase and add .all if no method is specified', () => {
+    expect(normalizePath('/API/Users.ts')).toBe('/api/users.all');
   });
 
   it('should normalize paths and filenames to lowercase and keep the specified method', () => {
@@ -19,7 +19,7 @@ describe('normalizePath', () => {
       '/api/users/details.txt.get'
     );
     expect(normalizePath('/API/Users/Details.txt.ts')).toBe(
-      '/api/users/details.txt.get'
+      '/api/users/details.txt.all'
     );
   });
 });
@@ -39,9 +39,9 @@ describe('sortRoutes', () => {
     expect(sortedRoutes).toEqual([
       '/api/users/details/address',
       '/api/users/details',
-      '/api/users.get',
       '/api/users.delete',
       '/api/users.post',
+      '/api/users.get',
       '/api',
     ]);
   });
@@ -103,8 +103,8 @@ describe('sortRoutes', () => {
     const sortedRoutes = sortRoutes(routes);
 
     expect(sortedRoutes).toEqual([
-      '/api/users/info',
       '/api/users/index',
+      '/api/users/info',
       '/api/users/[id]',
     ]);
   });
