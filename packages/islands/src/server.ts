@@ -56,12 +56,12 @@ export class Server<
       // register route handler on Hono
       this.on(
         method,
-        path === '/index' ? '/' : path,
+        path.endsWith('/index') ? path.slice(0, -6) || '/' : path,
         ...(Array.isArray(handler) ? handler : [handler])
       );
       console.log(
         method.replace('all', '*').toUpperCase(),
-        path === '/index' ? '/' : path
+        path.endsWith('/index') ? path.slice(0, -6) || '/' : path
       );
 
       ++count;
