@@ -6,8 +6,7 @@
     "dev": "tsc --build packages --watch"
   },
   "workspaces": [
-    "packages/*",
-    "templates/*"
+    "packages/*"
   ],
   "devDependencies": {
     "@changesets/cli": "^2.27.12"

@@ -145,77 +145,6 @@ importers:
         specifier: ^3.0.5
         version: 3.0.5(@types/node@20.17.17)(jsdom@26.0.0)
 
-  templates/graphql:
-    dependencies:
-      '@comity/graphql':
-        specifier: workspace:*
-        version: link:../../packages/graphql
-      '@envelop/core':
-        specifier: ^5.0.3
-        version: 5.0.3
-      graphql:
-        specifier: ^16.10.0
-        version: 16.10.0
-      hono:
-        specifier: ^4.7.0
-        version: 4.7.0
-    devDependencies:
-      '@cloudflare/workers-types':
-        specifier: ^4.20250204.0
-        version: 4.20250204.0
-      '@hono/vite-cloudflare-pages':
-        specifier: ^0.4.2
-        version: 0.4.2(hono@4.7.0)
-      wrangler:
-        specifier: ^3.107.3
-        version: 3.107.3(@cloudflare/workers-types@4.20250204.0)
-
-  templates/react:
-    dependencies:
-      '@comity/islands':
-        specifier: workspace:*
-        version: link:../../packages/islands
-      '@comity/react':
-        specifier: workspace:*
-        version: link:../../packages/react
-      '@nanostores/react':
-        specifier: ^0.8.4
-        version: 0.8.4(nanostores@0.11.3)(react@18.3.1)
-      hono:
-        specifier: ^4.7.0
-        version: 4.7.0
-      nanostores:
-        specifier: ^0.11.3
-        version: 0.11.3
-      react:
-        specifier: ^18.3.1
-        version: 18.3.1
-      react-dom:
-        specifier: ^18.3.1
-        version: 18.3.1(react@18.3.1)
-    devDependencies:
-      '@cloudflare/workers-types':
-        specifier: ^4.20250204.0
-        version: 4.20250204.0
-      '@hono/vite-cloudflare-pages':
-        specifier: ^0.4.2
-        version: 0.4.2(hono@4.7.0)
-      '@hono/vite-dev-server':
-        specifier: ^0.18.1
-        version: 0.18.1(hono@4.7.0)(miniflare@3.20250129.0)(wrangler@3.107.3(@cloudflare/workers-types@4.20250204.0))
-      '@types/react':
-        specifier: ^18.3.18
-        version: 18.3.18
-      '@types/react-dom':
-        specifier: ^18.3.5
-        version: 18.3.5(@types/react@18.3.18)
-      vite:
-        specifier: ^6.1.0
-        version: 6.1.0(@types/node@22.13.1)
-      wrangler:
-        specifier: ^3.107.3
-        version: 3.107.3(@cloudflare/workers-types@4.20250204.0)
-
 packages:
 
   '@ampproject/remapping@2.3.0':
@@ -688,12 +617,6 @@ packages:
     peerDependencies:
       hono: ^4
 
-  '@hono/vite-cloudflare-pages@0.4.2':
-    resolution: {integrity: sha512-fvSmWNtL7rMTa6tfj0dJNu0UStp8veb2r1BfutoKtJ6GaTzO1sR5ElQw9jIYo46oTBcx8+i/9+NzyGR56awtrQ==}
-    engines: {node: '>=18.14.1'}
-    peerDependencies:
-      hono: '*'
-
   '@hono/vite-dev-server@0.18.1':
     resolution: {integrity: sha512-Hud6Vsm+5jZDYGuchOVrc/Cr+CqydLH9yBc7VY8ChI1PH0WKSxG12t/qtQs4otuPDuUhowtemCLrk3TpMONYjQ==}
     engines: {node: '>=18.14.1'}
@@ -875,13 +798,6 @@ packages:
   '@manypkg/get-packages@1.1.3':
     resolution: {integrity: sha512-fo+QhuU3qE/2TQMQmbVMqaQ6EWbMhi4ABWP+O4AM1NqPBuy0OrApV5LO6BrrgnhtAHS2NH6RrVk9OL181tTi8A==}
 
-  '@nanostores/react@0.8.4':
-    resolution: {integrity: sha512-EciHSzDXg7GmGODjegGG1VldPEinbAK+12/Uz5+MAdHmxf082Rl6eXqKFxAAu4pZAcr5dNTpv6wMfEe7XacjkQ==}
-    engines: {node: ^18.0.0 || >=20.0.0}
-    peerDependencies:
-      nanostores: ^0.9.0 || ^0.10.0 || ^0.11.0
-      react: '>=18.0.0'
-
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
     engines: {node: '>= 8'}
@@ -1041,9 +957,6 @@ packages:
 
   '@types/node@20.17.17':
     resolution: {integrity: sha512-/WndGO4kIfMicEQLTi/mDANUu/iVUhT7KboZPdEqqHQ4aTS+3qT3U5gIqWDFV+XouorjfgGqvKILJeHhuQgFYg==}
-
-  '@types/node@22.13.1':
-    resolution: {integrity: sha512-jK8uzQlrvXqEU91UxiK5J7pKHyzgnI1Qnl0QDHIgVGuolJhRb9EEl28Cj9b3rGR8B2lhFCtvIm5os8lFnO/1Ew==}
 
   '@types/prop-types@15.7.14':
     resolution: {integrity: sha512-gNMvNH49DJ7OJYv+KAKn0Xp45p8PLl6zo2YnvDIbTd4J6MER2BmWN49TG7n9LvkyihINxeKW8+3bfS2yDC9dzQ==}
@@ -1455,10 +1368,6 @@ packages:
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
 
-  graphql@16.10.0:
-    resolution: {integrity: sha512-AjqGKbDGUFRKIRCP9tCKiIGHyriz2oHEbPIbEtcSLSs4YjReZOIPQQWek4+6hjw62H9QShXHyaGivGiYVLeYFQ==}
-    engines: {node: ^12.22.0 || ^14.16.0 || ^16.0.0 || >=17.0.0}
-
   has-flag@4.0.0:
     resolution: {integrity: sha512-EykJT/Q1KjTWctppgIAgfSO0tKVuZUjhgMr17kqTumMl6Afv3EISleU7qZUzoXDFTAHTDC4NOoG/ZxU3EvlMPQ==}
     engines: {node: '>=8'}
@@ -1687,10 +1596,6 @@ packages:
     resolution: {integrity: sha512-WNLf5Sd8oZxOm+TzppcYk8gVOgP+l58xNy58D0nbUnOxOWRWvlcCV4kUF7ltmI6PsrLl/BgKEyS4mqsGChFN0w==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
-
-  nanostores@0.11.3:
-    resolution: {integrity: sha512-TUes3xKIX33re4QzdxwZ6tdbodjmn3tWXCEc1uokiEmo14sI1EaGYNs2k3bU2pyyGNmBqFGAVl6jAGWd06AVIg==}
-    engines: {node: ^18.0.0 || >=20.0.0}
 
   nwsapi@2.2.16:
     resolution: {integrity: sha512-F1I/bimDpj3ncaNDhfyMWuFqmQDBwDB0Fogc2qpL3BWvkQteFD/8BzWuIRl83rq0DXfm8SGt/HFhLXZyljTXcQ==}
@@ -2021,9 +1926,6 @@ packages:
 
   undici-types@6.19.8:
     resolution: {integrity: sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==}
-
-  undici-types@6.20.0:
-    resolution: {integrity: sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg==}
 
   undici@5.28.5:
     resolution: {integrity: sha512-zICwjrDrcrUE0pyyJc1I2QzBkLM8FINsgOrt6WjA+BgajVq9Nxu2PbFFXUrAggLfDXlZGZBVZYw7WNV5KiBiBA==}
@@ -2380,6 +2282,7 @@ snapshots:
   '@cloudflare/kv-asset-handler@0.3.4':
     dependencies:
       mime: 3.0.0
+    optional: true
 
   '@cloudflare/workerd-darwin-64@1.20250129.0':
     optional: true
@@ -2396,11 +2299,13 @@ snapshots:
   '@cloudflare/workerd-windows-64@1.20250129.0':
     optional: true
 
-  '@cloudflare/workers-types@4.20250204.0': {}
+  '@cloudflare/workers-types@4.20250204.0':
+    optional: true
 
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
+    optional: true
 
   '@csstools/color-helpers@5.0.1': {}
 
@@ -2434,12 +2339,14 @@ snapshots:
   '@esbuild-plugins/node-globals-polyfill@0.2.3(esbuild@0.17.19)':
     dependencies:
       esbuild: 0.17.19
+    optional: true
 
   '@esbuild-plugins/node-modules-polyfill@0.2.2(esbuild@0.17.19)':
     dependencies:
       esbuild: 0.17.19
       escape-string-regexp: 4.0.0
       rollup-plugin-node-polyfills: 0.2.1
+    optional: true
 
   '@esbuild/aix-ppc64@0.24.2':
     optional: true
@@ -2582,13 +2489,10 @@ snapshots:
   '@esbuild/win32-x64@0.24.2':
     optional: true
 
-  '@fastify/busboy@2.1.1': {}
+  '@fastify/busboy@2.1.1':
+    optional: true
 
   '@hono/node-server@1.13.8(hono@4.7.0)':
-    dependencies:
-      hono: 4.7.0
-
-  '@hono/vite-cloudflare-pages@0.4.2(hono@4.7.0)':
     dependencies:
       hono: 4.7.0
 
@@ -2766,6 +2670,7 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
+    optional: true
 
   '@manypkg/find-root@1.1.0':
     dependencies:
@@ -2782,11 +2687,6 @@ snapshots:
       fs-extra: 8.1.0
       globby: 11.1.0
       read-yaml-file: 1.1.0
-
-  '@nanostores/react@0.8.4(nanostores@0.11.3)(react@18.3.1)':
-    dependencies:
-      nanostores: 0.11.3
-      react: 18.3.1
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
@@ -2910,11 +2810,6 @@ snapshots:
     dependencies:
       undici-types: 6.19.8
 
-  '@types/node@22.13.1':
-    dependencies:
-      undici-types: 6.20.0
-    optional: true
-
   '@types/prop-types@15.7.14': {}
 
   '@types/react-dom@18.3.5(@types/react@18.3.18)':
@@ -2995,8 +2890,10 @@ snapshots:
   acorn-walk@8.3.4:
     dependencies:
       acorn: 8.14.0
+    optional: true
 
-  acorn@8.14.0: {}
+  acorn@8.14.0:
+    optional: true
 
   agent-base@7.1.3: {}
 
@@ -3031,6 +2928,7 @@ snapshots:
   as-table@1.0.55:
     dependencies:
       printable-characters: 1.0.42
+    optional: true
 
   assertion-error@2.0.1: {}
 
@@ -3044,7 +2942,8 @@ snapshots:
     dependencies:
       is-windows: 1.0.2
 
-  blake3-wasm@2.1.5: {}
+  blake3-wasm@2.1.5:
+    optional: true
 
   brace-expansion@1.1.11:
     dependencies:
@@ -3102,9 +3001,11 @@ snapshots:
 
   concat-map@0.0.1: {}
 
-  confbox@0.1.8: {}
+  confbox@0.1.8:
+    optional: true
 
-  cookie@0.7.2: {}
+  cookie@0.7.2:
+    optional: true
 
   copy-folder-util@1.1.4:
     dependencies:
@@ -3126,7 +3027,8 @@ snapshots:
 
   csstype@3.1.3: {}
 
-  data-uri-to-buffer@2.0.2: {}
+  data-uri-to-buffer@2.0.2:
+    optional: true
 
   data-urls@5.0.0:
     dependencies:
@@ -3141,7 +3043,8 @@ snapshots:
 
   deep-eql@5.0.2: {}
 
-  defu@6.1.4: {}
+  defu@6.1.4:
+    optional: true
 
   delayed-stream@1.0.0: {}
 
@@ -3200,6 +3103,7 @@ snapshots:
       '@esbuild/win32-arm64': 0.17.19
       '@esbuild/win32-ia32': 0.17.19
       '@esbuild/win32-x64': 0.17.19
+    optional: true
 
   esbuild@0.24.2:
     optionalDependencies:
@@ -3231,17 +3135,20 @@ snapshots:
 
   escape-string-regexp@2.0.0: {}
 
-  escape-string-regexp@4.0.0: {}
+  escape-string-regexp@4.0.0:
+    optional: true
 
   esprima@4.0.1: {}
 
-  estree-walker@0.6.1: {}
+  estree-walker@0.6.1:
+    optional: true
 
   estree-walker@3.0.3:
     dependencies:
       '@types/estree': 1.0.6
 
-  exit-hook@2.2.1: {}
+  exit-hook@2.2.1:
+    optional: true
 
   expect-type@1.1.0: {}
 
@@ -3322,12 +3229,14 @@ snapshots:
     dependencies:
       data-uri-to-buffer: 2.0.2
       source-map: 0.6.1
+    optional: true
 
   glob-parent@5.1.2:
     dependencies:
       is-glob: 4.0.3
 
-  glob-to-regexp@0.4.1: {}
+  glob-to-regexp@0.4.1:
+    optional: true
 
   glob@10.4.5:
     dependencies:
@@ -3348,8 +3257,6 @@ snapshots:
       slash: 3.0.0
 
   graceful-fs@4.2.11: {}
-
-  graphql@16.10.0: {}
 
   has-flag@4.0.0: {}
 
@@ -3536,6 +3443,7 @@ snapshots:
   magic-string@0.25.9:
     dependencies:
       sourcemap-codec: 1.4.8
+    optional: true
 
   magic-string@0.30.17:
     dependencies:
@@ -3564,7 +3472,8 @@ snapshots:
     dependencies:
       mime-db: 1.52.0
 
-  mime@3.0.0: {}
+  mime@3.0.0:
+    optional: true
 
   miniflare@3.20250129.0:
     dependencies:
@@ -3582,6 +3491,7 @@ snapshots:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
+    optional: true
 
   minimatch@3.1.2:
     dependencies:
@@ -3603,22 +3513,23 @@ snapshots:
       pathe: 2.0.2
       pkg-types: 1.3.1
       ufo: 1.5.4
+    optional: true
 
   mri@1.2.0: {}
 
   ms@2.1.3: {}
 
-  mustache@4.2.0: {}
+  mustache@4.2.0:
+    optional: true
 
   mute-stream@2.0.0: {}
 
   nanoid@3.3.8: {}
 
-  nanostores@0.11.3: {}
-
   nwsapi@2.2.16: {}
 
-  ohash@1.1.4: {}
+  ohash@1.1.4:
+    optional: true
 
   os-tmpdir@1.0.2: {}
 
@@ -3657,11 +3568,13 @@ snapshots:
       lru-cache: 10.4.3
       minipass: 7.1.2
 
-  path-to-regexp@6.3.0: {}
+  path-to-regexp@6.3.0:
+    optional: true
 
   path-type@4.0.0: {}
 
-  pathe@1.1.2: {}
+  pathe@1.1.2:
+    optional: true
 
   pathe@2.0.2: {}
 
@@ -3678,6 +3591,7 @@ snapshots:
       confbox: 0.1.8
       mlly: 1.7.4
       pathe: 2.0.2
+    optional: true
 
   postcss@8.5.1:
     dependencies:
@@ -3699,7 +3613,8 @@ snapshots:
       ansi-styles: 5.2.0
       react-is: 18.3.1
 
-  printable-characters@1.0.42: {}
+  printable-characters@1.0.42:
+    optional: true
 
   punycode@2.3.1: {}
 
@@ -3737,14 +3652,17 @@ snapshots:
       estree-walker: 0.6.1
       magic-string: 0.25.9
       rollup-pluginutils: 2.8.2
+    optional: true
 
   rollup-plugin-node-polyfills@0.2.1:
     dependencies:
       rollup-plugin-inject: 3.0.2
+    optional: true
 
   rollup-pluginutils@2.8.2:
     dependencies:
       estree-walker: 0.6.1
+    optional: true
 
   rollup@4.34.6:
     dependencies:
@@ -3805,9 +3723,11 @@ snapshots:
 
   source-map-js@1.2.1: {}
 
-  source-map@0.6.1: {}
+  source-map@0.6.1:
+    optional: true
 
-  sourcemap-codec@1.4.8: {}
+  sourcemap-codec@1.4.8:
+    optional: true
 
   spawndamnit@3.0.1:
     dependencies:
@@ -3826,10 +3746,12 @@ snapshots:
     dependencies:
       as-table: 1.0.55
       get-source: 2.0.12
+    optional: true
 
   std-env@3.8.0: {}
 
-  stoppable@1.1.0: {}
+  stoppable@1.1.0:
+    optional: true
 
   string-width@4.2.3:
     dependencies:
@@ -3905,16 +3827,15 @@ snapshots:
 
   typescript@5.7.3: {}
 
-  ufo@1.5.4: {}
+  ufo@1.5.4:
+    optional: true
 
   undici-types@6.19.8: {}
-
-  undici-types@6.20.0:
-    optional: true
 
   undici@5.28.5:
     dependencies:
       '@fastify/busboy': 2.1.1
+    optional: true
 
   unenv@2.0.0-rc.1:
     dependencies:
@@ -3923,6 +3844,7 @@ snapshots:
       ohash: 1.1.4
       pathe: 1.1.2
       ufo: 1.5.4
+    optional: true
 
   universalify@0.1.2: {}
 
@@ -3954,15 +3876,6 @@ snapshots:
       rollup: 4.34.6
     optionalDependencies:
       '@types/node': 20.17.17
-      fsevents: 2.3.3
-
-  vite@6.1.0(@types/node@22.13.1):
-    dependencies:
-      esbuild: 0.24.2
-      postcss: 8.5.1
-      rollup: 4.34.6
-    optionalDependencies:
-      '@types/node': 22.13.1
       fsevents: 2.3.3
 
   vitest@3.0.5(@types/node@20.17.17)(jsdom@26.0.0):
@@ -4037,6 +3950,7 @@ snapshots:
       '@cloudflare/workerd-linux-64': 1.20250129.0
       '@cloudflare/workerd-linux-arm64': 1.20250129.0
       '@cloudflare/workerd-windows-64': 1.20250129.0
+    optional: true
 
   wrangler@3.107.3(@cloudflare/workers-types@4.20250204.0):
     dependencies:
@@ -4055,6 +3969,7 @@ snapshots:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
+    optional: true
 
   wrap-ansi@6.2.0:
     dependencies:
@@ -4087,5 +4002,7 @@ snapshots:
       cookie: 0.7.2
       mustache: 4.2.0
       stacktracey: 2.1.8
+    optional: true
 
-  zod@3.24.1: {}
+  zod@3.24.1:
+    optional: true
