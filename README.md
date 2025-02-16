@@ -7,7 +7,7 @@ Comity is a fresh approach to building scalable and efficient web applications t
 > [!IMPORTANT]
 >
 > - The project is still in development. You are welcome to contribute and experiment with it, but it is not yet ready for production use
-> - The documentation, including onboarding for contributions, will be supplemented from the 0.5.0 release on
+> - The documentation, including onboarding for contributions, will be supplemented from the 0.6.0 release on
 > - Not all functional and architectural features have been implemented yet
 > - The architecture, structure, and code are not final and are subject to change
 
