@@ -89,4 +89,57 @@ describe('Server', () => {
       '\u001B[33m[OK] 3/3 items registered\u001B[0m'
     );
   });
+
+  it('should register middleware correctly', () => {
+    const routes = {
+      '/test/_middleware': vi.fn(),
+    };
+
+    server.use = vi.fn();
+
+    server.registerRoutes(routes);
+
+    expect(server.use).toHaveBeenCalledWith(
+      '/test/*',
+      routes['/test/_middleware']
+    );
+    expect(console.log).toHaveBeenCalledWith('*', '/test/*', '(middleware)');
+    expect(console.log).toHaveBeenCalledWith(
+      '\u001B[33m[OK] 1/1 items registered\u001B[0m'
+    );
+  });
+
+  it('should generate sitemap.xml correctly', async () => {
+    const routes = {
+      '/test.get': { meta: { sitemap: { priority: 0.8 } }, handler: vi.fn() },
+    };
+
+    server.get = vi.fn();
+
+    // @ts-ignore
+    server.registerRoutes(routes, {
+      sitemap: { baseUrl: 'http://example.com' },
+    });
+
+    expect(server.get).toHaveBeenCalledWith(
+      '/sitemap.xml',
+      expect.any(Function)
+    );
+    expect(console.log).toHaveBeenCalledWith(
+      '\u001B[33m[OK] 1/1 items registered\u001B[0m'
+    );
+  });
+
+  it('should ignore invalid routes', () => {
+    const routes = {
+      '/_invalid': vi.fn(),
+      '/test/_invalid': vi.fn(),
+    };
+
+    server.registerRoutes(routes);
+
+    expect(console.log).toHaveBeenCalledWith(
+      '\u001B[33m[OK] 0/2 items registered\u001B[0m'
+    );
+  });
 });

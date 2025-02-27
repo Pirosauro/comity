@@ -7,7 +7,7 @@
     "deploy": "wrangler deploy src/index.ts"
   },
   "dependencies": {
-    "@comity/graphql": "^0.3.2",
+    "@comity/graphql": "^0.3.3",
     "@envelop/core": "^5.0.3",
     "graphql": "^16.10.0",
     "hono": "^4.7.0"
