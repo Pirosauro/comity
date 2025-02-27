@@ -82,7 +82,7 @@ export class Server<
       if (
         ['get', 'all'].includes(method) &&
         options.sitemap &&
-        typeof handler === 'object' &&
+        typeof handler === 'function' &&
         Object.hasOwn(handler, 'meta')
       ) {
         sitemap[normalized] = (handler as any).meta?.sitemap;

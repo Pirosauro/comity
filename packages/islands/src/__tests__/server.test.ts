@@ -111,12 +111,12 @@ describe('Server', () => {
 
   it('should generate sitemap.xml correctly', async () => {
     const routes = {
-      '/test.get': { meta: { sitemap: { priority: 0.8 } }, handler: vi.fn() },
+      '/test.get': vi.fn(),
     };
+    (routes['/test.get'] as any).meta = { sitemap: { priority: 0.8 } };
 
     server.get = vi.fn();
 
-    // @ts-ignore
     server.registerRoutes(routes, {
       sitemap: { baseUrl: 'http://example.com' },
     });
