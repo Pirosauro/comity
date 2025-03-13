@@ -8,24 +8,27 @@ import { getHydrationData } from './get-hydration-data.js';
  * @param {(FC<P>)} Component - The component to wrap
  * @return {FC<P>}
  */
-export function withHydration<P>(Component: FC<P>): FC<P> {
-  // @ts-ignore
-  const island: FC<P> = (props: P & ClientDirective) => {
-    // hydration data
+export function withHydration<P>(
+  Component: FC<P>
+): (props: P & ClientDirective) => any {
+  const island = (props: P & ClientDirective) => {
     const data = getHydrationData(Component, props);
 
-    // not hydratable, render as static
-    if (!data.strategy) return <Component {...data?.props} />;
+    // not hydratable, render static
+    if (!data.strategy) {
+      return <Component {...data.props} />;
+    }
 
     // render
     return (
-      <terra-island>
-        <Component {...data?.props} />
+      <comity-island style={{ display: 'contents' }}>
+        <Component {...data.props} />
         <script
           type="application/json"
           data-island
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}></script>
-      </terra-island>
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+        />
+      </comity-island>
     );
   };
 
