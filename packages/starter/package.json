@@ -1,6 +1,6 @@
 {
   "name": "create-comity",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "Starter for Comity",
   "type": "module",
   "main": "dist/index.js",
@@ -18,14 +18,14 @@
   },
   "devDependencies": {
     "@types/ejs": "^3.1.5",
-    "@types/node": "^20.17.19",
-    "@vitest/coverage-v8": "^3.0.7",
-    "copy-folder-util": "^1.1.4",
-    "typescript": "^5.7.3",
-    "vitest": "^3.0.7"
+    "@types/node": "^20.17.24",
+    "@vitest/coverage-v8": "^3.0.8",
+    "copy-folder-util": "^1.1.5",
+    "typescript": "^5.8.2",
+    "vitest": "^3.0.8"
   },
   "dependencies": {
-    "@inquirer/prompts": "^7.3.2",
+    "@inquirer/prompts": "^7.3.3",
     "ejs": "^3.1.10"
   }
 }
