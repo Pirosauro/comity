@@ -39,6 +39,7 @@ const createRenderer =
     const body =
       docType +
       renderToString(
+        // @ts-ignore
         createElement(RequestContext.Provider, { value: ctx }, node)
       );
 
