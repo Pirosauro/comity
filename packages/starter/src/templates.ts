@@ -5,16 +5,22 @@ export const getTemplates = () => {
   // const files = readdirSync(join(__dirname, 'templates'));
   return [
     {
+      name: 'Minimal',
+      value: 'minimal',
+      description:
+        'A minimal template using Hono and Vite, perfect for small projects.',
+    },
+    {
       name: 'React',
       value: 'react',
       description:
-        'React is a declarative, efficient, and flexible JavaScript library for building user interfaces.',
+        'A template with React, a powerful library for building user interfaces efficiently and flexibly.',
     },
     {
       name: 'GraphQL',
       value: 'graphql',
       description:
-        'GraphQL is a query language for APIs and a runtime for executing those queries by using a type system you define for your data.',
+        'A template with GraphQL, a query language for APIs that enables efficient data fetching and manipulation.',
     },
   ];
 };

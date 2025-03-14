@@ -1,5 +1,5 @@
 {
-  "name": "@comity/example-react",
+  "name": "@comity/example-minimal",
   "type": "module",
   "private": true,
   "scripts": {
@@ -10,19 +10,13 @@
   },
   "dependencies": {
     "@comity/islands": "^0.3.4",
-    "@comity/react": "^0.3.4",
-    "@nanostores/react": "^0.8.4",
     "hono": "^4.7.4",
-    "nanostores": "^0.11.4",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "nanostores": "^0.11.4"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250312.0",
     "@hono/vite-cloudflare-pages": "^0.4.2",
     "@hono/vite-dev-server": "^0.18.3",
-    "@types/react": "^18.3.18",
-    "@types/react-dom": "^18.3.5",
     "vite": "^6.2.1",
     "wrangler": "^3.114.1"
   }

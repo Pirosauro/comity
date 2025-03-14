@@ -1,0 +1,21 @@
+.count {
+  color: red;
+}
+
+.button {
+  padding: 0.5em 1em;
+  border: 1px solid purple;
+  background-color: antiquewhite;
+  color: purple;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+/**
+ * Caveat
+ * @see https://github.com/honojs/honox/issues/141
+ * @see https://zellwk.com/blog/overcoming-astro-styling-frustrations/
+ */
+.badge > span {
+  color: darkolivegreen;
+}
