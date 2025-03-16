@@ -1,58 +1,32 @@
-// @vitest-environment jsdom
 import type { FC } from 'hono/jsx';
-import type { Mock } from 'vitest';
 import { describe, it, expect, vi } from 'vitest';
-import { JSDOM } from 'jsdom';
 import { withHydration } from '../with-hydration.js';
-import { getHydrationData } from '../get-hydration-data.js';
-
-vi.mock('../get-hydration-data.js');
-
-const render = (node: any) => node.toString();
 
 describe('withHydration', () => {
-  const MockComponent: FC<{ message: string }> = ({ message }) => (
-    <div>{message}</div>
-  );
+  it('should add filename and framework properties to the component', () => {
+    const Component: any = () => null;
+    const framework = 'react';
+    const filename = 'TestComponent.tsx';
 
-  it('should render the component statically when no hydration strategy is provided', () => {
-    (getHydrationData as Mock).mockReturnValueOnce({
-      strategy: null,
-      props: { message: 'Hello, World!' },
-    });
+    const HydratedComponent = withHydration(Component, framework, filename);
 
-    const ComponentIsland = withHydration(MockComponent);
-    const document = new JSDOM(
-      /* @ts-expect-error */
-      render(<ComponentIsland message="Hello, World!" />),
-      { runScripts: 'dangerously' }
-    ).window.document;
-
-    expect(document.body.innerHTML).toBe('<div>Hello, World!</div>');
+    expect(Component.filename).toBe(filename);
+    expect(Component.framework).toBe(framework);
   });
 
-  it('should render the component with hydration when a strategy is provided', () => {
-    const hydrationData = {
-      strategy: 'load',
-      props: { message: 'Hello, Hydration!' },
-    };
-    (getHydrationData as Mock).mockReturnValueOnce(hydrationData);
+  it('should not allow modification of filename and framework properties', () => {
+    const Component: any = () => null;
+    const framework = 'react';
+    const filename = 'TestComponent.tsx';
 
-    const HydratedComponent = withHydration(MockComponent);
-    const document = new JSDOM(
-      render(<HydratedComponent client:load message="Hello, Hydration!" />),
-      { runScripts: 'dangerously' }
-    ).window.document;
+    const HydratedComponent = withHydration(Component, framework, filename);
 
-    expect(document.querySelector('comity-island')).not.toBeNull();
-    expect(document.querySelector('div')?.textContent).toBe(
-      'Hello, Hydration!'
-    );
-    expect(
-      document.querySelector('script')?.getAttribute('data-island')
-    ).not.toBeNull();
-    expect(document.querySelector('script')?.innerHTML).toBe(
-      JSON.stringify(hydrationData)
-    );
+    expect(() => {
+      Component.filename = 'NewFilename.tsx';
+    }).toThrowError(TypeError);
+
+    expect(() => {
+      Component.framework = 'vue';
+    }).toThrowError(TypeError);
   });
 });

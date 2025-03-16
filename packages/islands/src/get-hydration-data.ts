@@ -1,73 +1,80 @@
 import type {
   ClientDirective,
-  HydratableComponent,
   HydrationData,
   Strategy,
-} from '../types/index.d.js';
+} from '../types/module.js';
+
+type Props<P = Record<string, any>> = P & ClientDirective;
 
 /**
- * Look for hydration strategy directive on props
+ * Look for hydration strategy directive on props.
  *
- * @param {(P & ClientDirective)} props - The component props
- * @return {(Strategy & undefined)}
+ * This function checks the component props for hydration strategy directives
+ * and returns the corresponding strategy object.
+ *
+ * @param {Props<P>} props - The component props.
+ * @return {(Strategy | undefined)} - The hydration strategy or undefined if no strategy is found.
  */
-function getStrategy<P>(props: P & ClientDirective): Strategy | undefined {
-  if (props['client:load']) {
+function getStrategy<P>(props: Props<P>): Strategy | undefined {
+  if (props['$client:load']) {
     return { type: 'load' };
   }
-  if (props['client:visible']) {
+  if (props['$client:visible']) {
     return { type: 'visible' };
   }
-  if (props['client:media']) {
+  if (props['$client:media']) {
     return {
       type: 'media',
-      value: props['client:media'],
+      value: props['$client:media'],
     };
   }
-  if (props['client:idle']) {
+  if (props['$client:idle']) {
     return { type: 'idle' };
   }
 }
 
 /**
- * Remove hydration strategy directive from props
+ * Remove hydration strategy directive from props.
  *
- * @param {(P & ClientDirective)} props - The component props
- * @return {P}
+ * This function creates a copy of the component props and removes any
+ * hydration strategy directives from it.
+ *
+ * @param {Props<P>} props - The component props.
+ * @return {P} - The component props without hydration strategy directives.
  */
-function getProps<P>(props: P & ClientDirective): P {
-  const directives: (keyof ClientDirective)[] = [
-    'client:load',
-    'client:visible',
-    'client:media',
-    'client:idle',
-    'client:none',
-  ];
+function getProps<P>(props: Props<P>): P {
   const result = { ...props };
 
-  // remove client:* props
-  directives.forEach((d) => delete result[d]);
+  delete result['$client:load'];
+  delete result['$client:visible'];
+  delete result['$client:media'];
+  delete result['$client:idle'];
+  delete result['$client:none'];
 
-  return result;
+  return result as P;
 }
 
 /**
- * Retrieve hydration data
+ * Retrieve hydration data.
  *
- * @param {HydratableComponent<P>} component - The component
- * @param {(P & ClientDirective)} props - The component props
- * @return {(HydrationData)}
+ * This function extracts hydration data from the component props, including
+ * the hydration strategy, component hash, and framework name.
+ *
+ * @param {(P & ClientDirective & Props)} props - The component props.
+ * @param {string} framework - The framework name.
+ * @param {string} component - The component hash.
+ * @return {HydrationData} - The hydration data.
  */
 export function getHydrationData<P>(
-  component: HydratableComponent<P>,
-  props: P & ClientDirective
+  props: P & ClientDirective & Props,
+  framework: string,
+  component: string
 ): HydrationData {
   const strategy = getStrategy<P>(props);
-  const framework = component.framework || 'hono';
 
   return {
-    name: component.name || 'Unknown',
     strategy,
+    component,
     props: getProps<P>(props),
     framework,
   };

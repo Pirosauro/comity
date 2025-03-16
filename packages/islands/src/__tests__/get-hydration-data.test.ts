@@ -2,97 +2,93 @@ import { describe, expect, it } from 'vitest';
 import { getHydrationData } from '../get-hydration-data.js';
 
 describe('getHydrationData', () => {
-  it('should return correct hydration data with client:load strategy', () => {
-    const component = {
-      name: 'TestComponent',
-      framework: 'react',
+  it('should return correct hydration data with $client:load strategy', () => {
+    const props = {
+      '$client:load': true as const,
+      $component: 'TestComponent.tsx',
     };
-    const props = { 'client:load': true as const };
     const expected = {
-      name: 'TestComponent',
+      component: 'TestComponent',
       strategy: { type: 'load' },
       props: {},
       framework: 'react',
     };
 
-    expect(getHydrationData(component, props)).toEqual(expected);
+    expect(getHydrationData(props, 'react', 'TestComponent')).toEqual(expected);
   });
 
-  it('should return correct hydration data with client:visible strategy', () => {
-    const component = {
-      name: 'TestComponent',
-      framework: 'react',
+  it('should return correct hydration data with $client:visible strategy', () => {
+    const props = {
+      '$client:visible': true as const,
+      $component: 'TestComponent.tsx',
     };
-    const props = { 'client:visible': true as const };
     const expected = {
-      name: 'TestComponent',
+      component: 'TestComponent',
       strategy: { type: 'visible' },
       props: {},
       framework: 'react',
     };
 
-    expect(getHydrationData(component, props)).toEqual(expected);
+    expect(getHydrationData(props, 'react', 'TestComponent')).toEqual(expected);
   });
 
-  it('should return correct hydration data with client:media strategy', () => {
-    const component = {
-      name: 'TestComponent',
-      framework: 'react',
+  it('should return correct hydration data with $client:media strategy', () => {
+    const props = {
+      '$client:media': '(max-width: 600px)',
+      $component: 'TestComponent.tsx',
     };
-    const props = { 'client:media': '(max-width: 600px)' };
     const expected = {
-      name: 'TestComponent',
+      component: 'TestComponent',
       strategy: { type: 'media', value: '(max-width: 600px)' },
       props: {},
       framework: 'react',
     };
 
-    expect(getHydrationData(component, props)).toEqual(expected);
+    expect(getHydrationData(props, 'react', 'TestComponent')).toEqual(expected);
   });
 
-  it('should return correct hydration data with client:idle strategy', () => {
-    const component = {
-      name: 'TestComponent',
-      framework: 'react',
+  it('should return correct hydration data with $client:idle strategy', () => {
+    const props = {
+      '$client:idle': true as const,
+      $component: 'TestComponent.tsx',
     };
-    const props = { 'client:idle': true as const };
     const expected = {
-      name: 'TestComponent',
+      component: 'TestComponent',
       strategy: { type: 'idle' },
       props: {},
       framework: 'react',
     };
 
-    expect(getHydrationData(component, props)).toEqual(expected);
+    expect(getHydrationData(props, 'react', 'TestComponent')).toEqual(expected);
   });
 
   it('should return correct hydration data with no strategy', () => {
-    const component = {
-      name: 'TestComponent',
-      framework: 'react',
-    };
     const props = {};
     const expected = {
-      name: 'TestComponent',
+      component: 'TestComponent',
       strategy: undefined,
       props: {},
       framework: 'react',
     };
 
-    // @ts-expect-error
-    expect(getHydrationData(component, props)).toEqual(expected);
+    expect(
+      // @ts-expect-error
+      getHydrationData(props, 'react', 'TestComponent')
+    ).toEqual(expected);
   });
 
   it('should return default framework if not provided', () => {
-    const component = { name: 'TestComponent' };
-    const props = { 'client:load': true as const };
+    const props = {
+      '$client:load': true as const,
+      $component: 'TestComponent.tsx',
+    };
     const expected = {
-      name: 'TestComponent',
+      component: 'TestComponent',
       strategy: { type: 'load' },
       props: {},
       framework: 'hono',
     };
 
-    expect(getHydrationData(component, props)).toEqual(expected);
+    expect(getHydrationData(props, 'hono', 'TestComponent')).toEqual(expected);
   });
 });

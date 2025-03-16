@@ -12,6 +12,6 @@
     "target": "ES2022",
     "types": ["node", "vite/client"]
   },
-  "include": ["./src", "./types"],
-  "exclude": ["./**/*.test.ts"]
+  "exclude": ["**/*.test.ts"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/types/**/*.d.ts"]
 }

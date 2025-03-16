@@ -21,10 +21,13 @@ const RequestContext = createContext<Context | null>(null);
 /**
  * Create the renderer
  *
- * @param {Context} ctx
- * @param {FC<ComponentProps>} component
- * @param {Options} [options]
- * @return {any}
+ * This function creates a renderer that renders a React component to a string
+ * and returns it as an HTML response.
+ *
+ * @param {Context} ctx - The request context.
+ * @param {FC<ComponentProps>} component - The React component to render.
+ * @param {Options} [options] - Optional rendering options.
+ * @return {any} - A function that takes children and props, and returns a Promise that resolves to an HTML response.
  */
 const createRenderer =
   (ctx: Context, component: FC<ComponentProps>, options?: Options): any =>
@@ -49,9 +52,12 @@ const createRenderer =
 /**
  * Hono JSX renderer middleware
  *
- * @param {FC<ComponentProps>} component - The component to render
- * @param {Options} options - The rendering options
- * @return {MiddlewareHandler}
+ * This middleware sets up the renderer for the Hono framework, allowing React components
+ * to be rendered as part of the request handling process.
+ *
+ * @param {FC<ComponentProps>} component - The component to render.
+ * @param {Options} options - The rendering options.
+ * @return {MiddlewareHandler} - The middleware handler function.
  */
 export const honoRenderer =
   (component?: FC<ComponentProps>, options?: Options): MiddlewareHandler =>
@@ -66,7 +72,10 @@ export const honoRenderer =
 /**
  * Request context
  *
- * @return {Context<E>}
+ * This hook provides access to the request context within a React component.
+ *
+ * @return {Context<E>} - The request context.
+ * @throws {Error} - If the RequestContext is not provided.
  */
 export const useRequestContext = <E extends Env = any>(): Context<E> => {
   const ctx = useContext(RequestContext);
@@ -81,9 +90,12 @@ export const useRequestContext = <E extends Env = any>(): Context<E> => {
 /**
  * Component renderer
  *
- * @param {FC} component - The component to render
- * @param {Attributes} props - The component's props
- * @param {HTMLElement} element - The parent HTMLElement
+ * This function renders a React component into a specified HTML element on the client side.
+ *
+ * @param {FC} component - The component to render.
+ * @param {Attributes} props - The component's props.
+ * @param {HTMLElement} element - The parent HTMLElement.
+ * @return {Promise<void>} - A promise that resolves when the component is hydrated.
  */
 const hono = async (
   component: FC,

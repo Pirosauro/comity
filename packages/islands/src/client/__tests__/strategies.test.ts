@@ -38,7 +38,7 @@ describe('listenMediaOnce', () => {
 });
 
 describe('observeOnce', () => {
-  let observerMock;
+  let observerMock: any;
 
   beforeEach(() => {
     observerMock = {

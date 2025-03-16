@@ -10,7 +10,7 @@ describe('createClient', async () => {
   let consoleWarn: typeof console.warn;
 
   const mockComponent = vi.fn();
-  const mockIslands = {
+  const mockComponents = {
     TestComponent: () => Promise.resolve({ default: mockComponent }),
   };
   const mockIntegrations = {
@@ -18,7 +18,7 @@ describe('createClient', async () => {
   };
   const options = {
     debug: true,
-    islands: mockIslands,
+    components: mockComponents,
     integrations: mockIntegrations,
   };
 

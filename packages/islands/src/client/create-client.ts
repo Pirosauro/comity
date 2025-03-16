@@ -1,9 +1,9 @@
-import type { HydrationData } from '../../types/index.d.js';
-import { idle, observeOnce, listenMediaOnce } from '../strategies.js';
+import type { HydrationData } from '../../types/module.js';
+import { idle, observeOnce, listenMediaOnce } from './strategies.js';
 
 type Options<C, P> = {
   debug: boolean;
-  islands: Record<string, () => Promise<{ default: C }>>;
+  components: Record<string, () => Promise<{ default: C }>>;
   integrations: Record<
     string,
     (component: C, props: P, element: HTMLElement) => Promise<void>
@@ -18,10 +18,10 @@ type Options<C, P> = {
  */
 export const createClient = async <C, P>({
   debug,
-  islands,
+  components,
   integrations,
 }: Options<C, P>): Promise<void> => {
-  const components: Record<string, C | undefined> = {};
+  const index: Record<string, C | undefined> = {};
 
   /**
    * Log a console message
@@ -41,18 +41,18 @@ export const createClient = async <C, P>({
    * Load a component
    *
    * @async
-   * @param {string} name - The component name
+   * @param {string} filename - The component filename
    * @return {(Promise<C | undefined>)}
    */
-  const loadComponent = async (name: string): Promise<C | undefined> => {
-    if (!(name in components)) {
-      components[name] =
-        typeof islands?.[name] === 'function'
-          ? (await islands[name]())?.default
+  const loadComponent = async (filename: string): Promise<C | undefined> => {
+    if (!(filename in index)) {
+      index[filename] =
+        typeof components?.[filename] === 'function'
+          ? (await components[filename]())?.default
           : undefined;
     }
 
-    return components[name];
+    return index[filename];
   };
 
   class Island extends HTMLElement {
@@ -88,68 +88,64 @@ export const createClient = async <C, P>({
      * @returns {void}
      */
     _init(): void {
-      // collect information
+      // Collect hydration data
       const json = this.querySelector(
         ':scope > script[data-island]'
       )?.textContent;
       this.#data = json ? JSON.parse(json) : {};
 
-      // no information to hydrate
-      if (!this.#data?.name) {
+      // No hydration data found
+      if (!this.#data?.component) {
         return logMessage(
           'Unable to hydrate Island: missing hydration information',
           'warn'
         );
       }
 
-      const { name, strategy } = this.#data;
+      const { component: filename, strategy } = this.#data;
 
-      // component not found
-      if (!(name in islands)) {
+      // Component not found
+      if (!(filename in components)) {
         return logMessage(
-          'Unable to hydrate Island: component "' + name + '" not found',
+          `Unable to hydrate Island: component "${filename}" not found`,
           'warn'
         );
       }
 
-      // island is a descendant of another island
+      // Island is a descendant of another island
       if (this.parentElement?.closest('comity-island')) {
         return logMessage(
-          'Island "' + name + '" is a descendant of another island',
+          `Island "${filename}" is a descendant of another island`,
           'info'
         );
       }
 
-      logMessage('Island "' + name + '" initialized', 'info');
+      logMessage(`Island "${filename}" initialized`, 'info');
 
       switch (strategy?.type) {
-        // hydrate on load
+        // Hydrate on load
         case 'load':
           this.hydrate().then(() =>
-            logMessage('Island "' + name + '" hydrated on load', 'info')
+            logMessage(`Island "${filename}" hydrated on load`, 'info')
           );
           break;
 
-        // hydrate on idle
+        // Hydrate on idle
         case 'idle':
           idle(() =>
             this.hydrate().then(() =>
-              logMessage('Island "' + name + '" hydrated on idle', 'info')
+              logMessage(`Island "${filename}" hydrated on idle`, 'info')
             )
           );
           break;
 
-        // hydrate on media query match
+        // Hydrate on media query match
         case 'media':
           if (strategy?.value) {
             listenMediaOnce(strategy.value, () =>
               this.hydrate().then(() =>
                 logMessage(
-                  'Island "' +
-                    name +
-                    '" hydrated on media query match (' +
-                    strategy.value +
-                    ')',
+                  `Island "${filename}" hydrated on media query match (${strategy.value})`,
                   'info'
                 )
               )
@@ -157,11 +153,11 @@ export const createClient = async <C, P>({
           }
           break;
 
-        // hydrate on visible
+        // Hydrate on visible
         case 'visible':
           observeOnce(this, () =>
             this.hydrate().then(() =>
-              logMessage('Island "' + name + '" hydrated on visible', 'info')
+              logMessage(`Island "${filename}" hydrated on visible`, 'info')
             )
           );
           break;
@@ -174,32 +170,36 @@ export const createClient = async <C, P>({
      * @return {Promise<void>}
      */
     async hydrate(): Promise<void> {
-      const { framework, name, props } = this.#data as HydrationData;
+      const {
+        framework,
+        component: filename,
+        props,
+      } = this.#data as HydrationData;
 
       try {
         const integration = integrations[framework];
 
-        // integration not found, no hydration as well
+        // Integration not found
         if (!integration) {
-          throw new Error('integration "' + framework + '" is not defined');
+          throw new Error(`Integration "${framework}" is not defined`);
         }
 
-        // load component
-        const component = await loadComponent(name);
+        // Load component
+        const component = await loadComponent(filename);
 
-        // component not loaded
+        // Component not loaded
         if (!component) {
-          throw new Error('loading of component "' + name + '" has failed');
+          throw new Error(`Loading of component "${filename}" has failed`);
         }
 
         await integration(component, props, this);
       } catch (e: any) {
-        logMessage('Unable to hydrate Island: ' + e.message, 'error');
+        logMessage(`Unable to hydrate Island: ${e.message}`, 'error');
       }
     }
   }
 
-  // define
+  // Define custom element
   if ('customElements' in window) {
     window.customElements.define('comity-island', Island);
   }

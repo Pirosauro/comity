@@ -1,9 +1,9 @@
 /**
- * Use MediaQuery string
+ * Use MediaQuery string to execute a callback function once the media query matches.
  *
- * @param {string} query - The media query
- * @param {() => void} fn - The callback function
- * @return {() => void}
+ * @param {string} query - The media query string.
+ * @param {() => void} fn - The callback function to execute when the media query matches.
+ * @return {() => void} - A function to remove the event listener.
  */
 export const listenMediaOnce = (
   query: string,
@@ -16,18 +16,21 @@ export const listenMediaOnce = (
     }
   };
 
+  // Execute the handler immediately to check if the media query matches.
   handler(mediaQuery);
 
+  // Add an event listener to execute the handler when the media query changes.
   mediaQuery.addEventListener('change', handler, { once: true });
 
+  // Return a function to remove the event listener.
   return () => mediaQuery.removeEventListener('change', handler);
 };
 
 /**
- * Use IntersectionObserver strategy
+ * Use IntersectionObserver strategy to execute a callback function once an element is intersecting.
  *
- * @param {Element} element - The Element
- * @param {() => void} fn - The callback function
+ * @param {Element} element - The element to observe.
+ * @param {() => void} fn - The callback function to execute when the element is intersecting.
  * @return {void}
  */
 export const observeOnce = (element: Element, fn: () => void): void => {
@@ -38,11 +41,9 @@ export const observeOnce = (element: Element, fn: () => void): void => {
   };
 
   /**
-   * Implements IntersectionObserverCallback
+   * IntersectionObserver callback function.
    *
-   * @async
-   * @callback IntersectionObserverCallback
-   * @param {IntersectionObserverEntry[]} entries - The entries
+   * @param {IntersectionObserverEntry[]} entries - The entries observed.
    * @return {void}
    */
   const callback: IntersectionObserverCallback = async (entries) => {
@@ -69,9 +70,9 @@ export const observeOnce = (element: Element, fn: () => void): void => {
 };
 
 /**
- * Use idle strategy
+ * Use idle strategy to execute a callback function when the browser is idle.
  *
- * @param {() => void} fn - The callback function
+ * @param {() => void} fn - The callback function to execute when the browser is idle.
  * @return {void}
  */
 export const idle = (fn: () => void): void => {

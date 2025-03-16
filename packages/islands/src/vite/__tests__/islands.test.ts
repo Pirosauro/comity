@@ -11,8 +11,9 @@ const { fdir } = await import('fdir');
 const { comityIslands } = await import('../islands.js');
 
 interface MockOptions {
-  framework: string;
-  css: boolean;
+  css?: string;
+  path?: string;
+  extension?: string;
 }
 
 interface Plugin {
@@ -23,7 +24,7 @@ interface Plugin {
 }
 
 describe('comityIslands', () => {
-  const mockOptions = { framework: 'react', css: true };
+  const mockOptions: MockOptions = { css: '.css' };
   let plugin: Plugin;
 
   beforeEach(async () => {
@@ -31,7 +32,7 @@ describe('comityIslands', () => {
       withRelativePaths: vi.fn().mockReturnThis(),
       withMaxDepth: vi.fn().mockReturnThis(),
       crawl: vi.fn().mockReturnThis(),
-      sync: vi.fn().mockReturnValue(['component.tsx', 'component.css']),
+      sync: vi.fn().mockReturnValue(['component.island.tsx', 'component.css']),
     }));
 
     plugin = comityIslands(mockOptions) as Plugin;
@@ -45,31 +46,63 @@ describe('comityIslands', () => {
     expect(plugin.name).toBe('@comity/vite-islands');
   });
 
-  it('should resolve virtual module id', () => {
-    const resolvedId = plugin.resolveId?.('virtual:comity-islands');
+  it('should resolve virtual module id', async () => {
+    const resolvedId = await plugin.resolveId?.('virtual:comity-islands');
 
     expect(resolvedId).toBe('\0virtual:comity-islands');
   });
 
-  it('should load virtual module with components', () => {
-    const code = plugin.load?.('\0virtual:comity-islands');
+  it('should load virtual module with components', async () => {
+    const code = await plugin.load?.('\0virtual:comity-islands');
 
     expect(code).toContain("import('~/components/component.css');");
     expect(code).toContain(
-      "'1v70cgr': () => import('~/components/component.tsx'),"
+      "'component.tsx': () => import('~/components/component.tsx'),"
     );
   });
 
-  it('should transform code for island components', () => {
-    const inputCode = 'const Component = () => {};';
-    const id = '/src/components/test.island.tsx';
-    const result = plugin.transform?.(inputCode, id);
-
-    expect(result?.code).toContain(
-      "Object.defineProperty(Test, 'name', { writable: false, value: 's1kdt' })"
+  it('should load virtual module with filename', async () => {
+    const code = await plugin.load?.(
+      '\0virtual:comity-islands?filename=component.island.tsx'
     );
-    expect(result?.code).toContain(
-      "Object.defineProperty(Test, 'framework', { writable: false, value: 'react' })"
+
+    expect(code).toBe("export default 'component.island.tsx';");
+  });
+
+  it('should handle empty components list', async () => {
+    (fdir as Mock).mockImplementation(() => ({
+      withRelativePaths: vi.fn().mockReturnThis(),
+      withMaxDepth: vi.fn().mockReturnThis(),
+      crawl: vi.fn().mockReturnThis(),
+      sync: vi.fn().mockReturnValue([]),
+    }));
+
+    plugin = comityIslands(mockOptions) as Plugin;
+    const code = await plugin.load?.('\0virtual:comity-islands');
+
+    expect(code).toBe('export default {\n};');
+  });
+
+  it('should handle different file extensions', async () => {
+    const optionsWithExtension: MockOptions = {
+      css: '.css',
+      extension: '.jsx',
+    };
+
+    (fdir as Mock).mockImplementation(() => ({
+      withRelativePaths: vi.fn().mockReturnThis(),
+      withMaxDepth: vi.fn().mockReturnThis(),
+      crawl: vi.fn().mockReturnThis(),
+      sync: vi.fn().mockReturnValue(['component.jsx', 'component.css']),
+    }));
+
+    plugin = comityIslands(optionsWithExtension) as Plugin;
+
+    const code = await plugin.load?.('\0virtual:comity-islands');
+
+    expect(code).toContain("import('~/components/component.css');");
+    expect(code).toContain(
+      "'component.jsx': () => import('~/components/component.jsx'),"
     );
   });
 });

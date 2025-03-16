@@ -1,6 +1,6 @@
 import type { Context } from 'hono';
 import { describe, it, expect } from 'vitest';
-import { setRouteMeta, RouteMeta } from '../set-route-meta.js';
+import { withRouteMeta, RouteMeta } from '../with-route-meta.js';
 
 describe('setRouteMeta', () => {
   it('should set meta property on the route function', () => {
@@ -13,7 +13,7 @@ describe('setRouteMeta', () => {
       },
     };
 
-    setRouteMeta(route, meta);
+    withRouteMeta(route, meta);
 
     expect((route as any).meta).toEqual(meta);
   });
@@ -28,7 +28,7 @@ describe('setRouteMeta', () => {
       },
     };
 
-    setRouteMeta(route, meta);
+    withRouteMeta(route, meta);
 
     expect(() => {
       (route as any).meta = {};

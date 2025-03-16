@@ -1,36 +1,62 @@
 import type { FC } from 'hono/jsx';
-import type { ClientDirective } from './../types/index.d.js';
+import type { ClientDirective } from '../types/module.js';
 import { getHydrationData } from './get-hydration-data.js';
 
 /**
- * Wrap the component into an island
+ * Enhance a component with hydration capabilities.
  *
- * @param {(FC<P>)} Component - The component to wrap
- * @return {FC<P>}
+ * This function wraps a given component and adds properties to it,
+ * enabling it to be hydrated on the client side. It also attaches
+ * metadata to the component for hydration purposes.
+ *
+ * @param {FC<P>} Component - The component to wrap.
+ * @param {string} framework - The framework name.
+ * @param {string} filename - The component filename.
+ * @return {FC<P & ClientDirective>} - The enhanced component with hydration capabilities.
  */
-export function withHydration<P>(
-  Component: FC<P>
-): (props: P & ClientDirective) => any {
-  const island = (props: P & ClientDirective) => {
-    const data = getHydrationData(Component, props);
+export function withHydration<P = Record<string, any>>(
+  Component: FC<P>,
+  framework: string,
+  filename: string
+): FC<P & ClientDirective> {
+  console.log(Component, filename, framework);
+  // Add filename property to the component
+  Object.defineProperty(Component, 'filename', {
+    value: filename,
+    writable: false,
+  });
+  // Add framework property to the component
+  Object.defineProperty(Component, 'framework', {
+    value: framework,
+    writable: false,
+  });
 
-    // not hydratable, render static
+  // Create the island component
+  const island: FC<P & ClientDirective> = (props) => {
+    const data = getHydrationData(props, framework, filename);
+
+    // If the component is not hydratable, render it statically
     if (!data.strategy) {
       return <Component {...data.props} />;
     }
 
-    // render
+    // Render the component with hydration data
     return (
-      <comity-island style={{ display: 'contents' }}>
-        <Component {...data.props} />
-        <script
-          type="application/json"
-          data-island
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
-        />
-      </comity-island>
+      <>
+        <comity-island style={{ display: 'contents' }}>
+          <Component {...data.props} />
+          <script
+            type="application/json"
+            data-island
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+          />
+        </comity-island>
+      </>
     );
   };
+
+  // Add display name to the island component
+  island.displayName = `Hydrated(${Component.displayName || Component.name})`;
 
   return island;
 }

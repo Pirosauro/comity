@@ -1,97 +1,103 @@
 import type { Plugin } from 'vite';
+import { normalize } from 'node:path';
 import { fdir } from 'fdir';
 
 type Options = {
-  framework: string;
-  css?: boolean;
+  css?: string;
+  path?: string;
+  extension?: string;
+  alias?: string;
 };
 
+/**
+ * Vite plugin for handling island components
+ *
+ * This plugin scans the specified directory for island components and CSS files,
+ * generates virtual modules that import these files, and exports them as an object.
+ *
+ * @param {Options} options - The plugin options.
+ * @return {Plugin} - The Vite plugin object.
+ */
 export const comityIslands = (options: Options): Plugin => {
+  // Normalize options
+  options.path = options.path?.replace(/\/$/g, '') || './src/components';
+  options.extension =
+    options.extension?.replace(/\./g, '\\.') || '\\.island\\.tsx';
+  options.css = options.css?.replace(/\./g, '\\.');
+  options.alias = options.alias?.replace(/\/$/g, '') || '~/components';
+
   const virtualModuleId = 'virtual:comity-islands';
   const resolvedVirtualModuleId = '\0' + virtualModuleId;
-  //
-  const components = new fdir()
+  const cssPattern = options.css ? new RegExp(`${options.css}$`) : false;
+  const extensionPattern = new RegExp(`${options.extension}$`);
+  const importerPattern = new RegExp(
+    `${normalize(options.path)}/(.*${options.extension})$`
+  );
+
+  // Scan the components directory
+  const files = new fdir()
     .withRelativePaths()
     .withMaxDepth(10)
-    .crawl('./src/components')
+    .crawl(options.path)
     .sync();
-
-  /**
-   *
-   *
-   * @param {string} str
-   * @return {string}
-   */
-  const hash = (str: string): string => {
-    let h = 5381;
-    let i = str.length;
-
-    while (i) {
-      h = (h * 33) ^ str.charCodeAt(--i);
-    }
-
-    return (h >>> 0).toString(36);
-  };
-
-  /**
-   * Convert kebab-case into PascalCase
-   *
-   * @param {string} s - The string to convert
-   * @return {string}
-   */
-  const toPascalCase = (s: string): string =>
-    s.replace(/(^\w|-\w)/g, (x: string) => x.replace(/-/, '').toUpperCase());
+  const styles = cssPattern
+    ? files
+        .filter((c) => cssPattern.test(c))
+        .map((c) => `import('${options.alias}/${c}');\n`)
+    : [];
+  const components = files
+    .filter((c) => extensionPattern.test(c))
+    .map((c) => `'${c}': () => import('${options.alias}/${c}'),\n`);
 
   return {
     name: '@comity/vite-islands',
-    // enforce: 'post',
 
-    resolveId(id) {
-      if (id.includes(virtualModuleId)) {
-        return '\0' + id;
+    /**
+     * Resolve the virtual module
+     *
+     * This function resolves the module ID for the virtual islands module
+     * and individual component files.
+     *
+     * @inheritdoc
+     */
+    async resolveId(id, importer) {
+      if (id === virtualModuleId) {
+        const file = importer?.match(importerPattern)?.at(1);
+
+        return resolvedVirtualModuleId + `?filename=${file}`;
       }
     },
 
-    load(id) {
-      if (id === resolvedVirtualModuleId) {
+    /**
+     * Load the virtual module
+     *
+     * This function loads the virtual islands module and generates the code
+     * that imports individual component files and exports them as an object.
+     *
+     * @inheritdoc
+     */
+    async load(id) {
+      if (id.startsWith(resolvedVirtualModuleId)) {
+        const filename = new URLSearchParams(
+          id.substring(resolvedVirtualModuleId.length)
+        ).get('filename');
+
         const code: string[] = [];
 
-        // css
-        code.push(
-          ...components
-            .filter((c) => /\.(css)$/.test(c))
-            .map((c) => `import('~/components/${c}');\n`)
-        );
+        // Styles
+        if (styles.length > 0) {
+          code.push(...styles);
+        }
 
-        // js
-        code.push('export default {');
-        code.push(
-          ...components
-            .filter((c) => /\.(tsx?|jsx?)$/.test(c))
-            .map((c) => `'${hash(c)}': () => import('~/components/${c}'),\n`)
-        );
-        code.push('}');
+        // Components
+        code.push('export const components = {');
+        code.push(...components);
+        code.push('};');
+
+        // Current island filename
+        code.push(`export const filename = '${filename}';`);
 
         return code.join('\n');
-      }
-    },
-
-    transform(code, id) {
-      const file = id.match(/\/src\/components\/(.*\.island\.tsx)$/)?.at(1);
-
-      if (typeof file === 'string') {
-        const basename = file.split(/[\\/]/).pop() as string;
-        const component = toPascalCase(basename?.replace('.island.tsx', ''));
-
-        // add island properties
-        code += `\nObject.defineProperty(${component}, 'name', { writable: false, value: '${hash(
-          file
-        )}' })`;
-        code += `\nObject.defineProperty(${component}, 'framework', { writable: false, value: '${options.framework}' })`;
-
-        return {
-          code,
-        };
       }
     },
   };
