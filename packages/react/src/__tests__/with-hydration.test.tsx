@@ -21,9 +21,9 @@ describe('withHydration', () => {
       props: { message: 'Hello, World!' },
     });
 
-    const HydratedComponent = withHydration(MockComponent);
+    const HydratedComponent = withHydration(MockComponent, 'TestComponent');
     const { container } = render(
-      <HydratedComponent client:load message="Hello, World!" />
+      <HydratedComponent $client:load message="Hello, World!" />
     );
 
     expect(container.innerHTML).toBe('<div>Hello, World!</div>');
@@ -36,9 +36,9 @@ describe('withHydration', () => {
     };
     (getHydrationData as Mock).mockReturnValueOnce(hydrationData);
 
-    const HydratedComponent = withHydration(MockComponent);
+    const HydratedComponent = withHydration(MockComponent, 'TestComponent');
     const { container } = render(
-      <HydratedComponent client:load message="Hello, Hydration!" />
+      <HydratedComponent $client:load message="Hello, Hydration!" />
     );
 
     expect(container.querySelector('comity-island')).not.toBeNull();

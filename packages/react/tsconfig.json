@@ -4,13 +4,14 @@
     "esModuleInterop": true,
     "jsx": "react-jsx",
     "jsxImportSource": "react",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "ES2022",
+    "moduleResolution": "Bundler",
     "outDir": "./dist",
     "skipLibCheck": true,
     "strict": true,
     "target": "ES2022",
     "types": ["node", "vite/client"]
   },
-  "include": ["./src"]
+  "exclude": ["**/*.test.ts"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "types/**/*.d.ts"]
 }

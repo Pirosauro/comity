@@ -7,9 +7,6 @@ import { renderToString } from 'react-dom/server';
 import { hydrateRoot } from 'react-dom/client';
 import react, { reactRenderer, useRequestContext } from '../renderer.js';
 
-// vi.mock("hono", () => ({
-//   Context: vi.fn(),
-// }));
 vi.mock('react', async (importOriginal) => {
   const actual = (await importOriginal()) as typeof import('react');
 

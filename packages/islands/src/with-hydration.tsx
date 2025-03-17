@@ -10,7 +10,6 @@ import { getHydrationData } from './get-hydration-data.js';
  * metadata to the component for hydration purposes.
  *
  * @param {FC<P>} Component - The component to wrap.
- * @param {string} framework - The framework name.
  * @param {string} filename - The component filename.
  * @return {FC<P & ClientDirective>} - The enhanced component with hydration capabilities.
  */
@@ -53,8 +52,11 @@ export function withHydration<P = Record<string, any>>(
     );
   };
 
-  // Add display name to the island component
-  island.displayName = `Hydrated(${Component.displayName || Component.name})`;
+  // Add name to the island component
+  Object.defineProperty(island, 'framework', {
+    value: `${Component.displayName || Component.name}Island`,
+    writable: true,
+  });
 
   return island;
 }
