@@ -142,4 +142,97 @@ describe('Server', () => {
       '\u001B[33m[OK] 0/2 items registered\u001B[0m'
     );
   });
+
+  it('should handle routes with dynamic parameters', () => {
+    const routes = {
+      '/user/:id': vi.fn(),
+    };
+
+    server.registerRoutes(routes);
+
+    expect(console.log).toHaveBeenCalledWith('*', '/user/:id');
+    expect(console.log).toHaveBeenCalledWith(
+      '\u001B[33m[OK] 1/1 items registered\u001B[0m'
+    );
+  });
+
+  it('should handle routes with query parameters', () => {
+    const routes = {
+      '/search?query=test': vi.fn(),
+    };
+
+    server.registerRoutes(routes);
+
+    expect(console.log).toHaveBeenCalledWith('*', '/search?query=test');
+    expect(console.log).toHaveBeenCalledWith(
+      '\u001B[33m[OK] 1/1 items registered\u001B[0m'
+    );
+  });
+
+  it('should handle routes with hash fragments', () => {
+    const routes = {
+      '/page#section': vi.fn(),
+    };
+
+    server.registerRoutes(routes);
+
+    expect(console.log).toHaveBeenCalledWith('*', '/page#section');
+    expect(console.log).toHaveBeenCalledWith(
+      '\u001B[33m[OK] 1/1 items registered\u001B[0m'
+    );
+  });
+
+  it('should handle routes with multiple methods', () => {
+    const routes = {
+      '/test.get': vi.fn(),
+      '/test.post': vi.fn(),
+    };
+
+    server.registerRoutes(routes);
+
+    expect(console.log).toHaveBeenCalledWith('GET', '/test');
+    expect(console.log).toHaveBeenCalledWith('POST', '/test');
+    expect(console.log).toHaveBeenCalledWith(
+      '\u001B[33m[OK] 2/2 items registered\u001B[0m'
+    );
+  });
+
+  it('should handle routes with nested paths', () => {
+    const routes = {
+      '/parent/child': vi.fn(),
+    };
+
+    server.registerRoutes(routes);
+
+    expect(console.log).toHaveBeenCalledWith('*', '/parent/child');
+    expect(console.log).toHaveBeenCalledWith(
+      '\u001B[33m[OK] 1/1 items registered\u001B[0m'
+    );
+  });
+
+  it('should handle routes with file extensions', () => {
+    const routes = {
+      '/file.txt': vi.fn(),
+    };
+
+    server.registerRoutes(routes);
+
+    expect(console.log).toHaveBeenCalledWith('*', '/file.txt');
+    expect(console.log).toHaveBeenCalledWith(
+      '\u001B[33m[OK] 1/1 items registered\u001B[0m'
+    );
+  });
+
+  it('should handle routes with special characters', () => {
+    const routes = {
+      '/special-!@#$%^&*()': vi.fn(),
+    };
+
+    server.registerRoutes(routes);
+
+    expect(console.log).toHaveBeenCalledWith('*', '/special-!@#$%^&*()');
+    expect(console.log).toHaveBeenCalledWith(
+      '\u001B[33m[OK] 1/1 items registered\u001B[0m'
+    );
+  });
 });

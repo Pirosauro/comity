@@ -16,10 +16,8 @@ import { getHydrationData } from './get-hydration-data.js';
  */
 export function withHydration<P = Record<string, any>>(
   Component: FC<P>,
-  framework: string,
   filename: string
 ): FC<P & ClientDirective> {
-  console.log(Component, filename, framework);
   // Add filename property to the component
   Object.defineProperty(Component, 'filename', {
     value: filename,
@@ -27,13 +25,13 @@ export function withHydration<P = Record<string, any>>(
   });
   // Add framework property to the component
   Object.defineProperty(Component, 'framework', {
-    value: framework,
+    value: 'hono',
     writable: false,
   });
 
   // Create the island component
   const island: FC<P & ClientDirective> = (props) => {
-    const data = getHydrationData(props, framework, filename);
+    const data = getHydrationData(props, 'hono', filename);
 
     // If the component is not hydratable, render it statically
     if (!data.strategy) {

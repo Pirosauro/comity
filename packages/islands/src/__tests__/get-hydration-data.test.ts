@@ -5,7 +5,6 @@ describe('getHydrationData', () => {
   it('should return correct hydration data with $client:load strategy', () => {
     const props = {
       '$client:load': true as const,
-      $component: 'TestComponent.tsx',
     };
     const expected = {
       component: 'TestComponent',
@@ -20,7 +19,6 @@ describe('getHydrationData', () => {
   it('should return correct hydration data with $client:visible strategy', () => {
     const props = {
       '$client:visible': true as const,
-      $component: 'TestComponent.tsx',
     };
     const expected = {
       component: 'TestComponent',
@@ -35,7 +33,6 @@ describe('getHydrationData', () => {
   it('should return correct hydration data with $client:media strategy', () => {
     const props = {
       '$client:media': '(max-width: 600px)',
-      $component: 'TestComponent.tsx',
     };
     const expected = {
       component: 'TestComponent',
@@ -50,7 +47,6 @@ describe('getHydrationData', () => {
   it('should return correct hydration data with $client:idle strategy', () => {
     const props = {
       '$client:idle': true as const,
-      $component: 'TestComponent.tsx',
     };
     const expected = {
       component: 'TestComponent',
@@ -80,7 +76,6 @@ describe('getHydrationData', () => {
   it('should return default framework if not provided', () => {
     const props = {
       '$client:load': true as const,
-      $component: 'TestComponent.tsx',
     };
     const expected = {
       component: 'TestComponent',

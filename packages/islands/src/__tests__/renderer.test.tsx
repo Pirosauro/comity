@@ -7,10 +7,6 @@ import { renderToString } from 'hono/jsx/dom/server';
 import { hydrateRoot } from 'hono/jsx/dom/client';
 import hono, { honoRenderer, useRequestContext } from '../renderer.js';
 
-// vi.mock("hono", () => ({
-//   Context: vi.fn(),
-// }));
-
 vi.mock('hono', async (importOriginal) => {
   const actual = (await importOriginal()) as typeof import('hono');
 
@@ -27,51 +23,6 @@ vi.mock('hono/jsx/dom/client', () => ({
 }));
 
 const renderer = (node: any) => node.toString();
-
-// describe('honoRenderer middleware', () => {
-//   let ctx: Partial<Context>;
-//   let next: Mock;
-//   let setRenderer: Mock;
-
-//   beforeEach(() => {
-//     setRenderer = vi.fn();
-//     next = vi.fn();
-//     ctx = {
-//       html: vi.fn(),
-//       setRenderer,
-//     };
-//   });
-
-//   it('should set the renderer on the context', async () => {
-//     const middleware = honoRenderer();
-
-//     await middleware(ctx as Context, next);
-
-//     expect(setRenderer).toHaveBeenCalledWith(expect.any(Function));
-//     expect(next).toHaveBeenCalled();
-//   });
-
-//   it('should render the component to a string', async () => {
-//     const middleware = honoRenderer();
-
-//     await middleware(ctx as Context, next);
-//     await renderer(<span>Test</span>);
-
-//     expect(renderToString).toHaveBeenCalled();
-//   });
-
-//   it('should include the doctype if specified', async () => {
-//     const middleware = honoRenderer(undefined, { docType: true });
-
-//     await middleware(ctx as Context, next);
-//     await renderer(<span>Test</span>);
-
-//     expect(renderToString).toHaveBeenCalled();
-//     expect(ctx.html).toHaveBeenCalledWith(
-//       expect.stringContaining('<!DOCTYPE html>')
-//     );
-//   });
-// });
 
 describe('useRequestContext', async () => {
   let ctx: Partial<Context>;
@@ -92,7 +43,45 @@ describe('useRequestContext', async () => {
       'RequestContext is not provided.'
     );
   });
+
+  // it('should return the context if provided', async () => {
+  //   const mockContext = { some: 'context' } as unknown as Context;
+
+  //   (useRequestContext as Mock).mockReturnValue(mockContext);
+
+  //   const result = useRequestContext();
+
+  //   expect(result).toBe(mockContext);
+  // });
 });
+
+// describe('honoRenderer', () => {
+//   it('should set the renderer on the context', async () => {
+//     const TestComponent: FC = () => <div>Test</div>;
+//     const options = { docType: true };
+
+//     const middleware = honoRenderer(TestComponent, options);
+
+//     await middleware(ctx as Context, next);
+
+//     expect(setRenderer).toHaveBeenCalled();
+//     expect(next).toHaveBeenCalled();
+//   });
+
+//   it('should render the component to a string', async () => {
+//     const TestComponent: FC = () => <div>Test</div>;
+//     const options = { docType: true };
+
+//     const middleware = honoRenderer(TestComponent, options);
+//     await middleware(ctx as Context, next);
+
+//     const renderer = setRenderer.mock.calls[0][0];
+//     const result = await renderer(<TestComponent />, {});
+
+//     expect(renderToString).toHaveBeenCalled();
+//     expect(ctx.html).toHaveBeenCalledWith(expect.any(String));
+//   });
+// });
 
 describe('hono', () => {
   it('should hydrate the component on the client', async () => {
@@ -102,6 +91,20 @@ describe('hono', () => {
     const TestComponent: FC = () => <div>Hydrated</div>;
 
     await hono(TestComponent, {}, container);
+
+    expect(hydrateRoot).toHaveBeenCalled();
+  });
+
+  it('should render the component with props', async () => {
+    document.body.innerHTML = '<div id="root"></div>';
+
+    const container = document.getElementById('root') as HTMLDivElement;
+    const TestComponent: FC<{ message: string }> = ({ message }) => (
+      <div>{message}</div>
+    );
+
+    // @ts-ignore
+    await hono(TestComponent, { message: 'Hello' }, container);
 
     expect(hydrateRoot).toHaveBeenCalled();
   });

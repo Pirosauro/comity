@@ -49,15 +49,17 @@ describe('comityIslands', () => {
   it('should resolve virtual module id', async () => {
     const resolvedId = await plugin.resolveId?.('virtual:comity-islands');
 
-    expect(resolvedId).toBe('\0virtual:comity-islands');
+    expect(resolvedId).toBe('\0virtual:comity-islands?filename=');
   });
 
   it('should load virtual module with components', async () => {
-    const code = await plugin.load?.('\0virtual:comity-islands');
+    const code = await plugin.load?.('\0virtual:comity-islands?filename=');
+
+    console.log('Received code', code);
 
     expect(code).toContain("import('~/components/component.css');");
     expect(code).toContain(
-      "'component.tsx': () => import('~/components/component.tsx'),"
+      "'component.island.tsx': () => import('~/components/component.island.tsx'),"
     );
   });
 
@@ -66,7 +68,7 @@ describe('comityIslands', () => {
       '\0virtual:comity-islands?filename=component.island.tsx'
     );
 
-    expect(code).toBe("export default 'component.island.tsx';");
+    expect(code).toContain("export const filename = 'component.island.tsx';");
   });
 
   it('should handle empty components list', async () => {
@@ -80,20 +82,22 @@ describe('comityIslands', () => {
     plugin = comityIslands(mockOptions) as Plugin;
     const code = await plugin.load?.('\0virtual:comity-islands');
 
-    expect(code).toBe('export default {\n};');
+    expect(code).toContain('export const components = {\n};');
   });
 
   it('should handle different file extensions', async () => {
     const optionsWithExtension: MockOptions = {
       css: '.css',
-      extension: '.jsx',
+      extension: '.(jsx|vue)',
     };
 
     (fdir as Mock).mockImplementation(() => ({
       withRelativePaths: vi.fn().mockReturnThis(),
       withMaxDepth: vi.fn().mockReturnThis(),
       crawl: vi.fn().mockReturnThis(),
-      sync: vi.fn().mockReturnValue(['component.jsx', 'component.css']),
+      sync: vi
+        .fn()
+        .mockReturnValue(['component.jsx', 'component.vue', 'component.css']),
     }));
 
     plugin = comityIslands(optionsWithExtension) as Plugin;
@@ -103,6 +107,9 @@ describe('comityIslands', () => {
     expect(code).toContain("import('~/components/component.css');");
     expect(code).toContain(
       "'component.jsx': () => import('~/components/component.jsx'),"
+    );
+    expect(code).toContain(
+      "'component.vue': () => import('~/components/component.vue'),"
     );
   });
 });

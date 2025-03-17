@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import type { Mock } from 'vitest';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { listenMediaOnce, observeOnce, idle } from '../strategies.js';
 
@@ -35,6 +36,21 @@ describe('listenMediaOnce', () => {
     removeListener();
     expect(removeEventListener).toHaveBeenCalled();
   });
+
+  it('should not call the callback when the media query does not match', () => {
+    const query = '(max-width: 600px)';
+    const fn = vi.fn();
+
+    window.matchMedia = vi.fn().mockImplementation((query) => ({
+      matches: false,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    }));
+
+    listenMediaOnce(query, fn);
+
+    expect(fn).not.toHaveBeenCalled();
+  });
 });
 
 describe('observeOnce', () => {
@@ -59,15 +75,30 @@ describe('observeOnce', () => {
 
     const fn = vi.fn();
 
-    // window.IntersectionObserver.mockImplementation((callback) => {
-    //   callback([{ isIntersecting: false, target: child }]);
+    (global.IntersectionObserver as Mock).mockImplementation((callback) => {
+      callback([{ isIntersecting: false, target: child }]);
 
-    //   return observerMock;
-    // });
+      return observerMock;
+    });
 
     observeOnce(element, fn);
     expect(fn).not.toHaveBeenCalled();
     expect(observerMock.unobserve).not.toHaveBeenCalled();
+  });
+
+  it('should observe all children of the element', () => {
+    const element = document.createElement('div');
+    const child1 = document.createElement('div');
+    const child2 = document.createElement('div');
+
+    element.appendChild(child1);
+    element.appendChild(child2);
+
+    const fn = vi.fn();
+
+    observeOnce(element, fn);
+    expect(observerMock.observe).toHaveBeenCalledWith(child1);
+    expect(observerMock.observe).toHaveBeenCalledWith(child2);
   });
 });
 
@@ -89,6 +120,20 @@ describe('idle', () => {
     vi.useFakeTimers();
 
     idle(fn);
+    vi.runAllTimers();
+    expect(fn).toHaveBeenCalled();
+  });
+
+  it('should call the callback after a delay when using setTimeout', () => {
+    const fn = vi.fn();
+
+    // @ts-expect-error
+    window.requestIdleCallback = undefined;
+    vi.useFakeTimers();
+
+    idle(fn);
+    expect(fn).not.toHaveBeenCalled();
+
     vi.runAllTimers();
     expect(fn).toHaveBeenCalled();
   });

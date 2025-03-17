@@ -18,36 +18,37 @@ type Options = {
  * @param {Options} options - The plugin options.
  * @return {Plugin} - The Vite plugin object.
  */
-export const comityIslands = (options: Options): Plugin => {
-  // Normalize options
-  options.path = options.path?.replace(/\/$/g, '') || './src/components';
-  options.extension =
-    options.extension?.replace(/\./g, '\\.') || '\\.island\\.tsx';
-  options.css = options.css?.replace(/\./g, '\\.');
-  options.alias = options.alias?.replace(/\/$/g, '') || '~/components';
+export const comityIslands = (options: Options = {}): Plugin => {
+  // Normalize configuration options
+  const config = {
+    path: options.path?.replace(/\/$/g, '') || './src/components',
+    extension: options.extension?.replace(/\./g, '\\.') || '\\.island\\.tsx',
+    css: options.css?.replace(/\./g, '\\.'),
+    alias: options.alias?.replace(/\/$/g, '') || '~/components',
+  };
 
   const virtualModuleId = 'virtual:comity-islands';
   const resolvedVirtualModuleId = '\0' + virtualModuleId;
-  const cssPattern = options.css ? new RegExp(`${options.css}$`) : false;
-  const extensionPattern = new RegExp(`${options.extension}$`);
+  const cssPattern = config.css ? new RegExp(`${config.css}$`) : false;
+  const extensionPattern = new RegExp(`${config.extension}$`);
   const importerPattern = new RegExp(
-    `${normalize(options.path)}/(.*${options.extension})$`
+    `${normalize(config.path)}/(.*${config.extension})$`
   );
 
   // Scan the components directory
   const files = new fdir()
     .withRelativePaths()
     .withMaxDepth(10)
-    .crawl(options.path)
+    .crawl(config.path)
     .sync();
   const styles = cssPattern
     ? files
         .filter((c) => cssPattern.test(c))
-        .map((c) => `import('${options.alias}/${c}');\n`)
+        .map((c) => `import('${config.alias}/${c}');`)
     : [];
   const components = files
     .filter((c) => extensionPattern.test(c))
-    .map((c) => `'${c}': () => import('${options.alias}/${c}'),\n`);
+    .map((c) => `'${c}': () => import('${config.alias}/${c}'),`);
 
   return {
     name: '@comity/vite-islands',
@@ -64,7 +65,7 @@ export const comityIslands = (options: Options): Plugin => {
       if (id === virtualModuleId) {
         const file = importer?.match(importerPattern)?.at(1);
 
-        return resolvedVirtualModuleId + `?filename=${file}`;
+        return resolvedVirtualModuleId + `?filename=${file || ''}`;
       }
     },
 
@@ -95,7 +96,9 @@ export const comityIslands = (options: Options): Plugin => {
         code.push('};');
 
         // Current island filename
-        code.push(`export const filename = '${filename}';`);
+        if (filename) {
+          code.push(`export const filename = '${filename}';`);
+        }
 
         return code.join('\n');
       }
