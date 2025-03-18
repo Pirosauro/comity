@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import type { FunctionComponent as FC } from 'preact';
 import type { ClientDirective } from '@comity/islands/types';
 import { getHydrationData } from '@comity/islands';
 
@@ -24,13 +24,13 @@ export function withHydration<P = Record<string, any>>(
   });
   // Add framework property to the component
   Object.defineProperty(Component, 'framework', {
-    value: 'react',
+    value: 'preact',
     writable: false,
   });
 
   // Create the island component
   const island: FC<P & ClientDirective> = (props) => {
-    const data = getHydrationData(props, 'react', filename);
+    const data = getHydrationData(props, 'preact', filename);
 
     // If the component is not hydratable, render it statically
     if (!data.strategy) {

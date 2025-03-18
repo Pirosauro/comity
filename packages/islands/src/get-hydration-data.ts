@@ -74,8 +74,8 @@ export function getHydrationData<P>(
 
   return {
     strategy,
+    framework,
     component,
     props: getProps<P>(props),
-    framework,
   };
 }

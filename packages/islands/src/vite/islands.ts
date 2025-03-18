@@ -50,6 +50,11 @@ export const comityIslands = (options: Options = {}): Plugin => {
     .filter((c) => extensionPattern.test(c))
     .map((c) => `'${c}': () => import('${config.alias}/${c}'),`);
 
+  console.log(`\u001B[34m${styles.length} CSS files found\u001B[0m`);
+  console.log(
+    `\u001B[34m${components.length} hydratable components found\u001B[0m`
+  );
+
   return {
     name: '@comity/vite-islands',
 
