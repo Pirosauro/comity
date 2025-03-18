@@ -3,7 +3,7 @@
     "declaration": true,
     "esModuleInterop": true,
     "jsx": "react-jsx",
-    "jsxImportSource": "hono/jsx",
+    "jsxImportSource": "preact",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
@@ -14,12 +14,7 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "ES2022",
-    "types": [
-      "@cloudflare/workers-types",
-      "node",
-      "vite/client",
-      "@comity/islands"
-    ]
+    "types": ["@cloudflare/workers-types", "node", "vite/client"]
   },
   "exclude": ["**/*.test.ts"],
   "include": ["src/**/*.ts", "src/**/*.tsx", "types/**/*.d.ts"]

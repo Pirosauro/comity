@@ -31,6 +31,9 @@ export default defineConfig(({ mode }) => {
   }
 
   return {
+    ssr: {
+      external: ['react', 'react-dom'],
+    },
     resolve: {
       alias,
     },

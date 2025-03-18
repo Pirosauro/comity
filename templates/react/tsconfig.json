@@ -16,5 +16,6 @@
     "target": "ES2022",
     "types": ["@cloudflare/workers-types", "node", "vite/client"]
   },
-  "include": ["./src"]
+  "exclude": ["**/*.test.ts"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "types/**/*.d.ts"]
 }

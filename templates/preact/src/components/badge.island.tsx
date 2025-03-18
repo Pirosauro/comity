@@ -1,6 +1,6 @@
-import type { FC } from 'react';
-import { useEffect, useState } from 'react';
-import { withHydration } from '@comity/react';
+import type { FunctionComponent as FC } from 'preact';
+import { useEffect, useState } from 'preact/hooks';
+import { withHydration } from '@comity/preact';
 import { filename } from 'virtual:comity-islands';
 
 type Props = {

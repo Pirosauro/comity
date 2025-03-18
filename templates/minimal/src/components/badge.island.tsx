@@ -1,5 +1,7 @@
 import type { FC } from 'hono/jsx';
 import { useEffect, useState } from 'hono/jsx';
+import { withHydration } from '@comity/islands';
+import { filename } from 'virtual:comity-islands';
 
 type Props = {
   server?: string;
@@ -17,4 +19,6 @@ const Badge: FC<Props> = ({ client, server }) => {
   return <span>Hey {env}!</span>;
 };
 
-export default Badge;
+export const BadgeIsland = withHydration(Badge, filename);
+
+export default BadgeIsland;

@@ -1,8 +1,8 @@
-import type { FunctionComponent } from 'react';
-import { useEffect, useState } from 'react';
-import { withHydration } from '@comity/react';
+import type { FunctionComponent } from 'preact';
+import { useEffect, useState } from 'preact/hooks';
+import { withHydration } from '@comity/preact';
 import { filename } from 'virtual:comity-islands';
-import { useStore } from '@nanostores/react';
+import { useStore } from '@nanostores/preact';
 import { userStore } from '~/stores.js';
 
 // shared state PoC

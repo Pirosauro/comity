@@ -1,15 +1,16 @@
-import type { FunctionComponent, PropsWithChildren } from 'react';
-import { useState } from 'react';
-import { withHydration } from '@comity/react';
+import type { FunctionComponent, ComponentChildren } from 'preact';
+import { useState } from 'preact/hooks';
+import { withHydration } from '@comity/preact';
 import { filename } from 'virtual:comity-islands';
 import { BadgeIsland } from './badge.island.js';
 import style from './counter.module.css';
 
 export type Props = {
   count: number;
+  children?: ComponentChildren;
 };
 
-export const Counter: FunctionComponent<PropsWithChildren<Props>> = (props) => {
+export const Counter: FunctionComponent<Props> = (props) => {
   const [count, setCount] = useState(props.count);
   const onClickHandler = () => {
     const log = 'Click ' + count;
