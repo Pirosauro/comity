@@ -1,0 +1,28 @@
+{
+  "name": "@comity/example-vue",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build --mode client && vite build",
+    "preview": "wrangler pages dev dist",
+    "deploy": "$npm_execpath run build && wrangler pages deploy dist --env production"
+  },
+  "dependencies": {
+    "@comity/islands": "workspace:*",
+    "@comity/vue": "workspace:*",
+    "@vitejs/plugin-vue": "^5.2.3",
+    "handle": "^1.0.0",
+    "hono": "^4.7.4",
+    "to": "^0.2.9",
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250313.0",
+    "@hono/vite-cloudflare-pages": "^0.4.2",
+    "@hono/vite-dev-server": "^0.18.3",
+    "@vitejs/plugin-vue-jsx": "^4.1.2",
+    "vite": "^6.2.2",
+    "wrangler": "^3.114.1"
+  }
+}
