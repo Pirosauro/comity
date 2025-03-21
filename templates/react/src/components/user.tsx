@@ -1,7 +1,6 @@
 import type { FunctionComponent } from 'react';
 import { useEffect, useState } from 'react';
 import { withHydration } from '@comity/react';
-import { filename } from 'virtual:comity-islands';
 import { useStore } from '@nanostores/react';
 import { userStore } from '~/stores.js';
 
@@ -24,7 +23,3 @@ export const User: FunctionComponent = () => {
     <span style={{ color: 'blue' }}>Welcome, {name}</span>
   );
 };
-
-export const UserIsland = withHydration(User, filename);
-
-export default UserIsland;

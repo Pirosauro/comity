@@ -22,6 +22,9 @@
     "clean": "tsc --build --clean",
     "test": "vitest run --coverage"
   },
+  "bin": {
+    "comity": "./dist/cli.js"
+  },
   "files": [
     "./dist",
     "./types"
@@ -34,6 +37,10 @@
     "./client": {
       "types": "./dist/client/index.d.ts",
       "import": "./dist/client/index.js"
+    },
+    "./components": {
+      "types": "./dist/components/index.d.ts",
+      "import": "./dist/components/index.js"
     },
     "./vite": {
       "types": "./dist/vite/index.d.ts",
@@ -61,6 +68,7 @@
     "@types/jsdom": "^21.1.7",
     "@types/node": "^20.17.24",
     "@vitest/coverage-v8": "^3.0.9",
+    "commander": "^13.1.0",
     "jsdom": "^26.0.0",
     "typescript": "^5.8.2",
     "vite": "^6.2.2",

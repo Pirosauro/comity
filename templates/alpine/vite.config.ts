@@ -28,16 +28,14 @@ export default defineConfig(({ mode }) => {
       },
       plugins: [
         comityIslands({
-          framework: 'react',
+          extension: '.client.ts',
+          css: '.css',
         }),
       ],
     };
   }
 
   return {
-    ssr: {
-      external: ['react', 'react-dom'],
-    },
     resolve: {
       alias,
     },
@@ -50,7 +48,8 @@ export default defineConfig(({ mode }) => {
         entry: 'src/index.ts',
       }),
       comityIslands({
-        framework: 'react',
+        extension: '.client.ts',
+        css: '.css',
       }),
       comityRoutes(),
     ],

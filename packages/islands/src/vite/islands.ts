@@ -1,12 +1,11 @@
 import type { Plugin } from 'vite';
-import { normalize } from 'node:path';
+import { resolve } from 'node:path';
 import { fdir } from 'fdir';
 
 type Options = {
-  css?: string;
   path?: string;
   extension?: string;
-  alias?: string;
+  aliases?: Record<string, string>;
 };
 
 /**
@@ -23,40 +22,117 @@ export const comityIslands = (options: Options = {}): Plugin => {
   const config = {
     path: options.path?.replace(/\/$/g, '') || './src/components',
     extension: options.extension?.replace(/\./g, '\\.') || '\\.island\\.tsx',
-    css: options.css?.replace(/\./g, '\\.'),
-    alias: options.alias?.replace(/\/$/g, '') || '~/components',
+    aliases: options.aliases || {
+      './src/components': '~/components',
+    },
   };
-
   const virtualModuleId = 'virtual:comity-islands';
   const resolvedVirtualModuleId = '\0' + virtualModuleId;
-  const cssPattern = config.css ? new RegExp(`${config.css}$`) : false;
-  const extensionPattern = new RegExp(`${config.extension}$`);
-  const importerPattern = new RegExp(
-    `${normalize(config.path)}/(.*${config.extension})$`
-  );
+  const extensionPattern = new RegExp(`${config.extension}(\\?hash)?$`);
 
-  // Scan the components directory
-  const files = new fdir()
-    .withRelativePaths()
-    .withMaxDepth(10)
-    .crawl(config.path)
-    .sync();
-  const styles = cssPattern
-    ? files
-        .filter((c) => cssPattern.test(c))
-        .map((c) => `import('${config.alias}/${c}');`)
-    : [];
-  const components = files
-    .filter((c) => extensionPattern.test(c))
-    .map((c) => `'${c}': () => import('${config.alias}/${c}'),`);
+  const cache = {
+    ssr: [] as string[],
+    client: [] as string[],
+    names: {} as Record<string, string>,
+  };
 
-  console.log(`\u001B[34m${styles.length} CSS files found\u001B[0m`);
-  console.log(
-    `\u001B[34m${components.length} hydratable components found\u001B[0m`
-  );
+  /**
+   * Resolve the alias for a given path
+   *
+   * This function checks if the path starts with any of the configured aliases
+   * and replaces it with the corresponding replacement value.
+   *
+   * @param {string} path - The path to resolve
+   * @return {string} - The resolved path
+   */
+  const resolveAlias = (path: string): string => {
+    Object.entries(config.aliases).forEach(([alias, replacement]) => {
+      const normalized = resolve(alias);
+
+      if (path.startsWith(normalized)) {
+        path = path
+          .replace(normalized, replacement)
+          .replace(/\.(ts|tsx)$/g, '.js');
+
+        return;
+      }
+    });
+
+    return path;
+  };
+
+  /**
+   * Calculate a hash for a given string
+   *
+   * This function generates a hash for the given string using the DJB2 algorithm.
+   *
+   * @param {string} str - The string to hash
+   * @return {string} - The generated hash
+   */
+  const hash = (str: string): string => {
+    let h = 5381;
+    let i = str.length;
+
+    while (i) {
+      h = (h * 33) ^ str.charCodeAt(--i);
+    }
+
+    return (h >>> 0).toString(36);
+  };
+
+  /**
+   * Finds components in the specified directory
+   *
+   * This function scans the specified directory for files matching the
+   * configured extension pattern and logs the number of hydratable
+   * components found.
+   *
+   * @return {Promise<void>}
+   */
+  const buildCache = async (): Promise<void> => {
+    const files = new fdir()
+      .withFullPaths()
+      .withMaxDepth(10)
+      .crawl(resolve(config.path))
+      .sync();
+
+    cache.ssr = files
+      .filter((c) => extensionPattern.test(c))
+      .map(
+        (c) =>
+          `${'export const C_' + hash(c)} = () => import(${JSON.stringify(c)});`
+      );
+    cache.client = files
+      .filter((c) => extensionPattern.test(c))
+      .map(
+        (c) =>
+          `${'export const C_' + hash(c)} = () => import(${JSON.stringify(
+            resolveAlias(c)
+          )});`
+      );
+    cache.names = Object.fromEntries(
+      files.filter((c) => extensionPattern.test(c)).map((c) => [c, hash(c)])
+    );
+
+    console.log(
+      `\u001B[34m${cache.ssr.length} hydratable components found\u001B[0m`
+    );
+  };
 
   return {
     name: '@comity/vite-islands',
+
+    /**
+     * Handle the build start event
+     *
+     * This function is called when the build starts and is used to
+     * initialize the cache for the virtual module.
+     *
+     * @inheritdoc
+     */
+    async configResolved() {
+      await buildCache();
+    },
 
     /**
      * Resolve the virtual module
@@ -66,11 +142,9 @@ export const comityIslands = (options: Options = {}): Plugin => {
      *
      * @inheritdoc
      */
-    async resolveId(id, importer) {
-      if (id === virtualModuleId) {
-        const file = importer?.match(importerPattern)?.at(1);
-
-        return resolvedVirtualModuleId + `?filename=${file || ''}`;
+    async resolveId(id) {
+      if (id.startsWith(virtualModuleId)) {
+        return resolvedVirtualModuleId;
       }
     },
 
@@ -83,30 +157,36 @@ export const comityIslands = (options: Options = {}): Plugin => {
      * @inheritdoc
      */
     async load(id) {
+      // Handler for virtual:comity-islands
       if (id.startsWith(resolvedVirtualModuleId)) {
-        const filename = new URLSearchParams(
-          id.substring(resolvedVirtualModuleId.length)
-        ).get('filename');
-
-        const code: string[] = [];
-
-        // Styles
-        if (styles.length > 0) {
-          code.push(...styles);
-        }
-
-        // Components
-        code.push('export const components = {');
-        code.push(...components);
-        code.push('};');
-
-        // Current island filename
-        if (filename) {
-          code.push(`export const filename = '${filename}';`);
-        }
+        const code = id.endsWith('?client') ? cache.client : cache.ssr;
 
         return code.join('\n');
       }
+
+      // Handle island imports
+      if (extensionPattern.test(id) && id.endsWith('?hash')) {
+        return `export default ${JSON.stringify(
+          `${cache.names[id.replace('?hash', '')]}`
+        )};`;
+      }
+    },
+
+    /**
+     * Handle the changes on relevant files
+     *
+     * This function is called when the server starts and is used to
+     * watch for changes in the components directory and rebuild the cache.
+     *
+     * @inheritdoc
+     */
+    async configureServer(server) {
+      server.watcher.on('all', async (file) => {
+        // Check if the changed file is in the routes directory
+        if (extensionPattern.test(file)) {
+          await buildCache();
+        }
+      });
     },
   };
 };

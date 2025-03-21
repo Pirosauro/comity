@@ -3,7 +3,6 @@ import { idle, observeOnce, listenMediaOnce } from './strategies.js';
 
 type Options<C, P> = {
   debug: boolean;
-  components: Record<string, () => Promise<{ default: C }>>;
   integrations: Record<
     string,
     (component: C, props: P, element: HTMLElement) => Promise<void>
@@ -18,7 +17,6 @@ type Options<C, P> = {
  */
 export const createClient = async <C, P>({
   debug,
-  components,
   integrations,
 }: Options<C, P>): Promise<void> => {
   const index: Record<string, C | undefined> = {};
@@ -41,18 +39,21 @@ export const createClient = async <C, P>({
    * Load a component
    *
    * @async
-   * @param {string} filename - The component filename
+   * @param {string} module - The component module
    * @return {(Promise<C | undefined>)}
    */
-  const loadComponent = async (filename: string): Promise<C | undefined> => {
-    if (!(filename in index)) {
-      index[filename] =
-        typeof components?.[filename] === 'function'
-          ? (await components[filename]())?.default
-          : undefined;
-    }
-
-    return index[filename];
+  const loadComponent = async (module: string): Promise<C | undefined> => {
+    const name = 'default';
+    const components = await import('virtual:comity-islands');
+    const importer = components[`C_${module}`];
+    const component = importer ? (await importer())?.[name] : undefined;
+    console.log(
+      components,
+      importer,
+      component,
+      component({ count: 30 }).toString()
+    );
+    return component;
   };
 
   class Island extends HTMLElement {
@@ -102,31 +103,31 @@ export const createClient = async <C, P>({
         );
       }
 
-      const { component: filename, strategy } = this.#data;
+      const { component: module, strategy } = this.#data;
 
       // Component not found
-      if (!(filename in components)) {
-        return logMessage(
-          `Unable to hydrate Island: component "${filename}" not found`,
-          'warn'
-        );
-      }
+      // if (!(module in components)) {
+      //   return logMessage(
+      //     `Unable to hydrate Island: component "${module}" not found`,
+      //     'warn'
+      //   );
+      // }
 
       // Island is a descendant of another island
       if (this.parentElement?.closest('comity-island')) {
         return logMessage(
-          `Island "${filename}" is a descendant of another island`,
+          `Island "${module}" is a descendant of another island`,
           'info'
         );
       }
 
-      logMessage(`Island "${filename}" initialized`, 'info');
+      logMessage(`Island "${module}" initialized`, 'info');
 
       switch (strategy?.type) {
         // Hydrate on load
         case 'load':
           this.hydrate().then(() =>
-            logMessage(`Island "${filename}" hydrated on load`, 'info')
+            logMessage(`Island "${module}" hydrated on load`, 'info')
           );
           break;
 
@@ -134,7 +135,7 @@ export const createClient = async <C, P>({
         case 'idle':
           idle(() =>
             this.hydrate().then(() =>
-              logMessage(`Island "${filename}" hydrated on idle`, 'info')
+              logMessage(`Island "${module}" hydrated on idle`, 'info')
             )
           );
           break;
@@ -145,7 +146,7 @@ export const createClient = async <C, P>({
             listenMediaOnce(strategy.value, () =>
               this.hydrate().then(() =>
                 logMessage(
-                  `Island "${filename}" hydrated on media query match (${strategy.value})`,
+                  `Island "${module}" hydrated on media query match (${strategy.value})`,
                   'info'
                 )
               )
@@ -157,7 +158,7 @@ export const createClient = async <C, P>({
         case 'visible':
           observeOnce(this, () =>
             this.hydrate().then(() =>
-              logMessage(`Island "${filename}" hydrated on visible`, 'info')
+              logMessage(`Island "${module}" hydrated on visible`, 'info')
             )
           );
           break;

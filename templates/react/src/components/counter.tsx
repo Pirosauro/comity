@@ -1,8 +1,7 @@
 import type { FunctionComponent, PropsWithChildren } from 'react';
 import { useState } from 'react';
-import { withHydration } from '@comity/react';
-import { filename } from 'virtual:comity-islands';
-import { BadgeIsland } from './badge.island.js';
+import { Badge } from './badge.js';
+import hey from './badge.js?filename';
 import style from './counter.module.css';
 
 export type Props = {
@@ -21,16 +20,15 @@ export const Counter: FunctionComponent<PropsWithChildren<Props>> = (props) => {
   return (
     <>
       <div className={style.badge}>
-        <BadgeIsland $client:load client="hydrated" server="SSR" />
+        <Badge $client:load client="hydrated" server="SSR" />
       </div>
       <p className={style.count}>Count: {count}</p>
       <button className={style.button} onClick={onClickHandler}>
         Increment
       </button>
+      <p>{hey}</p>
     </>
   );
 };
 
-export const CounterIsland = withHydration(Counter, filename);
-
-export default CounterIsland;
+export default Counter;

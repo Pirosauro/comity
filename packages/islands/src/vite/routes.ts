@@ -40,8 +40,9 @@ export const comityRoutes = (options?: Options): Plugin => {
   const virtualModuleId = 'virtual:comity-routes';
   const resolvedVirtualModuleId = '\0' + virtualModuleId;
 
+  const cwd = process.cwd();
   const path = options?.path || './src/views';
-  const routes = getRoutes(path);
+  let routes = getRoutes(path);
 
   console.log(`\u001B[34m${routes.length} routes found\u001B[0m`);
 
@@ -54,10 +55,9 @@ export const comityRoutes = (options?: Options): Plugin => {
      * This function resolves the module ID for the virtual routes module
      * and individual route files.
      *
-     * @param {string} id - The module ID to resolve.
-     * @return {string | { id: string, external: boolean, moduleSideEffects: boolean } | undefined} - The resolved module ID or an object with module details.
+     * @inheritdoc
      */
-    resolveId(id) {
+    resolveId(id: string) {
       if (id.startsWith(virtualModuleId)) {
         const route = id.substring(virtualModuleId.length);
 
@@ -80,10 +80,9 @@ export const comityRoutes = (options?: Options): Plugin => {
      * This function loads the virtual routes module and generates the code
      * that imports individual route files and exports them as an object.
      *
-     * @param {string} id - The module ID to load.
-     * @return {string | undefined} - The generated code for the virtual routes module.
+     * @inheritdoc
      */
-    async load(id) {
+    async load(id: string) {
       if (id === resolvedVirtualModuleId) {
         const code: string[] = [];
 
@@ -103,6 +102,25 @@ export const comityRoutes = (options?: Options): Plugin => {
 
         return code.join('\n');
       }
+    },
+
+    /**
+     * Configure server
+     *
+     * This function configures the Vite server to watch for changes in the
+     * specified directory and updates the routes accordingly.
+     *
+     * @inheritdoc
+     */
+    configureServer(server) {
+      server.watcher.on('all', (file) => {
+        // Check if the changed file is in the routes directory
+        if (file.startsWith(cwd)) {
+          routes = getRoutes(path);
+
+          console.log(`\u001B[34m${routes.length} routes found\u001B[0m`);
+        }
+      });
     },
   };
 };

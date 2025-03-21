@@ -1,12 +1,19 @@
 import type { Context } from 'hono';
 import type { Env, MiddlewareHandler } from 'hono/types';
 import type { FC, Child, DOMAttributes } from 'hono/jsx';
+import type { RenderToReadableStreamOptions } from 'hono/jsx/dom/server';
 import { createContext, createElement, useContext } from 'hono/jsx';
-import { renderToString } from 'hono/jsx/dom/server';
+import { renderToString, renderToReadableStream } from 'hono/jsx/dom/server';
 import { hydrateRoot } from 'hono/jsx/dom/client';
 
 export type Options = {
   docType?: boolean | string;
+  stream?:
+    | boolean
+    | {
+        options?: RenderToReadableStreamOptions;
+        headers?: Record<string, string>;
+      };
 };
 
 export type Props = {};
@@ -33,6 +40,25 @@ const createRenderer =
   (ctx: Context, component: FC<ComponentProps>, options?: Options): any =>
   async (children: Child, props?: Props) => {
     const node = component ? component({ children, ctx, ...props }) : children;
+
+    if (options?.stream) {
+      const stream = await renderToReadableStream(
+        createElement(RequestContext.Provider, { value: ctx }, node as string),
+        typeof options.stream === 'object' ? options.stream?.options || {} : {}
+      );
+
+      if (typeof options.stream === 'object' && options.stream.headers) {
+        Object.entries(options.stream.headers).forEach(([key, value]) => {
+          ctx.header(key, value);
+        });
+      } else {
+        ctx.header('Transfer-Encoding', 'chunked');
+        ctx.header('Content-Type', 'text/html; charset=UTF-8');
+      }
+
+      return ctx.body(stream);
+    }
+
     const docType =
       typeof options?.docType === 'string'
         ? options.docType
