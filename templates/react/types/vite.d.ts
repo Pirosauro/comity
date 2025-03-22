@@ -1,6 +1,6 @@
 /// <reference types="vite/client" />
 
-declare module '*?filename' {
+declare module '*?hash' {
   const src: string;
 
   export default src;

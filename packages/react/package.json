@@ -19,12 +19,17 @@
     "test": "vitest run --coverage"
   },
   "files": [
-    "./dist"
+    "./dist",
+    "types"
   ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./components": {
+      "types": "./dist/components/index.d.ts",
+      "import": "./dist/components/index.js"
     }
   },
   "publishConfig": {

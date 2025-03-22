@@ -22,12 +22,6 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias,
     },
-    plugins: [
-      comityIslands({
-        client: {
-          entry: 'src/client.ts',
-        },
-      }),
-    ],
+    plugins: [comityIslands()],
   });
 });

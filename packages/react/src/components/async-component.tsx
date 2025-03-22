@@ -1,16 +1,18 @@
-import type { FC } from 'hono/jsx';
-import type { ClientDirective } from '../../types/module.d.js';
+import type { ClientDirective } from '@comity/islands/types';
 import { withHydration } from '../with-hydration.js';
 
-export type IslandProps = ClientDirective & {
+export type AsyncComponentProps = ClientDirective & {
   $component: string;
   [k: string]: any;
 };
 
 /**
- * Experimental Island component.
+ * Experimental async component.
  */
-export const Island: FC<IslandProps> = async ({ $component, ...props }) => {
+export const AsyncComponent = async ({
+  $component,
+  ...props
+}: AsyncComponentProps) => {
   try {
     if (!$component) {
       throw new Error(
@@ -22,8 +24,7 @@ export const Island: FC<IslandProps> = async ({ $component, ...props }) => {
       string,
       string
     ];
-    // @ts-ignore
-    const components = await import('virtual:comity-islands');
+    const components = (await import('virtual:comity-islands')) as any;
     const importer = components[`C_${module}`];
     const component = importer ? (await importer())?.[name] : undefined;
 

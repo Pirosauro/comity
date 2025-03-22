@@ -12,7 +12,7 @@ export default defineConfig(({ mode }) => {
 
   return withComity({
     ssr: {
-      external: ['react', 'react-dom'],
+      external: ['react', 'react-dom', 'react-dom/server'],
     },
     resolve: {
       alias,
@@ -28,5 +28,8 @@ export default defineConfig(({ mode }) => {
       comityIslands(),
       comityRoutes(),
     ],
+    optimizeDeps: {
+      include: ['react-dom/server'],
+    },
   });
 });

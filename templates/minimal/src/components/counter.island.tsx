@@ -1,7 +1,7 @@
 import type { FC, PropsWithChildren } from 'hono/jsx';
 import { useState } from 'hono/jsx';
-// import { Island } from '@comity/islands/components';
-// import badge from './badge.js?filename';
+import { Island } from '@comity/islands/components';
+import badge from './badge.island.js?hash';
 import style from './counter.module.css';
 
 export type Props = {
@@ -19,14 +19,14 @@ export const Counter: FC<PropsWithChildren<Props>> = (props) => {
 
   return (
     <>
-      <div className={style.badge}>
-        {/* <Island
+      {/* <div className={style.badge}>
+        <Island
           $client:load
           $component={badge}
           client="hydrated"
           server="SSR"
-        /> */}
-      </div>
+        />
+      </div> */}
       <p className={style.count}>Count: {count}</p>
       <button className={style.button} onClick={onClickHandler}>
         Increment

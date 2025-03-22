@@ -1,6 +1,5 @@
 import type { FunctionComponent } from 'react';
 import { useEffect, useState } from 'react';
-import { withHydration } from '@comity/react';
 import { useStore } from '@nanostores/react';
 import { userStore } from '~/stores.js';
 
@@ -23,3 +22,5 @@ export const User: FunctionComponent = () => {
     <span style={{ color: 'blue' }}>Welcome, {name}</span>
   );
 };
+
+export default User;

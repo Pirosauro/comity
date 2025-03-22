@@ -1,12 +1,18 @@
 import type { Context } from 'hono';
 import type { Env, MiddlewareHandler } from 'hono/types';
 import type { FC, ReactElement, Attributes } from 'react';
+import type { RenderToReadableStreamOptions } from 'react-dom/server';
 import { createContext, createElement, useContext } from 'react';
-import { renderToString } from 'react-dom/server';
 import { hydrateRoot } from 'react-dom/client';
 
 export type Options = {
   docType?: boolean | string;
+  stream?:
+    | boolean
+    | {
+        options?: RenderToReadableStreamOptions;
+        headers?: Record<string, string>;
+      };
 };
 
 export type Props = {};
@@ -30,6 +36,50 @@ const createRenderer =
   (ctx: Context, component?: FC<ComponentProps>, options?: Options) =>
   async (children: ReactElement, props?: Props) => {
     const node = component ? component({ children, ctx, ...props }) : children;
+    const { renderToReadableStream, renderToString } = await import(
+      'react-dom/server'
+    );
+
+    if (options?.stream && !renderToReadableStream) {
+      if (
+        typeof process !== 'undefined' &&
+        process.versions &&
+        process.versions.node
+      ) {
+        console.log('Running in Node.js');
+      }
+      if (typeof window !== 'undefined') {
+        console.log('Running in the browser');
+      }
+      if (
+        typeof self !== 'undefined' &&
+        self.constructor.name === 'WorkerGlobalScope'
+      ) {
+        console.log('Running in Cloudflare Workers');
+      }
+      throw new Error(
+        'React streaming is not supported in this environment. Please use a compatible environment.'
+      );
+    }
+
+    if (options?.stream && renderToReadableStream) {
+      const stream = await renderToReadableStream(
+        createElement(RequestContext.Provider, { value: ctx }, node as string),
+        typeof options.stream === 'object' ? options.stream?.options || {} : {}
+      );
+
+      if (typeof options.stream === 'object' && options.stream.headers) {
+        Object.entries(options.stream.headers).forEach(([key, value]) => {
+          ctx.header(key, value);
+        });
+      } else {
+        ctx.header('Transfer-Encoding', 'chunked');
+        ctx.header('Content-Type', 'text/html; charset=UTF-8');
+      }
+
+      return ctx.body(stream);
+    }
+
     const docType =
       typeof options?.docType === 'string'
         ? options.docType

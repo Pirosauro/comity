@@ -45,20 +45,17 @@ export function withHydration<P = Record<string, any>>(
     // Render the component with hydration data
     return (
       <>
-        <comity-island style={{ display: 'contents' }}>
+        <comity-island
+          style={{ display: 'contents' }}
+          data-island={JSON.stringify(data)}>
           <Component {...data.props} />
-          <script
-            type="application/json"
-            data-island
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
-          />
         </comity-island>
       </>
     );
   };
 
   // Add name to the island component
-  Object.defineProperty(island, 'framework', {
+  Object.defineProperty(island, 'name', {
     value: `${Component.displayName || Component.name}Island`,
     writable: true,
   });

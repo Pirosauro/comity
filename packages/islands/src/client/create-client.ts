@@ -44,15 +44,11 @@ export const createClient = async <C, P>({
    */
   const loadComponent = async (module: string): Promise<C | undefined> => {
     const name = 'default';
+    // @ts-ignore
     const components = await import('virtual:comity-islands');
     const importer = components[`C_${module}`];
     const component = importer ? (await importer())?.[name] : undefined;
-    console.log(
-      components,
-      importer,
-      component,
-      component({ count: 30 }).toString()
-    );
+
     return component;
   };
 
@@ -90,10 +86,7 @@ export const createClient = async <C, P>({
      */
     _init(): void {
       // Collect hydration data
-      const json = this.querySelector(
-        ':scope > script[data-island]'
-      )?.textContent;
-      this.#data = json ? JSON.parse(json) : {};
+      this.#data = JSON.parse(this.dataset.island || '{}');
 
       // No hydration data found
       if (!this.#data?.component) {
@@ -104,14 +97,6 @@ export const createClient = async <C, P>({
       }
 
       const { component: module, strategy } = this.#data;
-
-      // Component not found
-      // if (!(module in components)) {
-      //   return logMessage(
-      //     `Unable to hydrate Island: component "${module}" not found`,
-      //     'warn'
-      //   );
-      // }
 
       // Island is a descendant of another island
       if (this.parentElement?.closest('comity-island')) {
