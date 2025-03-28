@@ -26,6 +26,10 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./components": {
+      "types": "./dist/components/index.d.ts",
+      "import": "./dist/components/index.js"
     }
   },
   "publishConfig": {
@@ -34,7 +38,7 @@
   },
   "dependencies": {
     "@comity/islands": "workspace:*",
-    "hono": "^4.7.4",
+    "hono": "^4.7.5",
     "preact": "^10.26.4",
     "preact-render-to-string": "^6.5.13"
   },
@@ -42,11 +46,11 @@
     "@hono/vite-dev-server": "^0.18.3",
     "@testing-library/preact": "^3.2.4",
     "@types/jest": "^29.5.14",
-    "@types/node": "^20.17.24",
-    "@vitest/coverage-v8": "^3.0.8",
+    "@types/node": "^20.17.28",
+    "@vitest/coverage-v8": "^3.0.9",
     "jsdom": "^26.0.0",
     "typescript": "^5.8.2",
-    "vite": "^6.2.2",
-    "vitest": "^3.0.8"
+    "vite": "^6.2.3",
+    "vitest": "^3.0.9"
   }
 }

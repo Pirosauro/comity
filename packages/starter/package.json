@@ -18,14 +18,14 @@
   },
   "devDependencies": {
     "@types/ejs": "^3.1.5",
-    "@types/node": "^20.17.24",
-    "@vitest/coverage-v8": "^3.0.8",
+    "@types/node": "^20.17.28",
+    "@vitest/coverage-v8": "^3.0.9",
     "copy-folder-util": "^1.1.5",
     "typescript": "^5.8.2",
-    "vitest": "^3.0.8"
+    "vitest": "^3.0.9"
   },
   "dependencies": {
-    "@inquirer/prompts": "^7.3.3",
+    "@inquirer/prompts": "^7.4.0",
     "ejs": "^3.1.10"
   }
 }

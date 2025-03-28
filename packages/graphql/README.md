@@ -1,11 +1,12 @@
 # Comity Graphql Handler
 
-A [Hono](https://hono.dev) middleware for handling GraphQL requests, integrated with [Envelop](https://the-guild.dev/graphql/envelop) for enhanced GraphQL server capabilities.
+A [Hono](https://hono.dev) middleware for handling GraphQL requests, seamlessly integrated with [Envelop](https://the-guild.dev/graphql/envelop) to provide enhanced GraphQL server capabilities.
 
 ## Features
 
-- **Performant**: Built on Hono, ensuring minimal overhead and high performance.
-- **Pluggable**: Leverage Envelop plugins to enhance your GraphQL server with features like caching, tracing, and more.
+- **High Performance**: Built on Hono, ensuring minimal overhead and blazing-fast performance.
+- **Extensible**: Leverage Envelop plugins to enhance your GraphQL server with features like caching, tracing, error handling, and more.
+- **Lightweight**: Designed to be simple and efficient, with a focus on developer experience.
 
 ## Installation
 

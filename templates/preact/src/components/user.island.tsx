@@ -1,7 +1,5 @@
 import type { FunctionComponent } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
-import { withHydration } from '@comity/preact';
-import { filename } from 'virtual:comity-islands';
 import { useStore } from '@nanostores/preact';
 import { userStore } from '~/stores.js';
 
@@ -25,6 +23,4 @@ export const User: FunctionComponent = () => {
   );
 };
 
-export const UserIsland = withHydration(User, filename);
-
-export default UserIsland;
+export default User;

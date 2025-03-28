@@ -1,5 +1,5 @@
 import type { Handler } from 'hono';
-import type { FunctionComponent as FC } from 'preact';
+import type { FunctionalComponent as FC } from 'preact';
 
 declare module 'virtual:comity-islands' {
   const components: Record<string, () => Promise<{ default: FC }>>;
@@ -14,7 +14,7 @@ declare module 'virtual:comity-routes' {
   export { routes };
 }
 
-declare module '@comity/react' {
+declare module '@comity/preact' {
   interface Props {
     title: string;
   }

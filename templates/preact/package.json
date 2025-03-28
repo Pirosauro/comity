@@ -12,16 +12,16 @@
     "@comity/islands": "workspace:*",
     "@comity/preact": "workspace:*",
     "@nanostores/preact": "^0.5.2",
-    "hono": "^4.7.4",
+    "hono": "^4.7.5",
     "nanostores": "^0.11.4",
     "preact": "^10.26.4",
     "preact-render-to-string": "^6.5.13"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250313.0",
+    "@cloudflare/workers-types": "^4.20250327.0",
     "@hono/vite-cloudflare-pages": "^0.4.2",
     "@hono/vite-dev-server": "^0.18.3",
-    "vite": "^6.2.2",
-    "wrangler": "^3.114.1"
+    "vite": "^6.2.3",
+    "wrangler": "^3.114.3"
   }
 }

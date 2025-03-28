@@ -1,7 +1,11 @@
 import type { Context } from 'hono';
 import type { Env, MiddlewareHandler } from 'hono/types';
 import type { FC, ReactElement, Attributes } from 'react';
-import type { RenderToReadableStreamOptions } from 'react-dom/server';
+import { stream } from 'hono/streaming';
+import type {
+  RenderToReadableStreamOptions,
+  RenderToPipeableStreamOptions,
+} from 'react-dom/server';
 import { createContext, createElement, useContext } from 'react';
 import { hydrateRoot } from 'react-dom/client';
 
@@ -10,7 +14,7 @@ export type Options = {
   stream?:
     | boolean
     | {
-        options?: RenderToReadableStreamOptions;
+        options?: RenderToReadableStreamOptions | RenderToPipeableStreamOptions;
         headers?: Record<string, string>;
       };
 };
@@ -36,56 +40,93 @@ const createRenderer =
   (ctx: Context, component?: FC<ComponentProps>, options?: Options) =>
   async (children: ReactElement, props?: Props) => {
     const node = component ? component({ children, ctx, ...props }) : children;
-    const { renderToReadableStream, renderToString } = await import(
-      'react-dom/server'
-    );
-
-    if (options?.stream && !renderToReadableStream) {
-      if (
-        typeof process !== 'undefined' &&
-        process.versions &&
-        process.versions.node
-      ) {
-        console.log('Running in Node.js');
-      }
-      if (typeof window !== 'undefined') {
-        console.log('Running in the browser');
-      }
-      if (
-        typeof self !== 'undefined' &&
-        self.constructor.name === 'WorkerGlobalScope'
-      ) {
-        console.log('Running in Cloudflare Workers');
-      }
-      throw new Error(
-        'React streaming is not supported in this environment. Please use a compatible environment.'
-      );
-    }
-
-    if (options?.stream && renderToReadableStream) {
-      const stream = await renderToReadableStream(
-        createElement(RequestContext.Provider, { value: ctx }, node as string),
-        typeof options.stream === 'object' ? options.stream?.options || {} : {}
-      );
-
-      if (typeof options.stream === 'object' && options.stream.headers) {
-        Object.entries(options.stream.headers).forEach(([key, value]) => {
-          ctx.header(key, value);
-        });
-      } else {
-        ctx.header('Transfer-Encoding', 'chunked');
-        ctx.header('Content-Type', 'text/html; charset=UTF-8');
-      }
-
-      return ctx.body(stream);
-    }
-
+    const isNode =
+      typeof process !== 'undefined' &&
+      process.versions != null &&
+      process.versions.node != null;
     const docType =
       typeof options?.docType === 'string'
         ? options.docType
         : options?.docType === true
         ? '<!DOCTYPE html>'
         : '';
+
+    // Stream rendering
+    if (options?.stream) {
+      const { renderToReadableStream, renderToPipeableStream } = await import(
+        'react-dom/server'
+      );
+
+      // Check if streaming is supported
+      if (
+        options?.stream &&
+        !renderToReadableStream &&
+        !renderToPipeableStream
+      ) {
+        throw new Error(
+          'React streaming is not supported in this environment. Please use a compatible environment.'
+        );
+      }
+
+      // @ts-ignore
+      return stream(ctx, async (stream) => {
+        // Set headers
+        if (typeof options.stream === 'object' && options.stream.headers) {
+          Object.entries(options.stream.headers).forEach(([key, value]) => {
+            ctx.header(key, value);
+          });
+        } else {
+          ctx.header('Transfer-Encoding', 'chunked');
+          ctx.header('Content-Type', 'text/html; charset=UTF-8');
+        }
+
+        // Write doctype
+        if (docType) {
+          await stream.write(docType);
+        }
+
+        // Render to stream
+        if (!isNode && typeof renderToReadableStream === 'function') {
+          await stream.pipe(
+            await renderToReadableStream(
+              createElement(RequestContext.Provider, { value: ctx }, node)
+            )
+          );
+        } else if (isNode && typeof renderToPipeableStream === 'function') {
+          const { PassThrough } = await import('stream');
+          const pt = new PassThrough({ highWaterMark: 16384 }); // Limit buffer size
+
+          // Pipe to PassThrough stream when shell is ready
+          const { pipe } = renderToPipeableStream(
+            createElement(RequestContext.Provider, { value: ctx }, node),
+            {
+              onShellReady() {
+                pipe(pt); // Pipe to PassThrough stream when shell is ready
+              },
+              onError(error) {
+                throw error;
+              },
+            }
+          );
+
+          // Pipe to response stream
+          await stream.pipe(
+            new ReadableStream({
+              start(controller) {
+                pt.on('data', (chunk) => controller.enqueue(chunk));
+                pt.on('end', () => controller.close());
+                pt.on('error', (err) => controller.error(err));
+              },
+            })
+          );
+        }
+
+        await stream.close();
+      });
+    }
+
+    // String rendering
+    const { renderToString } = await import('react-dom/server');
     const body =
       docType +
       renderToString(

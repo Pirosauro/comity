@@ -42,14 +42,11 @@ describe('withHydration', () => {
     );
 
     expect(container.querySelector('comity-island')).not.toBeNull();
+    expect(
+      container.querySelector('comity-island')?.getAttribute('data-island')
+    ).toBe(JSON.stringify(hydrationData));
     expect(container.querySelector('div')?.textContent).toBe(
       'Hello, Hydration!'
-    );
-    expect(
-      container.querySelector('script')?.getAttribute('data-island')
-    ).not.toBeNull();
-    expect(container.querySelector('script')?.innerHTML).toBe(
-      JSON.stringify(hydrationData)
     );
   });
 });

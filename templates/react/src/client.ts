@@ -1,11 +1,11 @@
 import { createClient } from '@comity/islands/client';
-import preact from '@comity/preact';
+import react from '@comity/react';
 
 const debug = false;
 
 createClient({
   debug,
   integrations: {
-    preact,
+    react,
   },
 });

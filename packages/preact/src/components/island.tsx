@@ -1,6 +1,6 @@
-import type { FC } from 'react';
+import type { FunctionalComponent as FC } from 'preact';
 import type { ClientDirective } from '@comity/islands/types';
-import { lazy } from 'react';
+import { lazy } from 'preact/compat';
 import { withHydration } from '../with-hydration.js';
 
 export type IslandProps = ClientDirective & {
@@ -8,14 +8,9 @@ export type IslandProps = ClientDirective & {
   [k: string]: any;
 };
 
-/**
- * Load the component dynamically.
- *
- * @param {string} $component The component to load.
- * @returns {Promise<{default: FC}>} The component.
- */
 const loadComponent = async ($component: string) => {
   const [module, name = 'default'] = $component.split('#') as [string, string];
+  // @ts-ignore
   const components = (await import('virtual:comity-islands')) as any;
   const importer = components[`C_${module}`];
   const component = importer ? (await importer())?.[name] : undefined;

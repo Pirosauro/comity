@@ -11,14 +11,14 @@
   "dependencies": {
     "@comity/islands": "workspace:*",
     "alpinejs": "^3.14.9",
-    "hono": "^4.7.4"
+    "hono": "^4.7.5"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250312.0",
+    "@cloudflare/workers-types": "^4.20250327.0",
     "@hono/vite-cloudflare-pages": "^0.4.2",
     "@hono/vite-dev-server": "^0.18.3",
     "@types/alpinejs": "^3.13.11",
-    "vite": "^6.2.1",
-    "wrangler": "^3.114.1"
+    "vite": "^6.2.3",
+    "wrangler": "^3.114.3"
   }
 }
