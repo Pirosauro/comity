@@ -9,7 +9,7 @@
     "deploy": "$npm_execpath run build && wrangler pages deploy dist --env production"
   },
   "dependencies": {
-    "@comity/islands": "^0.4.0",
+    "@comity/islands": "workspace:*",
     "alpinejs": "^3.14.9",
     "hono": "^4.7.5"
   },

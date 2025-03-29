@@ -9,8 +9,8 @@
     "deploy": "$npm_execpath run build && wrangler pages deploy dist --env production"
   },
   "dependencies": {
-    "@comity/islands": "^0.4.0",
-    "@comity/react": "^0.4.0",
+    "@comity/islands": "workspace:*",
+    "@comity/react": "workspace:*",
     "@nanostores/react": "^0.8.4",
     "hono": "^4.7.5",
     "nanostores": "^0.11.4",

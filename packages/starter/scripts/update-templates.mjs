@@ -5,27 +5,25 @@ import { join } from 'path';
   const versions = {};
 
   // Read all packages and get their versions
-  (await readdir('./packages', { withFileTypes: true })).forEach(
-    async (folder) => {
-      if (folder.isDirectory()) {
-        const path = join('./packages', folder.name, 'package.json');
+  (await readdir('../', { withFileTypes: true })).forEach(async (folder) => {
+    if (folder.isDirectory()) {
+      const path = join('../', folder.name, 'package.json');
 
-        try {
-          const manifest = JSON.parse(await readFile(path, 'utf-8'));
+      try {
+        const manifest = JSON.parse(await readFile(path, 'utf-8'));
 
-          versions[manifest.name] = process.env.VERSION || manifest.version;
-        } catch (error) {
-          console.error(`Failed to read or parse ${manifest}:`, error);
-        }
+        versions[manifest.name] = process.env.VERSION || `^${manifest.version}`;
+      } catch (error) {
+        console.error(`Failed to read or parse ${manifest}:`, error);
       }
     }
-  );
+  });
 
   // Update all templates with the latest versions
-  (await readdir('./templates', { withFileTypes: true })).forEach(
+  (await readdir('../../templates', { withFileTypes: true })).forEach(
     async (folder) => {
       if (folder.isDirectory()) {
-        const path = join('./templates', folder.name);
+        const path = join('../../templates', folder.name);
 
         try {
           const manifest = JSON.parse(
