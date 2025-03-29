@@ -93,7 +93,7 @@ describe('reactRenderer middleware', () => {
   // });
 
   it('should render the component to a readable stream', async () => {
-    const middleware = reactRenderer(undefined, { stream: true });
+    const middleware = reactRenderer(undefined, { stream: undefined });
 
     await middleware(ctx as Context, next);
     await renderer(<span>Stream Test</span>);

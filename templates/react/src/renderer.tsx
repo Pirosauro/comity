@@ -1,4 +1,5 @@
 import { reactRenderer } from '@comity/react';
+import { renderToStream } from '@comity/react/streaming';
 
 export const renderer = reactRenderer(
   ({ children, title }) => {
@@ -16,5 +17,14 @@ export const renderer = reactRenderer(
       </html>
     );
   },
-  { stream: true }
+  {
+    stream: {
+      renderToStream,
+      options: {
+        onError(error) {
+          console.error('Error rendering to stream:', error);
+        },
+      },
+    },
+  }
 );

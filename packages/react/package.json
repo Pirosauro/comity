@@ -30,6 +30,10 @@
     "./components": {
       "types": "./dist/components/index.d.ts",
       "import": "./dist/components/index.js"
+    },
+    "./streaming": {
+      "node": "./dist/streaming/stream-node.js",
+      "default": "./dist/streaming/stream-edge.js"
     }
   },
   "publishConfig": {
