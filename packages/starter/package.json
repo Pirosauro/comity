@@ -6,7 +6,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "prepublish": "copy-folder ../../templates templates --summary && tsc",
+    "prepublish": "node scripts/update-templates.mjs && copy-folder ../../templates templates --summary && tsc",
     "clean": "tsc --build --clean",
     "test": "vitest run --coverage"
   },
