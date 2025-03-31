@@ -1,32 +1,12 @@
 import type { FC } from 'react';
 import type { ClientDirective } from '@comity/islands/types';
-import { lazy } from 'react';
 import { withHydration } from '../with-hydration.js';
+// @ts-ignore
+import * as components from 'virtual:comity-islands';
 
 export type IslandProps = ClientDirective & {
   $component: string;
   [k: string]: any;
-};
-
-/**
- * Load the component dynamically.
- *
- * @param {string} $component The component to load.
- * @returns {Promise<{default: FC}>} The component.
- */
-const loadComponent = async ($component: string) => {
-  const [module, name = 'default'] = $component.split('#') as [string, string];
-  const components = (await import('virtual:comity-islands')) as any;
-  const importer = components[`C_${module}`];
-  const component = importer ? (await importer())?.[name] : undefined;
-
-  if (!component) {
-    throw new Error(
-      `Ensure that the component "${$component}" exists and is exported correctly.`
-    );
-  }
-
-  return { default: withHydration(component, module) };
 };
 
 /**
@@ -40,7 +20,16 @@ export const Island: FC<IslandProps> = ({ $component, ...props }) => {
       );
     }
 
-    const HydratableComponent = lazy(() => loadComponent($component));
+    const name = 'C_' + $component;
+    const HydratableComponent = components[name]
+      ? withHydration(components[name], $component)
+      : undefined;
+    console.log(components);
+    if (!HydratableComponent) {
+      throw new Error(
+        `Ensure that the component "${$component}" exists and is exported correctly.`
+      );
+    }
 
     return <HydratableComponent {...props} />;
   } catch (error) {

@@ -33,6 +33,7 @@ export const comityIslands = (options: Options = {}): Plugin => {
   const cache = {
     ssr: [] as string[],
     client: [] as string[],
+    imports: [] as string[],
     names: {} as Record<string, string>,
   };
 
@@ -96,19 +97,13 @@ export const comityIslands = (options: Options = {}): Plugin => {
       .crawl(resolve(config.path))
       .sync();
 
-    cache.ssr = files
+    cache.imports = files
       .filter((c) => extensionPattern.test(c))
       .map(
         (c) =>
-          `${'export const C_' + hash(c)} = () => import(${JSON.stringify(c)});`
-      );
-    cache.client = files
-      .filter((c) => extensionPattern.test(c))
-      .map(
-        (c) =>
-          `${'export const C_' + hash(c)} = () => import(${JSON.stringify(
-            resolveAlias(c)
-          )});`
+          `${'export { default as C_' + hash(c)} } from ${JSON.stringify(
+            resolveAlias(c).replace(/\.tsx$/, '.js')
+          )};`
       );
     cache.names = Object.fromEntries(
       files.filter((c) => extensionPattern.test(c)).map((c) => [c, hash(c)])
@@ -159,7 +154,7 @@ export const comityIslands = (options: Options = {}): Plugin => {
     async load(id) {
       // Handler for virtual:comity-islands
       if (id.startsWith(resolvedVirtualModuleId)) {
-        const code = id.endsWith('?client') ? cache.client : cache.ssr;
+        const code = cache.imports; // id.endsWith('?client') ? cache.client : cache.ssr;
 
         return code.join('\n');
       }

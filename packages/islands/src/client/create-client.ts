@@ -3,6 +3,7 @@ import { idle, observeOnce, listenMediaOnce } from './strategies.js';
 
 type Options<C, P> = {
   debug: boolean;
+  components: Record<string, C>;
   integrations: Record<
     string,
     (component: C, props: P, element: HTMLElement) => Promise<void>
@@ -17,6 +18,7 @@ type Options<C, P> = {
  */
 export const createClient = async <C, P>({
   debug,
+  components,
   integrations,
 }: Options<C, P>): Promise<void> => {
   const index: Record<string, C | undefined> = {};
@@ -43,13 +45,9 @@ export const createClient = async <C, P>({
    * @return {(Promise<C | undefined>)}
    */
   const loadComponent = async (module: string): Promise<C | undefined> => {
-    const name = 'default';
-    // @ts-ignore
-    const components = await import('virtual:comity-islands');
-    const importer = components[`C_${module}`];
-    const component = importer ? (await importer())?.[name] : undefined;
+    const name = `C_${module}`;
 
-    return component;
+    return components[name];
   };
 
   class Island extends HTMLElement {

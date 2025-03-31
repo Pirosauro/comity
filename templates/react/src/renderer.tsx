@@ -7,6 +7,14 @@ export const renderer = reactRenderer(
       <html lang="en">
         <head>
           <title>{title}</title>
+          {import.meta.env.PROD && (
+            <link
+              rel="stylesheet"
+              href="/static/assets/client.css"
+              media="all"
+              type="text/css"
+            />
+          )}
         </head>
         <body>{children}</body>
         {import.meta.env.PROD ? (
