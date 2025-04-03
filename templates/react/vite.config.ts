@@ -4,10 +4,12 @@ import build from '@hono/vite-cloudflare-pages';
 import devServer from '@hono/vite-dev-server';
 import adapter from '@hono/vite-dev-server/cloudflare';
 import { comityRoutes, comityIslands } from '@comity/islands/vite';
+import react from '@comity/react/vite';
 
 export default defineConfig(({ mode }) => {
   const alias = {
     '~': resolve(__dirname, './src'),
+    '#internal': resolve(__dirname, './.comity'),
   };
 
   if (mode === 'client') {
@@ -21,16 +23,25 @@ export default defineConfig(({ mode }) => {
             assetFileNames: 'static/assets/[name].[ext]',
           },
         },
-        emptyOutDir: true,
+        emptyOutDir: false,
       },
       resolve: {
         alias,
       },
-      plugins: [comityIslands()],
+      plugins: [
+        comityIslands({
+          transpilers: {
+            island: react,
+          },
+        }),
+      ],
     };
   }
 
   return {
+    build: {
+      emptyOutDir: true,
+    },
     ssr: {
       external: ['react', 'react-dom', 'react-dom/server'],
     },
@@ -44,8 +55,13 @@ export default defineConfig(({ mode }) => {
       devServer({
         adapter,
         entry: 'src/index.ts',
+        injectClientScript: false,
       }),
-      comityIslands(),
+      comityIslands({
+        transpilers: {
+          island: react,
+        },
+      }),
       comityRoutes(),
     ],
   };

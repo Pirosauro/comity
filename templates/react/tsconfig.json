@@ -4,9 +4,9 @@
     "esModuleInterop": true,
     "jsx": "react-jsx",
     "jsxImportSource": "react",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "rootDir": "./src",
     "outDir": "./dist",
     "paths": {
       "~/*": ["./src/*"]
@@ -14,7 +14,7 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "ES2022",
-    "types": ["@cloudflare/workers-types", "node", "vite/client"]
+    "types": ["node", "vite/client", "@comity/islands/types"]
   },
   "exclude": ["**/*.test.ts"],
   "include": ["src/**/*.ts", "src/**/*.tsx", "types/**/*.d.ts"]

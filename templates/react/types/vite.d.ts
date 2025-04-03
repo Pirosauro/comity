@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 
-declare module '*?hash' {
-  const src: string;
+declare module '*?island' {
+  const hash: string;
 
-  export default src;
+  export default hash;
 }

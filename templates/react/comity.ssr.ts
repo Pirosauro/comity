@@ -4,6 +4,7 @@ import build from '@hono/vite-cloudflare-pages';
 import devServer from '@hono/vite-dev-server';
 import adapter from '@hono/vite-dev-server/cloudflare';
 import { comityRoutes, comityIslands, withComity } from '@comity/islands/vite';
+import react from '@comity/react/vite';
 
 export default defineConfig(({ mode }) => {
   const alias = {
@@ -11,6 +12,9 @@ export default defineConfig(({ mode }) => {
   };
 
   return withComity({
+    build: {
+      emptyOutDir: true,
+    },
     ssr: {
       external: ['react', 'react-dom', 'react-dom/server'],
     },
@@ -24,12 +28,14 @@ export default defineConfig(({ mode }) => {
       devServer({
         adapter,
         entry: 'src/index.ts',
+        injectClientScript: false,
       }),
-      comityIslands(),
+      comityIslands({
+        transpilers: {
+          island: react,
+        },
+      }),
       comityRoutes(),
     ],
-    optimizeDeps: {
-      include: ['react-dom/server'],
-    },
   });
 });

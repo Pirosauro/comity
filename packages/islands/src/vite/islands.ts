@@ -1,12 +1,25 @@
 import type { Plugin } from 'vite';
-import { resolve } from 'node:path';
-import { fdir } from 'fdir';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { hash } from '../hash.js';
+
+export type Transpiler = (
+  hash: string,
+  source: string,
+  name: string
+) => Promise<string>;
 
 type Options = {
-  path?: string;
-  extension?: string;
-  aliases?: Record<string, string>;
+  /**
+   * The transpiler functions to use for processing the island components.
+   * @default undefined
+   */
+  transpilers: Record<string, Transpiler>;
 };
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 /**
  * Vite plugin for handling island components
@@ -17,69 +30,12 @@ type Options = {
  * @param {Options} options - The plugin options.
  * @return {Plugin} - The Vite plugin object.
  */
-export const comityIslands = (options: Options = {}): Plugin => {
-  // Normalize configuration options
-  const config = {
-    path: options.path?.replace(/\/$/g, '') || './src/components',
-    extension: options.extension?.replace(/\./g, '\\.') || '\\.island\\.tsx',
-    aliases: options.aliases || {
-      './src/components': '~/components',
-    },
-  };
+export const comityIslands = (options: Options): Plugin => {
   const virtualModuleId = 'virtual:comity-islands';
   const resolvedVirtualModuleId = '\0' + virtualModuleId;
-  const extensionPattern = new RegExp(`${config.extension}(\\?hash)?$`);
-
-  const cache = {
-    ssr: [] as string[],
-    client: [] as string[],
-    imports: [] as string[],
-    names: {} as Record<string, string>,
-  };
-
-  /**
-   * Resolve the alias for a given path
-   *
-   * This function checks if the path starts with any of the configured aliases
-   * and replaces it with the corresponding replacement value.
-   *
-   * @param {string} path - The path to resolve
-   * @return {string} - The resolved path
-   */
-  const resolveAlias = (path: string): string => {
-    Object.entries(config.aliases).forEach(([alias, replacement]) => {
-      const normalized = resolve(alias);
-
-      if (path.startsWith(normalized)) {
-        path = path
-          .replace(normalized, replacement)
-          .replace(/\.(ts|tsx)$/g, '.js');
-
-        return;
-      }
-    });
-
-    return path;
-  };
-
-  /**
-   * Calculate a hash for a given string
-   *
-   * This function generates a hash for the given string using the DJB2 algorithm.
-   *
-   * @param {string} str - The string to hash
-   * @return {string} - The generated hash
-   */
-  const hash = (str: string): string => {
-    let h = 5381;
-    let i = str.length;
-
-    while (i) {
-      h = (h * 33) ^ str.charCodeAt(--i);
-    }
-
-    return (h >>> 0).toString(36);
-  };
+  //
+  const index: Record<string, string> = {};
+  let cwd: string;
 
   /**
    * Finds components in the specified directory
@@ -91,27 +47,16 @@ export const comityIslands = (options: Options = {}): Plugin => {
    * @return {Promise<void>}
    */
   const buildCache = async (): Promise<void> => {
-    const files = new fdir()
-      .withFullPaths()
-      .withMaxDepth(10)
-      .crawl(resolve(config.path))
-      .sync();
+    const code = [
+      'export default {',
+      ...Object.entries(index).map(
+        ([path, hash]) =>
+          `${JSON.stringify(hash)}: () => import(${JSON.stringify(path)}),`
+      ),
+      '};',
+    ].join('\n');
 
-    cache.imports = files
-      .filter((c) => extensionPattern.test(c))
-      .map(
-        (c) =>
-          `${'export { default as C_' + hash(c)} } from ${JSON.stringify(
-            resolveAlias(c).replace(/\.tsx$/, '.js')
-          )};`
-      );
-    cache.names = Object.fromEntries(
-      files.filter((c) => extensionPattern.test(c)).map((c) => [c, hash(c)])
-    );
-
-    console.log(
-      `\u001B[34m${cache.ssr.length} hydratable components found\u001B[0m`
-    );
+    await writeFile(join(cwd, '.comity', 'index.js'), code, 'utf-8');
   };
 
   return {
@@ -125,8 +70,18 @@ export const comityIslands = (options: Options = {}): Plugin => {
      *
      * @inheritdoc
      */
-    async configResolved() {
-      await buildCache();
+    async configResolved({ root, build }) {
+      cwd = root;
+
+      if (build.ssr) {
+        try {
+          await rm(join(root, '.comity'), { recursive: true });
+        } catch (e) {
+          // Ignore error if the directory does not exist
+        }
+
+        await mkdir(join(root, '.comity'), { recursive: true });
+      }
     },
 
     /**
@@ -137,7 +92,7 @@ export const comityIslands = (options: Options = {}): Plugin => {
      *
      * @inheritdoc
      */
-    async resolveId(id) {
+    async resolveId(id, importer) {
       if (id.startsWith(virtualModuleId)) {
         return resolvedVirtualModuleId;
       }
@@ -152,36 +107,39 @@ export const comityIslands = (options: Options = {}): Plugin => {
      * @inheritdoc
      */
     async load(id) {
-      // Handler for virtual:comity-islands
-      if (id.startsWith(resolvedVirtualModuleId)) {
-        const code = cache.imports; // id.endsWith('?client') ? cache.client : cache.ssr;
+      if (id === resolvedVirtualModuleId) {
+        //
+        const code = await readFile(join(cwd, '.comity', 'index.js'), 'utf-8');
 
-        return code.join('\n');
+        return code;
       }
 
-      // Handle island imports
-      if (extensionPattern.test(id) && id.endsWith('?hash')) {
-        return `export default ${JSON.stringify(
-          `${cache.names[id.replace('?hash', '')]}`
-        )};`;
-      }
-    },
+      if (id.includes('?')) {
+        const { pathname, searchParams } = new URL(id, 'file://');
+        const key = Object.keys(options.transpilers).find((key) =>
+          searchParams.has(key)
+        );
 
-    /**
-     * Handle the changes on relevant files
-     *
-     * This function is called when the server starts and is used to
-     * watch for changes in the components directory and rebuild the cache.
-     *
-     * @inheritdoc
-     */
-    async configureServer(server) {
-      server.watcher.on('all', async (file) => {
-        // Check if the changed file is in the routes directory
-        if (extensionPattern.test(file)) {
-          await buildCache();
+        if (key) {
+          const name = searchParams.get(key) || 'default';
+          const code = await options.transpilers[key](
+            hash(pathname),
+            pathname,
+            name
+          );
+
+          // Store the hash in the index
+          if (!index[pathname]) {
+            index[pathname] = hash(pathname);
+
+            console.log('GENERATE CACHE', index);
+
+            await buildCache();
+          }
+
+          return code;
         }
-      });
+      }
     },
   };
 };

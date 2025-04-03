@@ -36,7 +36,7 @@ export function withHydration<P = Record<string, any>>(
   // Create the island component
   const island: FC<P & ClientDirective> = (props) => {
     const data = getHydrationData(props, 'react', filename);
-
+    console.log('DATA', data);
     // If the component is not hydratable, render it statically
     if (!data.strategy) {
       return <Component {...data.props} />;

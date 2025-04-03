@@ -1,9 +1,11 @@
 import { createClient } from '@comity/islands/client';
 import react from '@comity/react';
 // @ts-ignore
-import * as components from 'virtual:comity-islands';
+import components from 'virtual:comity-islands';
 
 const debug = false;
+
+console.log('Comity Islands:', components);
 
 createClient({
   debug,

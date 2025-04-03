@@ -1,6 +1,7 @@
 import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 import { comityIslands, withComity } from '@comity/islands/vite';
+import react from '@comity/react/vite';
 
 export default defineConfig(({ mode }) => {
   const alias = {
@@ -17,11 +18,17 @@ export default defineConfig(({ mode }) => {
           assetFileNames: 'static/assets/[name].[ext]',
         },
       },
-      emptyOutDir: true,
+      emptyOutDir: false,
     },
     resolve: {
       alias,
     },
-    plugins: [comityIslands()],
+    plugins: [
+      comityIslands({
+        transpilers: {
+          island: react,
+        },
+      }),
+    ],
   });
 });

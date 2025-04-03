@@ -13,7 +13,7 @@
     "hono": "^4.7.5"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250327.0",
+    "@cloudflare/workers-types": "^4.20250403.0",
     "@hono/vite-cloudflare-pages": "^0.4.2",
     "wrangler": "^3.114.3"
   }

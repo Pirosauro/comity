@@ -3,7 +3,7 @@ import { idle, observeOnce, listenMediaOnce } from './strategies.js';
 
 type Options<C, P> = {
   debug: boolean;
-  components: Record<string, C>;
+  components: Record<string, () => Promise<Record<string, C>>>;
   integrations: Record<
     string,
     (component: C, props: P, element: HTMLElement) => Promise<void>
@@ -21,7 +21,7 @@ export const createClient = async <C, P>({
   components,
   integrations,
 }: Options<C, P>): Promise<void> => {
-  const index: Record<string, C | undefined> = {};
+  const index: Record<string, Record<string, C> | undefined> = {};
 
   /**
    * Log a console message
@@ -44,10 +44,20 @@ export const createClient = async <C, P>({
    * @param {string} module - The component module
    * @return {(Promise<C | undefined>)}
    */
-  const loadComponent = async (module: string): Promise<C | undefined> => {
-    const name = `C_${module}`;
+  const loadComponent = async (
+    module: string,
+    name: string
+  ): Promise<C | undefined> => {
+    if (
+      typeof index[module] === 'undefined' &&
+      typeof components?.[module] === 'function'
+    ) {
+      const loader = components[module];
 
-    return components[name];
+      index[module] = await loader();
+    }
+
+    return index[module]?.[name];
   };
 
   class Island extends HTMLElement {
@@ -156,7 +166,7 @@ export const createClient = async <C, P>({
     async hydrate(): Promise<void> {
       const {
         framework,
-        component: filename,
+        component: module,
         props,
       } = this.#data as HydrationData;
 
@@ -168,12 +178,13 @@ export const createClient = async <C, P>({
           throw new Error(`Integration "${framework}" is not defined`);
         }
 
+        const [hash, name] = module.split('.');
         // Load component
-        const component = await loadComponent(filename);
+        const component = await loadComponent(hash, name);
 
         // Component not loaded
         if (!component) {
-          throw new Error(`Loading of component "${filename}" has failed`);
+          throw new Error(`Loading of component "${module}" has failed`);
         }
 
         await integration(component, props, this);
