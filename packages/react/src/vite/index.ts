@@ -10,8 +10,6 @@ const transpiler: Transpiler = async (hash, path, name) => {
     `export { HydratableComponent as ${name} };`,
   ].join('\n');
 
-  console.log(code);
-
   return code;
 };
 

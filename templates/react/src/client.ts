@@ -5,8 +5,6 @@ import components from 'virtual:comity-islands';
 
 const debug = false;
 
-console.log('Comity Islands:', components);
-
 createClient({
   debug,
   components,

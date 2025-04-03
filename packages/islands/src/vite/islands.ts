@@ -36,6 +36,7 @@ export const comityIslands = (options: Options): Plugin => {
   //
   const index: Record<string, string> = {};
   let cwd: string;
+  let strategy: 'end' | 'load' | 'never';
 
   /**
    * Finds components in the specified directory
@@ -47,6 +48,7 @@ export const comityIslands = (options: Options): Plugin => {
    * @return {Promise<void>}
    */
   const buildCache = async (): Promise<void> => {
+    // Generate the index code
     const code = [
       'export default {',
       ...Object.entries(index).map(
@@ -56,6 +58,7 @@ export const comityIslands = (options: Options): Plugin => {
       '};',
     ].join('\n');
 
+    // Write the index code to a file
     await writeFile(join(cwd, '.comity', 'index.js'), code, 'utf-8');
   };
 
@@ -70,10 +73,11 @@ export const comityIslands = (options: Options): Plugin => {
      *
      * @inheritdoc
      */
-    async configResolved({ root, build }) {
+    async configResolved({ build, mode, root }) {
       cwd = root;
+      strategy = mode !== 'production' ? 'load' : build.ssr ? 'end' : 'never';
 
-      if (build.ssr) {
+      if ((mode === 'production' && build.ssr) || mode !== 'production') {
         try {
           await rm(join(root, '.comity'), { recursive: true });
         } catch (e) {
@@ -108,12 +112,17 @@ export const comityIslands = (options: Options): Plugin => {
      */
     async load(id) {
       if (id === resolvedVirtualModuleId) {
-        //
+        if (strategy === 'load') {
+          await buildCache();
+        }
+
+        // Read the index file
         const code = await readFile(join(cwd, '.comity', 'index.js'), 'utf-8');
 
         return code;
       }
 
+      // Handle island components
       if (id.includes('?')) {
         const { pathname, searchParams } = new URL(id, 'file://');
         const key = Object.keys(options.transpilers).find((key) =>
@@ -131,14 +140,24 @@ export const comityIslands = (options: Options): Plugin => {
           // Store the hash in the index
           if (!index[pathname]) {
             index[pathname] = hash(pathname);
-
-            console.log('GENERATE CACHE', index);
-
-            await buildCache();
           }
 
           return code;
         }
+      }
+    },
+
+    /**
+     * Handle the build end event
+     *
+     * This function is called when the build ends and is used to
+     * finalize the cache for the virtual module.
+     *
+     * @inheritdoc
+     */
+    async buildEnd() {
+      if (strategy === 'end') {
+        await buildCache();
       }
     },
   };
