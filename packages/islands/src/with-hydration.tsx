@@ -17,6 +17,17 @@ export function withHydration<P = Record<string, any>>(
   Component: FC<P> & { filename?: string; framework?: string },
   filename: string
 ): FC<P & ClientDirective> {
+  // Add filename property to the component
+  Object.defineProperty(Component, 'filename', {
+    value: filename,
+    writable: false,
+  });
+  // Add framework property to the component
+  Object.defineProperty(Component, 'framework', {
+    value: 'preact',
+    writable: false,
+  });
+
   // Create the island component
   const island: FC<P & ClientDirective> = (props) => {
     const data = getHydrationData(props, 'hono', filename);
@@ -37,6 +48,12 @@ export function withHydration<P = Record<string, any>>(
       </>
     );
   };
+
+  // Add name to the island component
+  Object.defineProperty(island, 'framework', {
+    value: `${Component.displayName || Component.name}Island`,
+    writable: true,
+  });
 
   return island;
 }

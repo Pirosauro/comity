@@ -7,7 +7,7 @@ type Props = {
 };
 
 // testing island inside island
-const Badge: FC<Props> = ({ client, server }) => {
+export const Badge: FC<Props> = ({ client, server }) => {
   const [env, setEnv] = useState<string>(server || 'server');
 
   useEffect(() => {

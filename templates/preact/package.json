@@ -3,25 +3,25 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "vite",
-    "build": "vite build --mode client && vite build",
+    "dev": "comity dev",
+    "build": "comity build",
     "preview": "wrangler pages dev dist",
     "deploy": "$npm_execpath run build && wrangler pages deploy dist --env production"
   },
   "dependencies": {
     "@comity/islands": "workspace:*",
     "@comity/preact": "workspace:*",
-    "@nanostores/preact": "^0.5.2",
-    "hono": "^4.7.5",
-    "nanostores": "^0.11.4",
-    "preact": "^10.26.4",
+    "@nanostores/preact": "^1.0.0",
+    "hono": "^4.7.6",
+    "nanostores": "^1.0.1",
+    "preact": "^10.26.5",
     "preact-render-to-string": "^6.5.13"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250403.0",
+    "@cloudflare/workers-types": "^4.20250412.0",
     "@hono/vite-cloudflare-pages": "^0.4.2",
-    "@hono/vite-dev-server": "^0.18.3",
-    "vite": "^6.2.5",
-    "wrangler": "^3.114.3"
+    "@hono/vite-dev-server": "^0.19.0",
+    "vite": "^6.2.6",
+    "wrangler": "^4.10.0"
   }
 }

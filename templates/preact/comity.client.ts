@@ -1,7 +1,7 @@
 import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 import { comityIslands, withComity } from '@comity/islands/vite';
-import hono from '@comity/islands/vite';
+import preact from '@comity/preact/vite';
 
 export default defineConfig(({ mode }) => {
   const alias = {
@@ -26,7 +26,7 @@ export default defineConfig(({ mode }) => {
     plugins: [
       comityIslands({
         transpilers: {
-          island: hono,
+          island: preact,
         },
       }),
     ],

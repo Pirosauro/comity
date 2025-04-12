@@ -2,9 +2,9 @@ import type { Handler } from 'hono';
 
 export interface RouteMeta {
   sitemap: {
-    lastmod: string;
-    changefreq: string;
-    priority: number;
+    lastmod?: string;
+    changefreq?: string;
+    priority?: number;
   };
 }
 
@@ -21,12 +21,12 @@ export interface RouteMeta {
 export const withRouteMeta = (
   route: Handler,
   meta: RouteMeta
-): Handler & RouteMeta => {
+): Handler & { meta: RouteMeta } => {
   // Add meta property to the route
   Object.defineProperty(route, 'meta', {
     value: meta,
     writable: false,
   });
 
-  return route as Handler & RouteMeta;
+  return route as Handler & { meta: RouteMeta };
 };

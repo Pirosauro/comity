@@ -10,11 +10,11 @@
     "@comity/graphql": "workspace:*",
     "@envelop/core": "^5.2.3",
     "graphql": "^16.10.0",
-    "hono": "^4.7.5"
+    "hono": "^4.7.6"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250403.0",
+    "@cloudflare/workers-types": "^4.20250412.0",
     "@hono/vite-cloudflare-pages": "^0.4.2",
-    "wrangler": "^3.114.3"
+    "wrangler": "^4.10.0"
   }
 }

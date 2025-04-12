@@ -1,15 +1,14 @@
 import type { Context } from 'hono';
 import { Suspense } from 'preact/compat';
-import { Island } from '@comity/preact/components';
-import counter from '~/components/counter.island.js?hash';
-import user from '~/components/user.island.js?hash';
+import { Counter } from '~/components/counter.js?island=Counter';
+import { User } from '~/components/user.js?island=User';
 
 export default async (ctx: Context) =>
   ctx.render(
     <div>
       <div style={{ backgroundColor: 'aquamarine', padding: '20px' }}>
         <Suspense fallback={<div>Loading...</div>}>
-          <Island $client:load $component={user} />
+          <User $client:load />
         </Suspense>
       </div>
       <div style={{ padding: '30px 5px 5px' }}>
@@ -17,7 +16,7 @@ export default async (ctx: Context) =>
       </div>
       <div style={{ backgroundColor: 'aliceblue', padding: '20px' }}>
         <Suspense fallback={<div>Loading...</div>}>
-          <Island $client:load $component={counter} count={10} />
+          <Counter $client:load count={10} />
         </Suspense>
       </div>
       <div style={{ padding: '30px 5px 5px' }}>
@@ -25,7 +24,7 @@ export default async (ctx: Context) =>
       </div>
       <div style={{ backgroundColor: 'wheat', padding: '20px' }}>
         <Suspense fallback={<div>Loading...</div>}>
-          <Island $client:idle $component={counter} count={20} />
+          <Counter $client:idle count={20} />
         </Suspense>
       </div>
       <div style={{ padding: '30px 5px 5px' }}>
@@ -34,11 +33,7 @@ export default async (ctx: Context) =>
       </div>
       <div style={{ backgroundColor: 'gold', padding: '20px' }}>
         <Suspense fallback={<div>Loading...</div>}>
-          <Island
-            $client:media="(max-width: 600px)"
-            $component={counter}
-            count={30}
-          />
+          <Counter $client:media="(max-width: 600px)" count={30} />
         </Suspense>
       </div>
       <div style={{ padding: '30px 5px 5px', lineHeight: '1.5em' }}>
@@ -47,7 +42,7 @@ export default async (ctx: Context) =>
       </div>
       <div style={{ marginTop: '1000px', padding: '20px' }}>
         <Suspense fallback={<div>Loading...</div>}>
-          <Island $client:visible $component={counter} count={30} />
+          <Counter $client:visible count={30} />
         </Suspense>
       </div>
     </div>,

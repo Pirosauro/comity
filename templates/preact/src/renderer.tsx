@@ -1,4 +1,5 @@
 import { preactRenderer } from '@comity/preact';
+import { renderToStream } from '@comity/preact/streaming';
 
 export const renderer = preactRenderer(
   ({ children, title }) => {
@@ -6,6 +7,14 @@ export const renderer = preactRenderer(
       <html lang="en">
         <head>
           <title>{title}</title>
+          {import.meta.env.PROD && (
+            <link
+              rel="stylesheet"
+              href="/static/assets/client.css"
+              media="all"
+              type="text/css"
+            />
+          )}
         </head>
         <body>{children}</body>
         {import.meta.env.PROD ? (
@@ -16,5 +25,14 @@ export const renderer = preactRenderer(
       </html>
     );
   },
-  { stream: true }
+  {
+    stream: {
+      renderToStream,
+      options: {
+        onError(error) {
+          console.error('Error rendering to stream:', error);
+        },
+      },
+    },
+  }
 );

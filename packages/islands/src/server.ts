@@ -5,10 +5,10 @@ import type {
   ErrorHandler,
   BlankEnv,
   BlankSchema,
+  RouterRoute,
 } from 'hono/types';
 import type { RouteMeta } from './with-route-meta.js';
 import { Hono } from 'hono';
-import { stream } from 'hono/streaming';
 
 /**
  * Custom server class extending Hono framework.
@@ -21,8 +21,6 @@ export class Server<
   S extends Schema = BlankSchema,
   BasePath extends string = '/'
 > extends Hono<E, S, BasePath> {
-  #sitemap: Record<string, RouteMeta['sitemap']> = {};
-
   /**
    * Register routes and middlewares.
    *
@@ -100,67 +98,27 @@ export class Server<
       ...(Array.isArray(handler) ? handler : [handler])
     );
     console.log(method.replace('all', '*').toUpperCase(), normalized);
-
-    // Add route to sitemap if applicable
-    if (
-      ['get', 'all'].includes(method) &&
-      typeof handler === 'function' &&
-      Object.hasOwn(handler, 'meta')
-    ) {
-      this.#sitemap[normalized] = (handler as any).meta?.sitemap;
-    }
   }
 
   /**
-   * Get the registered sitemap.
+   * Get the registered routes with their metadata.
    *
-   * @param {string} baseUrl - The base URL for the sitemap.
-   * @param {string} [path='/sitemap.xml'] - The path for the sitemap.
-   * @return {void}
+   * @returns {Record<string, RouteMeta>}
    */
-  useSitemapXml(baseUrl: string, path: string = '/sitemap.xml'): void {
-    this.get(path, (ctx) => {
-      const head = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">`;
+  getMeta(): Record<string, RouteMeta> {
+    const routes: Record<string, RouteMeta> = {};
 
-      // Stream sitemap.xml
-      return stream(ctx, async (stream) => {
-        // Set headers
-        ctx.header('Content-Type', 'text/xml');
-        ctx.header('Content-Encoding', 'Identity');
-
-        // Opening tag
-        await stream.write(head);
-
-        Object.entries(this.#sitemap).forEach(async ([path, meta]) => {
-          const { lastmod, changefreq, priority } = meta || {};
-
-          const items: string[] = [
-            `<loc>${baseUrl + (path === '/' ? '' : path)}</loc>`,
-          ];
-
-          // Add priority
-          if (priority) {
-            items.push(`<priority>${priority.toPrecision(1)}</priority>`);
-          }
-
-          // Add changefreq
-          if (changefreq) {
-            items.push(`<changefreq>${changefreq}</changefreq>`);
-          }
-
-          // Add lastmod
-          if (lastmod) {
-            items.push(`<lastmod>${lastmod}</lastmod>`);
-          }
-
-          // Write to stream
-          await stream.write(`\n<url>${items.join('\n')}</url>`);
-        });
-
-        // Closing tag
-        await stream.write(`\n</urlset>`);
-      });
+    this.routes.map(({ path, method, handler }: RouterRoute) => {
+      // Add route to sitemap if applicable
+      if (
+        ['get', 'all'].includes(method.toLowerCase()) &&
+        typeof handler === 'function' &&
+        Object.hasOwn(handler, 'meta')
+      ) {
+        routes[path] = (handler as any).meta;
+      }
     });
+
+    return routes;
   }
 }

@@ -6,17 +6,14 @@ import { stream } from 'hono/streaming';
 import { createContext, h, hydrate } from 'preact';
 import { useContext } from 'preact/hooks';
 import { renderToString } from 'preact-render-to-string';
-import { renderToReadableStream } from 'preact-render-to-string/stream';
-import { renderToPipeableStream } from 'preact-render-to-string/stream-node';
 
 export type Options = {
   docType?: boolean | string;
-  stream?:
-    | boolean
-    | {
-        options?: RenderToPipeableStreamOptions;
-        headers?: Record<string, string>;
-      };
+  stream?: {
+    renderToStream: Function;
+    options?: RenderToPipeableStreamOptions;
+    headers?: Record<string, string>;
+  };
 };
 
 export type Props = {};
@@ -58,9 +55,35 @@ const createRenderer =
       process.versions.node != null;
 
     if (options?.stream) {
-      throw new Error(
-        'Streaming is currently not supported in Preact integration.'
-      );
+      // Stream rendering
+      return stream(ctx, async (stream) => {
+        // Set headers
+        if (typeof options.stream === 'object' && options.stream.headers) {
+          Object.entries(options.stream.headers).forEach(([key, value]) => {
+            ctx.header(key, value);
+          });
+        } else {
+          ctx.header('Transfer-Encoding', 'chunked');
+          ctx.header('Content-Type', 'text/html; charset=UTF-8');
+        }
+
+        // Write doctype
+        if (docType) {
+          await stream.write(docType);
+        }
+
+        // Render to stream
+        await stream.pipe(
+          await options.stream!.renderToStream(
+            h(RequestContext.Provider, { value: ctx }, node),
+            typeof options.stream === 'object' && options.stream.options
+              ? options.stream.options
+              : {}
+          )
+        );
+
+        await stream.close();
+      });
     }
 
     const body =

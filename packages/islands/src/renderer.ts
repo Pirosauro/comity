@@ -1,26 +1,25 @@
 import type { Context } from 'hono';
 import type { Env, MiddlewareHandler } from 'hono/types';
-import type { FC, Child, DOMAttributes } from 'hono/jsx';
+import type { FC, DOMAttributes } from 'hono/jsx';
 import type { RenderToReadableStreamOptions } from 'hono/jsx/dom/server';
 import { createContext, createElement, useContext } from 'hono/jsx';
-import { renderToString, renderToReadableStream } from 'hono/jsx/dom/server';
+import { stream } from 'hono/streaming';
 import { hydrateRoot } from 'hono/jsx/dom/client';
 
 export type Options = {
   docType?: boolean | string;
-  stream?:
-    | boolean
-    | {
-        options?: RenderToReadableStreamOptions;
-        headers?: Record<string, string>;
-      };
+  stream?: {
+    renderToStream: Function;
+    options?: RenderToReadableStreamOptions;
+    headers?: Record<string, string>;
+  };
 };
 
 export type Props = {};
 
 export type ComponentProps = Props & {
   ctx: Context;
-  children: Child;
+  children: any;
 };
 
 const RequestContext = createContext<Context | null>(null);
@@ -34,41 +33,56 @@ const RequestContext = createContext<Context | null>(null);
  * @param {Context} ctx - The request context.
  * @param {FC<ComponentProps>} component - The React component to render.
  * @param {Options} [options] - Optional rendering options.
- * @return {any} - A function that takes children and props, and returns a Promise that resolves to an HTML response.
+ * @return {(children: any, props?: Props) => Promise<Response>} - A function that takes children and props, and returns a Promise that resolves to an HTML response.
  */
 const createRenderer =
-  (ctx: Context, component: FC<ComponentProps>, options?: Options): any =>
-  async (children: Child, props?: Props) => {
+  (ctx: Context, component?: FC<ComponentProps>, options?: Options) =>
+  async (children: any, props?: Props) => {
     const node = component ? component({ children, ctx, ...props }) : children;
-
-    if (options?.stream) {
-      const stream = await renderToReadableStream(
-        createElement(RequestContext.Provider, { value: ctx }, node as string),
-        typeof options.stream === 'object' ? options.stream?.options || {} : {}
-      );
-
-      if (typeof options.stream === 'object' && options.stream.headers) {
-        Object.entries(options.stream.headers).forEach(([key, value]) => {
-          ctx.header(key, value);
-        });
-      } else {
-        ctx.header('Transfer-Encoding', 'chunked');
-        ctx.header('Content-Type', 'text/html; charset=UTF-8');
-      }
-
-      return ctx.body(stream);
-    }
-
     const docType =
       typeof options?.docType === 'string'
         ? options.docType
         : options?.docType === true
         ? '<!DOCTYPE html>'
         : '';
+
+    // Stream rendering
+    if (options?.stream) {
+      return stream(ctx, async (stream) => {
+        // Set headers
+        if (typeof options.stream === 'object' && options.stream.headers) {
+          Object.entries(options.stream.headers).forEach(([key, value]) => {
+            ctx.header(key, value);
+          });
+        } else {
+          ctx.header('Transfer-Encoding', 'chunked');
+          ctx.header('Content-Type', 'text/html; charset=UTF-8');
+        }
+
+        // Write doctype
+        if (docType) {
+          await stream.write(docType);
+        }
+
+        // Render to stream
+        await stream.pipe(
+          await options.stream!.renderToStream(
+            createElement(RequestContext.Provider, { value: ctx }, node),
+            typeof options.stream === 'object' && options.stream.options
+              ? options.stream.options
+              : {}
+          )
+        );
+
+        await stream.close();
+      });
+    }
+
+    // String rendering
+    const { renderToString } = await import('hono/jsx/dom/server');
     const body =
       docType +
       renderToString(
-        // @ts-ignore
         createElement(RequestContext.Provider, { value: ctx }, node)
       );
 

@@ -1,4 +1,5 @@
 import { honoRenderer } from '@comity/islands';
+import { renderToStream } from '@comity/islands/streaming';
 
 export const renderer = honoRenderer(
   ({ children, title }) => {
@@ -6,6 +7,14 @@ export const renderer = honoRenderer(
       <html lang="en">
         <head>
           <title>{title}</title>
+          {import.meta.env.PROD && (
+            <link
+              rel="stylesheet"
+              href="/static/assets/client.css"
+              media="all"
+              type="text/css"
+            />
+          )}
         </head>
         <body>{children}</body>
         {import.meta.env.PROD ? (
@@ -16,5 +25,14 @@ export const renderer = honoRenderer(
       </html>
     );
   },
-  { stream: true }
+  {
+    stream: {
+      renderToStream,
+      options: {
+        onError(error) {
+          console.error('Error rendering to stream:', error);
+        },
+      },
+    },
+  }
 );

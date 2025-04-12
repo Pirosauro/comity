@@ -1,12 +1,11 @@
-import type { FunctionComponent } from 'preact';
+import type { FunctionComponent, JSX } from 'preact';
 import { useState } from 'preact/hooks';
-import { Island } from '@comity/preact/components';
-import badge from './badge.js?hash';
+import { Badge } from './badge.js';
 import style from './counter.module.css';
 
-export type Props = {
+export interface Props extends JSX.HTMLAttributes<HTMLElement> {
   count: number;
-};
+}
 
 export const Counter: FunctionComponent<Props> = (props) => {
   const [count, setCount] = useState(props.count);
@@ -19,14 +18,9 @@ export const Counter: FunctionComponent<Props> = (props) => {
 
   return (
     <>
-      {/* <div className={style.badge}>
-        <Island
-          $client:load
-          $component={badge}
-          client="hydrated"
-          server="SSR"
-        />
-      </div> */}
+      <div className={style.badge}>
+        <Badge client="hydrated" server="SSR" />
+      </div>
       <p className={style.count}>Count: {count}</p>
       <button className={style.button} onClick={onClickHandler}>
         Increment
