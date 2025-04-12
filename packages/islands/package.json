@@ -17,7 +17,7 @@
     "url": "https://github.com/pirosauro/comity.git"
   },
   "scripts": {
-    "build": "tsc & rollup --config rollup.config.mjs",
+    "build": "tsc && rollup --config rollup.config.mjs",
     "prepublish": "tsc & rollup --config rollup.config.mjs",
     "clean": "tsc --build --clean",
     "test": "vitest run --coverage"
