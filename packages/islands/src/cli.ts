@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { Command } from 'commander';
 import { build, createServer } from 'vite';
 
-const version = '0.4.0';
+const version = '0.4.5';
 const program = new Command();
 const ascii = `                                                            
   _____           _ __      

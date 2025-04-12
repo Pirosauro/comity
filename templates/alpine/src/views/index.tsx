@@ -31,5 +31,5 @@ export default (ctx: Context) =>
         <Counter count={30} />
       </div>
     </div>,
-    { title: 'Comity | Hono renderer example' }
+    { title: 'Comity | Hono renderer + Alpine example' }
   );
