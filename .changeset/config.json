@@ -8,7 +8,7 @@
       "@comity/react",
       "@comity/islands",
       "@comity/graphql",
-      "@comity/starter"
+      "create-comity"
     ]
   ],
   "linked": [],
