@@ -2,7 +2,15 @@
   "$schema": "https://unpkg.com/@changesets/config@3.0.4/schema.json",
   "changelog": "@changesets/cli/changelog",
   "commit": false,
-  "fixed": [["@comity/react", "@comity/islands", "@comity/graphql"]],
+  "fixed": [
+    [
+      "@comity/preact",
+      "@comity/react",
+      "@comity/islands",
+      "@comity/graphql",
+      "@comity/starter"
+    ]
+  ],
   "linked": [],
   "access": "public",
   "baseBranch": "main",

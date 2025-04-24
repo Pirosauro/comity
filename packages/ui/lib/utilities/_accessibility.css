@@ -1,0 +1,41 @@
+@layer cube {
+  .skip-link {
+    clip: rect(1px, 1px, 1px, 1px);
+    display: block;
+    height: 1px;
+    left: 1rem;
+    overflow: hidden;
+    position: absolute;
+    top: 1rem;
+    width: 1px;
+    z-index: 999;
+  }
+
+  .skip-link:focus {
+    background-color: var(--background);
+    clip: auto;
+    color: var(--color);
+    height: auto;
+    line-height: 1;
+    overflow: visible;
+    padding: var(--space-xs);
+    width: auto;
+  }
+
+  .skip-link:not(:focus),
+  .visually-hidden {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: auto;
+    margin: 0;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+  }
+
+  .visually-hidden {
+    height: 0;
+  }
+}

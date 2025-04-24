@@ -1,0 +1,36 @@
+@layer cube {
+  .breadcrumb {
+    --separator: "/";
+  }
+
+  .breadcrumb ol {
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .breadcrumb li {
+    display: inline-block;
+  }
+
+  .breadcrumb li + li::before {
+    display: inline-block;
+    margin: 0 0.25em;
+    content: var(--separator);
+  }
+
+  .breadcrumb a {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .breadcrumb a svg {
+    margin-right: 0.25rem;
+  }
+
+  .breadcrumb [aria-current="page"] {
+    text-decoration: none;
+  }
+}

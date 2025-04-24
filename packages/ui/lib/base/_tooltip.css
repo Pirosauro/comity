@@ -1,0 +1,14 @@
+@layer cube {
+  [role="tooltip"] {
+    display: none;
+  }
+
+  button:hover + [role="tooltip"],
+  button:focus + [role="tooltip"] {
+    display: block;
+  }
+
+  [data-has-tooltip="true"] {
+    position: relative;
+  }
+}

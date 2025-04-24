@@ -1,0 +1,42 @@
+/*
+Spacing
+--------------------------------------------------
+This file contains the spacing variables for the application.
+It includes spacing units, fluid spacing, and custom pairs.
+
+@see https://comity.filippobovo.com/principles/spacing
+@link https://www.smashingmagazine.com/2018/05/spacing-design/
+@link https://utopia.fyi/space/calculator?c=320,16,1.2,1240,20,1.25,5,2,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l&g=s,l,xl,12 
+@link https://www.bbc.com/gel/features/spacing-units
+*/
+
+@layer global {
+  :root {
+    --su: 0.5rem; /* Spacing Unit (~8px) */
+    --gutter: clamp(1rem, calc(0.7rem + 1.52vw), 1.88rem); /* Gutter */
+
+    /* Fluid spacing */
+    --space-tiny: clamp(0.25rem, calc(0.23rem + 0.11vw), 0.31rem);
+    --space-xxs: clamp(0.5rem, calc(0.46rem + 0.22vw), 0.63rem);
+    --space-xs: clamp(0.75rem, calc(0.68rem + 0.33vw), 0.94rem);
+    --space-s: clamp(1rem, calc(0.91rem + 0.43vw), 1.25rem);
+    --space-m: clamp(1.5rem, calc(1.37rem + 0.65vw), 1.88rem);
+    --space-l: clamp(2rem, calc(1.83rem + 0.87vw), 2.5rem);
+    --space-xl: clamp(3rem, calc(2.74rem + 1.3vw), 3.75rem);
+    --space-xxl: clamp(4rem, calc(3.65rem + 1.74vw), 5rem);
+    --space-huge: clamp(6rem, calc(5.48rem + 2.61vw), 7.5rem);
+
+    /* One-up pairs */
+    --space-tiny-xxs: clamp(0.25rem, calc(0.12rem + 0.65vw), 0.63rem);
+    --space-xxs-xs: clamp(0.5rem, calc(0.35rem + 0.76vw), 0.94rem);
+    --space-xs-s: clamp(0.75rem, calc(0.58rem + 0.87vw), 1.25rem);
+    --space-s-m: clamp(1rem, calc(0.7rem + 1.52vw), 1.88rem);
+    --space-m-l: clamp(1.5rem, calc(1.15rem + 1.74vw), 2.5rem);
+    --space-l-xl: clamp(2rem, calc(1.39rem + 3.04vw), 3.75rem);
+    --space-xl-xxl: clamp(3rem, calc(2.3rem + 3.48vw), 5rem);
+    --space-xxl-huge: clamp(4rem, calc(2.78rem + 6.09vw), 7.5rem);
+
+    /* Custom pairs */
+    --space-s-l: clamp(1rem, calc(0.48rem + 2.61vw), 2.5rem);
+  }
+}

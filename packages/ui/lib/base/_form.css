@@ -1,0 +1,107 @@
+/* 
+Form and inputs 
+--------------------------------------------------
+This file contains the base styles for form elements, including buttons, inputs, and select elements.
+It includes styles for various input types, checkboxes, radio buttons, and select elements.
+*/
+
+@layer cube {
+  legend {
+    font-weight: var(--font-weight-bold, bold);
+    padding: var(--space-tiny, 0.25rem);
+  }
+
+  label {
+    display: block;
+    margin-block: var(--space-tiny, 0.25rem);
+  }
+
+  form button {
+    display: flex;
+    margin-block-start: var(--space-xs, 0.75rem);
+  }
+
+  button[role="combobox"],
+  input[type="email"],
+  input[type="number"],
+  input[type="password"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="text"],
+  input[type="url"],
+  textarea,
+  select {
+    font-size: inherit;
+    letter-spacing: -0.5px;
+    line-height: var(--line-height, 1.5);
+    padding: var(--space-tiny, 0.25rem) var(--space-xxs, 0.5rem);
+  }
+
+  button[role="combobox"],
+  input[type="submit"],
+  input[type="checkbox"],
+  input[type="radio"],
+  select {
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    position: relative;
+  }
+
+  /* Chevron for select */
+  select:not([multiple]) {
+    background-image: linear-gradient(
+        45deg,
+        transparent 49%,
+        var(--color-current) 51%
+      ),
+      linear-gradient(135deg, var(--color-current) 51%, transparent 49%);
+    background-position: calc(100% - 16px), calc(100% - 11px);
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+    padding-inline-end: 2rem;
+  }
+
+  /* checkbox and radio button style */
+  input[type="checkbox"],
+  input[type="radio"] {
+    padding: var(--space-xxs);
+    vertical-align: middle;
+    position: relative;
+    width: min-content;
+    margin-inline-start: 0;
+    margin-inline-end: 0.5rem;
+    margin-block-end: 0.3rem;
+  }
+
+  input[type="radio"] {
+    border-radius: 100%;
+  }
+
+  input[type="checkbox"]:checked::after {
+    background-color: transparent;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath stroke='none' d='M0 0h24v24H0z' fill='none'/%3E%3Cpath d='M5 12l5 5l10 -10' /%3E%3C/svg%3E");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    content: "";
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+  }
+
+  input[type="radio"]:checked::after {
+    /* creates a colored circle for the checked radio button  */
+    background-color: currentColor;
+    border-radius: 100%;
+    content: " ";
+    font-size: 2em;
+    height: 0.5em;
+    left: 0.2em;
+    position: absolute;
+    top: 0.2em;
+    width: 0.5em;
+  }
+}

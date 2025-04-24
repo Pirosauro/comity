@@ -1,0 +1,19 @@
+@layer cube {
+  .with-icon {
+    align-items: baseline;
+    display: inline-flex;
+  }
+
+  .with-icon > svg {
+    height: 0.75em;
+    height: 1cap;
+    margin-inline-end: 0.5em;
+    transform: scale(var(--icon-scale, 1.5));
+    width: 0.75em;
+    width: 1cap;
+  }
+  .with-icon[data-icon-position="right"] > svg {
+    margin-inline-end: 0;
+    margin-inline-start: 0.5rem;
+  }
+}

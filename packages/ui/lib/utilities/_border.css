@@ -1,0 +1,35 @@
+/* !!! border colors are defined in _colors.css !!! */
+/* Border sizes */
+@layer cube {
+  .border-none,
+  .border-s,
+  .border,
+  .border-l {
+    border-style: solid;
+    border-width: 0;
+  }
+
+  .border-s {
+    border-width: var(--border-s);
+  }
+  .border {
+    border-width: var(--border-m);
+  }
+  .border-l {
+    border-width: var(--border-l);
+  }
+
+  /* Border radius */
+  .radius-none {
+    border-radius: 0;
+  }
+  .radius-s {
+    border-radius: 0.125rem;
+  }
+  .radius {
+    border-radius: 0.25rem;
+  }
+  .radius {
+    border-radius: 0.5rem;
+  }
+}

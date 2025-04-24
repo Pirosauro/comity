@@ -1,0 +1,14 @@
+/*
+WRAPPER
+Sets a max width, adds a consistent gutter and horizontally
+centers the contents
+@link: https://piccalil.li/quick-tip/use-css-clamp-to-create-a-more-flexible-wrapper-utility/
+*/
+@layer cube {
+  .wrapper {
+    max-width: var(--wrapper-max-width, 90rem);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+    position: relative;
+  }
+}

@@ -1,0 +1,87 @@
+@layer cube {
+  .heading-huge,
+  .heading-xxl,
+  .heading-xl,
+  .heading-l,
+  .heading-m,
+  .heading,
+  .heading-s,
+  .heading-xs {
+    font-family: var(--font-family-heading);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-s);
+  }
+
+  .text-huge,
+  .text-xxl,
+  .text-xl,
+  .text-l,
+  .text-m,
+  .text,
+  .text-s,
+  .text-xs {
+    font-family: var(--font-family);
+    font-weight: var(--font-weight);
+    line-height: var(--line-height);
+  }
+
+  .heading-huge,
+  .text-huge {
+    font-size: var(--font-size-huge);
+  }
+
+  .heading-xxl,
+  .text-xxl {
+    font-size: var(--font-size-xxl);
+  }
+
+  .heading-xl,
+  .text-xl {
+    font-size: var(--font-size-xl);
+  }
+
+  .heading-l,
+  .text-l {
+    font-size: var(--font-size-l);
+  }
+
+  .heading-m,
+  .text-m {
+    font-size: var(--font-size-m);
+  }
+
+  .heading,
+  .text {
+    font-size: var(--font-size);
+  }
+
+  .heading-s,
+  .text-s {
+    font-size: var(--font-size-s);
+  }
+
+  .heading-xs,
+  .text-xs {
+    font-size: var(--font-size-xs);
+  }
+
+  .text-normal {
+    font-weight: normal;
+  }
+
+  .text-bold {
+    font-weight: var(--font-weight-bold);
+  }
+
+  .text-center {
+    text-align: center;
+  }
+
+  .text-left {
+    text-align: left;
+  }
+
+  .text-right {
+    text-align: right;
+  }
+}

@@ -1,0 +1,37 @@
+/*
+Typography
+--------------------------------------------------
+This file contains the typography variables for the application.
+It includes font families, font sizes, line heights, letter spacing,
+font weights, and widths.
+
+@see https://comity.filippobovo.com/principles/typography
+*/
+
+@layer global {
+  :root {
+    --font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+      Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+    --font-family-mono: SFMono-Regular, Consolas, Liberation Mono, Menlo,
+      Courier, monospace;
+
+    --font-weight-nomal: 400;
+    --font-weight-bold: 700;
+
+    --font-size-xxs: clamp(0.64rem, 0.6179rem + 0.1104vw, 0.7035rem);
+    --font-size-xs: clamp(0.8rem, 0.7521rem + 0.2395vw, 0.9377rem);
+    --font-size-s: clamp(1rem, 0.913rem + 0.4348vw, 1.25rem);
+    --font-size-m: clamp(1.25rem, 1.1052rem + 0.7239vw, 1.6663rem);
+    --font-size-l: clamp(1.5625rem, 1.3334rem + 1.1454vw, 2.2211rem);
+    --font-size-xl: clamp(1.9531rem, 1.6026rem + 1.7524vw, 2.9607rem);
+    --font-size-xxl: clamp(2.4414rem, 1.9178rem + 2.6178vw, 3.9467rem);
+
+    --line-height-m: 1.5;
+    --line-height-s: 1.25;
+    --line-height-l: 1.75;
+
+    --width-wide: 100%;
+    --width-s: 35ch;
+    --width-l: 65ch;
+  }
+}

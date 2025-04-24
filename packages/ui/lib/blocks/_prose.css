@@ -1,0 +1,19 @@
+@layer cube {
+  .prose {
+    --flow-space: var(--space-s-m);
+
+    line-height: var(--line-height-l);
+  }
+
+  .prose :is(p, ul:not([class]), ol:not([class])) {
+    max-width: var(--width-l);
+  }
+
+  .prose :is(blockquote) {
+    max-width: 52ch;
+  }
+
+  .prose :is(pre, pre + *, figure, figure + *, h2, h3, h4):not(.flow *) {
+    --flow-space: var(--space-l-xl);
+  }
+}

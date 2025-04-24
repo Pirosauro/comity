@@ -1,0 +1,25 @@
+/* 
+Preformatted text 
+--------------------------------------------------
+This file contains the code styles for the application. It includes styles for
+code blocks, inline code, and syntax highlighting.
+*/
+
+@layer cube {
+  pre {
+    overflow: auto;
+    overflow-x: scroll;
+    overflow-wrap: normal;
+    padding: var(--space-xxs, 0.5rem);
+    margin: 0;
+  }
+
+  code {
+    font-size: 93%;
+  }
+
+  p code,
+  li code {
+    padding: var(--space-tiny, 0.25rem) var(--space-xxs, 0.5rem);
+  }
+}

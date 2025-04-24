@@ -1,0 +1,694 @@
+/*
+Reset CSS
+--------------------------------------------------
+This is a CSS reset file that provides a consistent baseline for styling across different browsers.
+It includes styles for universal elements, content sectioning, text block content, inline text semantics,
+embedded content, table content, forms, and interactive elements.
+*/
+
+@layer global {
+  /* --- Universal --- */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    height: 100%;
+    height: -webkit-fill-available;
+    font-size: 100%;
+    scroll-behavior: smooth;
+    text-size-adjust: none;
+    -moz-text-size-adjust: none;
+    -webkit-text-size-adjust: none;
+  }
+
+  html:focus-within {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    cursor: var(--cursor, auto);
+    font-family: var(--font-family, unset);
+    font-size: var(--font-size, 1rem);
+    letter-spacing: var(--letter-spacing, 0);
+    line-height: var(--line-height, 1.5);
+    margin: 0;
+    min-height: 100vh; /* Mobile viewport bug fix */
+    min-height: -webkit-fill-available;
+    text-rendering: optimizeSpeed;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* --- Content sectioning --- */
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: 0;
+  }
+
+  :is(h1, h2, h3) {
+    font-family: var(--font-family-heading, inherit);
+    font-weight: var(--font-weight-heading, bold);
+    letter-spacing: var(--letter-spacing-heading, 0);
+    line-height: var(--line-height-heading, 1.25);
+    text-wrap: balance;
+  }
+
+  h1 {
+    font-size: var(--font-size-xxl, unset);
+  }
+
+  h2 {
+    font-size: var(--font-size-xl, unset);
+  }
+
+  h3 {
+    font-size: var(--font-size-l, unset);
+  }
+
+  h4 {
+    font-size: var(--font-size-m, unset);
+  }
+
+  h5 {
+    font-size: var(--font-size-s, unset);
+  }
+
+  h6 {
+    font-size: var(--font-size-xs, unset);
+  }
+
+  header {
+  }
+
+  nav {
+  }
+
+  nav ul,
+  nav ol {
+  }
+
+  nav li {
+  }
+
+  nav a {
+  }
+
+  nav a:visited {
+  }
+
+  nav a:hover {
+  }
+
+  nav a:active {
+  }
+
+  main {
+  }
+  main:focus {
+    outline: none;
+  }
+
+  article {
+  }
+
+  section {
+  }
+
+  aside {
+  }
+
+  search {
+  }
+
+  footer {
+  }
+
+  address {
+  }
+
+  /* --- Text block content --- */
+
+  /* Overall styling, e.g. vertical spacing */
+  p,
+  ol,
+  ul,
+  pre,
+  blockquote,
+  figure,
+  hr,
+  dl {
+  }
+
+  p {
+    margin: 0;
+    font-size: inherit;
+    line-height: inherit;
+  }
+
+  p:not([class]) {
+    max-width: var(--width-l);
+  }
+
+  ol,
+  ul {
+  }
+  ul[role="list"],
+  ol[role="list"] {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  :is(ul, ol):not([class]) {
+    padding-inline-start: 1.7ch;
+  }
+
+  ol {
+  }
+
+  ul {
+  }
+
+  li {
+  }
+  li:not([class]) {
+    max-width: var(--width-l);
+  }
+
+  pre {
+  }
+
+  blockquote {
+    margin: 0;
+  }
+  blockquote:not([class]) {
+    border-left: solid var(--border-l) var(--color-current);
+    font-family: var(--font-heading);
+    font-size: var(--font-size-m);
+    line-height: var(--line-height);
+    padding-inline-start: var(--space-s);
+    max-width: var(--width-l);
+  }
+  blockquote:not([class]) p:last-of-type,
+  blockquote:not([class]) cite,
+  blockquote:not([class]) footer {
+    font-family: var(--font-family);
+    font-size: var(--font-size);
+    font-weight: 400;
+    margin-block-start: var(--space-xxs);
+  }
+
+  figure {
+    margin: 0;
+  }
+
+  figcaption {
+    font-size: var(--font-size-xs);
+    margin-block-start: var(--space-xxs, 0.5rem);
+    text-align: center;
+  }
+
+  hr {
+    position: relative;
+    margin: var(--space-l) 0;
+    border: none;
+    border-top: solid var(--border-s) currentColor;
+  }
+
+  dl {
+  }
+
+  dt {
+  }
+
+  dd {
+  }
+
+  /* --- Inline text semantics --- */
+
+  a {
+    color: var(--color-link, unset);
+    cursor: var(--cursor-pointer, pointer);
+    font-size: inherit;
+    line-height: inherit;
+  }
+
+  a:visited {
+  }
+
+  a:hover,
+  a:focus,
+  a:active {
+    cursor: var(--cursor-pointer, pointer);
+  }
+
+  a:not([class]) {
+    --offset: 0.1em;
+    --offset-hover: 0.25em;
+
+    text-decoration: underline;
+    text-underline-offset: var(--offset, 0.1em);
+    transition: all var(--transition);
+  }
+
+  a:not([class]):hover,
+  a:not([class]):focus {
+    --offset: var(--offset-hover, 0.25em);
+
+    color: inherit;
+    text-decoration: underline;
+  }
+
+  a[data-variant="naked"] {
+    text-decoration: none;
+  }
+
+  strong {
+  }
+
+  b {
+  }
+
+  em {
+  }
+
+  i {
+  }
+
+  q {
+  }
+
+  cite {
+  }
+
+  s {
+  }
+
+  mark {
+  }
+  mark,
+  ::selection {
+    color: var(--color, unset);
+    background-color: var(--color-highlight);
+  }
+
+  /* If you specify a font size, consider using the `em` unit so that it works universally, e.g. for both `h1 small` and `p small` */
+  small,
+  sub,
+  sup {
+    font-size: var(--font-size-s);
+  }
+
+  small {
+  }
+
+  sub {
+  }
+
+  sup {
+  }
+
+  code {
+    background: var(--color-neutral-200);
+    vertical-align: bottom; /* Forces text to constrain to the line-height. Not ideal, but works */
+  }
+
+  dfn {
+  }
+
+  abbr {
+  }
+
+  abbr[title] {
+  }
+
+  var {
+  }
+
+  kbd {
+    background-color: var(--color-neutral-700);
+    border: solid var(--border-s) var(--color-neutral-500);
+    border-radius: var(--border-radius-s);
+    font-family: var(--font-family-accent);
+    font-size: 1rem;
+    padding: 0.115rem 0.25rem;
+  }
+
+  kbd kbd {
+  }
+
+  samp {
+  }
+
+  u {
+  }
+
+  data {
+  }
+
+  time {
+  }
+
+  /* --- Demarcating edits --- */
+
+  del {
+  }
+
+  ins {
+  }
+
+  /* --- Embedded content --- */
+
+  img,
+  picture {
+    display: block;
+    max-width: 100%;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    img,
+    picture {
+      filter: brightness(0.8) contrast(1.2);
+    }
+  }
+
+  picture {
+  }
+
+  img {
+    border: none;
+  }
+
+  svg {
+    flex-shrink: 0;
+  }
+  svg:not([class]) {
+    height: 2ex;
+    width: auto;
+  }
+  svg:not([class]) path {
+    fill: var(--color-current);
+  }
+
+  svg[role="img"][width][height] {
+    width: revert;
+    height: revert;
+  }
+
+  video {
+  }
+
+  canvas {
+  }
+
+  audio {
+  }
+
+  object {
+  }
+
+  noscript {
+  }
+
+  iframe {
+    border: none;
+  }
+
+  /* --- Table content --- */
+
+  table {
+  }
+
+  caption {
+  }
+
+  col:first-child {
+  }
+
+  thead {
+  }
+
+  tbody {
+  }
+
+  tfoot {
+  }
+
+  tr {
+  }
+
+  th,
+  td {
+  }
+
+  th {
+  }
+
+  td {
+  }
+
+  /* --- Forms --- */
+
+  fieldset {
+  }
+
+  fieldset:disabled {
+  }
+
+  legend {
+  }
+
+  form {
+  }
+
+  label {
+  }
+
+  ::placeholder {
+  }
+
+  :focus::placeholder {
+  }
+
+  /* Overall styling, e.g. vertical spacing */
+  input,
+  textarea,
+  select,
+  button {
+    font: inherit;
+  }
+
+  /* `textarea` and `input` elements that share a similar look and similar styling capabilities */
+  /* - common styling */
+  textarea,
+  input[type="text"],
+  input[type="password"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="number"],
+  input[type="search"],
+  input[type="url"],
+  input[type="date"],
+  input[type="datetime-local"],
+  input[type="month"],
+  input[type="week"],
+  input[type="time"] {
+  }
+
+  /* - Individual styling */
+  textarea {
+  }
+
+  input[type="text"] {
+  }
+
+  input[type="password"] {
+  }
+
+  input[type="email"] {
+  }
+
+  input[type="tel"] {
+  }
+
+  input[type="number"] {
+  }
+
+  input[type="search"] {
+  }
+
+  input[type="url"] {
+  }
+
+  input[type="date"] {
+  }
+
+  input[type="datetime-local"] {
+  }
+
+  input[type="month"] {
+  }
+
+  input[type="week"] {
+  }
+
+  input[type="time"] {
+  }
+
+  /* Tick boxes */
+  input[type="checkbox"],
+  input[type="radio"] {
+  }
+
+  input[type="checkbox"]:checked,
+  input[type="radio"]:checked {
+  }
+
+  input[type="checkbox"] {
+  }
+
+  input[type="checkbox"]:checked {
+  }
+
+  input[type="radio"] {
+  }
+
+  input[type="radio"]:checked {
+  }
+
+  /* Other input fields, some with limited styling capabilities */
+  input[type="file"] {
+  }
+
+  input[type="color"] {
+  }
+
+  input[type="range"] {
+  }
+
+  select {
+  }
+
+  optgroup {
+  }
+
+  option {
+  }
+
+  option:checked {
+  }
+
+  datalist {
+  }
+
+  button,
+  input[type="submit"] {
+  }
+
+  button:disabled,
+  input[type="submit"]:disabled {
+  }
+
+  /*
+  This matches forms or form elements that are invalid *and* have been interacted with. Note that:
+  1. You may need to add the `interacted` class to forms yourself
+  2. You may need to add the `touched` class to form fields yourself
+  3. `:user-invalid` is a working draft and not yet supported by most browsers
+  4. `:-moz-ui-invalid` is non-standard and only works in Firefox
+  Form validation error messages will appear (in capable browsers) regardless of this styling.
+  You can omit 1) and 2) and still have working forms. Perfect example of progressive enhancement.
+  */
+  form.interacted:invalid {
+    /* applies to invalid forms */
+  }
+
+  /*
+  Applies to invalid form fields.
+  You would need to repeat your declarations for the following three groups of selectors individually.
+  Browsers completely ignore any rule that contains a selector they do not know.
+  */
+  form.interacted :invalid,
+  form .touched:invalid {
+  }
+
+  :user-invalid {
+  }
+
+  :-moz-ui-invalid {
+  }
+
+  output {
+  }
+
+  progress {
+  }
+
+  meter {
+  }
+
+  /* --- Interactive elements --- */
+
+  details {
+  }
+
+  details[open] {
+  }
+
+  summary {
+  }
+
+  details[open] summary {
+  }
+
+  dialog {
+  }
+
+  dialog::backdrop {
+  }
+
+  /*   
+  Some form fields, `details`, elements with `tabindex`, and possibly other elements can be focussed.
+  You should use `:focus-visible` instead of `:focus` whenever possible.
+  As the former is not yet widely supported, you need to do it as follows:
+  1. set styling on focus
+  2. if browser supports `:focus-visible`, revert/unset the styling from 1)
+  3. if the element matches `:focus-visible`, apply the styling again
+  */
+  :focus {
+  }
+
+  :focus:not(:focus-visible) {
+    outline: 0;
+  }
+
+  :focus-visible {
+    outline: var(--outline, dotted 2px currentColor);
+    outline-offset: var(--outline-offset, 2px);
+  }
+
+  :target {
+    scroll-margin-top: 2ex;
+  }
+
+  [inert],
+  [inert] * {
+  }
+
+  /*
+  Remove all animations and transitions for people that prefer not to see them
+  */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01s !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01s !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

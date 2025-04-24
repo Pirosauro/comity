@@ -1,0 +1,31 @@
+/* 
+Table 
+This file contains the base styles for tables in the cube design system.
+*/
+@layer cube {
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1.5rem 0;
+    overflow-x: scroll;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+  }
+
+  td,
+  th {
+    border: solid var(--border-s) currentColor;
+    text-align: left;
+    padding: 0.5rem;
+  }
+
+  th {
+    font-weight: bold;
+  }
+
+  table caption {
+    padding: 0.5rem;
+    caption-side: bottom;
+  }
+}

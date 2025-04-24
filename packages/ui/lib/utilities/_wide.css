@@ -1,0 +1,6 @@
+@layer cube {
+  .wide {
+    width: 100%;
+    max-width: 100%;
+  }
+}

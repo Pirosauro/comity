@@ -1,0 +1,23 @@
+@layer cube {
+  ul.footnote {
+    counter-reset: item;
+    padding: 0;
+    list-style: none;
+  }
+
+  ul.footnote > li {
+    position: relative;
+    display: block;
+    padding: 0 0 0 1em;
+  }
+
+  ul.footnote > li:before {
+    content: counter(item) ")";
+    counter-increment: item;
+    position: absolute;
+    left: 0.25em;
+    top: 0.25em;
+    vertical-align: super;
+    font-size: var(--font-size-xs); /* Shouldn't be relative? */
+  }
+}

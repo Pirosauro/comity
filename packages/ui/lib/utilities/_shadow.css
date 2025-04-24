@@ -1,0 +1,34 @@
+@layer cube {
+  /* .shadow {
+    display: block;
+    position: relative;
+  }
+
+  .shadow:not(a)::before {
+    background-color: var(--shadow-color, currentColor);
+    border-radius: inherit;
+    bottom: -0.5rem;
+    content: "";
+    display: block;
+    left: 0.5rem;
+    position: absolute;
+    right: -0.5rem;
+    top: 0.5rem;
+    z-index: -1;
+  } */
+
+  .shadow {
+    box-shadow: 0.35rem 0.35rem 0 var(--shadow-color, currentColor);
+    transition: all var(--transition);
+  }
+  a.shadow:hover {
+    box-shadow: 0 0 0 0 var(--shadow-color, currentColor);
+    transform: translate(0.175rem, 0.175rem);
+  }
+
+  .text-shadow {
+    text-shadow: 0 -1px 0 var(--shadow-color), -1px 0px 0 var(--shadow-color),
+      0 1px 0 var(--shadow-color), 1px 0px 0 var(--shadow-color),
+      0.0325em 0.065em 0 var(--shadow-color);
+  }
+}

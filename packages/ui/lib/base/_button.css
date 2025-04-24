@@ -1,0 +1,29 @@
+/* 
+Buttons
+--------------------------------------------------
+This file contains the button and the CTA styles for the application.
+It includes styles for buttons, input elements, and custom button classes.
+*/
+
+@layer cube {
+  button,
+  input[type="submit"],
+  input[type="reset"],
+  input[type="button"],
+  .button {
+    cursor: var(--cursor-pointer, pointer);
+    display: inline-block;
+    padding: var(--space-xs) var(--space-s);
+    text-align: center;
+    text-decoration: none;
+  }
+
+  button:disabled,
+  input[type="submit"]:disabled,
+  input[type="reset"]:disabled, 
+  input[type="button"]:disabled,
+  /* For disabled link styles, used with role=link (https://www.scottohara.me/blog/2021/05/28/disabled-links.html) */
+  .button[aria-disabled="true"] {
+    cursor: var(--cursor-not-allowed, not-allowed);
+  }
+}

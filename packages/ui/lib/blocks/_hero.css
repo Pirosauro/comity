@@ -1,0 +1,18 @@
+@layer cube {
+  .hero {
+    --region-space: 8rem;
+
+    padding-inline: var(--space-s-m);
+    text-align: center;
+  }
+
+  /* 
+  Ensure direct decending elements maintain a consistent flow space when hero is used with .flow. 
+  Center align elements.
+  */
+  .hero > * {
+    --flow-space: 1rem;
+
+    margin-inline: auto;
+  }
+}

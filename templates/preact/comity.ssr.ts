@@ -15,6 +15,9 @@ export default defineConfig(({ mode }) => {
     build: {
       emptyOutDir: true,
     },
+    css: {
+      minify: mode === 'production',
+    },
     ssr: {
       external: ['react', 'react-dom', 'react-dom/server'],
     },

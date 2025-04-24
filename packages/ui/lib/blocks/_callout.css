@@ -1,0 +1,11 @@
+@layer cube {
+  .callout {
+    padding: var(--space-xs-s);
+    border: dotted 0.125rem currentColor;
+    max-width: var(--width-l);
+  }
+
+  .callout > * {
+    line-height: var(--line-height);
+  }
+}
