@@ -8,6 +8,8 @@
       "@comity/react",
       "@comity/islands",
       "@comity/graphql",
+      "@comity/errors",
+      "@comity/ui",
       "create-comity"
     ]
   ],

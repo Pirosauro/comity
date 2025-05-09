@@ -1,0 +1,23 @@
+{
+  "name": "@comity/errors",
+  "type": "module",
+  "version": "0.4.6",
+  "author": "Filippo Bovo <hello@filippobovo.com>",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.17",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.3"
+  }
+}

@@ -12,18 +12,18 @@
     "@comity/islands": "workspace:*",
     "@comity/react": "workspace:*",
     "@nanostores/react": "^1.0.0",
-    "hono": "^4.7.6",
+    "hono": "^4.7.8",
     "nanostores": "^1.0.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250412.0",
+    "@cloudflare/workers-types": "^4.20250509.0",
     "@hono/vite-cloudflare-pages": "^0.4.2",
     "@hono/vite-dev-server": "^0.19.0",
-    "@types/react": "^18.3.20",
-    "@types/react-dom": "^18.3.6",
-    "vite": "^6.2.6",
-    "wrangler": "^4.10.0"
+    "@types/react": "^18.3.21",
+    "@types/react-dom": "^18.3.7",
+    "vite": "^6.3.5",
+    "wrangler": "^4.14.4"
   }
 }
