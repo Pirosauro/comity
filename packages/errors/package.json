@@ -1,7 +1,7 @@
 {
   "name": "@comity/errors",
   "type": "module",
-  "version": "0.4.6",
+  "version": "0.4.7",
   "author": "Filippo Bovo <hello@filippobovo.com>",
   "license": "MIT",
   "main": "./dist/index.js",

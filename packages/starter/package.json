@@ -1,6 +1,6 @@
 {
   "name": "create-comity",
-  "version": "0.4.6",
+  "version": "0.4.7",
   "description": "Starter for Comity",
   "type": "module",
   "main": "dist/index.js",
