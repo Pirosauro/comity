@@ -67,12 +67,21 @@ export const sortRoutes = (routes: string[]): string[] => {
     result.push(
       ...groups[directory]
         .sort((a, b) => {
-          // Sort special files first
-          if (a[0] === '_' || (a[0] === '[' && b[0] !== '[')) {
+          // Sort special files starting with '_' always on top
+          if (a[0] === '_') {
+            return -1;
+          }
+
+          if (b[0] === '_') {
             return 1;
           }
 
-          if (a[0] !== '[' && b[0] === '[') {
+          // Sort files with ':' after others
+          if (a[0] === ':' && b[0] !== ':') {
+            return 1;
+          }
+
+          if (a[0] !== ':' && b[0] === ':') {
             return -1;
           }
 
