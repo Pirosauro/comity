@@ -55,7 +55,7 @@ A flipped version where the sidebar is on the right
       position: sticky;
       top: 2rem;
       overflow: auto;
-      height: 100vh;
+      height: 100%;
     }
   }
 }

@@ -32,72 +32,38 @@ export const normalizePath = (str: string): string => {
  * @returns {string[]} - The sorted array of route paths.
  */
 export const sortRoutes = (routes: string[]): string[] => {
-  const groups: Record<string, string[]> = {};
+  const getRank = (segment: string): number => {
+    if (segment.startsWith('_')) return 0; // highest priority
+    if (segment.includes('*') || segment.includes('[...')) return 1; // wildcard
+    if (segment.startsWith(':') || segment.startsWith('[')) return 3; // dynamic
 
-  // Arrange files by folder
-  routes.forEach((path) => {
-    const parts = path.replace(/^\//, '').split('/');
-    const filename = parts.pop();
-    const directory = parts.length === 0 ? '/' : `/${parts.join('/')}/`;
+    return 2; // static
+  };
 
-    // Initialize group if it doesn't exist
-    if (!groups[directory]) {
-      groups[directory] = [];
-    }
+  return routes
+    .sort((a, b) => {
+      const aParts = a.replace(/^\//, '').split('/');
+      const bParts = b.replace(/^\//, '').split('/');
 
-    if (filename) {
-      groups[directory].push(filename);
-    }
-  });
+      const len = Math.max(aParts.length, bParts.length);
 
-  // Sort groups by length - longer paths first
-  const index = Object.keys(groups).sort((a, b) => {
-    if (a.length === b.length) {
-      return a.localeCompare(b);
-    }
+      for (let i = 0; i < len; i++) {
+        const aSeg = aParts[i] || '';
+        const bSeg = bParts[i] || '';
 
-    return b.length - a.length;
-  });
+        const aRank = getRank(aSeg);
+        const bRank = getRank(bSeg);
 
-  const result: string[] = [];
-  const replacer = (_: string, p: string) => (p === 'index' ? '' : p);
+        if (aRank !== bRank) return aRank - bRank;
 
-  // Sort files in each directory
-  index.forEach((directory) => {
-    result.push(
-      ...groups[directory]
-        .sort((a, b) => {
-          // Sort special files starting with '_' always on top
-          if (a[0] === '_') {
-            return -1;
-          }
+        if (aSeg !== bSeg) return aSeg.localeCompare(bSeg);
+      }
 
-          if (b[0] === '_') {
-            return 1;
-          }
-
-          // Sort files with ':' after others
-          if (a[0] === ':' && b[0] !== ':') {
-            return 1;
-          }
-
-          if (a[0] !== ':' && b[0] === ':') {
-            return -1;
-          }
-
-          // Normalize and compare filenames
-          const an = a.toLocaleLowerCase().replace(regex, replacer);
-          const bn = b.toLocaleLowerCase().replace(regex, replacer);
-
-          if (an.length === bn.length) {
-            return an.localeCompare(bn);
-          }
-
-          return bn.length - an.length;
-        })
-        .map((s) => directory + s)
-    );
-  });
-
-  return result;
+      // If everything else equal, shorter path wins (root `/`)
+      return aParts.length - bParts.length;
+    })
+    .map((route) => {
+      // Remove leading slash and trailing slash
+      return '/' + route.replace(/^\//, '').replace(/\/$/, '');
+    });
 };

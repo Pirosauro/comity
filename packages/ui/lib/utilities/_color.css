@@ -9,6 +9,9 @@
   .background-brand {
     background-color: var(--color-brand);
   }
+  .background-accent {
+    background-color: var(--color-accent);
+  }
   .background-status-ok {
     background-color: var(--color-status-ok);
   }
@@ -59,6 +62,9 @@
   .color-brand {
     color: var(--color-brand);
   }
+  .color-accent {
+    color: var(--color-accent);
+  }
   .color-status-ok {
     color: var(--color-status-ok);
   }
@@ -108,6 +114,9 @@
   }
   .border-brand {
     border-color: var(--color-brand);
+  }
+  .border-accent {
+    border-color: var(--color-accent);
   }
   .border-status-ok {
     border-color: var(--color-status-ok);
