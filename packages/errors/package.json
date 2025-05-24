@@ -4,6 +4,13 @@
   "version": "0.4.8",
   "author": "Filippo Bovo <hello@filippobovo.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pirosauro/comity.git"
+  },
+  "files": [
+    "./dist"
+  ],
   "main": "./dist/index.js",
   "exports": {
     ".": {
@@ -12,12 +19,17 @@
     }
   },
   "types": "./dist/index.d.ts",
-  "scripts": {
-    "build": "tsc"
-  },
   "devDependencies": {
     "@types/node": "^22.15.21",
     "typescript": "^5.8.3",
     "vitest": "^3.1.4"
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepublish": "tsc"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
   }
 }
