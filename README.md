@@ -1,3 +1,6 @@
+> [!NOTE]
+> Version 1.0 is coming soon (Q1/2026). Stay tuned!
+
 # 🪷 Comity: Greener Framework for the Web
 
 [![codecov](https://codecov.io/gh/Pirosauro/comity/graph/badge.svg)](https://codecov.io/gh/Pirosauro/comity)
