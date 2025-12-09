@@ -1,16 +1,11 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "declaration": true,
-    "esModuleInterop": true,
-    "jsx": "react-jsx",
-    "jsxImportSource": "react",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "jsx": "preserve",
+    "jsxImportSource": "hono/jsx",
     "outDir": "./dist",
-    "skipLibCheck": true,
-    "strict": true,
-    "target": "ES2022",
-    "types": ["node", "vite/client"]
+    "rootDir": "./src"
   },
-  "include": ["./src"]
+  "include": ["src/**/*"],
+  "exclude": ["dist", "node_modules", "**/*.test.ts", "**/__tests__/**"]
 }

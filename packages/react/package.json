@@ -1,22 +1,39 @@
 {
   "name": "@comity/react",
-  "version": "0.3.4",
+  "version": "1.0.0",
+  "description": "React module for server-rendered applications with Comity framework",
   "type": "module",
   "author": "Filippo Bovo <hello@filippobovo.com>",
   "license": "MIT",
+  "homepage": "https://github.com/comityjs/framework#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/comityjs/framework.git"
+  },
+  "bugs": {
+    "url": "https://github.com/comityjs/framework/issues"
+  },
   "keywords": [
-    "hono",
-    "cloudflare",
-    "vite",
+    "comity",
+    "comityjs",
+    "hydration",
+    "ssr",
+    "server-side rendering",
+    "rendering",
+    "islands",
+    "composability",
     "react",
-    "partial hydration",
-    "island architecture"
+    "hono",
+    "framework",
+    "typescript",
+    "javascript"
   ],
   "scripts": {
     "build": "tsc",
     "prepublish": "tsc",
+    "dev": "tsc -b --watch",
     "clean": "tsc --build --clean",
-    "test": "vitest run --coverage"
+    "typecheck": "tsc --noEmit"
   },
   "files": [
     "./dist"
@@ -25,6 +42,15 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./setup": {
+      "types": "./dist/setup.d.ts",
+      "import": "./dist/setup.js"
+    },
+    "./streaming": {
+      "node": "./dist/streaming/index.node.js",
+      "default": "./dist/streaming/index.js",
+      "types": "./dist/streaming/index.d.ts"
     }
   },
   "publishConfig": {
@@ -32,22 +58,17 @@
     "access": "public"
   },
   "dependencies": {
-    "@comity/islands": "workspace:*",
-    "hono": "^4.7.4",
+    "@comity/application": "workspace:*",
+    "@comity/hydration": "workspace:*",
+    "@comity/logger": "workspace:*",
+    "hono": "^4.10.7",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@hono/vite-dev-server": "^0.18.3",
-    "@testing-library/react": "^16.2.0",
-    "@types/jest": "^29.5.14",
-    "@types/node": "^20.17.24",
-    "@types/react": "^18.3.18",
-    "@types/react-dom": "^18.3.5",
-    "@vitest/coverage-v8": "^3.0.8",
-    "jsdom": "^26.0.0",
-    "typescript": "^5.8.2",
-    "vite": "^6.2.1",
-    "vitest": "^3.0.8"
+    "@types/node": "^24.10.1",
+    "@types/react": "^18.3.27",
+    "@types/react-dom": "^18.3.7",
+    "typescript": "^5.9.3"
   }
 }

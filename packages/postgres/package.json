@@ -1,0 +1,78 @@
+{
+  "name": "@comity/postgres",
+  "version": "1.0.0",
+  "description": "Database module for Comity framework with Drizzle ORM and PostgreSQL",
+  "type": "module",
+  "author": "Filippo Bovo <hello@filippobovo.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/comityjs/framework#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/comityjs/framework.git"
+  },
+  "bugs": {
+    "url": "https://github.com/comityjs/framework/issues"
+  },
+  "keywords": [
+    "comity",
+    "comityjs",
+    "database",
+    "drizzle",
+    "drizzle-orm",
+    "postgresql",
+    "postgres",
+    "pg",
+    "orm",
+    "sql",
+    "typescript",
+    "middleware",
+    "hono",
+    "framework"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublish": "tsc",
+    "dev": "tsc -b --watch",
+    "clean": "tsc --build --clean",
+    "typecheck": "tsc --noEmit"
+  },
+  "files": [
+    "./dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./cli": {
+      "types": "./dist/cli/index.d.ts",
+      "import": "./dist/cli/index.js"
+    },
+    "./errors": {
+      "types": "./dist/errors/index.d.ts",
+      "import": "./dist/errors/index.js"
+    },
+    "./setup": {
+      "types": "./dist/setup.d.ts",
+      "import": "./dist/setup.js"
+    }
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.45.0",
+    "hono": "^4.10.7",
+    "pg": "^8.16.3"
+  },
+  "devDependencies": {
+    "@comity/application": "workspace:*",
+    "@comity/cli": "workspace:*",
+    "@comity/core": "workspace:*",
+    "@comity/logger": "workspace:*",
+    "@types/node": "^24.10.1",
+    "@types/pg": "^8.15.6",
+    "typescript": "^5.9.3"
+  }
+}

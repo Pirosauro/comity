@@ -1,0 +1,58 @@
+{
+  "name": "@comity/cli",
+  "version": "1.0.0",
+  "description": "Command Line Interface module for Comity framework",
+  "type": "module",
+  "author": "Filippo Bovo <hello@filippobovo.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/comityjs/framework#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/comityjs/framework.git"
+  },
+  "bugs": {
+    "url": "https://github.com/comityjs/framework/issues"
+  },
+  "keywords": [
+    "comity",
+    "comityjs",
+    "cli",
+    "command-line",
+    "commander",
+    "typescript",
+    "framework"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublish": "tsc",
+    "dev": "tsc -b --watch",
+    "clean": "tsc --build --clean",
+    "typecheck": "tsc --noEmit"
+  },
+  "files": [
+    "./dist"
+  ],
+  "bin": {
+    "comity": "./dist/bin/cli.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "commander": "^14.0.2",
+    "pino": "^10.1.0",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "typescript": "^5.9.3"
+  }
+}

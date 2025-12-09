@@ -1,0 +1,56 @@
+{
+  "name": "@comity/core",
+  "version": "1.0.0",
+  "description": "Core framework for building modular applications with Hono",
+  "type": "module",
+  "author": "Filippo Bovo <hello@filippobovo.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/comityjs/framework#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/comityjs/framework.git"
+  },
+  "bugs": {
+    "url": "https://github.com/comityjs/framework/issues"
+  },
+  "keywords": [
+    "comity",
+    "comityjs",
+    "hono",
+    "framework",
+    "modular",
+    "web",
+    "typescript"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublish": "tsc",
+    "dev": "tsc -b --watch",
+    "clean": "tsc --build --clean",
+    "typecheck": "tsc --noEmit"
+  },
+  "files": [
+    "./dist/errors",
+    "./dist/patterns"
+  ],
+  "exports": {
+    "./errors": {
+      "types": "./dist/errors/index.d.ts",
+      "import": "./dist/errors/index.js"
+    },
+    "./patterns": {
+      "types": "./dist/patterns/index.d.ts",
+      "import": "./dist/patterns/index.js"
+    }
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "sideEffects": false,
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "typescript": "^5.9.3"
+  }
+}
