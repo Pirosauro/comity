@@ -15,6 +15,7 @@ vi.mock("../utils/index.js", () => ({
   handleLogin: vi.fn(),
   handleLogout: vi.fn(),
   handleTokenRefresh: vi.fn(),
+  handleRefresh: vi.fn(),
   signToken: vi.fn(),
 }));
 
@@ -63,8 +64,9 @@ describe("Auth Module Setup", () => {
     });
 
     it("should have required dependencies", () => {
-      expect(setup.dependsOn).toContain("@comity/core");
-      expect(setup.dependsOn).toHaveLength(1);
+      expect(setup.requires).toContain("@comity/application");
+      expect(setup.requires).toContain("@comity/logger");
+      expect(setup.requires).toHaveLength(2);
     });
 
     it("should have empty incompatibleWith array", () => {
@@ -72,7 +74,7 @@ describe("Auth Module Setup", () => {
     });
 
     it("should have setup function", () => {
-      expect(setup.setup).toBeInstanceOf(Function);
+      expect(typeof setup.setup).toBe("function");
     });
   });
 
@@ -98,11 +100,11 @@ describe("Auth Module Setup", () => {
       const mockMiddleware = vi.fn();
       vi.mocked(middleware.createJWTMiddleware).mockReturnValue(mockMiddleware);
 
-      // Patch onHook to immediately invoke the callback for @comity/core:initialized
+      // Patch onHook to immediately invoke the callback for @comity/application:initialized
       const onHookSpy = vi
         .spyOn(mockContext, "onHook")
         .mockImplementation((hook, cb) => {
-          if (hook === "@comity/core:initialized") {
+          if (hook === "@comity/application:initialized") {
             cb((mockContext as any).app);
           }
         });
@@ -115,8 +117,6 @@ describe("Auth Module Setup", () => {
         mockContext
       );
       expect((mockContext as any).app.use).toHaveBeenCalledWith(mockMiddleware);
-      // Optionally check api.use if your implementation applies to both
-      // expect(mockContext.api.use).toHaveBeenCalledWith(mockMiddleware);
       onHookSpy.mockRestore();
     });
 
@@ -150,11 +150,11 @@ describe("Auth Module Setup", () => {
         },
       };
 
-      // Patch onHook to immediately invoke the callback for @comity/core:initialized
+      // Patch onHook to immediately invoke the callback for @comity/application:initialized
       const onHookSpy = vi
         .spyOn(mockContext, "onHook")
         .mockImplementation((hook, cb) => {
-          if (hook === "@comity/core:initialized") {
+          if (hook === "@comity/application:initialized") {
             cb((mockContext as any).app);
           }
         });
@@ -267,67 +267,64 @@ describe("Auth Module Setup", () => {
     });
 
     describe("refreshToken method", () => {
-      it("should call handleTokenRefresh and emit token-refreshed event", async () => {
-        const mockUser = { id: "user-1", roles: { admin: ["read"] } };
+      it("should call handleRefresh and emit token-refreshed event", async () => {
         const mockHonoContext = {
           req: {
             header: vi.fn().mockReturnValue("Bearer old-token"),
           },
         };
-        const mockNewToken = "new-jwt-token";
+        vi.mocked(utils.handleRefresh).mockResolvedValue({
+          outdated: "old-token",
+          current: "new-jwt-token",
+        });
 
-        vi.mocked(utils.handleTokenRefresh).mockResolvedValue(mockNewToken);
+        const result = await authService.refreshToken(mockHonoContext);
 
-        const result = await authService.refreshToken(
-          mockUser,
-          mockHonoContext
-        );
-
-        expect(utils.handleTokenRefresh).toHaveBeenCalledWith(
-          mockUser,
+        expect(utils.handleRefresh).toHaveBeenCalledWith(
           mockHonoContext,
           validOptions
         );
-        // Find the last call to emit for token-refreshed
         const emitCalls = vi.mocked(mockContext.emit).mock.calls;
         const tokenRefreshedCall = emitCalls.find(
           (call) => call[0] === "@comity/auth:token-refreshed"
         );
         expect(tokenRefreshedCall).toBeDefined();
         expect(tokenRefreshedCall && tokenRefreshedCall[1]).toEqual({
-          user: mockUser,
           outdated: "old-token",
-          new: mockNewToken,
-          refreshedAt: expect.any(Number),
+          current: "new-jwt-token",
+          timestamp: expect.any(Number),
         });
-        expect(result).toBe(mockNewToken);
+        expect(result).toBe("new-jwt-token");
       });
 
       it("should handle missing authorization header", async () => {
-        const mockUser = { id: "user-1", roles: { admin: ["read"] } };
         const mockHonoContext = {
           req: {
             header: vi.fn().mockReturnValue(undefined),
           },
         };
-        const mockNewToken = "new-jwt-token";
+        vi.mocked(utils.handleRefresh).mockResolvedValue({
+          outdated: "",
+          current: "new-jwt-token",
+        });
 
-        vi.mocked(utils.handleTokenRefresh).mockResolvedValue(mockNewToken);
+        const result = await authService.refreshToken(mockHonoContext);
 
-        await authService.refreshToken(mockUser, mockHonoContext);
-
-        // Find the last call to emit for token-refreshed
+        expect(utils.handleRefresh).toHaveBeenCalledWith(
+          mockHonoContext,
+          validOptions
+        );
         const emitCalls = vi.mocked(mockContext.emit).mock.calls;
         const tokenRefreshedCall = emitCalls.find(
           (call) => call[0] === "@comity/auth:token-refreshed"
         );
         expect(tokenRefreshedCall).toBeDefined();
         expect(tokenRefreshedCall && tokenRefreshedCall[1]).toEqual({
-          user: mockUser,
           outdated: "",
-          new: mockNewToken,
-          refreshedAt: expect.any(Number),
+          current: "new-jwt-token",
+          timestamp: expect.any(Number),
         });
+        expect(result).toBe("new-jwt-token");
       });
     });
 
@@ -356,12 +353,12 @@ describe("Auth Module Setup", () => {
       expect(setup).toHaveProperty("name");
       expect(setup).toHaveProperty("version");
       expect(setup).toHaveProperty("setup");
-      expect(setup).toHaveProperty("dependsOn");
+      expect(setup).toHaveProperty("requires");
       expect(setup).toHaveProperty("incompatibleWith");
 
       expect(typeof setup.name).toBe("string");
       expect(typeof setup.version).toBe("string");
-      expect(Array.isArray(setup.dependsOn)).toBe(true);
+      expect(Array.isArray(setup.requires)).toBe(true);
       expect(Array.isArray(setup.incompatibleWith)).toBe(true);
       expect(typeof setup.setup).toBe("function");
     });
@@ -371,7 +368,7 @@ describe("Auth Module Setup", () => {
       expect(setup.name).toBe("@comity/auth");
 
       // Dependencies should be strings
-      setup.dependsOn?.forEach((dep: string) => {
+      setup.requires?.forEach((dep: string) => {
         expect(typeof dep).toBe("string");
       });
 

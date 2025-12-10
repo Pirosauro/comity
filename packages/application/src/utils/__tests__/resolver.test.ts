@@ -170,7 +170,7 @@ describe("resolveModuleOrder", () => {
       ];
 
       expect(() => resolveModuleOrder(modules)).toThrow(
-        "Cycle detected: module-a -> module-b -> module-a"
+        "Cycle detected: module-a → module-b → module-a"
       );
     });
 
@@ -183,7 +183,7 @@ describe("resolveModuleOrder", () => {
       ];
 
       expect(() => resolveModuleOrder(modules)).toThrow(
-        "Cycle detected: module-a -> module-b -> module-c -> module-d -> module-a"
+        "Cycle detected: module-a → module-b → module-c → module-d → module-a"
       );
     });
 
@@ -193,7 +193,7 @@ describe("resolveModuleOrder", () => {
       ];
 
       expect(() => resolveModuleOrder(modules)).toThrow(
-        "Cycle detected: module-a -> module-a"
+        "Cycle detected: module-a → module-a"
       );
     });
 
@@ -246,6 +246,7 @@ describe("resolveModuleOrder", () => {
 
       for (let i = 0; i < chainLength; i++) {
         const dependsOn = i > 0 ? [`module-${i - 1}`] : undefined;
+
         modules.push(createModule(`module-${i}`, dependsOn));
       }
 
@@ -324,43 +325,43 @@ describe("resolveModuleOrder", () => {
   describe("integration scenarios", () => {
     it("should work with real-world module structure", () => {
       const modules: ApplicationModuleMeta[] = [
-        createModule("@myapp/frontend", ["@myapp/api", "@myapp/auth"]),
-        createModule("@myapp/api", ["@myapp/database", "@myapp/validation"]),
-        createModule("@myapp/auth", ["@myapp/database", "@myapp/crypto"]),
-        createModule("@myapp/validation", ["@myapp/config"]),
-        createModule("@myapp/crypto", ["@myapp/config"]),
-        createModule("@myapp/database", ["@myapp/config"]),
-        createModule("@myapp/config"),
+        createModule("@test/frontend", ["@test/api", "@test/auth"]),
+        createModule("@test/api", ["@test/database", "@test/validation"]),
+        createModule("@test/auth", ["@test/database", "@test/crypto"]),
+        createModule("@test/validation", ["@test/config"]),
+        createModule("@test/crypto", ["@test/config"]),
+        createModule("@test/database", ["@test/config"]),
+        createModule("@test/config"),
       ];
 
       const result = resolveModuleOrder(modules);
       const names = result.map((m) => m.name);
 
       // Verify the ordering constraints
-      expect(names.indexOf("@myapp/config")).toBe(0);
-      expect(names.indexOf("@myapp/frontend")).toBe(names.length - 1);
+      expect(names.indexOf("@test/config")).toBe(0);
+      expect(names.indexOf("@test/frontend")).toBe(names.length - 1);
 
       // All config dependents should come after config
-      ["@myapp/database", "@myapp/validation", "@myapp/crypto"].forEach(
+      ["@test/database", "@test/validation", "@test/crypto"].forEach(
         (module) => {
           expect(names.indexOf(module)).toBeGreaterThan(
-            names.indexOf("@myapp/config")
+            names.indexOf("@test/config")
           );
         }
       );
 
       // Auth and API should come after their dependencies
-      expect(names.indexOf("@myapp/auth")).toBeGreaterThan(
-        names.indexOf("@myapp/database")
+      expect(names.indexOf("@test/auth")).toBeGreaterThan(
+        names.indexOf("@test/database")
       );
-      expect(names.indexOf("@myapp/auth")).toBeGreaterThan(
-        names.indexOf("@myapp/crypto")
+      expect(names.indexOf("@test/auth")).toBeGreaterThan(
+        names.indexOf("@test/crypto")
       );
-      expect(names.indexOf("@myapp/api")).toBeGreaterThan(
-        names.indexOf("@myapp/database")
+      expect(names.indexOf("@test/api")).toBeGreaterThan(
+        names.indexOf("@test/database")
       );
-      expect(names.indexOf("@myapp/api")).toBeGreaterThan(
-        names.indexOf("@myapp/validation")
+      expect(names.indexOf("@test/api")).toBeGreaterThan(
+        names.indexOf("@test/validation")
       );
     });
 

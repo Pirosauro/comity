@@ -1,6 +1,7 @@
 import type { Context } from "hono";
 import type { AuthModuleOptions } from "../types.js";
 import { deleteCookie } from "hono/cookie";
+import { DEFAULT_COOKIE_NAME } from "../constants.js";
 
 /**
  * Completes user logout by clearing authentication cookies and context.
@@ -27,7 +28,7 @@ import { deleteCookie } from "hono/cookie";
  */
 export function handleLogout(c: Context, options: AuthModuleOptions): void {
   // Clear authentication cookie
-  const cookieName = options.cookie?.name || "auth-token";
+  const cookieName = options.cookie?.name || DEFAULT_COOKIE_NAME;
 
   deleteCookie(c, cookieName);
 

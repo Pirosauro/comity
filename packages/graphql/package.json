@@ -51,10 +51,10 @@
     "@comity/logger": "workspace:*",
     "@envelop/core": "^5.4.0",
     "graphql": "^16.12.0",
-    "hono": "^4.10.7"
+    "hono": "^4.10.8"
   },
   "devDependencies": {
-    "@types/node": "^24.10.1",
+    "@types/node": "^24.10.2",
     "typescript": "^5.9.3"
   },
   "peerDependencies": {

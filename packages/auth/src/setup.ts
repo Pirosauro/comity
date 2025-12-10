@@ -19,6 +19,44 @@ import {
   signToken,
 } from "./utils/index.js";
 
+/**
+ * Authentication module setup for Comity framework.
+ *
+ * @remarks
+ * This module provides JWT-based authentication with middleware, token management,
+ * and comprehensive event system. It integrates with Hono for request handling
+ * and provides a clean API for login, logout, token refresh, and user management.
+ *
+ * Features:
+ * - JWT token generation and verification using JOSE
+ * - Automatic middleware for request authentication
+ * - Cookie and header-based token extraction
+ * - Token refresh with configurable windows
+ * - Two-factor authentication support
+ * - Comprehensive event system for monitoring
+ * - Type-safe user context in Hono requests
+ *
+ * @example
+ * ```typescript
+ * // Basic setup
+ * import { createApplication } from "@comity/application";
+ * import { authSetup } from "@comity/auth";
+ *
+ * const app = createApplication([
+ *   authSetup({
+ *     secret: "your-jwt-secret",
+ *     lifetime: 3600, // 1 hour
+ *   })
+ * ]);
+ *
+ * // Using the auth service
+ * app.post("/login", async (c) => {
+ *   const authService = c.get("auth");
+ *   const token = await authService.login({ id: "user-123" }, c);
+ *   return c.json({ token });
+ * });
+ * ```
+ */
 export const setup: ApplicationModuleMeta<
   AuthModuleOptions,
   ApplicationContext & AuthModuleContext & LoggerModuleContext

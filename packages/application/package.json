@@ -53,12 +53,12 @@
   "dependencies": {
     "@comity/cli": "workspace:*",
     "@comity/core": "workspace:*",
-    "hono": "^4.10.7",
+    "hono": "^4.10.8",
     "vite": "^7.2.7",
     "zod": "^4.1.13"
   },
   "devDependencies": {
-    "@types/node": "^24.10.1",
+    "@types/node": "^24.10.2",
     "typescript": "^5.9.3"
   }
 }

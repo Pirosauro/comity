@@ -1,5 +1,6 @@
 import type { AuthModuleOptions, AuthUser, JWTPayload } from "../types.js";
 import { SignJWT } from "jose";
+import { DEFAULT_TOKEN_LIFETIME } from "../constants.js";
 
 /**
  * Signs a JWT token for the given user.
@@ -30,7 +31,8 @@ export async function signToken(
     .setProtectedHeader({ alg: options.algorithm || "HS256" })
     .setIssuedAt()
     .setExpirationTime(
-      Math.floor(Date.now() / 1000) + (options.lifetime || 60 * 60)
+      Math.floor(Date.now() / 1000) +
+        (options.lifetime || DEFAULT_TOKEN_LIFETIME)
     )
     .setSubject(user.id);
 

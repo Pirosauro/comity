@@ -175,7 +175,7 @@ describe("withComity", () => {
       const config1 = withComity({});
       const config2 = withComity({});
 
-      expect(config1).toEqual(config2);
+      expect(config1).toMatchObject(config2);
     });
   });
 

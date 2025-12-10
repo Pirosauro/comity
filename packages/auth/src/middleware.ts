@@ -12,6 +12,7 @@ import type {
 } from "./types.js";
 import { jwtVerify } from "jose";
 import { extractToken, getFailureReason } from "./utils/index.js";
+import { JWTPayloadSchema } from "./validation.js";
 
 /**
  * Creates JWT authentication middleware.
@@ -74,13 +75,35 @@ export const createJWTMiddleware = (
         audience: options.audience,
       });
 
+      // Validate payload structure
+      const validationResult = JWTPayloadSchema.safeParse(payload);
+      if (!validationResult.success) {
+        await ctx.emit<AuthModuleEvents["@comity/auth:authentication-failed"]>(
+          "@comity/auth:authentication-failed",
+          {
+            reason: "malformed",
+            context: "middleware",
+            ip: c.req.header("x-forwarded-for") || c.req.header("x-real-ip"),
+            userAgent: c.req.header("user-agent"),
+          }
+        );
+
+        logger.error(validationResult.error, "Invalid JWT payload structure");
+        return next();
+      }
+
+      const validatedPayload = validationResult.data;
+
       // Check if token is expired
-      if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) {
+      if (
+        validatedPayload.exp &&
+        validatedPayload.exp < Math.floor(Date.now() / 1000)
+      ) {
         await ctx.emit<AuthModuleEvents["@comity/auth:token-expired"]>(
           "@comity/auth:token-expired",
           {
-            user: payload.user,
-            expiredAt: payload.exp,
+            user: validatedPayload.user,
+            expiredAt: validatedPayload.exp,
             token,
           }
         );
@@ -90,7 +113,7 @@ export const createJWTMiddleware = (
           {
             reason: "expired",
             context: "middleware",
-            userId: payload.sub,
+            userId: validatedPayload.sub,
             ip: c.req.header("x-forwarded-for") || c.req.header("x-real-ip"),
             userAgent: c.req.header("user-agent"),
           }
@@ -101,18 +124,18 @@ export const createJWTMiddleware = (
 
       await ctx.emit<AuthModuleEvents["@comity/auth:token-verified"]>(
         "@comity/auth:token-verified",
-        payload
+        validatedPayload
       );
 
-      if (payload.sub) {
+      if (validatedPayload.sub) {
         // Trigger user hook for other modules
-        ctx.trigger<AuthModuleHooks["@comity/auth:user"]>(
+        await ctx.trigger<AuthModuleHooks["@comity/auth:user"]>(
           "@comity/auth:user",
-          payload.user
+          validatedPayload.user
         );
 
         // Set context
-        c.set("user", payload.user);
+        c.set("user", validatedPayload.user);
       }
     } catch (error) {
       const message = (error as Error).message || "Unknown error";

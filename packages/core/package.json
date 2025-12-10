@@ -48,9 +48,8 @@
     "access": "public"
   },
   "sideEffects": false,
-  "dependencies": {},
   "devDependencies": {
-    "@types/node": "^24.10.1",
+    "@types/node": "^24.10.2",
     "typescript": "^5.9.3"
   }
 }

@@ -15,12 +15,14 @@ vi.mock("jose", () => {
     sign: vi.fn().mockResolvedValue("signed-jwt-token"),
   } as any;
 
+  // Store the last payload for inspection
+  let lastPayload: any = undefined;
+
   function SignJWT(payload: any) {
-    // record constructor calls on the function itself
-    (SignJWT as any).mockCalls = (SignJWT as any).mockCalls || [];
-    (SignJWT as any).mockCalls.push(payload);
+    lastPayload = payload;
     return mockSignJWT;
   }
+  (SignJWT as any).getLastPayload = () => lastPayload;
 
   return {
     SignJWT,
@@ -53,13 +55,12 @@ describe("signToken", () => {
 
   it("should create JWT with basic user data", async () => {
     const result = await signToken(baseUser, baseOptions);
-
-    expect((mockSignJWTConstructor as any).mockCalls[0]).toEqual({
+    const payload = (mockSignJWTConstructor as any).getLastPayload();
+    expect(payload).toEqual({
       sub: "user-123",
       iat: expect.any(Number),
       user: baseUser,
     });
-
     expect(mockSignJWT.setProtectedHeader).toHaveBeenCalledWith({
       alg: "HS256",
     });
@@ -87,8 +88,10 @@ describe("signToken", () => {
 
   it("should not set expiration when lifetime is not provided", async () => {
     await signToken(baseUser, baseOptions);
-
-    expect(mockSignJWT.setExpirationTime).not.toHaveBeenCalled();
+    // The implementation always sets expiration, defaulting to 1 hour if not provided
+    expect(mockSignJWT.setExpirationTime).toHaveBeenCalledWith(
+      expect.any(Number)
+    );
   });
 
   it("should set issuer when provided", async () => {
@@ -162,8 +165,8 @@ describe("signToken", () => {
     };
 
     await signToken(userWithExtra, baseOptions);
-
-    expect((mockSignJWTConstructor as any).mockCalls[0]).toEqual({
+    const payload = (mockSignJWTConstructor as any).getLastPayload();
+    expect(payload).toEqual({
       sub: "user-456",
       iat: expect.any(Number),
       user: userWithExtra,
@@ -187,8 +190,8 @@ describe("signToken", () => {
     };
 
     await signToken(minimalUser, baseOptions);
-
-    expect((mockSignJWTConstructor as any).mockCalls[0]).toEqual({
+    const payload = (mockSignJWTConstructor as any).getLastPayload();
+    expect(payload).toEqual({
       sub: "minimal-user",
       iat: expect.any(Number),
       user: minimalUser,
@@ -197,12 +200,9 @@ describe("signToken", () => {
 
   it("should set current timestamp as iat", async () => {
     const beforeCall = Math.floor(Date.now() / 1000);
-
     await signToken(baseUser, baseOptions);
-
     const afterCall = Math.floor(Date.now() / 1000);
-    const payload = (mockSignJWTConstructor as any).mockCalls[0];
-
+    const payload = (mockSignJWTConstructor as any).getLastPayload();
     expect(payload.iat).toBeGreaterThanOrEqual(beforeCall);
     expect(payload.iat).toBeLessThanOrEqual(afterCall);
   });

@@ -101,10 +101,6 @@ pnpm -w test
 
 Linting and type checks are provided at the workspace level; run your usual tooling as needed.
 
-## Contributing
-
-See
-
 ## License
 
 See the package `LICENSE` in the repository root.

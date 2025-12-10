@@ -7,6 +7,19 @@ vi.mock("hono/cookie", () => ({
 }));
 
 describe("extractToken", () => {
+  it("should return null if header extraction throws an error", () => {
+    const context = {
+      req: {
+        header: vi.fn(() => {
+          throw new Error("Header error");
+        }),
+      },
+      env: {},
+      executionCtx: {},
+    };
+    const token = extractToken(context as any, defaultOptions);
+    expect(token).toBeNull();
+  });
   let mockGetCookie: any;
 
   const createMockContext = (headers: Record<string, string> = {}) => ({
@@ -16,6 +29,11 @@ describe("extractToken", () => {
     env: {},
     executionCtx: {},
   });
+
+  const defaultOptions = {
+    header: { name: "authorization", prefix: "Bearer " },
+    cookie: { name: "auth-token" },
+  };
 
   beforeEach(async () => {
     const { getCookie } = await import("hono/cookie");
@@ -28,8 +46,7 @@ describe("extractToken", () => {
       const context = createMockContext({
         authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
       });
-
-      const token = extractToken(context as any);
+      const token = extractToken(context as any, defaultOptions);
       expect(token).toBe("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9");
     });
 
@@ -37,8 +54,7 @@ describe("extractToken", () => {
       const context = createMockContext({
         authorization: "Basic dXNlcjpwYXNz",
       });
-
-      const token = extractToken(context as any);
+      const token = extractToken(context as any, defaultOptions);
       expect(token).toBeNull();
     });
 
@@ -46,8 +62,7 @@ describe("extractToken", () => {
       const context = createMockContext({
         authorization: "",
       });
-
-      const token = extractToken(context as any);
+      const token = extractToken(context as any, defaultOptions);
       expect(token).toBeNull();
     });
 
@@ -55,8 +70,7 @@ describe("extractToken", () => {
       const context = createMockContext({
         authorization: "Bearer",
       });
-
-      const token = extractToken(context as any);
+      const token = extractToken(context as any, defaultOptions);
       expect(token).toBeNull();
     });
 
@@ -64,8 +78,7 @@ describe("extractToken", () => {
       const context = createMockContext({
         authorization: "Bearer ",
       });
-
-      const token = extractToken(context as any);
+      const token = extractToken(context as any, defaultOptions);
       expect(token).toBeNull();
     });
 
@@ -73,8 +86,7 @@ describe("extractToken", () => {
       const context = createMockContext({
         authorization: "Bearer   eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9   ",
       });
-
-      const token = extractToken(context as any);
+      const token = extractToken(context as any, defaultOptions);
       expect(token).toBe("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9");
     });
   });
@@ -83,8 +95,8 @@ describe("extractToken", () => {
     it("should extract token from cookie when cookieName is provided", () => {
       const context = createMockContext();
       mockGetCookie.mockReturnValue("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9");
-
-      const token = extractToken(context as any, "auth-token");
+      const options = { ...defaultOptions, cookie: { name: "auth-token" } };
+      const token = extractToken(context as any, options);
       expect(token).toBe("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9");
       expect(mockGetCookie).toHaveBeenCalledWith(context, "auth-token");
     });
@@ -92,8 +104,8 @@ describe("extractToken", () => {
     it("should return null when cookie doesn't exist", () => {
       const context = createMockContext();
       mockGetCookie.mockReturnValue(undefined);
-
-      const token = extractToken(context as any, "auth-token");
+      const options = { ...defaultOptions, cookie: { name: "auth-token" } };
+      const token = extractToken(context as any, options);
       expect(token).toBeNull();
       expect(mockGetCookie).toHaveBeenCalledWith(context, "auth-token");
     });
@@ -101,8 +113,8 @@ describe("extractToken", () => {
     it("should return null when no cookies are available", () => {
       const context = createMockContext();
       mockGetCookie.mockReturnValue(undefined);
-
-      const token = extractToken(context as any, "auth-token");
+      const options = { ...defaultOptions, cookie: { name: "auth-token" } };
+      const token = extractToken(context as any, options);
       expect(token).toBeNull();
     });
 
@@ -111,8 +123,8 @@ describe("extractToken", () => {
         authorization: "Bearer header-token",
       });
       mockGetCookie.mockReturnValue("cookie-token");
-
-      const token = extractToken(context as any, "auth-token");
+      const options = { ...defaultOptions, cookie: { name: "auth-token" } };
+      const token = extractToken(context as any, options);
       expect(token).toBe("header-token");
       // Cookie should not be checked when Authorization header is valid
       expect(mockGetCookie).not.toHaveBeenCalled();
@@ -123,8 +135,8 @@ describe("extractToken", () => {
         authorization: "Basic dXNlcjpwYXNz", // Not Bearer
       });
       mockGetCookie.mockReturnValue("cookie-token");
-
-      const token = extractToken(context as any, "auth-token");
+      const options = { ...defaultOptions, cookie: { name: "auth-token" } };
+      const token = extractToken(context as any, options);
       expect(token).toBe("cookie-token");
       expect(mockGetCookie).toHaveBeenCalledWith(context, "auth-token");
     });
@@ -133,15 +145,14 @@ describe("extractToken", () => {
   describe("Edge cases", () => {
     it("should return null when no token sources are available", () => {
       const context = createMockContext();
-
-      const token = extractToken(context as any);
+      mockGetCookie.mockReturnValue(undefined);
+      const token = extractToken(context as any, defaultOptions);
       expect(token).toBeNull();
     });
 
     it("should return null when context is missing required methods", () => {
       const context = {};
-
-      const token = extractToken(context as any);
+      const token = extractToken(context as any, defaultOptions);
       expect(token).toBeNull();
     });
 
@@ -149,8 +160,8 @@ describe("extractToken", () => {
       const context = createMockContext({
         authorization: "Bearer valid-token",
       });
-
-      const token = extractToken(context as any, undefined);
+      const options = { ...defaultOptions, cookie: undefined };
+      const token = extractToken(context as any, options);
       expect(token).toBe("valid-token");
     });
 
@@ -158,8 +169,8 @@ describe("extractToken", () => {
       const context = createMockContext({
         authorization: "Bearer valid-token",
       });
-
-      const token = extractToken(context as any, null as any);
+      const options = { ...defaultOptions, cookie: null as any };
+      const token = extractToken(context as any, options);
       expect(token).toBe("valid-token");
     });
 
@@ -172,8 +183,8 @@ describe("extractToken", () => {
           throw new Error("Context error");
         }),
       };
-
-      const token = extractToken(context as any, "auth-token");
+      const options = { ...defaultOptions, cookie: { name: "auth-token" } };
+      const token = extractToken(context as any, options);
       expect(token).toBe("valid-token");
     });
 
@@ -188,8 +199,8 @@ describe("extractToken", () => {
         executionCtx: {},
       };
       mockGetCookie.mockReturnValue("cookie-token");
-
-      const token = extractToken(context as any, "auth-token");
+      const options = { ...defaultOptions, cookie: { name: "auth-token" } };
+      const token = extractToken(context as any, options);
       expect(token).toBeNull(); // Should gracefully handle the error
     });
   });
@@ -199,8 +210,7 @@ describe("extractToken", () => {
       const context = createMockContext({
         authorization: "Bearer ",
       });
-
-      const token = extractToken(context as any);
+      const token = extractToken(context as any, defaultOptions);
       expect(token).toBeNull();
     });
 
@@ -208,37 +218,50 @@ describe("extractToken", () => {
       const context = createMockContext({
         authorization: "Bearer    ",
       });
-
-      const token = extractToken(context as any);
+      const token = extractToken(context as any, defaultOptions);
       expect(token).toBeNull();
     });
 
     it("should return null for empty string token from cookie", () => {
       const context = createMockContext();
       mockGetCookie.mockReturnValue("");
-
-      const token = extractToken(context as any, "auth-token");
+      const options = { ...defaultOptions, cookie: { name: "auth-token" } };
+      const token = extractToken(context as any, options);
       expect(token).toBeNull();
     });
 
     it("should return null for whitespace-only token from cookie", () => {
       const context = createMockContext();
       mockGetCookie.mockReturnValue("   ");
-
-      const token = extractToken(context as any, "auth-token");
+      const options = { ...defaultOptions, cookie: { name: "auth-token" } };
+      const token = extractToken(context as any, options);
       expect(token).toBeNull();
     });
 
     it("should handle valid tokens with special characters", () => {
       const specialToken =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
-
       const context = createMockContext({
         authorization: `Bearer ${specialToken}`,
       });
-
-      const token = extractToken(context as any);
+      const token = extractToken(context as any, defaultOptions);
       expect(token).toBe(specialToken);
+    });
+
+    it("should return null when no token is present in header or cookie", () => {
+      const context = createMockContext({}); // No headers
+      mockGetCookie.mockReturnValue(undefined); // No cookie
+
+      const token = extractToken(context as any, defaultOptions);
+      expect(token).toBeNull();
+    });
+
+    it("should return null when no token sources are configured", () => {
+      const context = createMockContext({}); // No headers
+      const options = { ...defaultOptions, cookie: undefined }; // No cookie configured
+
+      const token = extractToken(context as any, options);
+      expect(token).toBeNull();
     });
   });
 });

@@ -128,7 +128,7 @@ describe("handleLogin", () => {
         {
           httpOnly: true,
           secure: true,
-          sameSite: "Lax",
+          sameSite: "strict",
           domain: undefined,
           path: "/",
           maxAge: undefined,
@@ -169,7 +169,7 @@ describe("handleLogin", () => {
         {
           httpOnly: true,
           secure: false,
-          sameSite: "Lax",
+          sameSite: "strict",
           domain: undefined,
           path: "/",
           maxAge: 7200,
@@ -291,7 +291,7 @@ describe("handleLogin", () => {
         {
           httpOnly: true,
           secure: true,
-          sameSite: "Lax",
+          sameSite: "strict",
           domain: "",
           path: "/", // Empty path gets defaulted to "/"
           maxAge: undefined,

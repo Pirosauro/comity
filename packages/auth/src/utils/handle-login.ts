@@ -2,6 +2,11 @@ import type { Context } from "hono";
 import type { AuthModuleOptions, AuthUser } from "../types.js";
 import { setCookie } from "hono/cookie";
 import { signToken } from "./sign-token.js";
+import {
+  DEFAULT_COOKIE_NAME,
+  DEFAULT_COOKIE_PATH,
+  DEFAULT_COOKIE_SAMESITE,
+} from "../constants.js";
 
 /**
  * Creates a JWT token and sets up authentication for a validated user.
@@ -53,9 +58,9 @@ export async function handleLogin(
     setCookie(c, options.cookie.name, token, {
       httpOnly: options.cookie.httpOnly ?? true,
       secure: options.cookie.secure ?? true,
-      sameSite: options.cookie.sameSite || "Lax",
+      sameSite: options.cookie.sameSite || DEFAULT_COOKIE_SAMESITE,
       domain: options.cookie.domain,
-      path: options.cookie.path || "/",
+      path: options.cookie.path || DEFAULT_COOKIE_PATH,
       maxAge: options.cookie.maxAge,
     });
   }
