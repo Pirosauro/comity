@@ -5,7 +5,7 @@ import type {
 } from "@comity/application";
 import type { LoggerModuleContext } from "@comity/logger";
 import type { PostgresModuleOptions } from "./types.js";
-import { createDatabaseMiddleware } from "./middleware.js";
+import { createDatabaseMiddleware } from "./middleware-factory.js";
 
 export const setup: ApplicationModuleMeta<
   PostgresModuleOptions,

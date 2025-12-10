@@ -1,6 +1,6 @@
 import type { Pool } from "pg";
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
-import { DatabaseConnectionError } from "../errors/index.js";
+import { ConnectionError } from "../errors/index.js";
 
 /**
  * Tests database connection health by attempting to connect and run a simple query
@@ -35,7 +35,7 @@ export async function testConnection(
     const message =
       error && error instanceof Error ? error.message : "Unknown error";
 
-    throw new DatabaseConnectionError(
+    throw new ConnectionError(
       `${name} database connection test failed: ${message}`
     );
   }

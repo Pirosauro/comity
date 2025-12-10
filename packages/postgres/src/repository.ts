@@ -1,11 +1,6 @@
-import type { NodePgDatabase } from "drizzle-orm/node-postgres";
-import type { Pool } from "pg";
-import type { LoggerService } from "@comity/logger";
+import type { PostgresService } from "./types.js";
 
-export type DatabaseRepositoryConstructor<T> = new (
-  db: NodePgDatabase<Record<string, never>> & { $client: Pool },
-  logger: LoggerService
-) => T;
+export type PostgresRepositoryConstructor<T> = new (db: PostgresService) => T;
 
 /**
  * Base class for database repositories.
@@ -19,18 +14,11 @@ export type DatabaseRepositoryConstructor<T> = new (
  * implementations. It encapsulates the database connection and logger,
  * promoting code reuse and consistency across different repositories.
  */
-export abstract class DatabaseRepository {
-  #db: NodePgDatabase<Record<string, never>> & { $client: Pool };
-  #logger: LoggerService;
+export abstract class PostgresRepository {
+  #db: PostgresService;
 
-  constructor(
-    db: NodePgDatabase<Record<string, never>> & {
-      $client: Pool;
-    },
-    logger: LoggerService
-  ) {
+  constructor(db: PostgresService) {
     this.#db = db;
-    this.#logger = logger;
   }
 
   /**
@@ -40,14 +28,5 @@ export abstract class DatabaseRepository {
    */
   protected get db() {
     return this.#db;
-  }
-
-  /**
-   * Gets the logger context.
-   *
-   * @returns The logger context for logging within the repository.
-   */
-  protected get logger() {
-    return this.#logger;
   }
 }

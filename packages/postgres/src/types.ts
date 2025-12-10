@@ -1,8 +1,44 @@
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
-import type { Pool, PoolClient } from "pg";
+import type {
+  Pool,
+  PoolClient,
+  QueryResult,
+  QueryConfig,
+  QueryConfigValues,
+  QueryArrayResult,
+} from "pg";
 import type { LoggerService } from "@comity/logger";
-import type { Container } from "@comity/core/patterns";
 import type { PostgresHealthCheck } from "./utils/types.js";
+
+export type PostgresClient = NodePgDatabase<Record<string, never>> & {
+  $client: Pool;
+};
+
+export type PostgresService = Pick<
+  PostgresClient,
+  "select" | "insert" | "update" | "delete" | "transaction" | "execute"
+> & {
+  /**
+   * Helper function to register repositories in the container
+   *
+   * @param key - Unique identifier for the repository
+   * @param repository - Repository class constructor
+   */
+  registerRepository: <T>(
+    key: string,
+    repository: new (
+      db: NodePgDatabase<Record<string, never>> & {
+        $client: Pool;
+      },
+      logger: LoggerService
+    ) => T
+  ) => void;
+
+  /** Function to perform a health check on the databases */
+  healthCheck: () => Promise<
+    PostgresHealthCheck | Pick<PostgresHealthCheck, "status" | "timestamp">
+  >;
+};
 
 /**
  * Options for setting up the database module.
@@ -74,41 +110,17 @@ export type PostgresModuleHonoContext = {
   };
   Variables: {
     /** Database repositories */
-    postgres: Container;
+    postgres: PostgresService;
   };
 };
 
-export type PostgresModuleHooks = {};
+export type PostgresModuleHooks = {
+  "@comity/postgres:initialized": PostgresService;
+
+  "@comity/postgres:shutdown": string;
+};
 
 export type PostgresModuleEvents = {
-  "@comity/postgres:initialized": {
-    /** Drizzle database instance */
-    db: NodePgDatabase<Record<string, never>> & {
-      $client: Pool;
-    };
-
-    /**
-     * Helper function to register repositories in the container
-     *
-     * @param key - Unique identifier for the repository
-     * @param repository - Repository class constructor
-     */
-    registerRepository: <T>(
-      key: string,
-      repository: new (
-        db: NodePgDatabase<Record<string, never>> & {
-          $client: Pool;
-        },
-        logger: LoggerService
-      ) => T
-    ) => void;
-
-    /** Function to perform a health check on the databases */
-    healthCheck: () => Promise<
-      PostgresHealthCheck | Pick<PostgresHealthCheck, "status" | "timestamp">
-    >;
-  };
-
   "@comity/postgres:error": {
     error: unknown;
     client: PoolClient | null;
@@ -129,5 +141,21 @@ export type PostgresModuleEvents = {
 
   "@comity/postgres:remove": {
     client: PoolClient;
+  };
+
+  "@comity/postgres:query-start": {
+    id: string;
+    query: QueryConfig<any> | string;
+    params?: QueryConfigValues<any> | undefined;
+  };
+
+  "@comity/postgres:query-end": {
+    id: string;
+    result?: QueryResult<any> | QueryArrayResult<any> | undefined;
+  };
+
+  "@comity/postgres:query-error": {
+    id: string;
+    error: Error;
   };
 };

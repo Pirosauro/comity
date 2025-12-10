@@ -5,7 +5,7 @@ describe("Database Setup Module", () => {
   it("should have correct module metadata", () => {
     expect(setup.name).toBe("@comity/postgres");
     expect(setup.version).toBe("1.0.0");
-    expect(setup.dependsOn).toEqual(["@comity/core"]);
+    expect(setup.dependsOn).toEqual(["@comity/application", "@comity/logger"]);
     expect(setup.incompatibleWith).toEqual([]);
   });
 

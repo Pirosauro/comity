@@ -1,31 +1,48 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { createDatabaseMiddleware } from "../middleware.js";
-import { DatabaseConnectionError } from "../errors/connection.js";
+import { env } from "hono/adapter";
+import { createDatabaseMiddleware } from "../middleware-factory.js";
+import { ConnectionError } from "../errors/connection.js";
 
 // Mock dependencies
-vi.mock("pg", () => ({
-  Pool: vi.fn().mockImplementation((config) => ({
-    connectionString: config.connectionString,
-    max: config.max,
-    on: vi.fn(),
-    connect: vi.fn().mockResolvedValue({
-      query: vi.fn().mockResolvedValue({ rows: [{ "?column?": 1 }] }),
-      release: vi.fn(),
-    }),
-    end: vi.fn(),
-  })),
-}));
+vi.mock("pg", () => {
+  const MockPool = vi
+    .fn()
+    .mockImplementation(function (this: any, config: any) {
+      this.connectionString = config?.connectionString;
+      this.max = config?.max;
+      this.on = vi.fn();
+      this.connect = vi.fn().mockResolvedValue({
+        query: vi.fn().mockResolvedValue({ rows: [{ "?column?": 1 }] }),
+        release: vi.fn(),
+      });
+      this.end = vi.fn();
+      this.totalCount = 0;
+      this.idleCount = 0;
+      this.waitingCount = 0;
+    });
+
+  return {
+    Pool: MockPool,
+  };
+});
 
 vi.mock("drizzle-orm/node-postgres", () => ({
-  drizzle: vi.fn().mockReturnValue({
+  drizzle: vi.fn().mockImplementation(({ client }) => ({
     execute: vi.fn().mockResolvedValue(undefined),
-  }),
+    select: vi.fn(),
+    insert: vi.fn(),
+    update: vi.fn(),
+    delete: vi.fn(),
+    transaction: vi.fn(),
+    $client: client,
+  })),
 }));
 
 vi.mock("@comity/core/patterns", () => ({
-  Container: vi.fn().mockImplementation(() => ({
-    register: vi.fn(),
-  })),
+  Container: vi.fn().mockImplementation(function (this: any) {
+    this.register = vi.fn();
+    return this;
+  }),
 }));
 
 vi.mock("hono/adapter", () => ({
@@ -53,6 +70,11 @@ describe("createDatabaseMiddleware", () => {
       error: vi.fn(),
       info: vi.fn(),
       debug: vi.fn(),
+      child: vi.fn().mockReturnValue({
+        error: vi.fn(),
+        info: vi.fn(),
+        debug: vi.fn(),
+      }),
     };
 
     mockEmit = vi.fn();
@@ -61,7 +83,12 @@ describe("createDatabaseMiddleware", () => {
     mockCtx = {
       logger: mockLogger,
       emit: mockEmit,
+      trigger: vi.fn(),
       error: vi.fn(),
+      onHook: vi.fn(),
+      onEvent: vi.fn(),
+      register: vi.fn(),
+      resolve: vi.fn(),
     };
   });
 
@@ -71,7 +98,7 @@ describe("createDatabaseMiddleware", () => {
     expect(typeof middleware).toBe("function");
   });
 
-  it("should throw DatabaseConnectionError when no connection string is provided", async () => {
+  it("should throw ConnectionError when no connection string is provided", async () => {
     const { env } = await import("hono/adapter");
 
     vi.mocked(env).mockReturnValue({});
@@ -79,29 +106,32 @@ describe("createDatabaseMiddleware", () => {
     const middleware = createDatabaseMiddleware({}, mockCtx);
 
     await expect(middleware(mockContext, mockNext)).rejects.toThrow(
-      DatabaseConnectionError
+      ConnectionError
     );
 
     await expect(middleware(mockContext, mockNext)).rejects.toThrow(
-      "Database configuration missing: DATABASE_URL or HYPERDRIVE connection string is required"
+      "Database configuration missing: POSTGRES_URL or HYPERDRIVE connection string is required"
     );
   });
 
   it("should use DATABASE_URL when provided", async () => {
-    const { env } = await import("hono/adapter");
-
     vi.mocked(env).mockReturnValue({
-      DATABASE_URL: "postgresql://localhost:5432/testdb",
+      POSTGRES_URL: "postgresql://localhost:5432/testdb",
     });
 
     const middleware = createDatabaseMiddleware({}, mockCtx);
 
     await middleware(mockContext, mockNext);
 
-    expect(mockContext.set).toHaveBeenCalledWith("db", {
-      primary: expect.any(Object),
-      replica: expect.any(Object),
-      repositories: expect.any(Object),
+    expect(mockContext.set).toHaveBeenCalledWith("postgres", {
+      select: expect.any(Function),
+      insert: expect.any(Function),
+      update: expect.any(Function),
+      delete: expect.any(Function),
+      transaction: expect.any(Function),
+      execute: expect.any(Function),
+      registerRepository: expect.any(Function),
+      healthCheck: expect.any(Function),
     });
     expect(mockNext).toHaveBeenCalled();
   });
@@ -119,10 +149,15 @@ describe("createDatabaseMiddleware", () => {
 
     await middleware(mockContext, mockNext);
 
-    expect(mockContext.set).toHaveBeenCalledWith("db", {
-      primary: expect.any(Object),
-      replica: expect.any(Object),
-      repositories: expect.any(Object),
+    expect(mockContext.set).toHaveBeenCalledWith("postgres", {
+      select: expect.any(Function),
+      insert: expect.any(Function),
+      update: expect.any(Function),
+      delete: expect.any(Function),
+      transaction: expect.any(Function),
+      execute: expect.any(Function),
+      registerRepository: expect.any(Function),
+      healthCheck: expect.any(Function),
     });
     expect(mockNext).toHaveBeenCalled();
   });
@@ -154,8 +189,8 @@ describe("createDatabaseMiddleware", () => {
     const { env } = await import("hono/adapter");
 
     vi.mocked(env).mockReturnValue({
-      DATABASE_URL: "postgresql://primary:5432/testdb",
-      DATABASE_URL_REPLICA: "postgresql://replica:5432/testdb",
+      POSTGRES_URL: "postgresql://primary:5432/testdb",
+      POSTGRES_URL_REPLICAS: ["postgresql://replica:5432/testdb"],
     });
 
     const middleware = createDatabaseMiddleware({}, mockCtx);
@@ -182,7 +217,7 @@ describe("createDatabaseMiddleware", () => {
     const { env } = await import("hono/adapter");
 
     vi.mocked(env).mockReturnValue({
-      DATABASE_URL: "postgresql://primary:5432/testdb",
+      POSTGRES_URL: "postgresql://primary:5432/testdb",
     });
 
     const middleware = createDatabaseMiddleware({}, mockCtx);
@@ -198,7 +233,7 @@ describe("createDatabaseMiddleware", () => {
     const { env } = await import("hono/adapter");
 
     vi.mocked(env).mockReturnValue({
-      DATABASE_URL: "postgresql://localhost:5432/testdb",
+      POSTGRES_URL: "postgresql://localhost:5432/testdb",
     });
 
     const options = {
@@ -226,7 +261,7 @@ describe("createDatabaseMiddleware", () => {
     const { env } = await import("hono/adapter");
 
     vi.mocked(env).mockReturnValue({
-      DATABASE_URL: "postgresql://localhost:5432/testdb",
+      POSTGRES_URL: "postgresql://localhost:5432/testdb",
     });
 
     const middleware = createDatabaseMiddleware({}, mockCtx);
@@ -236,9 +271,12 @@ describe("createDatabaseMiddleware", () => {
     expect(mockEmit).toHaveBeenCalledWith(
       "@comity/postgres:initialized",
       expect.objectContaining({
-        primary: expect.any(Object),
-        replica: expect.any(Object),
-        repositories: expect.any(Object),
+        select: expect.any(Function),
+        insert: expect.any(Function),
+        update: expect.any(Function),
+        delete: expect.any(Function),
+        transaction: expect.any(Function),
+        execute: expect.any(Function),
         registerRepository: expect.any(Function),
         healthCheck: expect.any(Function),
       })
@@ -249,8 +287,10 @@ describe("createDatabaseMiddleware", () => {
     const { Pool } = await import("pg");
     const { env } = await import("hono/adapter");
 
+    vi.clearAllMocks();
+
     vi.mocked(env).mockReturnValue({
-      DATABASE_URL: "postgresql://localhost:5432/testdb",
+      POSTGRES_URL: "postgresql://localhost:5432/testdb",
     });
 
     const middleware = createDatabaseMiddleware({}, mockCtx);
@@ -268,7 +308,7 @@ describe("createDatabaseMiddleware", () => {
     const { env } = await import("hono/adapter");
 
     vi.mocked(env).mockReturnValue({
-      DATABASE_URL: "postgresql://localhost:5432/testdb",
+      POSTGRES_URL: "postgresql://localhost:5432/testdb",
     });
 
     const options = {
@@ -285,37 +325,39 @@ describe("createDatabaseMiddleware", () => {
     const { Pool } = await import("pg");
     const { env } = await import("hono/adapter");
     // Mock connection failure
-    const mockPool: any = {
+    const mockPool = Object.create(Pool.prototype);
+    Object.assign(mockPool, {
       on: vi.fn(),
       connect: vi.fn().mockRejectedValue(new Error("Connection failed")),
       end: vi.fn(),
-    };
+    });
 
     vi.mocked(Pool).mockReturnValue(mockPool);
 
     vi.mocked(env).mockReturnValue({
-      DATABASE_URL: "postgresql://localhost:5432/testdb",
+      POSTGRES_URL: "postgresql://localhost:5432/testdb",
     });
 
     const middleware = createDatabaseMiddleware({}, mockCtx);
 
     await expect(middleware(mockContext, mockNext)).rejects.toThrow(
-      DatabaseConnectionError
+      ConnectionError
     );
   });
 
   it("should clean up pools on error", async () => {
     const { Pool } = await import("pg");
     const { env } = await import("hono/adapter");
-    const mockPool: any = {
+    const mockPool = Object.create(Pool.prototype);
+    Object.assign(mockPool, {
       on: vi.fn(),
       connect: vi.fn().mockRejectedValue(new Error("Connection failed")),
       end: vi.fn(),
-    };
+    });
 
     vi.mocked(Pool).mockReturnValue(mockPool);
     vi.mocked(env).mockReturnValue({
-      DATABASE_URL: "postgresql://localhost:5432/testdb",
+      POSTGRES_URL: "postgresql://localhost:5432/testdb",
     });
 
     const middleware = createDatabaseMiddleware({}, mockCtx);
@@ -337,19 +379,16 @@ describe("createDatabaseMiddleware", () => {
     vi.clearAllMocks();
 
     // Setup fresh successful connection mock
-    vi.mocked(Pool).mockImplementation(
-      (config) =>
-        ({
-          connectionString: config?.connectionString,
-          max: config?.max,
-          on: vi.fn(),
-          connect: vi.fn().mockResolvedValue({
-            query: vi.fn().mockResolvedValue({ rows: [{ "?column?": 1 }] }),
-            release: vi.fn(),
-          }),
-          end: vi.fn(),
-        } as any)
-    );
+    vi.mocked(Pool).mockImplementation(function (this: any, config: any) {
+      this.connectionString = config?.connectionString;
+      this.max = config?.max;
+      this.on = vi.fn();
+      this.connect = vi.fn().mockResolvedValue({
+        query: vi.fn().mockResolvedValue({ rows: [{ "?column?": 1 }] }),
+        release: vi.fn(),
+      });
+      this.end = vi.fn();
+    });
 
     vi.mocked(env).mockReturnValue({
       HYPERDRIVE: {
@@ -383,7 +422,7 @@ describe("createDatabaseMiddleware", () => {
     const { env } = await import("hono/adapter");
 
     vi.mocked(env).mockReturnValue({
-      DATABASE_URL: "postgresql://localhost:5432/testdb",
+      POSTGRES_URL: "postgresql://localhost:5432/testdb",
     });
 
     const options = {

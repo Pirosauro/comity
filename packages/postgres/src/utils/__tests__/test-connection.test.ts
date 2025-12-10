@@ -22,9 +22,9 @@ describe("testConnection", () => {
   it("should successfully test a working connection", async () => {
     mockClient.query.mockResolvedValue({ rows: [{ "?column?": 1 }] });
 
-    await expect(
-      testConnection(mockPool, "test-pool")
-    ).resolves.toBeUndefined();
+    const mockDb = { $client: mockPool };
+
+    await expect(testConnection(mockDb, "test-pool")).resolves.toBeUndefined();
 
     expect(mockPool.connect).toHaveBeenCalled();
     expect(mockClient.query).toHaveBeenCalledWith("SELECT 1");
@@ -35,11 +35,12 @@ describe("testConnection", () => {
     const connectionError = new Error("Connection refused");
 
     mockPool.connect.mockRejectedValue(connectionError);
+    const mockDb = { $client: mockPool };
 
-    await expect(testConnection(mockPool, "failed-pool")).rejects.toThrow(
+    await expect(testConnection(mockDb, "failed-pool")).rejects.toThrow(
       DatabaseConnectionError
     );
-    await expect(testConnection(mockPool, "failed-pool")).rejects.toThrow(
+    await expect(testConnection(mockDb, "failed-pool")).rejects.toThrow(
       "failed-pool database connection test failed: Connection refused"
     );
   });
@@ -47,11 +48,12 @@ describe("testConnection", () => {
   it("should handle query failures", async () => {
     const queryError = new Error("Query failed");
     mockClient.query.mockRejectedValue(queryError);
+    const mockDb = { $client: mockPool };
 
-    await expect(testConnection(mockPool, "query-failed-pool")).rejects.toThrow(
+    await expect(testConnection(mockDb, "query-failed-pool")).rejects.toThrow(
       DatabaseConnectionError
     );
-    await expect(testConnection(mockPool, "query-failed-pool")).rejects.toThrow(
+    await expect(testConnection(mockDb, "query-failed-pool")).rejects.toThrow(
       "query-failed-pool database connection test failed: Query failed"
     );
     expect(mockClient.release).toHaveBeenCalled();
@@ -61,9 +63,10 @@ describe("testConnection", () => {
     const queryError = new Error("Query failed");
 
     mockClient.query.mockRejectedValue(queryError);
+    const mockDb = { $client: mockPool };
 
     try {
-      await testConnection(mockPool, "query-failed-pool");
+      await testConnection(mockDb, "query-failed-pool");
     } catch (error) {
       // Expected to throw
     }
@@ -79,9 +82,10 @@ describe("testConnection", () => {
     mockClient.release.mockImplementation(() => {
       throw releaseError;
     });
+    const mockDb = { $client: mockPool };
 
     // Should still throw the original query error, not the release error
-    await expect(testConnection(mockPool, "release-fail-pool")).rejects.toThrow(
+    await expect(testConnection(mockDb, "release-fail-pool")).rejects.toThrow(
       "release-fail-pool database connection test failed: Release failed"
     );
 
@@ -92,10 +96,11 @@ describe("testConnection", () => {
     const connectionError = new Error("Network timeout");
 
     mockPool.connect.mockRejectedValue(connectionError);
+    const mockDb = { $client: mockPool };
 
     const poolName = "production-primary";
 
-    await expect(testConnection(mockPool, poolName)).rejects.toThrow(
+    await expect(testConnection(mockDb, poolName)).rejects.toThrow(
       `${poolName} database connection test failed: Network timeout`
     );
   });
@@ -103,11 +108,12 @@ describe("testConnection", () => {
   it("should handle non-Error exceptions", async () => {
     // Simulate a non-Error being thrown
     mockPool.connect.mockRejectedValue("String error");
+    const mockDb = { $client: mockPool };
 
-    await expect(testConnection(mockPool, "string-error-pool")).rejects.toThrow(
+    await expect(testConnection(mockDb, "string-error-pool")).rejects.toThrow(
       DatabaseConnectionError
     );
-    await expect(testConnection(mockPool, "string-error-pool")).rejects.toThrow(
+    await expect(testConnection(mockDb, "string-error-pool")).rejects.toThrow(
       "string-error-pool database connection test failed: Unknown error"
     );
   });

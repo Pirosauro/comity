@@ -116,10 +116,10 @@ import { ServiceUnavailableError } from "@comity/core/errors";
  * }
  * ```
  */
-export class DatabaseConnectionError extends ServiceUnavailableError {
+export class ConnectionError extends ServiceUnavailableError {
   constructor(message = "Database connection failed") {
     super(message);
 
-    this.name = "DatabaseConnectionError";
+    this.name = "PostgresConnectionError";
   }
 }
