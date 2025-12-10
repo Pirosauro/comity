@@ -58,65 +58,6 @@ export const setup: ApplicationModuleMeta<
         }
       );
 
-      const UserType = new GraphQLObjectType({
-        name: "User",
-        fields: {
-          id: { type: new GraphQLNonNull(GraphQLID) },
-          name: { type: GraphQLString },
-          email: { type: GraphQLString },
-          isActive: { type: GraphQLBoolean },
-        },
-      });
-
-      container.register({
-        queries: {
-          users: {
-            type: new GraphQLList(UserType),
-            resolve: () => [
-              {
-                id: "1",
-                name: "Alice",
-                email: "alice@example.com",
-                isActive: true,
-              },
-              {
-                id: "2",
-                name: "Bob",
-                email: "bob@example.com",
-                isActive: false,
-              },
-            ],
-          },
-          user: {
-            type: UserType,
-            args: {
-              id: { type: new GraphQLNonNull(GraphQLID) },
-            },
-            resolve: (_, { id }) => ({
-              id,
-              name: "User " + id,
-              email: "user@example.com",
-              isActive: true,
-            }),
-          },
-        },
-        mutations: {
-          createUser: {
-            type: UserType,
-            args: {
-              name: { type: new GraphQLNonNull(GraphQLString) },
-              email: { type: new GraphQLNonNull(GraphQLString) },
-            },
-            resolve: (_, args) => ({
-              id: "new-" + Date.now(),
-              name: args.name,
-              email: args.email,
-              isActive: true,
-            }),
-          },
-        },
-      });
-
       const schema = container.buildSchema();
 
       gql.use(

@@ -11,7 +11,7 @@ import type {
   AuthModuleOptions,
   AuthService,
 } from "./types.js";
-import { createJWTMiddleware } from "./middleware.js";
+import { createJWTMiddleware } from "./middleware-factory.js";
 import {
   handleLogin,
   handleLogout,

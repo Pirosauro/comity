@@ -1,13 +1,18 @@
+import type { WebCryptoStorage } from "../crypto.js";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { WebCrypto, type WebCryptoStorage } from "../crypto.js";
+import { WebCrypto } from "../crypto.js";
 
-// Mock crypto.subtle for Node.js
-globalThis.crypto = {
-  subtle: {
-    importKey: vi.fn(async () => ({})),
-    decrypt: vi.fn(async () => new Uint8Array([123, 34, 97, 34, 58, 49, 125])), // {"a":1}
-  },
-} as any;
+if (!globalThis.crypto) {
+  // Mock crypto.subtle for Node.js
+  globalThis.crypto = {
+    subtle: {
+      importKey: vi.fn(async () => ({})),
+      decrypt: vi.fn(
+        async () => new Uint8Array([123, 34, 97, 34, 58, 49, 125])
+      ), // {"a":1}
+    },
+  } as any;
+}
 
 describe("WebCrypto", () => {
   let storage: Record<string, { data: string; iv: string }>;
@@ -25,7 +30,7 @@ describe("WebCrypto", () => {
         delete storage[key];
       },
     };
-    webCrypto = new WebCrypto(backend, "test-key");
+    webCrypto = new WebCrypto(backend, "01234567890123456789012345678901"); // 32-byte key
   });
 
   it("should throw if no secrets are found", async () => {
@@ -35,17 +40,36 @@ describe("WebCrypto", () => {
   });
 
   it("should call crypto.subtle.importKey and decrypt", async () => {
+    // Mock the storage to return encrypted data
     storage["service"] = {
-      data: Buffer.from(
-        new Uint8Array([123, 34, 97, 34, 58, 49, 125])
-      ).toString("base64"),
-      iv: Buffer.from(new Uint8Array([1, 2, 3, 4])).toString("base64"),
+      data: "encrypted-data",
+      iv: "iv-data",
     };
+
+    // Mock crypto.subtle methods
+    const mockImportKey = vi.fn(async () => ({} as CryptoKey));
+    const mockDecrypt = vi.fn(async () => new ArrayBuffer(7)); // Mock ArrayBuffer
+
+    // Mock JSON.parse to return the expected object
+    const originalParse = JSON.parse;
+    JSON.parse = vi.fn(() => ({ a: 1 }));
+
+    (globalThis.crypto.subtle as any).importKey = mockImportKey;
+    (globalThis.crypto.subtle as any).decrypt = mockDecrypt;
 
     const result = await webCrypto.getSecretsForConnector("service", {});
 
-    expect(globalThis.crypto.subtle.importKey).toHaveBeenCalled();
-    expect(globalThis.crypto.subtle.decrypt).toHaveBeenCalled();
+    expect(mockImportKey).toHaveBeenCalledWith(
+      "raw",
+      new TextEncoder().encode("01234567890123456789012345678901"),
+      { name: "AES-GCM", length: 256 },
+      false,
+      ["decrypt"]
+    );
+    expect(mockDecrypt).toHaveBeenCalled();
     expect(result).toEqual({ a: 1 });
+
+    // Restore original JSON.parse
+    JSON.parse = originalParse;
   });
 });

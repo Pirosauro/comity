@@ -12,7 +12,7 @@ import type {
 } from "./types.js";
 import { jwtVerify } from "jose";
 import { extractToken, getFailureReason } from "./utils/index.js";
-import { JWTPayloadSchema } from "./validation.js";
+import { JWTPayloadSchema } from "./validation/jwt-payload.js";
 
 /**
  * Creates JWT authentication middleware.

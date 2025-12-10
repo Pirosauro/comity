@@ -1,6 +1,6 @@
 import type { AuthModuleOptions, AuthUser } from "../types.js";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { createJWTMiddleware } from "../middleware.js";
+import { createJWTMiddleware } from "../middleware-factory.js";
 
 // Minimal Context mock for middleware compatibility
 class Context {

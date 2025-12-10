@@ -1,6 +1,6 @@
+import type { AuthModuleOptions } from "../../types.js";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { handleLogout } from "../handle-logout.js";
-import type { AuthModuleOptions } from "../../types.js";
 
 // Mock dependencies
 vi.mock("hono/cookie", () => ({

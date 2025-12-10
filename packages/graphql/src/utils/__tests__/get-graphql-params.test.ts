@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getGraphQLParams } from "../utils/get-graphql-params.js";
+import { getGraphQLParams } from "../get-graphql-params.js";
 
 describe("getGraphQLParams", () => {
   it("should return correct GraphQLParams from URL and body", async () => {

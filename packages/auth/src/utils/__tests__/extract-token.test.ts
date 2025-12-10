@@ -1,3 +1,4 @@
+import type { AuthModuleOptions } from "../../types.js";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { extractToken } from "../extract-token.js";
 
@@ -7,6 +8,28 @@ vi.mock("hono/cookie", () => ({
 }));
 
 describe("extractToken", () => {
+  let mockGetCookie: any;
+
+  const createMockContext = (headers: Record<string, string> = {}) => ({
+    req: {
+      header: vi.fn((name: string) => headers[name.toLowerCase()]),
+    },
+    env: {},
+    executionCtx: {},
+  });
+
+  const defaultOptions: AuthModuleOptions = {
+    header: { name: "authorization", prefix: "Bearer " },
+    cookie: { name: "auth-token" },
+    secret: "test-secret",
+  };
+
+  beforeEach(async () => {
+    const { getCookie } = await import("hono/cookie");
+    mockGetCookie = vi.mocked(getCookie);
+    vi.clearAllMocks();
+  });
+
   it("should return null if header extraction throws an error", () => {
     const context = {
       req: {
@@ -18,27 +41,8 @@ describe("extractToken", () => {
       executionCtx: {},
     };
     const token = extractToken(context as any, defaultOptions);
+
     expect(token).toBeNull();
-  });
-  let mockGetCookie: any;
-
-  const createMockContext = (headers: Record<string, string> = {}) => ({
-    req: {
-      header: vi.fn((name: string) => headers[name.toLowerCase()]),
-    },
-    env: {},
-    executionCtx: {},
-  });
-
-  const defaultOptions = {
-    header: { name: "authorization", prefix: "Bearer " },
-    cookie: { name: "auth-token" },
-  };
-
-  beforeEach(async () => {
-    const { getCookie } = await import("hono/cookie");
-    mockGetCookie = vi.mocked(getCookie);
-    vi.clearAllMocks();
   });
 
   describe("Authorization header extraction", () => {
@@ -89,6 +93,31 @@ describe("extractToken", () => {
       const token = extractToken(context as any, defaultOptions);
       expect(token).toBe("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9");
     });
+
+    it("should use default header configuration when header options are undefined", () => {
+      const context = createMockContext({
+        authorization: "Bearer default-token",
+      });
+      const options = { ...defaultOptions, header: undefined };
+
+      const token = extractToken(context as any, options);
+
+      expect(token).toBe("default-token");
+    });
+
+    it("should use default header prefix when prefix is undefined", () => {
+      const context = createMockContext({
+        authorization: "Bearer prefix-token",
+      });
+      const options = {
+        ...defaultOptions,
+        header: { name: "authorization", prefix: undefined },
+      };
+
+      const token = extractToken(context as any, options);
+
+      expect(token).toBe("prefix-token");
+    });
   });
 
   describe("Cookie extraction", () => {
@@ -115,6 +144,18 @@ describe("extractToken", () => {
       mockGetCookie.mockReturnValue(undefined);
       const options = { ...defaultOptions, cookie: { name: "auth-token" } };
       const token = extractToken(context as any, options);
+      expect(token).toBeNull();
+    });
+
+    it("should return null when cookie extraction throws an error", () => {
+      mockGetCookie.mockImplementation(() => {
+        throw new Error("Cookie error");
+      });
+      const context = createMockContext();
+      const options = { ...defaultOptions, cookie: { name: "auth-token" } };
+
+      const token = extractToken(context as any, options);
+
       expect(token).toBeNull();
     });
 

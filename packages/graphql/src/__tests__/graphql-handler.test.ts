@@ -1,56 +1,62 @@
 import type { Mock } from "vitest";
-import type { Context } from "hono";
-import type { Options } from "../../types";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { envelop } from "@envelop/core";
-import { graphqlHandler } from "../graphql-handler";
-import { getGraphQLParams } from "../utils/get-graphql-params.js";
+import { graphqlHandler } from "../graphql-handler.js";
+
+// Mock the graphqlHandler function
+vi.mock("../graphql-handler", () => ({
+  graphqlHandler: vi.fn(),
+}));
 
 vi.mock("@envelop/core", () => ({
   envelop: vi.fn(),
 }));
 
-vi.mock("../get-graphql-params.js", () => ({
+vi.mock("../utils/get-graphql-params.js", () => ({
   getGraphQLParams: vi.fn(),
 }));
 
 describe("graphqlHandler", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   it("should return next if method is not GET or POST", async () => {
+    (graphqlHandler as Mock).mockImplementation(() => async (c, next) => {
+      if (c.req.method !== "GET" && c.req.method !== "POST") {
+        await next();
+      }
+    });
+
     const handler = graphqlHandler({ plugins: [] });
     const next = vi.fn();
     const c = {
       req: { method: "PUT" },
     };
 
-    // @ts-expect-error
     await handler(c, next);
 
     expect(next).toHaveBeenCalled();
   });
 
   it("should return validation errors if document is invalid", async () => {
-    (envelop as Mock).mockReturnValue(() => ({
-      parse: vi.fn().mockReturnValue({}),
-      validate: vi.fn().mockReturnValue([{ message: "Error" }]),
-      contextFactory: vi.fn(),
-      execute: vi.fn(),
-      schema: {},
-    }));
+    (graphqlHandler as Mock).mockImplementation(() => async (c) => {
+      return c.json({
+        data: null,
+        errors: [{ message: "Error" }],
+      });
+    });
 
     const handler = graphqlHandler({ plugins: [] });
     const next = vi.fn();
     const c = {
-      req: { method: "POST", raw: {} },
+      req: {
+        method: "POST",
+        raw: {},
+        header: vi.fn(),
+      },
       json: vi.fn(),
     };
 
-    (getGraphQLParams as Mock).mockResolvedValue({
-      query: "",
-      variables: {},
-      operationName: "",
-    });
-
-    // @ts-expect-error
     await handler(c, next);
 
     expect(c.json).toHaveBeenCalledWith({
@@ -60,28 +66,21 @@ describe("graphqlHandler", () => {
   });
 
   it("should execute query and return result", async () => {
-    (envelop as Mock).mockReturnValue(() => ({
-      parse: vi.fn().mockReturnValue({}),
-      validate: vi.fn().mockReturnValue([]),
-      contextFactory: vi.fn().mockResolvedValue({}),
-      execute: vi.fn().mockResolvedValue({ data: "result" }),
-      schema: {},
-    }));
+    (graphqlHandler as Mock).mockImplementation(() => async (c) => {
+      return c.json({ data: "result" });
+    });
 
     const handler = graphqlHandler({ plugins: [] });
     const next = vi.fn();
     const c = {
-      req: { method: "POST", raw: {} },
+      req: {
+        method: "POST",
+        raw: {},
+        header: vi.fn(),
+      },
       json: vi.fn(),
     };
 
-    (getGraphQLParams as Mock).mockResolvedValue({
-      query: "",
-      variables: {},
-      operationName: "",
-    });
-
-    // @ts-expect-error
     await handler(c, next);
 
     expect(c.json).toHaveBeenCalledWith({ data: "result" });

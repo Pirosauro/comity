@@ -9,6 +9,7 @@ export class GraphQLContainer {
   #queries: Record<string, FieldConfig> = {};
   #mutations: Record<string, FieldConfig> = {};
   #subscriptions: Record<string, SubscriptionFieldConfig> = {};
+  #schema: GraphQLSchema | null = null;
 
   get queries() {
     return { ...this.#queries };
@@ -44,13 +45,12 @@ export class GraphQLContainer {
     // Register subscriptions
     if (module.subscriptions) {
       for (const [name, field] of Object.entries(module.subscriptions)) {
-        if (!field.resolve) {
-          field.resolve = (payload: unknown) => payload;
-        }
-
         this.#subscriptions[name] = field;
       }
     }
+
+    // Invalidate cached schema when new modules are registered
+    this.#schema = null;
   }
 
   /**
@@ -58,6 +58,11 @@ export class GraphQLContainer {
    * @returns The constructed GraphQL schema
    */
   buildSchema(): GraphQLSchema {
+    // Return cached schema if available
+    if (this.#schema) {
+      return this.#schema;
+    }
+
     const schemaConfig: any = {
       query: new GraphQLObjectType({
         name: "Query",
@@ -79,7 +84,10 @@ export class GraphQLContainer {
       });
     }
 
-    return new GraphQLSchema(schemaConfig);
+    // Cache the built schema
+    this.#schema = new GraphQLSchema(schemaConfig);
+
+    return this.#schema;
   }
 
   /**
@@ -89,5 +97,6 @@ export class GraphQLContainer {
     this.#queries = {};
     this.#mutations = {};
     this.#subscriptions = {};
+    this.#schema = null;
   }
 }

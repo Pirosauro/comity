@@ -1,6 +1,6 @@
+import type { AuthUser, AuthModuleOptions } from "../../types.js";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { handleLogin } from "../handle-login.js";
-import type { AuthUser, AuthModuleOptions } from "../../types.js";
 
 // Mock dependencies
 vi.mock("../sign-token.js", () => ({
@@ -18,7 +18,7 @@ describe("handleLogin", () => {
   const mockSignToken = vi.mocked(signToken);
   const mockSetCookie = vi.mocked(setCookie);
 
-  const mockUser: AuthUser = {
+  const mockUser: AuthUser<{ [key: string]: any }> = {
     id: "user-123",
     roles: { default: ["user"] },
     email: "test@example.com",
@@ -48,7 +48,7 @@ describe("handleLogin", () => {
     });
 
     it("should handle complex user data", async () => {
-      const complexUser: AuthUser = {
+      const complexUser: AuthUser<{ [key: string]: any }> = {
         id: "admin-456",
         roles: { admin: ["admin", "moderator"], general: ["user"] },
         email: "admin@company.com",
@@ -188,7 +188,7 @@ describe("handleLogin", () => {
         secret: "test-secret",
         cookie: {
           name: "auth-token",
-          sameSite: sameSiteValue as "strict" | "lax" | "none",
+          sameSite: sameSiteValue as "strict",
         },
       };
 
@@ -249,7 +249,7 @@ describe("handleLogin", () => {
 
   describe("edge cases", () => {
     it("should handle user with minimal data", async () => {
-      const minimalUser: AuthUser = {
+      const minimalUser: AuthUser<{ [key: string]: any }> = {
         id: "min-user",
         roles: { default: ["guest"] },
         email: "min@test.com",

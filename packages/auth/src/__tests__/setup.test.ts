@@ -1,9 +1,13 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import type { CoreContextInterface } from "@comity/core";
 import type { AuthModuleOptions } from "../types.js";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { setup } from "../setup.js";
-import * as middleware from "../middleware.js";
-import * as utils from "../utils/index.js";
+import { createJWTMiddleware } from "../middleware-factory.js";
+import {
+  handleLogin,
+  handleLogout,
+  handleRefresh,
+  signToken,
+} from "../utils/index.js";
 
 // Mock the middleware module
 vi.mock("../middleware.js", () => ({
@@ -31,7 +35,7 @@ describe("Auth Module Setup", () => {
     child: vi.fn(),
   };
 
-  const mockContext: CoreContextInterface = {
+  const mockContext: any = {
     app: {
       use: vi.fn(),
     } as any,
@@ -98,21 +102,21 @@ describe("Auth Module Setup", () => {
 
     it("should configure JWT middleware on both app and api", async () => {
       const mockMiddleware = vi.fn();
-      vi.mocked(middleware.createJWTMiddleware).mockReturnValue(mockMiddleware);
+      vi.mocked(createJWTMiddleware).mockReturnValue(mockMiddleware);
 
       // Patch onHook to immediately invoke the callback for @comity/application:initialized
       const onHookSpy = vi
         .spyOn(mockContext, "onHook")
         .mockImplementation((hook, cb) => {
           if (hook === "@comity/application:initialized") {
-            cb((mockContext as any).app);
+            (cb as Function)((mockContext as any).app);
           }
         });
 
       const setupFn = await setup.setup(validOptions);
       await setupFn(mockContext);
 
-      expect(middleware.createJWTMiddleware).toHaveBeenCalledWith(
+      expect(createJWTMiddleware).toHaveBeenCalledWith(
         validOptions,
         mockContext
       );
@@ -155,14 +159,14 @@ describe("Auth Module Setup", () => {
         .spyOn(mockContext, "onHook")
         .mockImplementation((hook, cb) => {
           if (hook === "@comity/application:initialized") {
-            cb((mockContext as any).app);
+            (cb as Function)((mockContext as any).app);
           }
         });
 
       const setupFn = await setup.setup(fullOptions);
       await setupFn(mockContext);
 
-      expect(middleware.createJWTMiddleware).toHaveBeenCalledWith(
+      expect(createJWTMiddleware).toHaveBeenCalledWith(
         fullOptions,
         mockContext
       );
@@ -180,7 +184,9 @@ describe("Auth Module Setup", () => {
       // Get the auth service from the emit call
       const emitCall = vi
         .mocked(mockContext.emit)
-        .mock.calls.find((call) => call[0] === "@comity/auth:initialized");
+        .mock.calls.find(
+          (call: string[]) => call[0] === "@comity/auth:initialized"
+        );
       authService = emitCall?.[1];
     });
 
@@ -210,11 +216,11 @@ describe("Auth Module Setup", () => {
         const mockHonoContext = { req: { header: vi.fn() } };
         const mockToken = "jwt-token";
 
-        vi.mocked(utils.handleLogin).mockResolvedValue(mockToken);
+        vi.mocked(handleLogin).mockResolvedValue(mockToken);
 
         const result = await authService.login(mockUser, mockHonoContext);
 
-        expect(utils.handleLogin).toHaveBeenCalledWith(
+        expect(handleLogin).toHaveBeenCalledWith(
           mockUser,
           mockHonoContext,
           validOptions
@@ -237,7 +243,7 @@ describe("Auth Module Setup", () => {
 
         authService.logout(mockHonoContext);
 
-        expect(utils.handleLogout).toHaveBeenCalledWith(
+        expect(handleLogout).toHaveBeenCalledWith(
           mockHonoContext,
           validOptions
         );
@@ -255,7 +261,7 @@ describe("Auth Module Setup", () => {
 
         authService.logout(mockHonoContext);
 
-        expect(utils.handleLogout).toHaveBeenCalledWith(
+        expect(handleLogout).toHaveBeenCalledWith(
           mockHonoContext,
           validOptions
         );
@@ -273,20 +279,20 @@ describe("Auth Module Setup", () => {
             header: vi.fn().mockReturnValue("Bearer old-token"),
           },
         };
-        vi.mocked(utils.handleRefresh).mockResolvedValue({
+        vi.mocked(handleRefresh).mockResolvedValue({
           outdated: "old-token",
           current: "new-jwt-token",
         });
 
         const result = await authService.refreshToken(mockHonoContext);
 
-        expect(utils.handleRefresh).toHaveBeenCalledWith(
+        expect(handleRefresh).toHaveBeenCalledWith(
           mockHonoContext,
           validOptions
         );
         const emitCalls = vi.mocked(mockContext.emit).mock.calls;
         const tokenRefreshedCall = emitCalls.find(
-          (call) => call[0] === "@comity/auth:token-refreshed"
+          (call: string[]) => call[0] === "@comity/auth:token-refreshed"
         );
         expect(tokenRefreshedCall).toBeDefined();
         expect(tokenRefreshedCall && tokenRefreshedCall[1]).toEqual({
@@ -303,20 +309,20 @@ describe("Auth Module Setup", () => {
             header: vi.fn().mockReturnValue(undefined),
           },
         };
-        vi.mocked(utils.handleRefresh).mockResolvedValue({
+        vi.mocked(handleRefresh).mockResolvedValue({
           outdated: "",
           current: "new-jwt-token",
         });
 
         const result = await authService.refreshToken(mockHonoContext);
 
-        expect(utils.handleRefresh).toHaveBeenCalledWith(
+        expect(handleRefresh).toHaveBeenCalledWith(
           mockHonoContext,
           validOptions
         );
         const emitCalls = vi.mocked(mockContext.emit).mock.calls;
         const tokenRefreshedCall = emitCalls.find(
-          (call) => call[0] === "@comity/auth:token-refreshed"
+          (call: string[]) => call[0] === "@comity/auth:token-refreshed"
         );
         expect(tokenRefreshedCall).toBeDefined();
         expect(tokenRefreshedCall && tokenRefreshedCall[1]).toEqual({
@@ -333,11 +339,11 @@ describe("Auth Module Setup", () => {
         const mockUser = { id: "user-1", roles: { admin: ["read"] } };
         const mockToken = "signed-token";
 
-        vi.mocked(utils.signToken).mockResolvedValue(mockToken);
+        vi.mocked(signToken).mockResolvedValue(mockToken);
 
         const result = await authService.signToken(mockUser);
 
-        expect(utils.signToken).toHaveBeenCalledWith(mockUser, validOptions);
+        expect(signToken).toHaveBeenCalledWith(mockUser, validOptions);
         expect(result).toBe(mockToken);
       });
     });

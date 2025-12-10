@@ -125,13 +125,7 @@ export function resolveModuleOrder(
       const parent = modules.find((m) => m.name === dep);
 
       if (!parent) {
-        if (mod.requires?.includes(dep)) {
-          throw new Error(
-            `Missing required dependency: ${dep} (used in ${mod.name})`
-          );
-        }
-
-        continue;
+        throw new Error(`Missing dependency: ${dep} (used in ${mod.name})`);
       }
 
       visit(parent, stack);

@@ -11,7 +11,7 @@ export const AuthUserSchema = z
   .object({
     id: z.string().min(1, "User ID cannot be empty"),
   })
-  .passthrough(); // Allow additional properties
+  .loose(); // Allow additional properties
 
 /**
  * Zod schema for validating JWTPayload objects.
@@ -30,7 +30,7 @@ export const JWTPayloadSchema = z
     verified: z.number().int().positive().optional(),
     user: AuthUserSchema,
   })
-  .passthrough(); // Allow additional custom claims
+  .loose(); // Allow additional custom claims
 
 /**
  * Zod schema for validating AuthModuleOptions.

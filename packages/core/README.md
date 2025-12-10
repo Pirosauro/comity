@@ -73,21 +73,3 @@ const crypto = new WebCrypto(storage, "secret-key");
 ## License
 
 See the package `LICENSE` in the repository root.
-
-/**
- * Creates JWT authentication middleware for Hono.
- *
- * @remarks
- * This middleware validates JWT tokens and attaches user info to the context.
- * Throws an error if the token is invalid or missing.
- *
- * @param options - JWT configuration options
- * @param ctx - Hono context object
- * @returns Middleware handler for Hono
- *
- * @throws {Error} If the token is invalid or missing
- *
- * @example
- * app.use('/protected', createJWTMiddleware({ secret: 'my-secret' }, ctx));
- */
-export function createJWTMiddleware(options: JWTOptions, ctx: HonoContext): MiddlewareHandler { ... }

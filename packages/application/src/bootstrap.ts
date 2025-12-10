@@ -2,7 +2,8 @@ import type { Hono } from "hono";
 import type { BlankEnv, BlankSchema, Env, Schema } from "hono/types";
 import type { ApplicationModuleHooks, ApplicationModuleMeta } from "./types.js";
 import { ApplicationContext } from "./context.js";
-import { resolveModuleOrder, moduleMetaSchema } from "./utils/index.js";
+import { moduleMetaSchema } from "./validation/module-meta.js";
+import { resolveModuleOrder } from "./utils/resolver.js";
 
 /**
  * Bootstraps a Comity application by registering modules and setting up the runtime environment.

@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
-import { parseRequest } from "../utils/parse-request.js";
+import { describe, expect, it, vi } from "vitest";
+import { parseRequest } from "../parse-request.js";
 
 describe("parseRequest", () => {
   it("should parse application/graphql content type", async () => {
@@ -25,6 +25,8 @@ describe("parseRequest", () => {
   });
 
   it("should throw an error for invalid JSON", async () => {
+    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
     const request = new Request("http://example.com/graphql", {
       method: "POST",
       body: "invalidJSON",
@@ -32,8 +34,31 @@ describe("parseRequest", () => {
     });
 
     await expect(parseRequest(request)).rejects.toThrow(
-      "POST body sent invalid JSON"
+      /POST body sent invalid JSON/
     );
+
+    expect(consoleSpy).toHaveBeenCalled();
+    consoleSpy.mockRestore();
+  });
+
+  it("should handle non-Error exceptions in JSON parsing", async () => {
+    // Mock req.json to throw a non-Error
+    const originalJson = Request.prototype.json;
+    Request.prototype.json = vi.fn().mockRejectedValue("string error");
+
+    const request = new Request("http://example.com/graphql", {
+      method: "POST",
+      body: "invalidJSON",
+      headers: { "Content-Type": "application/json" },
+    });
+
+    try {
+      await expect(parseRequest(request)).rejects.toThrow(
+        /POST body sent invalid JSON/
+      );
+    } finally {
+      Request.prototype.json = originalJson;
+    }
   });
 
   it("should parse application/x-www-form-urlencoded content type", async () => {
@@ -45,6 +70,17 @@ describe("parseRequest", () => {
     const result = await parseRequest(request);
 
     expect(result).toEqual({ test: "value", foo: "bar" });
+  });
+
+  it("should parse application/graphql content type", async () => {
+    const request = new Request("http://example.com/graphql", {
+      method: "POST",
+      body: "query { test }",
+      headers: { "Content-Type": "application/graphql" },
+    });
+    const result = await parseRequest(request);
+
+    expect(result).toEqual({ query: "query { test }" });
   });
 
   it("should return an empty object for unsupported content type", async () => {

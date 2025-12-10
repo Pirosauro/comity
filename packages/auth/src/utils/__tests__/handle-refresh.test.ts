@@ -1,6 +1,11 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { handleRefresh } from "../handle-refresh.js";
 import type { AuthUser, AuthModuleOptions, JWTPayload } from "../../types.js";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { jwtVerify, JWTVerifyResult, ResolvedKey } from "jose";
+import { TooManyRequestsError, UnauthorizedError } from "@comity/core/errors";
+import { TokenExpiredError, TokenInvalidError } from "../../errors/index.js";
+import { extractToken } from "../extract-token.js";
+import { signToken } from "../sign-token.js";
+import { handleRefresh } from "../handle-refresh.js";
 
 // Mock dependencies
 vi.mock("jose", () => ({
@@ -45,15 +50,9 @@ vi.mock("../../errors/index.js", () => ({
   },
 }));
 
-import { jwtVerify } from "jose";
-import { extractToken } from "../extract-token.js";
-import { signToken } from "../sign-token.js";
-import { TooManyRequestsError, UnauthorizedError } from "@comity/core/errors";
-import { TokenExpiredError, TokenInvalidError } from "../../errors/index.js";
-
-const createMockJwtResult = (payload: JWTPayload) => ({
+const createMockJwtResult = (payload: Partial<JWTPayload>): any => ({
   payload,
-  protectedHeader: { alg: "HS256" }
+  protectedHeader: { alg: "HS256" },
 });
 
 describe("handleRefresh", () => {
@@ -61,11 +60,12 @@ describe("handleRefresh", () => {
   const mockExtractToken = vi.mocked(extractToken);
   const mockSignToken = vi.mocked(signToken);
 
-  const mockUser: AuthUser<{ roles: Record<string, string[]>; email: string }> = {
-    id: "user-123",
-    roles: { default: ["user"] },
-    email: "test@example.com",
-  };
+  const mockUser: AuthUser<{ roles: Record<string, string[]>; email: string }> =
+    {
+      id: "user-123",
+      roles: { default: ["user"] },
+      email: "test@example.com",
+    };
 
   const mockContext = {
     req: {
@@ -260,14 +260,17 @@ describe("handleRefresh", () => {
         current: "new-token",
       });
 
-      expect(mockSignToken).toHaveBeenCalledWith(
-        mockUser,
-        defaultOptions
-      );
+      expect(mockSignToken).toHaveBeenCalledWith(mockUser, defaultOptions);
     });
 
     it("should handle complex user data", async () => {
-      const complexUser: AuthUser<{ roles: Record<string, string[]>; email: string; verified: number; permissions: string[]; customField: string }> = {
+      const complexUser: AuthUser<{
+        roles: Record<string, string[]>;
+        email: string;
+        verified: number;
+        permissions: string[];
+        customField: string;
+      }> = {
         id: "user-complex",
         roles: { admin: ["read", "write"], user: ["read"] },
         email: "complex@example.com",
@@ -294,10 +297,7 @@ describe("handleRefresh", () => {
         current: "new-token",
       });
 
-      expect(mockSignToken).toHaveBeenCalledWith(
-        complexUser,
-        defaultOptions
-      );
+      expect(mockSignToken).toHaveBeenCalledWith(complexUser, defaultOptions);
     });
   });
 });

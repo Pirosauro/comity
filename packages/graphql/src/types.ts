@@ -6,29 +6,95 @@ import type {
   GraphQLOutputType,
   GraphQLFieldConfigArgumentMap,
   GraphQLFieldResolver,
+  GraphQLResolveInfo,
+  GraphQLScalarType,
+  GraphQLObjectType,
+  GraphQLInterfaceType,
+  GraphQLUnionType,
+  GraphQLEnumType,
+  GraphQLInputObjectType,
 } from "graphql";
 
-export type FieldConfig<S = any, C = any, A = any> = {
-  type: GraphQLOutputType;
-  args?: GraphQLFieldConfigArgumentMap;
-  resolve?: GraphQLFieldResolver<S, C, A>;
-  description?: Maybe<string>;
-  deprecationReason?: Maybe<string>;
+// Enhanced context type for better type safety
+export interface GraphQLContext {
+  readonly request: Request;
+  readonly user?: {
+    readonly id: string;
+    readonly roles?: readonly string[];
+    readonly permissions?: readonly string[];
+  };
+  readonly logger?: {
+    readonly info: (message: string, meta?: Record<string, unknown>) => void;
+    readonly error: (
+      message: string,
+      error?: unknown,
+      meta?: Record<string, unknown>
+    ) => void;
+    readonly warn: (message: string, meta?: Record<string, unknown>) => void;
+    readonly debug: (message: string, meta?: Record<string, unknown>) => void;
+  };
+  readonly [key: string]: unknown;
+}
+
+// Strict typing for GraphQL types
+export type GraphQLType =
+  | GraphQLScalarType
+  | GraphQLObjectType
+  | GraphQLInterfaceType
+  | GraphQLUnionType
+  | GraphQLEnumType
+  | GraphQLInputObjectType;
+
+// Enhanced field config with better type safety
+export type FieldConfig<
+  TSource = unknown,
+  TContext extends GraphQLContext = GraphQLContext,
+  TArgs = Record<string, unknown>
+> = {
+  readonly type: GraphQLOutputType;
+  readonly args?: GraphQLFieldConfigArgumentMap;
+  readonly resolve?: GraphQLFieldResolver<TSource, TContext, TArgs>;
+  readonly description?: string;
+  readonly deprecationReason?: string;
+  readonly extensions?: Readonly<Record<string, unknown>>;
 };
 
-export type SubscriptionFieldConfig<S = any, C = any, A = any> = {
-  type: GraphQLOutputType;
-  resolve: GraphQLFieldResolver<S, C, A>;
-  subscribe: GraphQLFieldResolver<S, C, A>;
-  args?: GraphQLFieldConfigArgumentMap;
-  description?: Maybe<string>;
-  deprecationReason?: Maybe<string>;
+// Enhanced subscription field config
+export type SubscriptionFieldConfig<
+  TSource = unknown,
+  TContext extends GraphQLContext = GraphQLContext,
+  TArgs = Record<string, unknown>
+> = {
+  readonly type: GraphQLOutputType;
+  readonly resolve: GraphQLFieldResolver<TSource, TContext, TArgs>;
+  readonly subscribe: GraphQLFieldResolver<TSource, TContext, TArgs>;
+  readonly args?: GraphQLFieldConfigArgumentMap;
+  readonly description?: string;
+  readonly deprecationReason?: string;
+  readonly extensions?: Readonly<Record<string, unknown>>;
 };
 
-export interface GraphQLModule {
-  queries?: Record<string, FieldConfig>;
-  mutations?: Record<string, FieldConfig>;
-  subscriptions?: Record<string, SubscriptionFieldConfig>;
+// Strict GraphQL module interface
+export interface GraphQLModule<
+  TContext extends GraphQLContext = GraphQLContext
+> {
+  readonly queries?: Readonly<Record<string, FieldConfig<unknown, TContext>>>;
+  readonly mutations?: Readonly<Record<string, FieldConfig<unknown, TContext>>>;
+  readonly subscriptions?: Readonly<
+    Record<string, SubscriptionFieldConfig<unknown, TContext>>
+  >;
+}
+
+// Validation result type
+export interface ValidationResult {
+  readonly isValid: boolean;
+  readonly errors: readonly ValidationError[];
+}
+
+export interface ValidationError {
+  readonly field: string;
+  readonly message: string;
+  readonly code: string;
 }
 
 export interface GraphQLParams {

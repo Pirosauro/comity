@@ -1,7 +1,7 @@
-import type { ValidatedModuleMeta } from "../meta-schema.js";
+import type { ValidatedModuleMeta } from "../module-meta.js";
 import { describe, it, expect } from "vitest";
 import { z } from "zod";
-import { moduleMetaSchema } from "../meta-schema.js";
+import { moduleMetaSchema } from "../module-meta.js";
 
 // Helper function to create a valid module for testing
 const createValidModule = (overrides: Partial<ValidatedModuleMeta> = {}) => ({
