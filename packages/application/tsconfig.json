@@ -6,5 +6,5 @@
     "types": ["node"]
   },
   "exclude": ["**/*.test.ts"],
-  "include": ["src/**/*.ts", "src/**/*.tsx", "types/**/*.d.ts"]
+  "include": ["src/**/*.ts", "src/**/*.d.ts"]
 }

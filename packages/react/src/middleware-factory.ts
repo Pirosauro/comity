@@ -3,11 +3,11 @@ import type { FC, PropsWithChildren, ReactNode } from "react";
 import type { ReactRendererOptions } from "./types.js";
 import { renderToString } from "react-dom/server";
 
-export const reactRendererMiddleware =
-  (component: FC, options?: ReactRendererOptions): MiddlewareHandler =>
+export const createReactRendererMiddleware =
+  (root: FC, options?: ReactRendererOptions): MiddlewareHandler =>
   (ctx, next) => {
     function renderer(children: ReactNode, props?: PropsWithChildren) {
-      const node = component ? component({ ...props, children }) : children;
+      const node = root ? root({ ...props, children }) : children;
       const docType =
         typeof options?.docType === "string"
           ? options.docType

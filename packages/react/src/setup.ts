@@ -1,15 +1,9 @@
 import type {
   ApplicationContext,
-  ApplicationModuleHooks,
   ApplicationModuleMeta,
 } from "@comity/application";
 import type { LoggerModuleContext } from "@comity/logger";
-import type {
-  ReactModuleContext,
-  ReactModuleEvents,
-  ReactModuleHooks,
-  ReactModuleOptions,
-} from "./types.js";
+import type { ReactModuleContext, ReactModuleOptions } from "./types.js";
 
 export const setup: ApplicationModuleMeta<
   ReactModuleOptions,
@@ -18,15 +12,10 @@ export const setup: ApplicationModuleMeta<
   name: "@comity/react",
   version: "1.0.0",
   setup: async (options) => {
-    return async (ctx) => {
-      // Emit service via events
-      await ctx.emit<ReactModuleHooks["@comity/react:initialized"]>(
-        "@comity/react:initialized"
-      );
-    };
+    return async (ctx) => {};
   },
   dependsOn: ["@comity/application", "@comity/hydration", "@comity/logger"],
-  incompatibleWith: [],
+  incompatibleWith: ["@comity/preact"],
 };
 
 export default setup;

@@ -2,6 +2,14 @@ import type { ComponentType } from "react";
 import type { ClientDirective } from "@comity/hydration";
 import { getHydrationData } from "@comity/hydration";
 
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      "comity-island": any;
+    }
+  }
+}
+
 /**
  * Wrap the component into an island
  */

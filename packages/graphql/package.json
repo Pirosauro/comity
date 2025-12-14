@@ -24,7 +24,7 @@
   "scripts": {
     "build": "tsc",
     "prepublish": "tsc",
-    "dev": "tsc -b --watch",
+    "dev": "tsc --build --watch",
     "clean": "tsc --build --clean",
     "typecheck": "tsc --noEmit"
   },
@@ -51,10 +51,10 @@
     "@comity/logger": "workspace:*",
     "@envelop/core": "^5.4.0",
     "graphql": "^16.12.0",
-    "hono": "^4.10.8"
+    "hono": "^4.11.0"
   },
   "devDependencies": {
-    "@types/node": "^24.10.2",
+    "@types/node": "^24.10.3",
     "typescript": "^5.9.3"
   },
   "peerDependencies": {

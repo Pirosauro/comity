@@ -1,6 +1,11 @@
 import type { UserConfig } from "vite";
-import { resolve } from "node:path";
+import { normalize, resolve } from "node:path";
 import { existsSync, statSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { dirname, sep } from "node:path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 /**
  * Configuration options for the withComity Vite plugin.
@@ -20,15 +25,13 @@ import { existsSync, statSync } from "node:fs";
  * });
  * ```
  */
-export type ComityViteOptions = {};
+export type ComityViteOptions = {
+  /** List of package names allowed to be overridden */
+  allowedOverrides?: string[];
 
-// Cache the configuration since options are not used
-let cachedConfig: UserConfig | null = null;
-
-// For testing: clear the cache
-export function __test_clearCache() {
-  cachedConfig = null;
-}
+  /** Base folder for resolution, defaults to "./src" */
+  baseFolder?: string;
+};
 
 /**
  * Creates a Vite configuration with Comity-specific alias resolution.
@@ -99,36 +102,49 @@ export function __test_clearCache() {
 export function withComity(
   options: ComityViteOptions
 ): Promise<UserConfig> | UserConfig {
-  if (cachedConfig) {
-    return cachedConfig;
+  const cwd = normalize(__dirname || process.cwd());
+  const root = resolve(cwd, options.baseFolder || "./src");
+
+  // Path traversal protection
+  if (!root.startsWith(cwd + sep)) {
+    throw new Error(
+      "Path Traversal detected: 'baseFolder' must resolve within the current working directory."
+    );
   }
 
-  cachedConfig = {
-    resolve: {
-      alias: [
-        // Replace package imports with local overrides if the file exists
-        {
-          // find: /^(?:@[^\/]+\/[^\/]+|[^@][^\/]*)(?:\/.*)?$/,
-          find: /^(?:@[a-zA-Z0-9][a-zA-Z0-9\-_]*\/[a-zA-Z0-9][a-zA-Z0-9\-_]*|[a-zA-Z0-9][a-zA-Z0-9\-_]*)(?:\/.*)?$/,
-          replacement: resolve(
-            __dirname || process.cwd(),
-            "./src/overrides/$1"
-          ),
-          customResolver: (source: string) => {
-            try {
-              if (existsSync(source) && statSync(source).isFile()) {
-                return source;
-              }
-            } catch (error) {
-              // Fallback to default resolution if any error occurs
-            }
+  /** Override aliases for allowed packages */
+  const alias =
+    options.allowedOverrides?.map((name) => {
+      // Construct a regex to match the package name exactly, including subpaths
+      // e.g., /^@my-org\/ui(\/.*)?$/
+      const finder = new RegExp(
+        `^${name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(\\/.*)?$`
+      );
 
-            return null;
-          },
+      return {
+        find: finder,
+        replacement: resolve(
+          __dirname || process.cwd(),
+          `${options.baseFolder || "./src"}/overrides/${name}/$1`
+        ),
+        customResolver: (source: string) => {
+          // The customResolver logic remains the same:
+          // Check if the replacement file exists.
+          try {
+            if (existsSync(source) && statSync(source).isFile()) {
+              return source;
+            }
+          } catch (error) {
+            // Fallback to default resolution if any error occurs
+          }
+          return null;
         },
-      ],
+      };
+    }) ?? [];
+
+  return {
+    resolve: {
+      alias,
     },
   };
-
-  return cachedConfig;
 }

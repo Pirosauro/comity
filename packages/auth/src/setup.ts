@@ -129,7 +129,7 @@ export const setup: ApplicationModuleMeta<
       ctx.auth = service;
     };
   },
-  requires: ["@comity/application", "@comity/logger"],
+  dependsOn: ["@comity/application", "@comity/logger"],
   priority: 10,
   incompatibleWith: [],
 };

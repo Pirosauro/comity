@@ -86,6 +86,7 @@ export function determineHttpStatus(
     const errorCode = extensions.code as string | undefined;
     if (errorCode) {
       const mappedStatus = ERROR_CODE_TO_STATUS[errorCode];
+
       if (mappedStatus && mappedStatus > highestStatus) {
         highestStatus = mappedStatus;
       }
@@ -96,7 +97,7 @@ export function determineHttpStatus(
       error.message.includes("Syntax Error") ||
       error.message.includes("Unexpected")
     ) {
-      highestStatus = Math.max(highestStatus, 400);
+      highestStatus = Math.max(highestStatus, 400) as ContentfulStatusCode;
     }
 
     // Check for validation errors
@@ -104,7 +105,7 @@ export function determineHttpStatus(
       error.message.includes("Cannot query field") ||
       error.message.includes("Unknown type")
     ) {
-      highestStatus = Math.max(highestStatus, 400);
+      highestStatus = Math.max(highestStatus, 400) as ContentfulStatusCode;
     }
 
     // Check for authentication/authorization errors
@@ -112,7 +113,7 @@ export function determineHttpStatus(
       error.message.includes("Unauthorized") ||
       error.message.includes("Forbidden")
     ) {
-      highestStatus = Math.max(highestStatus, 401);
+      highestStatus = Math.max(highestStatus, 401) as ContentfulStatusCode;
     }
   }
 

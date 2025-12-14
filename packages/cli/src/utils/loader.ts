@@ -1,14 +1,18 @@
-import { CliConfig } from "../types.js";
+import type { CliConfig } from "../types.js";
 import { pathToFileURL } from "node:url";
 import { join } from "node:path";
 
 export async function loadCliConfig(): Promise<CliConfig> {
-  const paths = [
-    join(process.cwd(), "comity.config.ts"),
-    join(process.cwd(), "comity.config.js"),
-    join(process.cwd(), "config", "comity.config.ts"),
-    join(process.cwd(), "config", "comity.config.js"),
-  ];
+  const paths = process.env.COMITY_CLI_CONFIG
+    ? [process.env.COMITY_CLI_CONFIG]
+    : [
+        join(process.cwd(), "comity.config.ts"),
+        join(process.cwd(), "comity.config.js"),
+        join(process.cwd(), "config", "comity.config.ts"),
+        join(process.cwd(), "config", "comity.config.js"),
+        join(process.cwd(), "src", "config", "comity.config.ts"),
+        join(process.cwd(), "src", "config", "comity.config.js"),
+      ];
 
   // Try to load the configuration file from the possible paths
   for (const path of paths) {

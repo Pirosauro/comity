@@ -4,6 +4,7 @@
   "packageManager": "pnpm@10.13.1",
   "scripts": {
     "build": "pnpm --recursive build",
+    "clean": "pnpm --recursive clean",
     "lint": "pnpm --recursive lint",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",

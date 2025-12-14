@@ -3,7 +3,7 @@ import type { FC, PropsWithChildren, ReactNode } from "react";
 import type { ReactStreamRendererOptions } from "../types.js";
 import { stream } from "hono/streaming";
 
-export const reactRendererMiddleware = (
+export const createReactRendererMiddleware = (
   component: FC,
   options: ReactStreamRendererOptions
 ): MiddlewareHandler => {

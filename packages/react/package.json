@@ -31,7 +31,7 @@
   "scripts": {
     "build": "tsc",
     "prepublish": "tsc",
-    "dev": "tsc -b --watch",
+    "dev": "tsc --build --watch",
     "clean": "tsc --build --clean",
     "typecheck": "tsc --noEmit"
   },
@@ -61,12 +61,12 @@
     "@comity/application": "workspace:*",
     "@comity/hydration": "workspace:*",
     "@comity/logger": "workspace:*",
-    "hono": "^4.10.8",
+    "hono": "^4.11.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@types/node": "^24.10.2",
+    "@types/node": "^24.10.3",
     "@types/react": "^18.3.27",
     "@types/react-dom": "^18.3.7",
     "typescript": "^5.9.3"

@@ -1,6 +1,6 @@
-import type { PostgresService } from "./types.js";
+import type { PostgresClient } from "./types.js";
 
-export type PostgresRepositoryConstructor<T> = new (db: PostgresService) => T;
+export type PostgresRepositoryConstructor<T> = new (db: PostgresClient) => T;
 
 /**
  * Base class for database repositories.
@@ -15,9 +15,9 @@ export type PostgresRepositoryConstructor<T> = new (db: PostgresService) => T;
  * promoting code reuse and consistency across different repositories.
  */
 export abstract class PostgresRepository {
-  #db: PostgresService;
+  #db: PostgresClient;
 
-  constructor(db: PostgresService) {
+  constructor(db: PostgresClient) {
     this.#db = db;
   }
 

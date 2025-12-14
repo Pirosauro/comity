@@ -10,6 +10,39 @@ import type { ApplicationContext } from "@comity/application";
 import type { PostgresModuleEvents } from "./types.js";
 import { Pool } from "pg";
 
+/**
+ * Extended PostgreSQL connection pool client with event monitoring and query tracking.
+ *
+ * @remarks
+ * This class extends the native `pg.Pool` to provide additional functionality:
+ * - Automatic event emission for connection lifecycle events
+ * - Query execution tracking with start/end/error events
+ * - Integration with Comity's logging and event system
+ * - Enhanced error handling and monitoring
+ *
+ * **Event Types Emitted:**
+ * - `connect`: When a client connects to the database
+ * - `acquire`: When a client is acquired from the pool
+ * - `release`: When a client is released back to the pool
+ * - `remove`: When a client is removed from the pool
+ * - `error`: When a pool-level error occurs
+ * - `query-start`: When a query execution begins
+ * - `query-end`: When a query execution completes successfully
+ * - `query-error`: When a query execution fails
+ *
+ * All events are forwarded to the Comity event system for centralized monitoring.
+ *
+ * @example
+ * Basic client usage with event handling
+ * ```typescript
+ * const client = new Client({
+ *   connectionString: "postgresql://localhost:5432/mydb",
+ *   max: 10
+ * }, context);
+ *
+ * // Client automatically emits events through the context
+ * ```
+ */
 export class Client extends Pool {
   constructor(
     config: PoolConfig,
@@ -100,6 +133,20 @@ export class Client extends Pool {
     });
   }
 
+  /**
+   * Executes a database query with event tracking.
+   *
+   * @remarks
+   * This method overrides the base Pool.query to add query lifecycle event emission.
+   * It emits `query-start`, `query-end`, and `query-error` events through the Comity event system.
+   *
+   * @param query - SQL query string or query configuration object
+   * @param params - Query parameters for parameterized queries
+   * @param callback - Optional callback function (not recommended for async/await)
+   * @returns Promise resolving to query result or void if callback is provided
+   *
+   * @template T - The type of the query result
+   */
   // @ts-expect-error
   async query<T extends Submittable>(
     query: QueryConfig<any[]> | string,

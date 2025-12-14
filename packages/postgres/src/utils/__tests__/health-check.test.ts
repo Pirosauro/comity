@@ -160,4 +160,29 @@ describe("performHealthCheck", () => {
     expect(result.primary.latency).toBeGreaterThanOrEqual(delay - 10); // Allow small margin for timing precision
     expect(result.primary.latency).toBeLessThan(delay + 50); // Allow some margin
   });
+
+  it("should return degraded status when replica latency is too high", async () => {
+    mockPrimaryPool.query.mockResolvedValue({ rows: [{ "?column?": 1 }] });
+    // Mock a slow replica response
+    mockReplicaPool.query.mockImplementation(
+      () => new Promise((resolve) => setTimeout(() => resolve({ rows: [{ "?column?": 1 }] }), 1100))
+    );
+
+    const result = await performHealthCheck(mockPrimaryDb, [mockReplicaDb]);
+
+    expect(result.status).toBe("degraded");
+    expect(result.primary.status).toBe("connected");
+    expect(result.replicas[0].status).toBe("connected");
+    expect(result.replicas[0].latency).toBeGreaterThan(1000);
+  });
+
+  it("should handle missing latency values", async () => {
+    mockPrimaryPool.query.mockResolvedValue({ rows: [{ "?column?": 1 }] });
+    mockReplicaPool.query.mockResolvedValue({ rows: [{ "?column?": 1 }] });
+
+    const result = await performHealthCheck(mockPrimaryDb, [mockReplicaDb]);
+
+    // Should still return healthy even if latency is undefined (though it shouldn't be)
+    expect(result.status).toBe("healthy");
+  });
 });

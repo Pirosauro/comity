@@ -4,6 +4,7 @@ import type { ApplicationModuleHooks, ApplicationModuleMeta } from "./types.js";
 import { ApplicationContext } from "./context.js";
 import { moduleMetaSchema } from "./validation/module-meta.js";
 import { resolveModuleOrder } from "./utils/resolver.js";
+import { createService } from "./service-factory.js";
 
 /**
  * Bootstraps a Comity application by registering modules and setting up the runtime environment.
@@ -110,26 +111,27 @@ export async function createApplication<
     await setup(ctx);
   }
 
+  if (
+    options["@comity/application"]?.rendererOrder === "before" &&
+    typeof options["@comity/application"]?.renderer === "function"
+  ) {
+    app.use("*", options["@comity/application"].renderer);
+  }
+
+  // Create service
+  const service = createService(app, ctx);
+
   // Trigger lifecycle hook
   await ctx.trigger<
     ApplicationModuleHooks<E, S>["@comity/application:initialized"]
-  >("@comity/application:initialized", {
-    get: app.get.bind(app),
-    post: app.post.bind(app),
-    put: app.put.bind(app),
-    delete: app.delete.bind(app),
-    options: app.options.bind(app),
-    patch: app.patch.bind(app),
-    use: app.use.bind(app),
-    on: app.on.bind(app),
-    all: app.all.bind(app),
-    route: app.route.bind(app),
-    mount: app.mount.bind(app),
-    fetch: app.fetch.bind(app),
-    request: app.request.bind(app),
-    notFound: app.notFound.bind(app),
-    onError: app.onError.bind(app),
-  });
+  >("@comity/application:initialized", service);
+
+  if (
+    options["@comity/application"]?.rendererOrder === "after" &&
+    typeof options["@comity/application"]?.renderer === "function"
+  ) {
+    app.use("*", options["@comity/application"].renderer);
+  }
 
   return app;
 }

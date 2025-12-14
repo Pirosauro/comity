@@ -82,7 +82,7 @@ export const myModule: ApplicationModuleMeta = {
 Notes:
 
 - Keep `name` unique across modules.
-- Use `dependsOn` to declare optional ordering dependencies (tests rely on missing-dependency errors for dependsOn).
+- Use `dependsOn` to declare optional ordering dependencies.
 - Use `requires` when a dependency is mandatory and should cause a hard failure if missing.
 
 ## Development & Tests

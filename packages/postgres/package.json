@@ -32,7 +32,7 @@
   "scripts": {
     "build": "tsc",
     "prepublish": "tsc",
-    "dev": "tsc -b --watch",
+    "dev": "tsc --build --watch",
     "clean": "tsc --build --clean",
     "typecheck": "tsc --noEmit"
   },
@@ -62,8 +62,8 @@
     "access": "public"
   },
   "dependencies": {
-    "drizzle-orm": "^0.45.0",
-    "hono": "^4.10.8",
+    "drizzle-orm": "^0.45.1",
+    "hono": "^4.11.0",
     "pg": "^8.16.3"
   },
   "devDependencies": {
@@ -71,8 +71,8 @@
     "@comity/cli": "workspace:*",
     "@comity/core": "workspace:*",
     "@comity/logger": "workspace:*",
-    "@types/node": "^24.10.2",
-    "@types/pg": "^8.15.6",
+    "@types/node": "^24.10.3",
+    "@types/pg": "^8.16.0",
     "typescript": "^5.9.3"
   }
 }

@@ -1,0 +1,87 @@
+{
+  "name": "@comity/slug",
+  "version": "1.0.0",
+  "description": "Friendly URL module for Comity framework",
+  "type": "module",
+  "author": "Filippo Bovo <hello@filippobovo.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/comityjs/framework#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/comityjs/framework.git"
+  },
+  "bugs": {
+    "url": "https://github.com/comityjs/framework/issues"
+  },
+  "keywords": [
+    "comity",
+    "comityjs",
+    "slug",
+    "url",
+    "friendly",
+    "rewrite",
+    "SEO",
+    "typescript",
+    "framework"
+  ],
+  "scripts": {
+    "build": "tsc && tsc -p tsconfig.drizzle.json",
+    "prepublish": "tsc && tsc -p tsconfig.drizzle.json",
+    "dev": "tsc --build --watch",
+    "clean": "tsc --build --clean",
+    "typecheck": "tsc --noEmit"
+  },
+  "files": [
+    "./dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/esm/index.d.ts",
+      "import": "./dist/esm/index.js"
+    },
+    "./database": {
+      "import": {
+        "default": "./dist/esm/database/index.js",
+        "types": "./dist/esm/database/index.d.ts"
+      },
+      "require": {
+        "default": "./dist/cjs/database/index.js",
+        "types": "./dist/cjs/database/index.d.ts"
+      }
+    },
+    "./repositories": {
+      "types": "./dist/esm/repositories/index.d.ts",
+      "import": "./dist/esm/repositories/index.js"
+    },
+    "./setup": {
+      "types": "./dist/esm/setup.d.ts",
+      "import": "./dist/esm/setup.js"
+    },
+    "./use-cases": {
+      "types": "./dist/esm/use-cases/index.d.ts",
+      "import": "./dist/esm/use-cases/index.js"
+    },
+    "./validation": {
+      "types": "./dist/esm/validation/index.d.ts",
+      "import": "./dist/esm/validation/index.js"
+    }
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "dependencies": {
+    "@casl/ability": "^6.7.3",
+    "@comity/application": "workspace:*",
+    "@comity/core": "workspace:*",
+    "@comity/logger": "workspace:*",
+    "@comity/postgres": "workspace:*",
+    "@comity/workspace": "workspace:*",
+    "drizzle-orm": "^0.45.1",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.3",
+    "typescript": "^5.9.3"
+  }
+}

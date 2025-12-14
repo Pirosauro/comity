@@ -14,7 +14,7 @@ describe("PostgresRepository", () => {
 
   class TestRepository extends PostgresRepository {
     constructor() {
-      super(mockDb);
+      super(mockDb as any);
     }
 
     get testDb() {
@@ -62,7 +62,7 @@ describe("PostgresRepository", () => {
       }
     }
 
-    const repo = new CustomRepository(mockDb);
+    const repo = new CustomRepository(mockDb as any);
 
     expect(typeof repo.findById).toBe("function");
     expect(typeof repo.create).toBe("function");

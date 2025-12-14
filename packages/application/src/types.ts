@@ -19,7 +19,35 @@ export {
   Schema,
 };
 
-export type ApplicationModuleOptions = {};
+export type ApplicationService<
+  E extends Env = Env,
+  S extends Schema = Schema
+> = Pick<
+  Hono<E, S, "/">,
+  | "get"
+  | "post"
+  | "put"
+  | "delete"
+  | "options"
+  | "patch"
+  | "all"
+  | "use"
+  | "on"
+  | "route"
+  | "mount"
+  | "fetch"
+  | "request"
+  | "notFound"
+  | "onError"
+>;
+
+export type ApplicationModuleOptions = {
+  /** Renderer function to render responses */
+  renderer?: HonoContextRenderer;
+
+  /** Order in which the renderer should be applied relative to other middleware */
+  rendererOrder?: "before" | "after";
+};
 
 /**
  * Metadata structure defining a Comity module's configuration and dependencies.
@@ -91,8 +119,8 @@ export interface ApplicationModuleMeta<O extends {} = {}, C = Context> {
   /** Array of module names this module depends on (optional) */
   dependsOn?: string[];
 
-  /** Array of module names this module requires (optional) */
-  requires?: string[];
+  /** Array of module names this module optionally depends on (optional) */
+  optionalDependsOn?: string[];
 
   /** Array of module names this module cannot coexist with (optional) */
   incompatibleWith?: string[];
@@ -130,22 +158,5 @@ export type ApplicationModuleHooks<
   /**
    * Triggered after the application is initialized.
    */
-  "@comity/application:initialized": Pick<
-    Hono<E, S, "/">,
-    | "get"
-    | "post"
-    | "put"
-    | "delete"
-    | "options"
-    | "patch"
-    | "all"
-    | "use"
-    | "on"
-    | "route"
-    | "mount"
-    | "fetch"
-    | "request"
-    | "notFound"
-    | "onError"
-  >;
+  "@comity/application:initialized": ApplicationService<E, S>;
 };

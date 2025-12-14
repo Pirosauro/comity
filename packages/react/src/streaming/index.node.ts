@@ -1,2 +1,2 @@
-export * from "./middleware.js";
+export * from "./middleware-factory.js";
 export * from "./node.js";

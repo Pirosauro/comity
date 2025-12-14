@@ -117,18 +117,27 @@ export function resolveModuleOrder(
     stack.push(mod.name);
 
     const dependencies = Array.from(
-      new Set([...(mod.dependsOn || []), ...(mod.requires || [])])
+      new Set([...(mod.dependsOn || []), ...(mod.optionalDependsOn || [])])
     );
 
     // Visit dependencies first
-    for (const dep of dependencies.filter((d) => d !== "@comity/application")) {
+    for (const dep of dependencies) {
+      if (dep === "@comity/application") continue;
+
+      if (dep === mod.name) {
+        throw new Error(`Module ${mod.name} cannot depend on itself`);
+      }
+
       const parent = modules.find((m) => m.name === dep);
 
-      if (!parent) {
+      // If dependency not found and not optional, throw error
+      if (!parent && !(mod.optionalDependsOn || []).includes(dep)) {
         throw new Error(`Missing dependency: ${dep} (used in ${mod.name})`);
       }
 
-      visit(parent, stack);
+      if (parent) {
+        visit(parent, stack);
+      }
     }
 
     // Add the current module to the result

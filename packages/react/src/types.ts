@@ -11,7 +11,7 @@ export type ReactRendererOptions = {
 
 export type ReactStreamRendererOptions = {
   renderer: (
-    children: ReactNode,
+    children: ReactNode | Promise<ReactNode>,
     options?: RenderToReadableStreamOptions | RenderToPipeableStreamOptions
   ) => Promise<ReadableStream<any>>;
   docType?: boolean | string;
@@ -35,7 +35,7 @@ export type ReactModuleOptions = {
     component: FC,
     options?: ReactRendererOptions | ReactStreamRendererOptions
   ) => ContextRenderer;
-  component: FC;
+  root: FC;
 } & (ReactRendererOptions | ReactStreamRendererOptions);
 
 export type IslandOptions = {

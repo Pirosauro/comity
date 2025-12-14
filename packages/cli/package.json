@@ -25,7 +25,7 @@
   "scripts": {
     "build": "tsc",
     "prepublish": "tsc",
-    "dev": "tsc -b --watch",
+    "dev": "tsc --build --watch",
     "clean": "tsc --build --clean",
     "typecheck": "tsc --noEmit"
   },
@@ -52,7 +52,7 @@
     "zod": "^4.1.13"
   },
   "devDependencies": {
-    "@types/node": "^24.10.2",
+    "@types/node": "^24.10.3",
     "typescript": "^5.9.3"
   }
 }

@@ -8,13 +8,7 @@ import type { GraphQLModuleHooks, GraphQLModuleOptions } from "./types.js";
 import { Hono } from "hono";
 import {
   execute,
-  GraphQLBoolean,
   GraphQLError,
-  GraphQLID,
-  GraphQLList,
-  GraphQLNonNull,
-  GraphQLObjectType,
-  GraphQLString,
   parse,
   specifiedRules,
   subscribe,
@@ -22,7 +16,7 @@ import {
 } from "graphql";
 import { useEngine, useSchema } from "@envelop/core";
 import { GraphQLContainer } from "./container.js";
-import { createGraphQLMiddleware } from "./middleware.js";
+import { createGraphQLMiddleware } from "./middleware-factory.js";
 import { normalizeToGraphQLError } from "./utils/normalize-to-graphql-error.js";
 
 export const setup: ApplicationModuleMeta<

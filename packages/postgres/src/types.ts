@@ -29,10 +29,12 @@ export type PostgresService = Pick<
     repository: new (
       db: NodePgDatabase<Record<string, never>> & {
         $client: Pool;
-      },
-      logger: LoggerService
+      }
     ) => T
   ) => void;
+
+  /** Function to retrieve a registered repository by its key */
+  getRepository: <T>(key: string) => T;
 
   /** Function to perform a health check on the databases */
   healthCheck: () => Promise<

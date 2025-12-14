@@ -15,8 +15,8 @@ import type {
 import { env } from "hono/adapter";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { withReplicas } from "drizzle-orm/pg-core";
-import { Container } from "@comity/core/patterns";
 import { Client } from "./client.js";
+import { createService } from "./service-factory.js";
 import { performHealthCheck, testConnection } from "./utils/index.js";
 import { ConnectionError } from "./errors/index.js";
 
@@ -138,17 +138,8 @@ export function createDatabaseMiddleware(
       const db = replicas.length
         ? withReplicas(primary, replicas as [PostgresClient])
         : primary;
-      const repositories = new Container();
       const service: PostgresService = {
-        select: db.select.bind(db),
-        insert: db.insert.bind(db),
-        update: db.update.bind(db),
-        delete: db.delete.bind(db),
-        transaction: db.transaction.bind(db),
-        execute: db.execute?.bind(db),
-        registerRepository: (key, repository) => {
-          repositories.register(key, () => new repository(db, logger));
-        },
+        ...createService(db),
         healthCheck: async () => {
           // If health checks are disabled, return unknown status
           if (options?.disableHealthCheck) {
@@ -215,8 +206,8 @@ export function createDatabaseMiddleware(
       // Log the error for debugging
       logger.error({ error }, `Database middleware error: ${message}`);
 
-      await ctx.trigger<PostgresModuleHooks["@comity/postgres:shutodown"]>(
-        "@comity/postgres:shutodown",
+      await ctx.trigger<PostgresModuleHooks["@comity/postgres:shutdown"]>(
+        "@comity/postgres:shutdown",
         message
       );
 

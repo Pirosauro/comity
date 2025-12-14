@@ -117,6 +117,25 @@ describe("Client", () => {
     );
   });
 
+  it("should handle error events with null error", () => {
+    const config = { connectionString: "postgresql://localhost:5432/test" };
+    const client = new Client(config, mockCtx);
+
+    const errorHandler = client.on.mock.calls.find(
+      (call) => call[0] === "error"
+    )?.[1];
+    const mockClient = {};
+
+    errorHandler(null, mockClient);
+
+    // Should not log error when error is null
+    expect(mockLogger.error).not.toHaveBeenCalled();
+    expect(mockEmit).toHaveBeenCalledWith("@comity/postgres:error", {
+      client: mockClient,
+      error: null,
+    });
+  });
+
   it("should set up release event handler", () => {
     const config = { connectionString: "postgresql://localhost:5432/test" };
     const client = new Client(config, mockCtx);
@@ -158,6 +177,8 @@ describe("Client", () => {
 
     releaseHandler(null, {});
 
+    // Should not log error when error is null
+    expect(mockLogger.error).not.toHaveBeenCalled();
     expect(mockEmit).toHaveBeenCalledWith("@comity/postgres:release", {
       client: {},
       error: null,

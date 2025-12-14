@@ -1,11 +1,10 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "jsx": "preserve",
-    "jsxImportSource": "hono/jsx",
     "outDir": "./dist",
-    "rootDir": "./src"
+    "rootDir": "./src",
+    "types": ["node"]
   },
-  "include": ["src/**/*", "module.d.ts"],
-  "exclude": ["dist", "node_modules", "**/*.test.ts", "**/__tests__/**"]
+  "exclude": ["**/*.test.ts"],
+  "include": ["src/**/*.ts", "src/**/*.d.ts"]
 }

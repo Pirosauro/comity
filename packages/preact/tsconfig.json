@@ -4,8 +4,9 @@
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
     "outDir": "./dist",
-    "rootDir": "./src"
+    "rootDir": "./src",
+    "types": ["node"]
   },
-  "include": ["src/**/*"],
-  "exclude": ["dist", "node_modules", "**/*.test.ts", "**/__tests__/**"]
+  "exclude": ["**/*.test.ts"],
+  "include": ["src/**/*.ts", "src/**/*.d.ts"]
 }
