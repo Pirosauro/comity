@@ -2,30 +2,19 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
-    projects: ["packages/*"],
-    include: ["packages/*/src/**/*.test.{ts,tsx}"],
-    exclude: [
-      "**/node_modules/**",
-      "**/dist/**",
-      "**/.{git,cache,output,temp}/**",
-    ],
-    globals: true,
+    projects: ["packages/*/vitest.config.{ts,js,mjs}"],
+
     environment: "node",
+    globals: true,
+
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html", "lcov"],
       reportsDirectory: "coverage",
-      exclude: [
-        "coverage/**",
-        "dist/**",
-        "**/node_modules/**",
-        "**/*.d.ts",
-        "**/*.config.{ts,js}",
-        "**/test{,s}/**",
-        "**/*.test.{ts,tsx,js,jsx}",
-        "**/*.spec.{ts,tsx,js,jsx}",
-      ],
-      all: true,
+
+      clean: true,
+      cleanOnRerun: false,
+
       thresholds: {
         lines: 80,
         functions: 80,
@@ -33,11 +22,7 @@ export default defineConfig({
         statements: 80,
       },
     },
-    pool: "threads",
-    poolOptions: {
-      threads: {
-        singleThread: false,
-      },
-    },
+
+    testTimeout: 10000,
   },
 });

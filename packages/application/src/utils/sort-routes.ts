@@ -39,26 +39,24 @@ export const sortRoutes = (routes: string[]): string[] => {
   // sort files in each directory
   index.forEach((directory) => {
     result.push(
-      ...groups[directory]
-        .sort((a, b) => {
-          if (a[0] === "_" || (a[0] === "[" && b[0] !== "[")) {
-            return 1;
-          }
+      ...groups[directory]!.sort((a, b) => {
+        if (a[0] === "_" || (a[0] === "[" && b[0] !== "[")) {
+          return 1;
+        }
 
-          if (a[0] !== "[" && b[0] === "[") {
-            return -1;
-          }
+        if (a[0] !== "[" && b[0] === "[") {
+          return -1;
+        }
 
-          const an = a.toLocaleLowerCase().replace(ROUTE_PATTERN, replacer);
-          const bn = b.toLocaleLowerCase().replace(ROUTE_PATTERN, replacer);
+        const an = a.toLocaleLowerCase().replace(ROUTE_PATTERN, replacer);
+        const bn = b.toLocaleLowerCase().replace(ROUTE_PATTERN, replacer);
 
-          if (an.length === bn.length) {
-            return an.localeCompare(bn);
-          }
+        if (an.length === bn.length) {
+          return an.localeCompare(bn);
+        }
 
-          return bn.length - an.length;
-        })
-        .map((s) => directory + s)
+        return bn.length - an.length;
+      }).map((s) => directory + s)
     );
   });
 

@@ -23,24 +23,59 @@
     "typescript"
   ],
   "scripts": {
-    "build": "tsc",
-    "prepublish": "tsc",
-    "dev": "tsc --build --watch",
-    "clean": "tsc --build --clean",
-    "typecheck": "tsc --noEmit"
+    "build": "node ../../scripts/build.mjs",
+    "prepublish": "node ../../scripts/build.mjs",
+    "dev": "node ../../scripts/build.mjs --watch",
+    "type-check": "tsc --noEmit"
   },
   "files": [
-    "./dist/errors",
-    "./dist/patterns"
+    "./dist",
+    "!./dist/**/*.map"
   ],
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
   "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    },
     "./errors": {
-      "types": "./dist/errors/index.d.ts",
-      "import": "./dist/errors/index.js"
+      "import": {
+        "types": "./dist/types/errors/index.d.ts",
+        "default": "./dist/esm/errors/index.js"
+      },
+      "require": {
+        "types": "./dist/types/errors/index.d.ts",
+        "default": "./dist/cjs/errors/index.js"
+      }
     },
     "./patterns": {
-      "types": "./dist/patterns/index.d.ts",
-      "import": "./dist/patterns/index.js"
+      "import": {
+        "types": "./dist/types/patterns/index.d.ts",
+        "default": "./dist/esm/patterns/index.js"
+      },
+      "require": {
+        "types": "./dist/types/patterns/index.d.ts",
+        "default": "./dist/cjs/patterns/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "errors": [
+        "./dist/types/errors/index.d.ts"
+      ],
+      "patterns": [
+        "./dist/types/patterns/index.d.ts"
+      ]
     }
   },
   "publishConfig": {
@@ -49,7 +84,7 @@
   },
   "sideEffects": false,
   "devDependencies": {
-    "@types/node": "^24.10.3",
+    "@types/node": "^24.10.4",
     "typescript": "^5.9.3"
   }
 }

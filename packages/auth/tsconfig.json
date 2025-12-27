@@ -1,10 +1,15 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "./dist",
-    "rootDir": "./src",
+    "noEmit": false,
+    "outDir": "dist",
+    "paths": {
+      "jose/errors": ["./node_modules/jose/dist/types/util/errors.d.ts"]
+    },
+    "rootDir": "src",
     "types": ["node"]
   },
-  "exclude": ["**/*.test.ts"],
-  "include": ["src/**/*.ts", "src/**/*.d.ts"]
+  "exclude": ["node_modules", "dist", "**/__tests__/**"],
+  "include": ["src/**/*"]
 }

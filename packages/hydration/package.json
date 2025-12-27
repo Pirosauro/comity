@@ -30,48 +30,93 @@
     "javascript"
   ],
   "scripts": {
-    "build": "tsc",
-    "prepublish": "tsc",
-    "dev": "tsc --build --watch",
-    "clean": "tsc --build --clean",
-    "typecheck": "tsc --noEmit"
+    "build": "node ../../scripts/build.mjs",
+    "prepublish": "node ../../scripts/build.mjs",
+    "dev": "node ../../scripts/build.mjs --watch",
+    "type-check": "tsc --noEmit"
   },
   "files": [
-    "./dist"
+    "./dist",
+    "!./dist/**/*.map"
   ],
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
     },
     "./client": {
-      "types": "./dist/client/index.d.ts",
-      "import": "./dist/client/index.js"
+      "import": {
+        "types": "./dist/types/client/index.d.ts",
+        "default": "./dist/esm/client/index.js"
+      },
+      "require": {
+        "types": "./dist/types/client/index.d.ts",
+        "default": "./dist/cjs/client/index.js"
+      }
     },
     "./setup": {
-      "types": "./dist/setup.d.ts",
-      "import": "./dist/setup.js"
+      "import": {
+        "types": "./dist/types/setup/index.d.ts",
+        "default": "./dist/esm/setup/index.js"
+      },
+      "require": {
+        "types": "./dist/types/setup/index.d.ts",
+        "default": "./dist/cjs/setup/index.js"
+      }
     },
     "./vite": {
-      "types": "./dist/vite/index.d.ts",
-      "import": "./dist/vite/index.js"
+      "import": {
+        "types": "./dist/types/vite/index.d.ts",
+        "default": "./dist/esm/vite/index.js"
+      },
+      "require": {
+        "types": "./dist/types/vite/index.d.ts",
+        "default": "./dist/cjs/vite/index.js"
+      }
     },
     "./types": {
       "types": "./module.d.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "client": [
+        "./dist/types/client/index.d.ts"
+      ],
+      "setup": [
+        "./dist/types/setup/index.d.ts"
+      ],
+      "vite": [
+        "./dist/types/vite/index.d.ts"
+      ],
+      "types": [
+        "./module.d.ts"
+      ]
     }
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public"
   },
+  "sideEffects": false,
   "dependencies": {
     "@comity/application": "workspace:*",
     "@comity/core": "workspace:*",
     "@comity/logger": "workspace:*",
-    "vite": "^7.2.7"
+    "vite": "^7.3.0"
   },
   "devDependencies": {
-    "@types/node": "^24.10.3",
+    "@types/node": "^24.10.4",
     "typescript": "^5.9.3"
   }
 }

@@ -23,60 +23,113 @@
     "tenant"
   ],
   "scripts": {
-    "build": "tsc && tsc -p tsconfig.drizzle.json",
-    "prepublish": "tsc && tsc -p tsconfig.drizzle.json",
-    "dev": "tsc --build --watch",
-    "clean": "tsc --build --clean",
-    "typecheck": "tsc --noEmit"
+    "build": "node ../../scripts/build.mjs",
+    "prepublish": "node ../../scripts/build.mjs",
+    "dev": "node ../../scripts/build.mjs --watch",
+    "type-check": "tsc --noEmit"
   },
   "files": [
-    "./dist"
+    "./dist",
+    "!./dist/**/*.map"
   ],
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/esm/index.d.ts",
-      "import": "./dist/esm/index.js"
+      "import": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
     },
     "./database": {
       "import": {
-        "default": "./dist/esm/database/index.js",
-        "types": "./dist/esm/database/index.d.ts"
+        "types": "./dist/types/database/index.d.ts",
+        "default": "./dist/esm/database/index.js"
       },
       "require": {
-        "default": "./dist/cjs/database/index.js",
-        "types": "./dist/cjs/database/index.d.ts"
+        "types": "./dist/types/database/index.d.ts",
+        "default": "./dist/cjs/database/index.cjs"
       }
     },
     "./repositories": {
-      "types": "./dist/esm/repositories/index.d.ts",
-      "import": "./dist/esm/repositories/index.js"
+      "import": {
+        "types": "./dist/types/repositories/index.d.ts",
+        "default": "./dist/esm/repositories/index.js"
+      },
+      "require": {
+        "types": "./dist/types/repositories/index.d.ts",
+        "default": "./dist/cjs/repositories/index.js"
+      }
     },
     "./setup": {
-      "types": "./dist/esm/setup.d.ts",
-      "import": "./dist/esm/setup.js"
+      "import": {
+        "types": "./dist/types/setup/index.d.ts",
+        "default": "./dist/esm/setup/index.js"
+      },
+      "require": {
+        "types": "./dist/types/setup/index.d.ts",
+        "default": "./dist/cjs/setup/index.js"
+      }
     },
     "./use-cases": {
-      "types": "./dist/esm/use-cases/index.d.ts",
-      "import": "./dist/esm/use-cases/index.js"
+      "import": {
+        "types": "./dist/types/use-cases/index.d.ts",
+        "default": "./dist/esm/use-cases/index.js"
+      },
+      "require": {
+        "types": "./dist/types/use-cases/index.d.ts",
+        "default": "./dist/cjs/use-cases/index.js"
+      }
     },
     "./validation": {
-      "types": "./dist/esm/validation/index.d.ts",
-      "import": "./dist/esm/validation/index.js"
+      "import": {
+        "types": "./dist/types/validation/index.d.ts",
+        "default": "./dist/esm/validation/index.js"
+      },
+      "require": {
+        "types": "./dist/types/validation/index.d.ts",
+        "default": "./dist/cjs/validation/index.js"
+      }
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "database": [
+        "./dist/types/database/index.d.ts"
+      ],
+      "repositories": [
+        "./dist/types/repositories/index.d.ts"
+      ],
+      "setup": [
+        "./dist/types/setup/index.d.ts"
+      ],
+      "use-cases": [
+        "./dist/types/use-cases/index.d.ts"
+      ],
+      "validation": [
+        "./dist/types/validation/index.d.ts"
+      ]
     }
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public"
   },
+  "sideEffects": false,
   "dependencies": {
-    "@casl/ability": "^6.7.3",
+    "@casl/ability": "^6.7.5",
     "@comity/application": "workspace:*",
     "@comity/core": "workspace:*",
     "@comity/logger": "workspace:*",
     "@comity/postgres": "workspace:*",
     "drizzle-orm": "^0.45.1",
-    "hono": "^4.11.0",
-    "zod": "^4.1.13"
+    "hono": "^4.11.3",
+    "zod": "^4.2.1"
   },
   "devDependencies": {
     "@types/node": "24.10.3",

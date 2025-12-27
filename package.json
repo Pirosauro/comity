@@ -3,12 +3,19 @@
   "type": "module",
   "packageManager": "pnpm@10.13.1",
   "scripts": {
-    "build": "pnpm --recursive build",
-    "clean": "pnpm --recursive clean",
-    "lint": "pnpm --recursive lint",
+    "build": "turbo run build",
+    "build:single": "turbo run build --filter",
+    "type-check": "turbo run type-check",
+    "dev": "turbo run dev --parallel",
     "test": "vitest run",
+    "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "test:watch": "vitest watch"
+    "test:single": "vitest run --run",
+    "clean": "turbo run clean",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "release": "changeset publish",
+    "preinstall": "npx only-allow pnpm"
   },
   "workspaces": [
     "examples/*",
@@ -16,8 +23,24 @@
   ],
   "devDependencies": {
     "@changesets/cli": "^2.29.8",
-    "@vitest/coverage-v8": "^4.0.15",
+    "@vitest/coverage-v8": "^4.0.16",
+    "turbo": "^2.7.2",
     "typescript": "^5.9.3",
-    "vitest": "^4.0.15"
+    "vitest": "^4.0.16"
+  },
+  "pnpm": {
+    "overrides": {
+      "typescript": "^5.9.3"
+    },
+    "peerDependencyRules": {
+      "ignoreMissing": [
+        "react",
+        "vue",
+        "solid-js"
+      ]
+    },
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
   }
 }

@@ -8,7 +8,7 @@ import type { BlankEnv, BlankSchema, Env, Schema } from "hono/types";
 import type { z } from "zod";
 import type { Context } from "@comity/core/patterns";
 
-export {
+export type {
   BlankEnv,
   BlankSchema,
   Env,

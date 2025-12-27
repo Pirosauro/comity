@@ -1,12 +1,15 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "jsx": "react-jsx",
     "jsxImportSource": "react",
-    "outDir": "./dist",
-    "rootDir": "./src",
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "noEmit": false,
+    "outDir": "dist",
+    "rootDir": "src",
     "types": ["node"]
   },
-  "exclude": ["**/*.test.ts"],
-  "include": ["src/**/*.ts", "src/**/*.d.ts"]
+  "exclude": ["node_modules", "dist", "**/*.test.ts"],
+  "include": ["src/**/*"]
 }

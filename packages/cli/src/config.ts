@@ -1,4 +1,4 @@
-import { CliConfig } from "./types.js";
+import type { CliConfig } from "./types.js";
 
 /**
  * Type-safe configuration definition helper for Comity applications.

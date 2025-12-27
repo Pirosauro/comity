@@ -20,10 +20,10 @@ export const listenMediaOnce = (
   handler(mediaQuery);
 
   // Add an event listener to execute the handler when the media query changes.
-  mediaQuery.addEventListener('change', handler, { once: true });
+  mediaQuery.addEventListener("change", handler, { once: true });
 
   // Return a function to remove the event listener.
-  return () => mediaQuery.removeEventListener('change', handler);
+  return () => mediaQuery.removeEventListener("change", handler);
 };
 
 /**
@@ -36,7 +36,7 @@ export const listenMediaOnce = (
 export const observeOnce = (element: Element, fn: () => void): void => {
   const options: IntersectionObserverInit = {
     root: null,
-    rootMargin: '0px',
+    rootMargin: "0px",
     threshold: 0.5,
   };
 
@@ -51,7 +51,7 @@ export const observeOnce = (element: Element, fn: () => void): void => {
       if (!e.isIntersecting) return;
 
       if (element && element.childElementCount) {
-        for (const child of element.children) {
+        for (const child of Array.from(element.children)) {
           observer.unobserve(child);
         }
       }
@@ -63,7 +63,7 @@ export const observeOnce = (element: Element, fn: () => void): void => {
   const observer = new IntersectionObserver(callback, options);
 
   if (element && element.childElementCount) {
-    for (const child of element.children) {
+    for (const child of Array.from(element.children)) {
       observer.observe(child);
     }
   }
@@ -76,7 +76,7 @@ export const observeOnce = (element: Element, fn: () => void): void => {
  * @return {void}
  */
 export const idle = (fn: () => void): void => {
-  typeof window?.requestIdleCallback === 'function'
+  typeof window?.requestIdleCallback === "function"
     ? window.requestIdleCallback(fn)
     : setTimeout(fn, 250);
 };

@@ -1,4 +1,4 @@
-import { ErrorContext } from "../types.js";
+import type { ErrorContext } from "../types.js";
 
 const map: Record<string, ErrorContext> = {
   // Authentication & Token errors

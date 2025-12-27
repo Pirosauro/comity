@@ -1,11 +1,7 @@
 import type { UserConfig } from "vite";
 import { normalize, resolve } from "node:path";
 import { existsSync, statSync } from "node:fs";
-import { fileURLToPath } from "node:url";
-import { dirname, sep } from "node:path";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+import { sep } from "node:path";
 
 /**
  * Configuration options for the withComity Vite plugin.
@@ -102,7 +98,7 @@ export type ComityViteOptions = {
 export function withComity(
   options: ComityViteOptions
 ): Promise<UserConfig> | UserConfig {
-  const cwd = normalize(__dirname || process.cwd());
+  const cwd = normalize(process.cwd());
   const root = resolve(cwd, options.baseFolder || "./src");
 
   // Path traversal protection

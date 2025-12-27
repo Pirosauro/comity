@@ -11,7 +11,7 @@ export default defineConfig({
     // resolve("./node_modules/@comity/slug/dist/database/index.js"),
     // resolve("./node_modules/@comity/workspace/dist/database/index.js"),
     // resolve("./node_modules/@comity/user/dist/database/index.js"),
-    resolve("./node_modules/@comity/slug/dist/cjs/database/index.js"),
+    // resolve("./node_modules/@comity/slug/dist/database/index.js"),
     resolve("./node_modules/@comity/workspace/dist/cjs/database/index.js"),
   ],
   dbCredentials: {

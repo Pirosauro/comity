@@ -1,11 +1,47 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "declaration": true,
-    "esModuleInterop": true,
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "skipLibCheck": true,
+    // Module system
+    "composite": false,
+    "isolatedModules": false,
+    "module": "es2022",
+    "moduleResolution": "bundler",
+    "verbatimModuleSyntax": true,
+
+    // Targeting
+    "lib": ["ES2022"],
+    "target": "es2022",
+
+    // Strictness
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitAny": true,
+    "noImplicitOverride": true,
+    "noUncheckedIndexedAccess": true,
     "strict": true,
-    "target": "ES2022"
-  }
+
+    // Declarations
+    "declaration": false,
+    "declarationMap": false,
+    "emitDeclarationOnly": false,
+    "noEmit": true,
+
+    // Interop
+    "allowImportingTsExtensions": false,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true,
+
+    // Performance
+    "incremental": true,
+    "sourceMap": false
+  },
+  "exclude": [
+    "coverage",
+    "**/node_modules",
+    "**/dist",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/*.bench.ts"
+  ]
 }

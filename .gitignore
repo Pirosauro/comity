@@ -1,10 +1,29 @@
-# NodeJS
+# Dependencies
 node_modules/
+.pnpm-store/
+.pnpm-debug.log
+
+# Build outputs
 dist/
 coverage/
-tsconfig.tsbuildinfo
-.wrangler
-.dev.vars
+*.tsbuildinfo
 
-# MacOS
+# Environment
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
 .DS_Store
+Thumbs.db
+
+# Turbo
+.turbo/

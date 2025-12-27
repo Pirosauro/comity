@@ -1,9 +1,9 @@
-import { GraphQLSchema, GraphQLObjectType } from "graphql";
-import {
+import type {
   FieldConfig,
   GraphQLModule,
   SubscriptionFieldConfig,
 } from "./types.js";
+import { GraphQLSchema, GraphQLObjectType } from "graphql";
 
 export class GraphQLContainer {
   #queries: Record<string, FieldConfig> = {};

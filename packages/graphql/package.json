@@ -22,25 +22,48 @@
     "framework"
   ],
   "scripts": {
-    "build": "tsc",
-    "prepublish": "tsc",
-    "dev": "tsc --build --watch",
-    "clean": "tsc --build --clean",
-    "typecheck": "tsc --noEmit"
+    "build": "node ../../scripts/build.mjs",
+    "prepublish": "node ../../scripts/build.mjs",
+    "dev": "node ../../scripts/build.mjs --watch",
+    "type-check": "tsc --noEmit"
   },
   "files": [
-    "./dist"
+    "./dist",
+    "!./dist/**/*.map"
   ],
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
     },
     "./setup": {
-      "types": "./dist/setup.d.ts",
-      "import": "./dist/setup.js"
+      "import": {
+        "types": "./dist/types/setup/index.d.ts",
+        "default": "./dist/esm/setup/index.js"
+      },
+      "require": {
+        "types": "./dist/types/setup/index.d.ts",
+        "default": "./dist/cjs/setup/index.js"
+      }
     }
   },
+  "typesVersions": {
+    "*": {
+      "setup": [
+        "./dist/types/setup/index.d.ts"
+      ]
+    }
+  },
+  "sideEffects": false,
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public"
@@ -51,10 +74,10 @@
     "@comity/logger": "workspace:*",
     "@envelop/core": "^5.4.0",
     "graphql": "^16.12.0",
-    "hono": "^4.11.0"
+    "hono": "^4.11.3"
   },
   "devDependencies": {
-    "@types/node": "^24.10.3",
+    "@types/node": "^24.10.4",
     "typescript": "^5.9.3"
   },
   "peerDependencies": {

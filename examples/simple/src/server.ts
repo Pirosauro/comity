@@ -6,6 +6,7 @@ import graphql from "@comity/graphql/setup";
 import hydration from "@comity/hydration/setup";
 import logger from "@comity/logger/setup";
 import react from "@comity/react/setup";
+import workspace from "@comity/workspace/setup";
 import {
   createReactRendererMiddleware,
   renderToReadableStream,

@@ -1,12 +1,23 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
-    "outDir": "./dist",
-    "rootDir": "./src",
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "noEmit": false,
+    "outDir": "dist",
+    "paths": {
+      "preact-render-to-string/stream": [
+        "./node_modules/preact-render-to-string/dist/stream.d.ts"
+      ],
+      "preact-render-to-string/stream-node": [
+        "./node_modules/preact-render-to-string/dist/stream-node.d.ts"
+      ]
+    },
+    "rootDir": "src",
     "types": ["node"]
   },
-  "exclude": ["**/*.test.ts"],
-  "include": ["src/**/*.ts", "src/**/*.d.ts"]
+  "exclude": ["node_modules", "dist", "**/*.test.ts"],
+  "include": ["src/**/*"]
 }
