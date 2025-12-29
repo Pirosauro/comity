@@ -152,6 +152,9 @@ importers:
 
   packages/cli:
     dependencies:
+      '@comity/core':
+        specifier: workspace:*
+        version: link:../core
       commander:
         specifier: ^14.0.2
         version: 14.0.2

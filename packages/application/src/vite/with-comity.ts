@@ -137,7 +137,27 @@ export function withComity(
           return null;
         },
       };
-    }) ?? [];
+    }) ?? [
+      // Default alias for all package imports when no allowedOverrides specified
+      {
+        find: /^(@[a-z0-9-_.]+\/)?[a-z0-9][a-z0-9-_.]*(\/.*)?$/,
+        replacement: resolve(
+          __dirname || process.cwd(),
+          `${options.baseFolder || "./src"}/overrides/$1$2`
+        ),
+        customResolver: (source: string) => {
+          // Check if the replacement file exists.
+          try {
+            if (existsSync(source) && statSync(source).isFile()) {
+              return source;
+            }
+          } catch (error) {
+            // Fallback to default resolution if any error occurs
+          }
+          return null;
+        },
+      },
+    ];
 
   return {
     resolve: {
