@@ -42,7 +42,6 @@ export type ApplicationService<
 export type ApplicationModuleOptions = {
   /** Renderer function to render responses */
   renderer?: HonoContextRenderer;
-
   /** Order in which the renderer should be applied relative to other middleware */
   rendererOrder?: "before" | "after";
 };

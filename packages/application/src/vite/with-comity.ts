@@ -2,6 +2,7 @@ import type { UserConfig } from "vite";
 import { normalize, resolve } from "node:path";
 import { existsSync, statSync } from "node:fs";
 import { sep } from "node:path";
+import { ApplicationInvalidRootPathError } from "../errors/index.js";
 
 /**
  * Configuration options for the withComity Vite plugin.
@@ -24,7 +25,6 @@ import { sep } from "node:path";
 export type ComityViteOptions = {
   /** List of package names allowed to be overridden */
   allowedOverrides?: string[];
-
   /** Base folder for resolution, defaults to "./src" */
   baseFolder?: string;
 };
@@ -103,9 +103,10 @@ export function withComity(
 
   // Path traversal protection
   if (!root.startsWith(cwd + sep)) {
-    throw new Error(
-      "Path Traversal detected: 'baseFolder' must resolve within the current working directory."
-    );
+    throw new ApplicationInvalidRootPathError({
+      path: root,
+      cwd,
+    });
   }
 
   /** Override aliases for allowed packages */

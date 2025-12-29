@@ -1,9 +1,9 @@
 import type { BlankEnv, BlankSchema, Env, Schema } from "hono/types";
 import type { ModuleMeta } from "@comity/core";
-import type { ApplicationModuleHooks } from "./types.js";
+import type { ApplicationModuleHooks } from "../types.js";
 import { Hono } from "hono";
-import { createContext } from "@comity/core";
-import { createService } from "./service-factory.js";
+import { createContext } from "@comity/core/factories";
+import { createService } from "./service.js";
 
 /**
  * Bootstraps a Comity application by registering modules and setting up the runtime environment.
