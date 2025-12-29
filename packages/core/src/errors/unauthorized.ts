@@ -1,81 +1,51 @@
+import type { ErrorMeta } from "./base.js";
+import { BaseError } from "./base.js";
+
 /**
- * Error thrown when authentication is required but not provided or invalid.
+ * Error thrown when authentication is required but missing or invalid.
  *
  * @remarks
- * This error represents HTTP 401 Unauthorized status conditions where the request
- * lacks valid authentication credentials. It should be used when:
- *
- * - No authentication token is provided
- * - Authentication token is invalid or expired
- * - Authentication method is not supported
- * - User credentials are incorrect
- *
- * **HTTP Status Code**: 401 Unauthorized
- *
- * **Common Use Cases:**
- * - Missing Authorization header
- * - Expired JWT tokens
- * - Invalid API keys
- * - Failed login attempts
- * - Session timeouts
+ * This error corresponds to HTTP 401 status and is typically thrown when
+ * requests lack proper authentication credentials or when provided
+ * credentials are invalid or expired.
  *
  * @example
- * Basic usage in authentication middleware
  * ```typescript
- * import { UnauthorizedError } from '@comity/core/errors';
- *
- * function validateToken(token: string) {
- *   if (!token) {
- *     throw new UnauthorizedError('Authorization token is required');
- *   }
- *
- *   if (!isValidToken(token)) {
- *     throw new UnauthorizedError('Invalid or expired token');
- *   }
- * }
- * ```
- *
- * @example
- * Error handling in route handlers
- * ```typescript
- * app.get('/protected', async (c) => {
- *   try {
- *     const user = await getCurrentUser(c);
- *     return c.json({ user });
- *   } catch (error) {
- *     if (error instanceof UnauthorizedError) {
- *       return c.json({ error: error.message }, 401);
- *     }
- *     throw error;
- *   }
- * });
- * ```
- *
- * @example
- * Custom authentication scenarios
- * ```typescript
- * // API key validation
- * if (!request.headers['x-api-key']) {
- *   throw new UnauthorizedError('API key required');
+ * // Missing authentication
+ * if (!request.headers.authorization) {
+ *   throw new UnauthorizedError();
  * }
  *
- * // Session validation
- * if (!session || session.expired) {
- *   throw new UnauthorizedError('Please log in to continue');
+ * // Invalid token
+ * try {
+ *   const user = verifyToken(token);
+ * } catch (error) {
+ *   throw new UnauthorizedError("Invalid or expired token", {
+ *     details: { tokenType: "bearer" }
+ *   });
  * }
  *
- * // Multi-factor authentication
- * if (user.mfaEnabled && !mfaToken) {
- *   throw new UnauthorizedError('Multi-factor authentication required');
+ * // Session expired
+ * if (session.expired) {
+ *   throw new UnauthorizedError("Session expired", {
+ *     details: { sessionId: session.id }
+ *   });
  * }
  * ```
  */
-export class UnauthorizedError extends Error {
-  readonly status = 401;
+export class UnauthorizedError extends BaseError {
+  readonly code = "UNAUTHORIZED";
 
-  constructor(message = "Unauthorized") {
-    super(message);
-
-    this.name = "UnauthorizedError";
+  /**
+   * Creates a new UnauthorizedError.
+   *
+   * @param message - Human-readable error message (defaults to "Authentication required")
+   * @param meta - Additional error metadata (auth method, context, etc.)
+   */
+  constructor(message = "Authentication required", meta?: ErrorMeta) {
+    super(message, {
+      httpStatus: 401,
+      ...meta,
+    });
   }
 }

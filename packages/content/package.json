@@ -1,0 +1,87 @@
+{
+  "name": "@comity/content",
+  "version": "1.0.0",
+  "description": "Web content creation module for Comity framework",
+  "type": "module",
+  "author": "Filippo Bovo <hello@filippobovo.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/comityjs/framework#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/comityjs/framework.git"
+  },
+  "bugs": {
+    "url": "https://github.com/comityjs/framework/issues"
+  },
+  "keywords": [
+    "comity",
+    "comityjs",
+    "content",
+    "cms",
+    "website",
+    "page",
+    "typescript",
+    "framework"
+  ],
+  "scripts": {
+    "build": "node ../../scripts/build.mjs",
+    "prepublish": "node ../../scripts/build.mjs",
+    "dev": "node ../../scripts/build.mjs --watch"
+  },
+  "files": [
+    "./dist",
+    "!./dist/**/*.map"
+  ],
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    },
+    "./setup": {
+      "import": {
+        "types": "./dist/types/setup.d.ts",
+        "default": "./dist/esm/setup.js"
+      },
+      "require": {
+        "types": "./dist/types/setup.d.ts",
+        "default": "./dist/cjs/setup.js"
+      }
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "setup": [
+        "./dist/types/setup.d.ts"
+      ]
+    }
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "@casl/ability": "^6.7.5",
+    "@comity/application": "workspace:*",
+    "@comity/core": "workspace:*",
+    "@comity/logger": "workspace:*",
+    "@comity/postgres": "workspace:*",
+    "@comity/user": "workspace:*",
+    "@comity/workspace": "workspace:*",
+    "drizzle-orm": "^0.45.1",
+    "zod": "^4.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.4",
+    "typescript": "^5.9.3"
+  }
+}

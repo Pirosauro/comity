@@ -25,8 +25,7 @@
   "scripts": {
     "build": "node ../../scripts/build.mjs",
     "prepublish": "node ../../scripts/build.mjs",
-    "dev": "node ../../scripts/build.mjs --watch",
-    "type-check": "tsc --noEmit"
+    "dev": "node ../../scripts/build.mjs --watch"
   },
   "files": [
     "./dist",
@@ -55,7 +54,7 @@
     "registry": "https://registry.npmjs.org",
     "access": "public"
   },
-  "sideEffects": false,
+  "sideEffects": true,
   "dependencies": {
     "commander": "^14.0.2",
     "pino": "^10.1.0",

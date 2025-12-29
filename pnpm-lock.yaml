@@ -114,9 +114,6 @@ importers:
       vite:
         specifier: ^7.3.0
         version: 7.3.0(@types/node@24.10.4)(tsx@4.20.5)
-      zod:
-        specifier: ^4.2.1
-        version: 4.2.1
     devDependencies:
       '@types/node':
         specifier: ^24.10.4
@@ -172,7 +169,48 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
 
+  packages/content:
+    dependencies:
+      '@casl/ability':
+        specifier: ^6.7.5
+        version: 6.7.5
+      '@comity/application':
+        specifier: workspace:*
+        version: link:../application
+      '@comity/core':
+        specifier: workspace:*
+        version: link:../core
+      '@comity/logger':
+        specifier: workspace:*
+        version: link:../logger
+      '@comity/postgres':
+        specifier: workspace:*
+        version: link:../postgres
+      '@comity/user':
+        specifier: workspace:*
+        version: link:../user
+      '@comity/workspace':
+        specifier: workspace:*
+        version: link:../workspace
+      drizzle-orm:
+        specifier: ^0.45.1
+        version: 0.45.1(@types/pg@8.16.0)(pg@8.16.3)
+      zod:
+        specifier: ^4.2.1
+        version: 4.2.1
+    devDependencies:
+      '@types/node':
+        specifier: ^24.10.4
+        version: 24.10.4
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+
   packages/core:
+    dependencies:
+      zod:
+        specifier: ^4.2.1
+        version: 4.2.1
     devDependencies:
       '@types/node':
         specifier: ^24.10.4
@@ -249,16 +287,6 @@ importers:
 
   packages/postgres:
     dependencies:
-      drizzle-orm:
-        specifier: ^0.45.1
-        version: 0.45.1(@types/pg@8.16.0)(pg@8.16.3)
-      hono:
-        specifier: ^4.11.3
-        version: 4.11.3
-      pg:
-        specifier: ^8.16.3
-        version: 8.16.3
-    devDependencies:
       '@comity/application':
         specifier: workspace:*
         version: link:../application
@@ -271,6 +299,16 @@ importers:
       '@comity/logger':
         specifier: workspace:*
         version: link:../logger
+      drizzle-orm:
+        specifier: ^0.45.1
+        version: 0.45.1(@types/pg@8.16.0)(pg@8.16.3)
+      hono:
+        specifier: ^4.11.3
+        version: 4.11.3
+      pg:
+        specifier: ^8.16.3
+        version: 8.16.3
+    devDependencies:
       '@types/node':
         specifier: ^24.10.4
         version: 24.10.4
@@ -377,6 +415,43 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
 
+  packages/user:
+    dependencies:
+      '@casl/ability':
+        specifier: ^6.7.5
+        version: 6.7.5
+      '@comity/application':
+        specifier: workspace:*
+        version: link:../application
+      '@comity/auth':
+        specifier: workspace:*
+        version: link:../auth
+      '@comity/core':
+        specifier: workspace:*
+        version: link:../core
+      '@comity/logger':
+        specifier: workspace:*
+        version: link:../logger
+      '@comity/postgres':
+        specifier: workspace:*
+        version: link:../postgres
+      '@comity/workspace':
+        specifier: workspace:*
+        version: link:../workspace
+      drizzle-orm:
+        specifier: ^0.45.1
+        version: 0.45.1(@types/pg@8.16.0)(pg@8.16.3)
+      zod:
+        specifier: ^4.2.1
+        version: 4.2.1
+    devDependencies:
+      '@types/node':
+        specifier: ^24.10.4
+        version: 24.10.4
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+
   packages/workspace:
     dependencies:
       '@casl/ability':
@@ -405,8 +480,8 @@ importers:
         version: 4.2.1
     devDependencies:
       '@types/node':
-        specifier: 24.10.3
-        version: 24.10.3
+        specifier: ^24.10.4
+        version: 24.10.4
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -1492,8 +1567,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@sindresorhus/is@7.1.1':
-    resolution: {integrity: sha512-rO92VvpgMc3kfiTjGT52LEtJ8Yc5kCWhZjLQ3LwlA4pSgPpQO7bVpYXParOD8Jwf+cVQECJo3yP/4I8aZtUQTQ==}
+  '@sindresorhus/is@7.2.0':
+    resolution: {integrity: sha512-P1Cz1dWaFfR4IR+U13mqqiGsLFf1KbayybWwdd2vfctdV6hDpUkgCY0nKOLLTMSoRd/jJNjtbqzf13K8DCCXQw==}
     engines: {node: '>=18'}
 
   '@speed-highlight/core@1.2.12':
@@ -1513,9 +1588,6 @@ packages:
 
   '@types/node@12.20.55':
     resolution: {integrity: sha512-J8xLz7q2OFulZ2cyGTLE1TbbZcjpno7FaN6zdJNrgAdrJ+DZzh/uFR6YrTb4C+nXakvud8Q4+rbhoIWlYQbUFQ==}
-
-  '@types/node@24.10.3':
-    resolution: {integrity: sha512-gqkrWUsS8hcm0r44yn7/xZeV1ERva/nLgrLxFRUGb7aoNMIJfZJ3AC261zDQuOAKC7MiXai1WCpYc48jAHoShQ==}
 
   '@types/node@24.10.4':
     resolution: {integrity: sha512-vnDVpYPMzs4wunl27jHrfmwojOGKya0xyM3sH+UE5iv5uPS6vX7UIoh6m+vQc5LGBq52HBKPIn/zcSZVzeDEZg==}
@@ -2708,6 +2780,7 @@ packages:
   whatwg-encoding@3.1.1:
     resolution: {integrity: sha512-6qN4hJdMwfYBtE3YBTTHhoeuUrDBPZmbQaxWAqSALV/MeEnR5z1xd8UKud2RAkFoPkmB+hli1TZSnyi84xz1vQ==}
     engines: {node: '>=18'}
+    deprecated: Use @exodus/bytes instead for a more spec-conformant and faster implementation
 
   whatwg-mimetype@4.0.0:
     resolution: {integrity: sha512-QaKxh0eNIi2mE9p2vEdzfagOKHCcj1pJ56EEHGQOVxp8r9/iszLUUV7v89x9O1p/T+NlTM5W7jW6+cz4Fq1YVg==}
@@ -3503,7 +3576,7 @@ snapshots:
   '@poppinss/dumper@0.6.5':
     dependencies:
       '@poppinss/colors': 4.1.6
-      '@sindresorhus/is': 7.1.1
+      '@sindresorhus/is': 7.2.0
       supports-color: 10.2.2
 
   '@poppinss/exception@1.2.3': {}
@@ -3574,7 +3647,7 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.54.0':
     optional: true
 
-  '@sindresorhus/is@7.1.1': {}
+  '@sindresorhus/is@7.2.0': {}
 
   '@speed-highlight/core@1.2.12': {}
 
@@ -3590,10 +3663,6 @@ snapshots:
   '@types/estree@1.0.8': {}
 
   '@types/node@12.20.55': {}
-
-  '@types/node@24.10.3':
-    dependencies:
-      undici-types: 7.16.0
 
   '@types/node@24.10.4':
     dependencies:

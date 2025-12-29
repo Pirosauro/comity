@@ -22,13 +22,13 @@ describe("WebCrypto", () => {
   beforeEach(() => {
     storage = {};
     backend = {
-      get: async (key) => storage[key] ?? null,
-      set: async (key, value) => {
+      get: vi.fn(async (key) => storage[key] ?? null),
+      set: vi.fn(async (key, value) => {
         storage[key] = value;
-      },
-      delete: async (key) => {
+      }),
+      delete: vi.fn(async (key) => {
         delete storage[key];
-      },
+      }),
     };
     webCrypto = new WebCrypto(backend, "01234567890123456789012345678901"); // 32-byte key
   });
@@ -36,7 +36,7 @@ describe("WebCrypto", () => {
   it("should throw if no secrets are found", async () => {
     await expect(
       webCrypto.getSecretsForConnector("missing", {})
-    ).rejects.toThrow(/No secrets found/);
+    ).rejects.toThrow(/Secrets not found/);
   });
 
   it("should call crypto.subtle.importKey and decrypt", async () => {
@@ -71,5 +71,69 @@ describe("WebCrypto", () => {
 
     // Restore original JSON.parse
     JSON.parse = originalParse;
+  });
+
+  it("should encrypt and store secrets", async () => {
+    const secrets = { token: "secret-token", key: "secret-key" };
+
+    // Mock crypto.subtle methods
+    const mockImportKey = vi.fn(async () => ({} as CryptoKey));
+    const mockEncrypt = vi.fn(async () => new ArrayBuffer(10));
+    const mockGetRandomValues = vi.fn(() => new Uint8Array(12));
+
+    (globalThis.crypto.subtle as any).importKey = mockImportKey;
+    (globalThis.crypto.subtle as any).encrypt = mockEncrypt;
+    (globalThis.crypto as any).getRandomValues = mockGetRandomValues;
+
+    await webCrypto.setSecretsForConnector("service", secrets);
+
+    expect(mockImportKey).toHaveBeenCalledWith(
+      "raw",
+      new TextEncoder().encode("01234567890123456789012345678901"),
+      { name: "AES-GCM", length: 256 },
+      false,
+      ["encrypt"]
+    );
+    expect(mockEncrypt).toHaveBeenCalled();
+    expect(backend.set).toHaveBeenCalledWith("service", {
+      data: expect.any(String),
+      iv: "AAAAAAAAAAAAAAAA",
+    });
+  });
+
+  it("should delete stored secrets", async () => {
+    await webCrypto.deleteSecretsForConnector("service");
+
+    expect(backend.delete).toHaveBeenCalledWith("service");
+  });
+
+  it("should throw InternalError when decryption fails", async () => {
+    // Mock the storage to return encrypted data
+    storage["service"] = {
+      data: "encrypted-data",
+      iv: "iv-data",
+    };
+
+    // Mock crypto.subtle.decrypt to throw
+    (globalThis.crypto.subtle as any).decrypt = vi.fn(async () => {
+      throw new Error("Decryption failed");
+    });
+
+    await expect(
+      webCrypto.getSecretsForConnector("service", {})
+    ).rejects.toThrow("Failed to decrypt secrets");
+  });
+
+  it("should throw InternalError when encryption fails", async () => {
+    const secrets = { token: "secret-token" };
+
+    // Mock crypto.subtle.encrypt to throw
+    (globalThis.crypto.subtle as any).encrypt = vi.fn(async () => {
+      throw new Error("Encryption failed");
+    });
+
+    await expect(
+      webCrypto.setSecretsForConnector("service", secrets)
+    ).rejects.toThrow("Failed to encrypt secrets");
   });
 });

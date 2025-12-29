@@ -28,8 +28,7 @@
   "scripts": {
     "build": "node ../../scripts/build.mjs",
     "prepublish": "node ../../scripts/build.mjs",
-    "dev": "node ../../scripts/build.mjs --watch",
-    "type-check": "tsc --noEmit"
+    "dev": "node ../../scripts/build.mjs --watch"
   },
   "files": [
     "./dist",
@@ -90,8 +89,7 @@
     "@comity/cli": "workspace:*",
     "@comity/core": "workspace:*",
     "hono": "^4.11.3",
-    "vite": "^7.3.0",
-    "zod": "^4.2.1"
+    "vite": "^7.3.0"
   },
   "devDependencies": {
     "@types/node": "^24.10.4",

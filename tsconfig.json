@@ -6,7 +6,7 @@
     "isolatedModules": false,
     "module": "es2022",
     "moduleResolution": "bundler",
-    "verbatimModuleSyntax": true,
+    "verbatimModuleSyntax": false,
 
     // Targeting
     "lib": ["ES2022"],
@@ -33,7 +33,7 @@
     "skipLibCheck": true,
 
     // Performance
-    "incremental": true,
+    "incremental": false,
     "sourceMap": false
   },
   "exclude": [

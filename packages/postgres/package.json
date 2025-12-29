@@ -32,8 +32,7 @@
   "scripts": {
     "build": "node ../../scripts/build.mjs",
     "prepublish": "node ../../scripts/build.mjs",
-    "dev": "node ../../scripts/build.mjs --watch",
-    "type-check": "tsc --noEmit"
+    "dev": "node ../../scripts/build.mjs --watch"
   },
   "files": [
     "./dist",
@@ -103,15 +102,15 @@
   },
   "sideEffects": false,
   "dependencies": {
+    "@comity/application": "workspace:*",
+    "@comity/cli": "workspace:*",
+    "@comity/core": "workspace:*",
+    "@comity/logger": "workspace:*",
     "drizzle-orm": "^0.45.1",
     "hono": "^4.11.3",
     "pg": "^8.16.3"
   },
   "devDependencies": {
-    "@comity/application": "workspace:*",
-    "@comity/cli": "workspace:*",
-    "@comity/core": "workspace:*",
-    "@comity/logger": "workspace:*",
     "@types/node": "^24.10.4",
     "@types/pg": "^8.16.0",
     "typescript": "^5.9.3"

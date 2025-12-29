@@ -1,4 +1,3 @@
 export type * from "./types.js";
 
-export * from "./bootstrap.js";
-export * from "./context.js";
+export * from "./application-factory.js";

@@ -25,8 +25,7 @@
   "scripts": {
     "build": "node ../../scripts/build.mjs",
     "prepublish": "node ../../scripts/build.mjs",
-    "dev": "node ../../scripts/build.mjs --watch",
-    "type-check": "tsc --noEmit"
+    "dev": "node ../../scripts/build.mjs --watch"
   },
   "files": [
     "./dist",
@@ -53,7 +52,7 @@
       },
       "require": {
         "types": "./dist/types/database/index.d.ts",
-        "default": "./dist/cjs/database/index.cjs"
+        "default": "./dist/cjs/database/index.js"
       }
     },
     "./repositories": {
@@ -132,7 +131,7 @@
     "zod": "^4.2.1"
   },
   "devDependencies": {
-    "@types/node": "24.10.3",
+    "@types/node": "^24.10.4",
     "typescript": "^5.9.3"
   }
 }

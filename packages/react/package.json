@@ -31,8 +31,7 @@
   "scripts": {
     "build": "node ../../scripts/build.mjs",
     "prepublish": "node ../../scripts/build.mjs",
-    "dev": "node ../../scripts/build.mjs --watch",
-    "type-check": "pnpm tsc --noEmit"
+    "dev": "node ../../scripts/build.mjs --watch"
   },
   "files": [
     "./dist",
@@ -65,13 +64,13 @@
     "./streaming": {
       "import": {
         "types": "./dist/types/streaming/index.d.ts",
-        "default": "./dist/esm/streaming/index.js",
-        "node": "./dist/esm/streaming/index.node.js"
+        "node": "./dist/esm/streaming/index.node.js",
+        "default": "./dist/esm/streaming/index.js"
       },
       "require": {
         "types": "./dist/types/streaming/index.d.ts",
-        "default": "./dist/cjs/streaming/index.js",
-        "node": "./dist/cjs/streaming/index.node.js"
+        "node": "./dist/cjs/streaming/index.node.js",
+        "default": "./dist/cjs/streaming/index.js"
       }
     }
   },

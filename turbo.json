@@ -1,6 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalDependencies": ["tsconfig.base.json", "package.json", ".npmrc"],
+  "globalDependencies": ["tsconfig.json", "package.json", ".npmrc"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
@@ -8,16 +8,11 @@
       "inputs": [
         "src/**/*.ts",
         "src/**/*.tsx",
-        "tsdown.config.ts",
+        "tsconfig.json",
         "package.json"
       ],
       "env": ["NODE_ENV"],
       "cache": true
-    },
-    "type-check": {
-      "dependsOn": ["^type-check"],
-      "cache": false,
-      "inputs": ["src/**/*.ts", "src/**/*.tsx", "tsconfig.json"]
     },
     "dev": {
       "cache": false,
@@ -25,10 +20,11 @@
     },
     "test": {
       "dependsOn": ["build"],
-      "outputs": []
+      "outputs": [],
+      "cache": false
     },
     "clean": {
-      "outputs": ["dist/**"]
+      "outputs": ["dist/**", ".turbo"]
     }
   }
 }

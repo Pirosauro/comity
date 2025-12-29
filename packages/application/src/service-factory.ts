@@ -1,9 +1,7 @@
 import type { Env, Handler, Hono, MiddlewareHandler, Schema } from "hono";
-import type { ApplicationContext } from "./context.js";
 
 export function createService<E extends Env, S extends Schema>(
-  app: Hono<E, S, "/">,
-  ctx: ApplicationContext
+  app: Hono<E, S, "/">
 ) {
   return {
     get: app.get.bind(app),
@@ -26,7 +24,6 @@ export function createService<E extends Env, S extends Schema>(
       path: string,
       loader: () => Promise<{ default: Handler | MiddlewareHandler }>
     ) => {
-      console.log(`Registering lazy route: [${method.toUpperCase()}] ${path}`);
       app.on(method, path, async (c, next) => {
         const { default: handler } = await loader();
 

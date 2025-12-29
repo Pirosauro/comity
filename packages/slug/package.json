@@ -27,8 +27,7 @@
   "scripts": {
     "build": "node ../../scripts/build.mjs",
     "prepublish": "node ../../scripts/build.mjs",
-    "dev": "node ../../scripts/build.mjs --watch",
-    "type-check": "tsc --noEmit"
+    "dev": "node ../../scripts/build.mjs --watch"
   },
   "files": [
     "./dist",
@@ -50,12 +49,12 @@
     },
     "./database": {
       "import": {
-        "default": "./dist/esm/database/index.js",
-        "types": "./dist/types/database/index.d.ts"
+        "types": "./dist/types/database/index.d.ts",
+        "default": "./dist/esm/database/index.js"
       },
       "require": {
-        "default": "./dist/cjs/database/index.cjs",
-        "types": "./dist/types/database/index.d.ts"
+        "types": "./dist/types/database/index.d.ts",
+        "default": "./dist/cjs/database/index.js"
       }
     },
     "./repositories": {

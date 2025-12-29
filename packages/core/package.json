@@ -13,10 +13,12 @@
   "bugs": {
     "url": "https://github.com/comityjs/framework/issues"
   },
+  "engines": {
+    "node": ">=24.0.0"
+  },
   "keywords": [
     "comity",
     "comityjs",
-    "hono",
     "framework",
     "modular",
     "web",
@@ -26,7 +28,7 @@
     "build": "node ../../scripts/build.mjs",
     "prepublish": "node ../../scripts/build.mjs",
     "dev": "node ../../scripts/build.mjs --watch",
-    "type-check": "tsc --noEmit"
+    "test": "vitest run --coverage"
   },
   "files": [
     "./dist",
@@ -56,14 +58,34 @@
         "default": "./dist/cjs/errors/index.js"
       }
     },
-    "./patterns": {
+    "./factories": {
       "import": {
-        "types": "./dist/types/patterns/index.d.ts",
-        "default": "./dist/esm/patterns/index.js"
+        "types": "./dist/types/factories/index.d.ts",
+        "default": "./dist/esm/factories/index.js"
       },
       "require": {
-        "types": "./dist/types/patterns/index.d.ts",
-        "default": "./dist/cjs/patterns/index.js"
+        "types": "./dist/types/factories/index.d.ts",
+        "default": "./dist/cjs/factories/index.js"
+      }
+    },
+    "./primitives": {
+      "import": {
+        "types": "./dist/types/primitives/index.d.ts",
+        "default": "./dist/esm/primitives/index.js"
+      },
+      "require": {
+        "types": "./dist/types/primitives/index.d.ts",
+        "default": "./dist/cjs/primitives/index.js"
+      }
+    },
+    "./setup": {
+      "import": {
+        "types": "./dist/types/setup/index.d.ts",
+        "default": "./dist/esm/setup/index.js"
+      },
+      "require": {
+        "types": "./dist/types/setup/index.d.ts",
+        "default": "./dist/cjs/setup/index.js"
       }
     },
     "./package.json": "./package.json"
@@ -73,8 +95,14 @@
       "errors": [
         "./dist/types/errors/index.d.ts"
       ],
-      "patterns": [
-        "./dist/types/patterns/index.d.ts"
+      "factories": [
+        "./dist/types/factories/index.d.ts"
+      ],
+      "primitives": [
+        "./dist/types/primitives/index.d.ts"
+      ],
+      "setup": [
+        "./dist/types/setup/index.d.ts"
       ]
     }
   },
@@ -83,6 +111,9 @@
     "access": "public"
   },
   "sideEffects": false,
+  "dependencies": {
+    "zod": "^4.2.1"
+  },
   "devDependencies": {
     "@types/node": "^24.10.4",
     "typescript": "^5.9.3"
