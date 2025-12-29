@@ -1,49 +1,36 @@
 #!/usr/bin/env node
 
-import { Command } from "commander";
-import { CliContext } from "./context.js";
-import { loadCliConfig } from "./utils/loader.js";
+import { pino } from "pino";
+import { run } from "../runtime/run.js";
 
-const version = "1.0.0"; // Ideally, this should be dynamically set from package.json or an environment variable
+/**
+ * Main entry point for the Comity CLI application.
+ *
+ * @remarks
+ * This function initializes the CLI with proper error handling and logging.
+ * It creates a Pino logger instance and delegates to the core CLI runner.
+ * Any errors during CLI execution are logged and cause the process to exit with code 1.
+ *
+ * @example
+ * Running from command line
+ * ```bash
+ * node bin/index.js build --watch
+ * ```
+ *
+ * @example
+ * Programmatic usage (not recommended for production)
+ * ```typescript
+ * import { main } from "./bin/index.js";
+ * main(); // This will use process.argv
+ * ```
+ */
+function main() {
+  const logger = pino({ name: "@comity/cli" });
 
-async function main() {
-  try {
-    // Load configuration
-    const config = await loadCliConfig();
-    // Initialize core
-    const cli = new CliContext(config);
-    // Create the commander application
-    const program = new Command();
-
-    program.name("Comity CLI").version(version);
-
-    // Register all commands
-    cli.getAllCommands().forEach((command) => {
-      const cmd = program.command(command.name);
-
-      if (command.description) {
-        cmd.description(command.description);
-      }
-
-      // Add options
-      command.options?.forEach((option) => {
-        cmd.option(option.flags, option.description, option.default);
-      });
-
-      // Add action
-      cmd.action(async (...args) => {
-        await cli.executeHook("beforeCommand", { command: command.name, args });
-        await command.action(...args);
-        await cli.executeHook("afterCommand", { command: command.name, args });
-      });
-    });
-
-    // Parse arguments
-    program.parse(process.argv);
-  } catch (error) {
-    console.error("Error during CLI execution:", error);
+  run(process.argv).catch((error) => {
+    logger.error(error);
     process.exit(1);
-  }
+  });
 }
 
 main();

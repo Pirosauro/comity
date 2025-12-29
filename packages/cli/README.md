@@ -1,220 +1,251 @@
 # @comity/cli
 
-The `@comity/cli` package provides a plugin-based Command Line Interface framework for Comity-based projects: extensible command registration, lifecycle hooks, configuration management, and a shared CLI context.
+Command Line Interface for the Comity framework.
 
-This package is intended to be consumed by applications that need to build CLI tools with plugin architecture, command management, and extensible functionality.
+`@comity/cli` provides a structured, extensible, and predictable CLI runtime built on top of the Comity core primitives. It is designed to be used both as a standalone developer tool and as a programmable CLI runtime for larger systems.
+
+The module strictly follows Comity architectural principles:
+
+- Clear separation between **bootstrap**, **runtime**, and **domain logic**
+- Standardized **error model** based on `BaseError`
+- Plugin-based command and hook registration
+- No business or orchestration logic inside the `bin/` entrypoint
+
+---
 
 ## Features
 
-- Plugin-based architecture for extensible CLI commands and hooks
-- Type-safe configuration management with `defineConfig`
-- Shared `CliContext` for command and hook management
-- Automatic configuration loading from multiple file paths
-- Lifecycle hooks for `beforeCommand` and `afterCommand` events
-- Integration with Commander.js for robust CLI parsing
-- Pino logger integration for consistent logging
-- Duplicate registration prevention and error handling
+- **Composable CLI Runtime**
 
-## Quickstart
+  - Central `CliContext` for command, hook, and plugin management
 
-Install the monorepo (pnpm workspace):
+- **Plugin System**
 
-```bash
-pnpm install
+  - Register commands, hooks, and extensions via plugins
+  - Deterministic registration and conflict detection
+
+- **Lifecycle Hooks**
+
+  - `beforeCommand` / `afterCommand` hooks
+  - Extensible hook registry
+
+- **Configuration Loader**
+
+  - Secure CLI configuration resolution
+  - Path traversal protection
+
+- **Standardized Errors**
+
+  - All domain errors extend `BaseError`
+  - Machine-readable error codes
+  - HTTP-style semantics where applicable
+
+---
+
+## Installation
+
+```sh
+pnpm add @comity/cli
 ```
 
-Create a CLI configuration file:
+---
 
-```js
-// comity.config.js
-import { defineConfig } from "@comity/cli";
+## CLI Entry Point
 
-export default defineConfig({
-  plugins: [
-    {
-      name: "@example/greeter",
-      version: "1.0.0",
-      commands: [
-        {
-          name: "greet",
-          description: "Greet someone",
-          options: [
-            {
-              flags: "--name <name>",
-              description: "Name to greet",
-              default: "World",
-            },
-          ],
-          action: (options) => {
-            console.log(`Hello, ${options.name}!`);
-          },
-        },
-      ],
-      hooks: {
-        beforeCommand: ({ command }) => {
-          console.log(`Executing command: ${command}`);
-        },
-        afterCommand: ({ command }) => {
-          console.log(`Finished command: ${command}`);
-        },
-      },
-    },
-  ],
+The executable entry point (`bin/index.ts`) is intentionally minimal and limited to:
+
+- Parsing process arguments
+- Invoking the CLI runtime
+- Handling fatal errors
+
+All runtime orchestration lives outside `bin/`.
+
+```ts
+#!/usr/bin/env node
+
+import { run } from "../runtime/run.js";
+
+run(process.argv).catch((error) => {
+  console.error(error);
+  process.exit(1);
 });
 ```
 
-Run the CLI:
+---
 
-```bash
-npx comity greet --name Alice
-# Output: Executing command: greet
-# Hello, Alice!
-# Finished command: greet
+## Runtime Architecture
+
+```
+cli/
+├─ bin/
+│  └─ index.ts        # Thin bootstrap only
+├─ runtime/
+│  ├─ context.ts      # CliContext (commands, hooks, plugins)
+│  ├─ loader.ts       # Configuration loader
+│  └─ run.ts          # Runtime entry
+└─ errors/
+   └─ *.ts            # CLI-specific BaseError extensions
 ```
 
-## API
+---
 
-- `defineConfig<T>(config)`
+## CliContext
 
-  - Type-safe configuration helper that provides IDE autocompletion and compile-time validation for CLI configurations.
-  - Returns the configuration object unchanged but with full TypeScript support.
+`CliContext` is the core runtime container. It is responsible for:
 
-- `CliContext`
+- Registering commands
+- Registering and executing hooks
+- Registering plugins
+- Exposing a read-only view of the runtime to adapters
 
-  - Main CLI context class that manages plugins, commands, and hooks.
-  - Constructor accepts a `CliConfig` object with optional logger, plugins, and global hooks.
-
-- `CliContext.registerPlugin(plugin)`
-
-  - Registers a plugin with its commands and hooks.
-  - Throws an error if a plugin with the same name is already registered.
-
-- `CliContext.registerCommand(command)`
-
-  - Registers a single command.
-  - Throws an error if a command with the same name already exists.
-
-- `CliContext.registerHook(name, hook)`
-
-  - Registers a hook function for a specific hook name.
-
-- `CliContext.executeHook(name, context?)`
-
-  - Executes all registered hooks for the given name asynchronously.
-  - Errors in individual hooks are logged but don't stop execution of other hooks.
-
-- `CliContext.getCommand(name)`
-
-  - Returns a command by name or undefined if not found.
-
-- `CliContext.getAllCommands()`
-
-  - Returns an array of all registered commands.
-
-## Plugin authoring
-
-Create a plugin using the `CliPlugin` interface:
+Example:
 
 ```ts
-import type { CliPlugin } from "@comity/cli";
+const cli = new CliContext(config);
 
-export const myPlugin: CliPlugin = {
-  name: "@example/my-plugin",
-  version: "1.0.0",
-  commands: [
-    {
-      name: "build",
-      description: "Build the project",
-      options: [
-        {
-          flags: "--watch",
-          description: "Watch for changes",
-        },
-        {
-          flags: "--output <dir>",
-          description: "Output directory",
-          default: "dist",
-        },
-      ],
-      action: async (options) => {
-        console.log(`Building to ${options.output}...`);
-
-        if (options.watch) {
-          console.log("Watching for changes...");
-        }
-        // Build logic here
-      },
-    },
-  ],
-  hooks: {
-    beforeCommand: async ({ command, args }) => {
-      console.log(`Starting ${command} with args:`, args);
-    },
-    afterCommand: async ({ command }) => {
-      console.log(`${command} completed successfully`);
-    },
-  },
-};
-```
-
-### Built-in Hooks
-
-- `beforeCommand`: Executed before any command runs
-  - Context: `{ command: string, args: any[] }`
-- `afterCommand`: Executed after any command completes
-  - Context: `{ command: string, args: any[] }`
-
-### Command Options
-
-Commands support the following option properties:
-
-- `flags`: Commander.js option flags (e.g., `--name <name>`, `-v`)
-- `description`: Help text for the option
-- `default`: Default value if not provided
-
-## Configuration
-
-The CLI automatically loads configuration from these paths (in order):
-
-1. `comity.config.ts`
-2. `comity.config.js`
-3. `config/comity.config.ts`
-4. `config/comity.config.js`
-
-Configuration files should export a default `CliConfig` object:
-
-```ts
-import { defineConfig } from "@comity/cli";
-
-export default defineConfig({
-  logger: customLogger, // Optional Pino logger instance
-  plugins: [
-    /* plugin array */
-  ],
-  hooks: {
-    beforeCommand: (context) => {
-      // Global before hook
-    },
+cli.registerCommand({
+  name: "hello",
+  description: "Say hello",
+  action: async () => {
+    console.log("Hello Comity");
   },
 });
 ```
 
-## Development & Tests
+---
 
-Run the package tests (from repository root):
+## Commands
 
-```bash
-pnpm -w -F @comity/cli test
+Commands are plain objects with no dependency on Commander or other adapters.
+
+```ts
+export interface CliCommand {
+  name: string;
+  description?: string;
+  options?: CliOption[];
+  action: (...args: any[]) => Promise<void> | void;
+}
 ```
 
-Run the full monorepo test suite:
+This allows commands to be reused across different CLIs or adapters.
 
-```bash
-pnpm -w test
+---
+
+## Hooks
+
+Hooks allow extending the CLI lifecycle.
+
+Available hooks:
+
+- `beforeCommand`
+- `afterCommand`
+
+Example:
+
+```ts
+cli.registerHook("beforeCommand", async ({ command }) => {
+  console.log(`Running ${command}`);
+});
 ```
 
-Linting and type checks are provided at the workspace level; run your usual tooling as needed.
+Hooks are executed sequentially. Errors propagate as `BaseError` instances.
+
+---
+
+## Plugins
+
+Plugins are first-class citizens.
+
+```ts
+export interface CliPlugin {
+  name: string;
+  commands?: CliCommand[];
+  hooks?: Record<string, CliHook>;
+}
+```
+
+Registering a plugin:
+
+```ts
+cli.registerPlugin(myPlugin);
+```
+
+Duplicate plugin names result in a `ConflictError`.
+
+---
+
+## Configuration Loading
+
+Configuration is resolved by the runtime loader:
+
+- Supports environment overrides
+- Prevents path traversal
+- Emits structured errors
+
+Possible errors:
+
+- `CliConfigNotFoundError`
+- `CliConfigLoadError`
+- `CliConfigInvalidError`
+
+---
+
+## Error Model
+
+All CLI-specific errors extend `BaseError`.
+
+Example:
+
+```ts
+export class CliConfigNotFoundError extends BaseError {
+  readonly code = "CLI_CONFIG_NOT_FOUND";
+
+  constructor(meta: { searchedPaths: string[]; cause?: unknown }) {
+    super("CLI configuration file not found", {
+      httpStatus: 400,
+      ...meta,
+    });
+  }
+}
+```
+
+### Error Handling Contract
+
+- Domain errors are **thrown**, not logged
+- Logging is performed at the runtime or bin boundary
+- Errors carry structured metadata
+
+---
+
+## Commander Adapter
+
+Commander is treated as an **adapter**, not a dependency of the domain.
+
+Responsibilities:
+
+- Map `CliCommand` to Commander commands
+- Forward execution to `CliContext`
+- Translate process arguments
+
+This ensures the CLI runtime can be reused with different argument parsers.
+
+---
+
+## Design Principles
+
+- **Thin bin**: no business logic in executable entrypoints
+- **Explicit runtime boundary**
+- **Framework-level error semantics**
+- **Composable, testable units**
+
+---
+
+## Related Packages
+
+- `@comity/core` – Core framework primitives
+
+---
 
 ## License
 
-See the package `LICENSE` in the repository root.
+MIT

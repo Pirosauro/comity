@@ -1,4 +1,4 @@
-import type { CliConfig, CliPlugin, CliCommand, CliHook } from "../types.js";
+import type { CliConfig, CliPlugin, CliCommand, CliHook } from "../../types.js";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { CliContext } from "../context.js";
 
@@ -56,12 +56,6 @@ describe("CliContext", () => {
       const context = new CliContext(configWithPlugins);
 
       expect(context.getCommand("test-cmd")).toBeDefined();
-      expect(mockLogger.debug).toHaveBeenCalledWith(
-        "Registered command: test-cmd"
-      );
-      expect(mockLogger.debug).toHaveBeenCalledWith(
-        "Registered hook for: beforeCommand"
-      );
     });
 
     it("should register global hooks from config", () => {
@@ -74,10 +68,6 @@ describe("CliContext", () => {
       };
 
       const context = new CliContext(configWithHooks);
-
-      expect(mockLogger.debug).toHaveBeenCalledWith(
-        "Registered hook for: globalHook"
-      );
     });
   });
 
@@ -95,8 +85,6 @@ describe("CliContext", () => {
       };
 
       context["registerPlugin"](plugin);
-
-      expect(mockLogger.debug).not.toHaveBeenCalled();
     });
 
     it("should register plugin commands", () => {
@@ -115,9 +103,6 @@ describe("CliContext", () => {
       context["registerPlugin"](plugin);
 
       expect(context.getCommand("test-cmd")).toBeDefined();
-      expect(mockLogger.debug).toHaveBeenCalledWith(
-        "Registered command: test-cmd"
-      );
     });
 
     it("should register plugin hooks", () => {
@@ -130,10 +115,6 @@ describe("CliContext", () => {
       };
 
       context["registerPlugin"](plugin);
-
-      expect(mockLogger.debug).toHaveBeenCalledWith(
-        "Registered hook for: testHook"
-      );
     });
 
     it("should throw error for duplicate plugin registration", () => {
@@ -146,11 +127,7 @@ describe("CliContext", () => {
 
       expect(() => {
         context["registerPlugin"](plugin);
-      }).toThrow("Plugin 'test-plugin' is already registered.");
-
-      expect(mockLogger.error).toHaveBeenCalledWith(
-        "Plugin 'test-plugin' is already registered."
-      );
+      }).toThrow("CLI plugin already registered");
     });
   });
 
@@ -171,9 +148,6 @@ describe("CliContext", () => {
       context.registerCommand(command);
 
       expect(context.getCommand("test-cmd")).toEqual(command);
-      expect(mockLogger.debug).toHaveBeenCalledWith(
-        "Registered command: test-cmd"
-      );
     });
 
     it("should throw error for duplicate command registration", () => {
@@ -187,11 +161,7 @@ describe("CliContext", () => {
 
       expect(() => {
         context.registerCommand(command);
-      }).toThrow("Command 'test-cmd' is already registered.");
-
-      expect(mockLogger.error).toHaveBeenCalledWith(
-        "Command 'test-cmd' is already registered."
-      );
+      }).toThrow("CLI command already registered");
     });
   });
 
@@ -206,10 +176,6 @@ describe("CliContext", () => {
       const hook: CliHook = vi.fn();
 
       context.registerHook("testHook", hook);
-
-      expect(mockLogger.debug).toHaveBeenCalledWith(
-        "Registered hook for: testHook"
-      );
     });
 
     it("should register multiple hooks for the same name", () => {
@@ -218,8 +184,6 @@ describe("CliContext", () => {
 
       context.registerHook("testHook", hook1);
       context.registerHook("testHook", hook2);
-
-      expect(mockLogger.debug).toHaveBeenCalledTimes(2);
     });
   });
 
@@ -256,19 +220,14 @@ describe("CliContext", () => {
 
     it("should handle hook errors gracefully", async () => {
       const errorHook = vi.fn().mockRejectedValue(new Error("Hook error"));
-      const successHook = vi.fn().mockResolvedValue(undefined);
 
       context.registerHook("testHook", errorHook);
-      context.registerHook("testHook", successHook);
 
-      await context.executeHook("testHook");
+      await expect(context.executeHook("testHook")).rejects.toThrow(
+        "CLI hook execution failed"
+      );
 
       expect(errorHook).toHaveBeenCalled();
-      expect(successHook).toHaveBeenCalled();
-      expect(mockLogger.error).toHaveBeenCalledWith(
-        expect.any(Error),
-        "Error in hook 'testHook': Hook error"
-      );
     });
 
     it("should handle non-Error exceptions", async () => {
@@ -276,18 +235,15 @@ describe("CliContext", () => {
 
       context.registerHook("testHook", errorHook);
 
-      await context.executeHook("testHook");
-
-      expect(mockLogger.error).toHaveBeenCalledWith(
-        "String error",
-        "Error in hook 'testHook': Unknown error"
+      await expect(context.executeHook("testHook")).rejects.toThrow(
+        "CLI hook execution failed"
       );
+
+      expect(errorHook).toHaveBeenCalled();
     });
 
     it("should do nothing for unregistered hooks", async () => {
       await context.executeHook("nonexistentHook");
-
-      expect(mockLogger.error).not.toHaveBeenCalled();
     });
   });
 
