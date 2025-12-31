@@ -58,35 +58,27 @@ import type { Context } from "./context.js";
  * };
  * ```
  */
-export interface ModuleMeta<O extends {} = {}, C = Context> {
+export interface ModuleMeta<O extends {} = {}, C = {}> {
   /** Unique identifier for the module */
   name: string;
-
   /** Semantic version string (e.g., "1.2.3") */
   version: string;
-
   /** Priority for loading order (lower numbers load first, default is 100) */
   priority?: number;
-
   /** Array of module names this module depends on (optional) */
   dependsOn?: string[];
-
   /** Array of module names this module optionally depends on (optional) */
   optionalDependsOn?: string[];
-
   /** Array of module names this module cannot coexist with (optional) */
   incompatibleWith?: string[];
-
   /** Zod schema for validating module configuration (optional) */
   configSchema?: z.ZodTypeAny;
-
   /**
    * Function that returns the module setup function.
    * Receives module-specific options and returns an async function
    * that performs the actual module setup with the provided context.
    */
-  setup: (options?: O) => Promise<(ctx: C) => Promise<void>>;
-
+  setup: (options?: O) => Promise<(ctx: C & Context) => Promise<void>>;
   /** Additional metadata or configuration options */
   [key: string]: any;
 }

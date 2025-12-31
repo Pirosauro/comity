@@ -59,6 +59,11 @@ describe("createD1Client", () => {
       expect(typeof result.query).toBe("function");
     });
 
+    it("should expose kind property as 'd1'", () => {
+      const client = createD1Client(mockClient, options) as any;
+      expect(client.kind).toBe("d1");
+    });
+
     it("should preserve other client properties", () => {
       (mockClient as any).exec = vi.fn();
       const result = createD1Client(mockClient, options);

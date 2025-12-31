@@ -68,6 +68,26 @@
         "default": "./dist/cjs/adapters/postgres/index.js"
       }
     },
+    "./errors": {
+      "import": {
+        "types": "./dist/types/errors/index.d.ts",
+        "default": "./dist/esm/errors/index.js"
+      },
+      "require": {
+        "types": "./dist/types/errors/index.d.ts",
+        "default": "./dist/cjs/errors/index.js"
+      }
+    },
+    "./helpers": {
+      "import": {
+        "types": "./dist/types/helpers/index.d.ts",
+        "default": "./dist/esm/helpers/index.js"
+      },
+      "require": {
+        "types": "./dist/types/helpers/index.d.ts",
+        "default": "./dist/cjs/helpers/index.js"
+      }
+    },
     "./setup": {
       "import": {
         "types": "./dist/types/setup/index.d.ts",
@@ -86,6 +106,12 @@
       ],
       "adapters/postgres": [
         "./dist/types/adapters/postgres/index.d.ts"
+      ],
+      "errors": [
+        "./dist/types/errors/index.d.ts"
+      ],
+      "helpers": [
+        "./dist/types/helpers/index.d.ts"
       ],
       "setup": [
         "./dist/types/setup/index.d.ts"
