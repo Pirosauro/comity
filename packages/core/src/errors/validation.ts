@@ -36,7 +36,7 @@ export class ValidationError extends BaseError {
    * @param message - Human-readable error message describing the validation failure
    * @param meta - Additional error metadata (validation details, field info, etc.)
    */
-  constructor(message: string, meta?: ErrorMeta) {
+  constructor(message = "Validation Error", meta?: ErrorMeta) {
     super(message, {
       httpStatus: 400,
       ...meta,
