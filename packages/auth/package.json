@@ -23,11 +23,7 @@
     "token",
     "refresh-token",
     "security",
-    "middleware",
-    "hono",
     "session",
-    "login",
-    "logout",
     "typescript"
   ],
   "scripts": {
@@ -73,10 +69,36 @@
         "default": "./dist/cjs/setup.js"
       }
     },
+    "./adapters/jose": {
+      "import": {
+        "types": "./dist/types/adapters/jose/index.d.ts",
+        "default": "./dist/esm/adapters/jose/index.js"
+      },
+      "require": {
+        "types": "./dist/types/adapters/jose/index.d.ts",
+        "default": "./dist/cjs/adapters/jose/index.js"
+      }
+    },
+    "./adapters/jwt": {
+      "import": {
+        "types": "./dist/types/adapters/jwt/index.d.ts",
+        "default": "./dist/esm/adapters/jwt/index.js"
+      },
+      "require": {
+        "types": "./dist/types/adapters/jwt/index.d.ts",
+        "default": "./dist/cjs/adapters/jwt/index.js"
+      }
+    },
     "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
+      "adapters/jose": [
+        "./dist/types/adapters/jose/index.d.ts"
+      ],
+      "adapters/jwt": [
+        "./dist/types/adapters/jwt/index.d.ts"
+      ],
       "errors": [
         "./dist/types/errors/index.d.ts"
       ],

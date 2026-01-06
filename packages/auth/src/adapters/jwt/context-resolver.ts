@@ -6,10 +6,29 @@ import type { JwtFacade } from "./facade.js";
 import type { JwtSessionMapper } from "./session-mapper.js";
 
 export const AUTH_JWT_CONTEXT_RESOLVER_REASONS = {
+  /** Credential is missing or malformed */
   INVALID_CREDENTIALS: "auth:jwt_invalid_credential",
+
+  /** Token is malformed or invalid */
   TOKEN_INVALID: "auth:jwt_token_invalid",
+
+  /** Token has expired */
   TOKEN_EXPIRED: "auth:jwt_token_expired",
+
+  /** Token signature is invalid */
   SESSION_INVALID: "auth:jwt_session_invalid",
+
+  /** Token issuer is invalid */
+  INVALID_ISSUER: "auth:jwt_invalid_issuer",
+
+  /** Token audience is invalid */
+  INVALID_AUDIENCE: "auth:jwt_invalid_audience",
+
+  /** Required claims are missing */
+  MISSING_CLAIMS: "auth:jwt_missing_claims",
+
+  /** Token is not yet active */
+  TOKEN_NOT_ACTIVE: "auth:jwt_token_not_active", // nbf claim
 } as const;
 
 export type AuthJwtContextResolverReason =

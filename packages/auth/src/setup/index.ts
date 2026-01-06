@@ -8,16 +8,25 @@ import type {
 import { withAuthEvents } from "../internal/auth-events.js";
 
 /**
- * Auth module setup for Comity.
+ * Auth Module for Comity
  *
- * @remarks
- * This module wires an AuthOrchestrator into the application context
- * and exposes authentication lifecycle events.
+ * Integrates authentication and authorization into the application lifecycle.
+ * Provides session management, step-up auth, and refresh capabilities.
  *
- * The module itself is transport-agnostic and does not assume
- * HTTP, JWT, cookies, or headers.
+ * What it offers:
+ * - Policy-driven session validation and assurance scoring
+ * - Step-up authentication for privilege escalation
+ * - Session refresh with configurable requirements
+ * - Event emission for monitoring and integration
  *
- * Adapters (HTTP, JWT, etc.) must be composed externally and passed in.
+ * What it excludes:
+ * - Transport mechanisms (HTTP, JWT, etc. - use adapters)
+ * - User storage or credential validation (external systems)
+ *
+ * Invariants:
+ * - Requires an AuthOrchestrator to be configured
+ * - Exposes auth service on context (ctx.auth available after setup)
+ * - Events are emitted after state changes, not before
  */
 export const module: ModuleMeta<
   AuthModuleOptions<any, any, any, any>,
@@ -32,14 +41,16 @@ export const module: ModuleMeta<
     }
 
     return async (ctx) => {
+      // Wrap orchestrator with event emission (invariant: events are observational)
       const service = withAuthEvents(options.orchestrator, ctx.emit.bind(ctx));
 
-      ctx.trigger<AuthModuleHooks["@comity/auth:initialized"]>(
+      // Signal initialization complete (hook for other modules)
+      await ctx.trigger<AuthModuleHooks["@comity/auth:initialized"]>(
         "@comity/auth:initialized",
         service
       );
 
-      // Expose orchestrator in context
+      // Expose service (invariant: ctx.auth is now available)
       ctx.auth = service;
     };
   },

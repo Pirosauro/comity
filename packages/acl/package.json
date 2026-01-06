@@ -49,14 +49,44 @@
         "default": "./dist/cjs/index.js"
       }
     },
-    "./adapters": {
+    "./adapters/casl": {
       "import": {
-        "types": "./dist/types/adapters/index.d.ts",
-        "default": "./dist/esm/adapters/index.js"
+        "types": "./dist/types/adapters/casl/index.d.ts",
+        "default": "./dist/esm/adapters/casl/index.js"
       },
       "require": {
-        "types": "./dist/types/adapters/index.d.ts",
-        "default": "./dist/cjs/adapters/index.js"
+        "types": "./dist/types/adapters/casl/index.d.ts",
+        "default": "./dist/cjs/adapters/casl/index.js"
+      }
+    },
+    "./adapters/http": {
+      "import": {
+        "types": "./dist/types/adapters/http/index.d.ts",
+        "default": "./dist/esm/adapters/http/index.js"
+      },
+      "require": {
+        "types": "./dist/types/adapters/http/index.d.ts",
+        "default": "./dist/cjs/adapters/http/index.js"
+      }
+    },
+    "./application": {
+      "import": {
+        "types": "./dist/types/application/index.d.ts",
+        "default": "./dist/esm/application/index.js"
+      },
+      "require": {
+        "types": "./dist/types/application/index.d.ts",
+        "default": "./dist/cjs/application/index.js"
+      }
+    },
+    "./ports": {
+      "import": {
+        "types": "./dist/types/ports/index.d.ts",
+        "default": "./dist/esm/ports/index.js"
+      },
+      "require": {
+        "types": "./dist/types/ports/index.d.ts",
+        "default": "./dist/cjs/ports/index.js"
       }
     },
     "./setup": {
@@ -73,8 +103,17 @@
   },
   "typesVersions": {
     "*": {
-      "adapters": [
-        "./dist/types/adapters/index.d.ts"
+      "adapters/casl": [
+        "./dist/types/adapters/casl/index.d.ts"
+      ],
+      "adapters/http": [
+        "./dist/types/adapters/http/index.d.ts"
+      ],
+      "application": [
+        "./dist/types/application/index.d.ts"
+      ],
+      "ports": [
+        "./dist/types/ports/index.d.ts"
       ],
       "setup": [
         "./dist/types/setup/index.d.ts"

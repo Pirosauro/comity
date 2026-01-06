@@ -13,9 +13,11 @@
     "target": "es2022",
 
     // Strictness
+    "exactOptionalPropertyTypes": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": true,
     "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
     "noUncheckedIndexedAccess": true,
     "strict": true,
 

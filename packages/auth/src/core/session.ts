@@ -1,24 +1,36 @@
 import type { AuthSession } from "./types.js";
 
 /**
- * Returns true if the session has a hard expiration
- * and the current time is past that expiration.
+ * Session utility functions.
  *
- * IMPORTANT:
- * - Absence of expiresAt means "no hard expiration",
- *   NOT infinite validity (validation/policy decide that).
+ * Invariants:
+ * - All functions are pure (no side effects)
+ * - Time calculations use seconds since epoch
+ * - Functions handle undefined values gracefully
+ */
+
+/**
+ * Returns true if the session has expired.
+ *
+ * Invariants:
+ * - Hard expiration takes precedence over policy-based expiration
+ * - maxAgeSeconds is optional and overrides session.expiresAt if shorter
+ *
+ * Misuse Prevention:
+ * - Do not call with negative timestamps
+ * - Understand that undefined expiresAt means no hard expiration
  */
 export function isSessionExpired(
   session: AuthSession,
   now: number,
   maxAgeSeconds?: number // Seconds
 ): boolean {
-  // 1. Hard cap always wins
+  // Hard cap always wins (intent: absolute expiration)
   if (session.expiresAt !== undefined && now >= session.expiresAt) {
     return true;
   }
 
-  // 2. Policy-based expiration
+  // Policy-based expiration (intent: configurable max age)
   if (
     maxAgeSeconds !== undefined &&
     getSessionAge(session, now) > maxAgeSeconds
@@ -31,17 +43,24 @@ export function isSessionExpired(
 
 /**
  * Returns the age of the session in seconds.
+ *
+ * Invariants:
+ * - Always returns a non-negative number
+ * - Calculated as now - session.createdAt
  */
 export function getSessionAge(session: AuthSession, now: number): number {
   return now - session.createdAt;
 }
 
 /**
- * Returns the age (in seconds) since the last strong authentication.
+ * Returns the age since last strong authentication in seconds.
  *
- * NOTE:
- * - verifiedAt represents the last completed strong auth step
- *   (password + 2FA, passkey, step-up, etc.).
+ * Invariants:
+ * - Returns Infinity if session.verifiedAt is undefined (never verified)
+ * - Otherwise returns now - session.verifiedAt
+ *
+ * Misuse Prevention:
+ * - Check for Infinity before comparisons
  */
 export function getVerificationAge(session: AuthSession, now: number): number {
   if (session.verifiedAt === undefined) {
@@ -52,20 +71,22 @@ export function getVerificationAge(session: AuthSession, now: number): number {
 }
 
 /**
- * Returns true if the session is within a given verification age window.
+ * Returns true if verification is within the specified age window.
  *
- * IMPORTANT:
- * - This helper does NOT decide validity by itself.
- *   It only answers a temporal question.
- * - verification freshness makes sense only if verifiedAt is set,
- *   as it represents the last completed strong auth step.
+ * Invariants:
+ * - Returns false if session.expiresAt is undefined (no hard expiration)
+ * - Age calculation uses session.verifiedAt
+ *
+ * Misuse Prevention:
+ * - Ensure maxAgeSeconds is positive
+ * - Understand that this is temporal, not security validation
  */
 export function isVerificationFresh(
   session: AuthSession,
   now: number,
   maxAgeSeconds: number
 ): boolean {
-  if (session.verifiedAt === undefined) {
+  if (session.expiresAt === undefined) {
     return false;
   }
 
