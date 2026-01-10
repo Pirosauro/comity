@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ADR Front Matter Schema",
+  "type": "object",
+  "required": ["id", "status", "date", "owner", "enforcement"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^adr-[0-9]{4}$",
+      "description": "Unique ADR identifier (e.g. adr-0001)"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["proposed", "accepted", "rejected", "superseded"],
+      "description": "Lifecycle state of the ADR"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date the ADR was proposed or accepted"
+    },
+    "owner": {
+      "type": "string",
+      "pattern": "^@[a-z0-9\\-_/]+$",
+      "description": "Owning team or council"
+    },
+    "enforcement": {
+      "type": "string",
+      "enum": ["block"],
+      "description": "ADRs always have blocking enforcement"
+    },
+    "supersedes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^adr-[0-9]{4}$"
+      },
+      "description": "List of ADRs superseded by this one (empty if none)"
+    }
+  },
+  "additionalProperties": false,
+  "not": {
+    "anyOf": [
+      { "required": ["version"] },
+      { "required": ["last_reviewed"] },
+      { "required": ["next_review"] }
+    ]
+  }
+}

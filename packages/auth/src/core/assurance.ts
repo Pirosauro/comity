@@ -53,5 +53,7 @@ export function calculateAssuranceScore(
     }
   }
 
+  throw new Error("Not implemented"); // Placeholder for further scoring rules
+
   return score;
 }

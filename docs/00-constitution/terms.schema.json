@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "/docs/00-constitution/terms.schema.json",
+  "title": "Comity Terminology Registry Schema",
+  "description": "Canonical registry of all defined terminology used in Comity documentation.",
+  "type": "object",
+  "additionalProperties": {
+    "$ref": "#/$defs/term"
+  },
+  "propertyNames": {
+    "pattern": "^[a-z][a-z0-9_]*$",
+    "description": "Term keys must be snake_case identifiers."
+  },
+  "required": [],
+  "$defs": {
+    "term": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["definition", "first_defined", "status"],
+      "properties": {
+        "definition": {
+          "type": "string",
+          "minLength": 20,
+          "description": "Canonical, normative definition of the term."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["active", "deprecated"],
+          "description": "Lifecycle status of the term."
+        },
+        "first_defined": {
+          "type": "string",
+          "format": "uri-reference",
+          "description": "Path to the document where the term was first defined."
+        },
+        "synonyms": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "uniqueItems": true,
+          "description": "Alternative identifiers referring to the same concept."
+        },
+        "deprecated_in_favor_of": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "description": "Replacement term identifier, required if status=deprecated."
+        },
+        "notes": {
+          "type": "string",
+          "description": "Optional clarification or usage notes."
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": { "const": "deprecated" }
+            }
+          },
+          "then": {
+            "required": ["deprecated_in_favor_of"]
+          }
+        }
+      ]
+    }
+  }
+}

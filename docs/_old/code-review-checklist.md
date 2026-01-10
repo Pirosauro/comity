@@ -234,10 +234,10 @@ export class UserService {
   async findUser(id: string): Promise<Result<User, UserError>> {
     // Business logic failures return Result
     if (!isValidId(id)) {
-      return { ok: false, reason: USER_ERRORS.INVALID_ID };
+      return { success: false, reason: USER_ERRORS.INVALID_ID };
     }
     // Success returns Result
-    return { ok: true, value: user };
+    return { success: true, value: user };
   }
 }
 
