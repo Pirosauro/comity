@@ -1,22 +1,7 @@
-/**
- * Type definition for error metadata.
- *
- * @remarks
- * Error metadata provides additional context about errors, including HTTP status codes,
- * structured details, and causal relationships. The metadata object is extensible to
- * allow custom properties for specific error types.
- */
-export type ErrorMeta = {
-  /** HTTP status code associated with this error, if applicable */
-  httpStatus?: number;
-  /** Additional details about the error (structured data) */
-  details?: unknown;
-  /** The underlying cause of the error */
-  cause?: unknown;
-} & Record<string, unknown>;
+import type { ErrorMeta } from "./types.js";
 
 /**
- * Base error class for all Comity framework errors.
+ * Base error class for all Comity framework errors
  *
  * @remarks
  * All Comity errors extend this base class to ensure consistent error handling,
@@ -64,13 +49,13 @@ export type ErrorMeta = {
 export abstract class BaseError extends Error {
   /** Stable, machine-readable error code */
   abstract readonly code: string;
+
   /** Additional metadata associated with this error */
   readonly meta: Omit<ErrorMeta, "cause">;
 
   /**
-   * Creates a new BaseError instance.
-   *
-   * @param message - Human-readable error message
+   * @param message Human-readable error message
+   * @param meta.cause The underlying cause of the error
    * @param meta - Error metadata including HTTP status, details, and cause
    * @protected
    */

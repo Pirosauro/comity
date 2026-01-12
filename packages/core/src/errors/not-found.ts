@@ -1,4 +1,5 @@
-import type { ErrorMeta } from "./base.js";
+import type { ErrorMeta } from "./types.js";
+
 import { BaseError } from "./base.js";
 
 /**
@@ -26,10 +27,8 @@ export class NotFoundError extends BaseError {
   readonly code = "NOT_FOUND";
 
   /**
-   * Creates a new NotFoundError.
-   *
-   * @param entity - Name of the entity that was not found (e.g., "user", "file", "record")
-   * @param meta - Additional error metadata (criteria, context, etc.)
+   * @param entity Name of the entity that was not found (e.g., "user", "file", "record")
+   * @param meta Additional error metadata (criteria, context, etc.)
    */
   constructor(entity: string, meta?: ErrorMeta) {
     super(`${entity} not found`, {

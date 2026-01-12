@@ -1,4 +1,5 @@
-import type { ErrorMeta } from "./base.js";
+import type { ErrorMeta } from "./types.js";
+
 import { BaseError } from "./base.js";
 
 /**
@@ -32,10 +33,8 @@ export class TooManyRequestsError extends BaseError {
   readonly code = "TOO_MANY_REQUESTS";
 
   /**
-   * Creates a new TooManyRequestsError.
-   *
-   * @param message - Human-readable error message (defaults to "Too many requests")
-   * @param meta - Additional error metadata (limits, reset times, etc.)
+   * @param message Human-readable error message (defaults to "Too many requests")
+   * @param meta Additional error metadata (limits, reset times, etc.)
    */
   constructor(message = "Too many requests", meta?: ErrorMeta) {
     super(message, {

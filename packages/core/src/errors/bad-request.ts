@@ -1,8 +1,9 @@
-import type { ErrorMeta } from "./base.js";
+import type { ErrorMeta } from "./types.js";
+
 import { BaseError } from "./base.js";
 
 /**
- * Error thrown when the request is malformed or contains invalid parameters.
+ * Error thrown when the request is malformed or contains invalid parameters
  *
  * @remarks
  * This error corresponds to HTTP 400 status and is typically thrown when
@@ -30,10 +31,8 @@ export class BadRequestError extends BaseError {
   readonly code = "BAD_REQUEST";
 
   /**
-   * Creates a new BadRequestError.
-   *
-   * @param message - Human-readable error message describing the bad request
-   * @param meta - Additional error metadata (validation details, context, etc.)
+   * @param message Human-readable error message describing the bad request
+   * @param meta Additional error metadata (validation details, context, etc.)
    */
   constructor(message: string, meta?: ErrorMeta) {
     super(message, {

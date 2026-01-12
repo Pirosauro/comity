@@ -1,4 +1,5 @@
-import type { ErrorMeta } from "./base.js";
+import type { ErrorMeta } from "./types.js";
+
 import { BaseError } from "./base.js";
 
 /**
@@ -31,10 +32,8 @@ export class ValidationError extends BaseError {
   readonly code = "VALIDATION_ERROR";
 
   /**
-   * Creates a new ValidationError.
-   *
-   * @param message - Human-readable error message describing the validation failure
-   * @param meta - Additional error metadata (validation details, field info, etc.)
+   * @param message Human-readable error message describing the validation failure
+   * @param meta Additional error metadata (validation details, field info, etc.)
    */
   constructor(message = "Validation Error", meta?: ErrorMeta) {
     super(message, {

@@ -1,7 +1,7 @@
 {
   "name": "@comity/core",
   "version": "1.0.0",
-  "description": "Core framework for building modular applications with Hono",
+  "description": "Core framework for building modular applications",
   "type": "module",
   "author": "Filippo Bovo <hello@filippobovo.com>",
   "license": "MIT",
@@ -48,6 +48,16 @@
         "default": "./dist/cjs/index.js"
       }
     },
+    "./di": {
+      "import": {
+        "types": "./dist/types/di/index.d.ts",
+        "default": "./dist/esm/di/index.js"
+      },
+      "require": {
+        "types": "./dist/types/di/index.d.ts",
+        "default": "./dist/cjs/di/index.js"
+      }
+    },
     "./errors": {
       "import": {
         "types": "./dist/types/errors/index.d.ts",
@@ -58,51 +68,67 @@
         "default": "./dist/cjs/errors/index.js"
       }
     },
-    "./factories": {
+    "./events": {
       "import": {
-        "types": "./dist/types/factories/index.d.ts",
-        "default": "./dist/esm/factories/index.js"
+        "types": "./dist/types/events/index.d.ts",
+        "default": "./dist/esm/events/index.js"
       },
       "require": {
-        "types": "./dist/types/factories/index.d.ts",
-        "default": "./dist/cjs/factories/index.js"
+        "types": "./dist/types/events/index.d.ts",
+        "default": "./dist/cjs/events/index.js"
       }
     },
-    "./primitives": {
+    "./hooks": {
       "import": {
-        "types": "./dist/types/primitives/index.d.ts",
-        "default": "./dist/esm/primitives/index.js"
+        "types": "./dist/types/hooks/index.d.ts",
+        "default": "./dist/esm/hooks/index.js"
       },
       "require": {
-        "types": "./dist/types/primitives/index.d.ts",
-        "default": "./dist/cjs/primitives/index.js"
+        "types": "./dist/types/hooks/index.d.ts",
+        "default": "./dist/cjs/hooks/index.js"
       }
     },
-    "./setup": {
+    "./lazy": {
       "import": {
-        "types": "./dist/types/setup/index.d.ts",
-        "default": "./dist/esm/setup/index.js"
+        "types": "./dist/types/lazy/index.d.ts",
+        "default": "./dist/esm/lazy/index.js"
       },
       "require": {
-        "types": "./dist/types/setup/index.d.ts",
-        "default": "./dist/cjs/setup/index.js"
+        "types": "./dist/types/lazy/index.d.ts",
+        "default": "./dist/cjs/lazy/index.js"
+      }
+    },
+    "./result": {
+      "import": {
+        "types": "./dist/types/result/index.d.ts",
+        "default": "./dist/esm/result/index.js"
+      },
+      "require": {
+        "types": "./dist/types/result/index.d.ts",
+        "default": "./dist/cjs/result/index.js"
       }
     },
     "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
+      "di": [
+        "./dist/types/di/index.d.ts"
+      ],
       "errors": [
         "./dist/types/errors/index.d.ts"
       ],
-      "factories": [
-        "./dist/types/factories/index.d.ts"
+      "events": [
+        "./dist/types/events/index.d.ts"
       ],
-      "primitives": [
-        "./dist/types/primitives/index.d.ts"
+      "hooks": [
+        "./dist/types/hooks/index.d.ts"
       ],
-      "setup": [
-        "./dist/types/setup/index.d.ts"
+      "lazy": [
+        "./dist/types/lazy/index.d.ts"
+      ],
+      "result": [
+        "./dist/types/result/index.d.ts"
       ]
     }
   },
@@ -111,11 +137,8 @@
     "access": "public"
   },
   "sideEffects": false,
-  "dependencies": {
-    "zod": "^4.2.1"
-  },
   "devDependencies": {
-    "@types/node": "^24.10.4",
+    "@types/node": "^24.10.7",
     "typescript": "^5.9.3"
   }
 }

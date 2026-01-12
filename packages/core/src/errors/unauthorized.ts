@@ -1,4 +1,5 @@
-import type { ErrorMeta } from "./base.js";
+import type { ErrorMeta } from "./types.js";
+
 import { BaseError } from "./base.js";
 
 /**
@@ -37,10 +38,8 @@ export class UnauthorizedError extends BaseError {
   readonly code = "UNAUTHORIZED";
 
   /**
-   * Creates a new UnauthorizedError.
-   *
-   * @param message - Human-readable error message (defaults to "Authentication required")
-   * @param meta - Additional error metadata (auth method, context, etc.)
+   * @param message Human-readable error message (defaults to "Authentication required")
+   * @param meta Additional error metadata (auth method, context, etc.)
    */
   constructor(message = "Authentication required", meta?: ErrorMeta) {
     super(message, {

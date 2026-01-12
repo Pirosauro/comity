@@ -1,4 +1,5 @@
-import type { ErrorMeta } from "./base.js";
+import type { ErrorMeta } from "./types.js";
+
 import { BaseError } from "./base.js";
 
 /**
@@ -30,8 +31,8 @@ export class ForbiddenError extends BaseError {
   /**
    * Creates a new ForbiddenError.
    *
-   * @param message - Human-readable error message (defaults to "Access denied")
-   * @param meta - Additional error metadata (permissions, context, etc.)
+   * @param message Human-readable error message (defaults to "Access denied")
+   * @param meta Additional error metadata (permissions, context, etc.)
    */
   constructor(message = "Access denied", meta?: ErrorMeta) {
     super(message, {

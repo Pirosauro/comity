@@ -1,20 +1,19 @@
 # @comity/core
 
-Core runtime, patterns, and error model for building modular, type-safe applications with the Comity framework.
+Core utilities, patterns, and error model for building modular, type-safe applications with the Comity framework.
 
-`@comity/core` is the foundational runtime of the Comity framework. It provides the primary abstractions (Context, Container, module system, error model) used by all Comity-based applications.
+`@comity/core` provides foundational utilities for dependency injection, event handling, hooks, lazy instantiation, and a standardized error model. It serves as the building blocks for higher-level Comity abstractions.
 
 ---
 
 ## Features
 
-- **Context Runtime**: Central application runtime with lifecycle hooks, events, and dependency injection
-- **Dependency Injection Container**: Lazy, singleton, and transient service management
-- **Module System**: Deterministic module initialization with dependency resolution and cycle detection
+- **Dependency Injection Container**: Singleton and transient service management with error handling
+- **Hook System**: Sequential execution of middleware-like handlers that can transform payloads
+- **Event System**: Parallel, fire-and-forget event emission with optional error handling
+- **Lazy Instantiation**: Memoization and deferred computation helpers
+- **Result Types**: Type-safe success/failure patterns with utility functions
 - **Standard Error Model**: Typed errors with stable codes, HTTP semantics, and structured metadata
-- **Validation**: Zod-based schema validation for module metadata and configuration
-- **Security Utilities**: WebCrypto-based secret storage with pluggable backends
-- **Lazy Instantiation Utilities**: Memoization and deferred computation helpers
 
 ---
 
@@ -29,101 +28,145 @@ pnpm add @comity/core
 ## Quick Start
 
 ```ts
-import { createContext } from "@comity/core";
+import { DiContainer } from "@comity/core";
+import { HookBus } from "@comity/core";
+import { EventBus } from "@comity/core";
 
-const loggerModule = {
-  name: "logger",
-  version: "1.0.0",
-  setup: async () => async (ctx) => {
-    ctx.register("logger", () => console);
-  },
-};
+const container = new DiContainer();
+container.define("logger", () => console);
+const logger = container.resolve<Console>("logger");
 
-const ctx = await createContext([loggerModule]);
-const logger = ctx.get<Console>("logger");
+const hooks = new HookBus<{ beforeSave: string }>();
+hooks.define("beforeSave", (value) => value.toUpperCase());
+const result = await hooks.execute("beforeSave", "hello");
 
-logger.log("Application started");
+const events = new EventBus<{ userLogin: { id: number } }>();
+events.subscribe("userLogin", async (payload) => {
+  logger.log("User logged in:", payload.id);
+});
+await events.emit("userLogin", { id: 123 });
 ```
-
-`Context` is the primary runtime abstraction in Comity applications. Direct usage of `Container` is intended only for advanced or isolated scenarios.
 
 ---
 
 ## Dependency Injection
 
 ```ts
-import { Container, ServiceFlags } from "@comity/core";
+import { DiContainer } from "@comity/core";
 
-const container = new Container();
+const container = new DiContainer();
 
-container.register("database", () => new Database(), ServiceFlags.SINGLETON);
-container.register(
-  "requestId",
-  () => crypto.randomUUID(),
-  ServiceFlags.TRANSIENT
-);
+container.define("database", () => new Database());
+container.define("requestId", () => crypto.randomUUID());
 
-const db = container.get<Database>("database");
-const id = container.get<string>("requestId");
+const db = container.resolve<Database>("database");
+const id = container.resolve<string>("requestId");
 ```
 
-### Service Lifecycles
-
-- `ServiceFlags.SINGLETON`: One shared instance (default)
-- `ServiceFlags.TRANSIENT`: New instance per access
+Services are singletons by default. Attempting to redefine a service throws `ConflictError`. Resolving an undefined service throws `NotFoundError`.
 
 ---
 
-## Context and Lifecycle
+## Hooks
 
 ```ts
-import { Context } from "@comity/core";
+import { HookBus } from "@comity/core";
 
-const ctx = new Context();
+interface MyHooks {
+  beforeSave: string;
+  validate: object;
+}
 
-ctx.onHook("app:startup", async (config) => {
-  return { ...config, startedAt: Date.now() };
+const hooks = new HookBus<MyHooks>();
+
+hooks.define("beforeSave", async (value) => {
+  // Transform the value
+  return value.trim();
 });
 
-ctx.onEvent("user:login", async (user) => {
-  await analytics.track("login", user);
+hooks.define("beforeSave", (value) => {
+  return value.toUpperCase();
 });
 
-await ctx.trigger("app:startup", { port: 3000 });
-await ctx.emit("user:login", { id: 123 });
+const result = await hooks.execute("beforeSave", "  hello  ");
+// Result: "HELLO" (handlers executed sequentially)
 ```
 
-Hooks are executed sequentially and may transform payloads. Events are executed in parallel and are fire-and-forget.
+Hooks are executed in registration order and can be synchronous or asynchronous. Each handler receives the result of the previous handler.
 
 ---
 
-## Module System
+## Events
 
 ```ts
-import { createContext } from "@comity/core";
+import { EventBus } from "@comity/core";
 
-const databaseModule = {
-  name: "database",
-  version: "1.0.0",
-  setup: async () => async (ctx) => {
-    ctx.register("db", () => new Database());
-  },
-};
+interface MyEvents {
+  userCreated: { id: number; name: string };
+  dataUpdated: { key: string; value: unknown };
+}
 
-const authModule = {
-  name: "auth",
-  version: "1.0.0",
-  dependsOn: ["database"],
-  setup: async () => async (ctx) => {
-    const db = ctx.get("db");
-    ctx.register("auth", () => new AuthService(db));
-  },
-};
+const events = new EventBus<MyEvents>({
+  errorHandler: (error) => console.error("Event error:", error),
+});
 
-const ctx = await createContext([authModule, databaseModule]);
+events.subscribe("userCreated", async (payload) => {
+  await sendWelcomeEmail(payload.name);
+});
+
+events.subscribe("userCreated", (payload) => {
+  console.log(`User ${payload.id} created`);
+});
+
+await events.emit("userCreated", { id: 123, name: "Alice" });
 ```
 
-Modules are automatically ordered and initialized based on their dependencies. Errors during resolution or setup are propagated as-is.
+Events are executed in parallel. If an error handler is provided, handler failures are caught and passed to it; otherwise, errors are silently ignored.
+
+---
+
+## Lazy Instantiation
+
+```ts
+import { Lazy } from "@comity/core";
+
+const lazyDb = new Lazy(() => {
+  console.log("Connecting to database...");
+  return new Database();
+});
+
+// Database connection happens here
+const db = lazyDb.value;
+
+// Subsequent accesses return the cached instance
+const sameDb = lazyDb.value;
+```
+
+The factory function is called only once, on first access. Useful for expensive computations or resource initialization.
+
+---
+
+## Result Types
+
+```ts
+import { success, failure, isSuccess, isFailure } from "@comity/core";
+
+function divide(a: number, b: number) {
+  if (b === 0) {
+    return failure(new Error("Division by zero"));
+  }
+  return success(a / b);
+}
+
+const result = divide(10, 2);
+if (isSuccess(result)) {
+  console.log("Result:", result.value);
+} else {
+  console.error("Error:", result.error);
+}
+```
+
+Use `success` and `failure` to create result objects, and `isSuccess`/`isFailure` for type-safe checking.
 
 ---
 
@@ -171,28 +214,21 @@ Consumers are expected to handle `BaseError` subclasses at the application bound
 
 ---
 
-## Security
-
-```ts
-import { WebCrypto } from "@comity/core/security";
-
-const crypto = new WebCrypto(storage, "master-key");
-await crypto.setSecretsForConnector("github", { token: "ghp_..." });
-const secrets = await crypto.getSecretsForConnector("github", {});
-await crypto.deleteSecretsForConnector("github");
-```
-
-`WebCrypto` is intended for application-level secret handling, not for user-facing cryptography.
-
----
-
 ## API Reference (Summary)
 
 ### Core
 
-- `createContext(modules, options?)`
-- `Context`
-- `Container`
+- `DiContainer`
+- `HookBus<Hooks>`
+- `EventBus<Events>`
+- `Lazy<T>`
+
+### Result
+
+- `success<T>(value, meta?)`
+- `failure<E>(error)`
+- `isSuccess<T>(result)`
+- `isFailure<E>(result)`
 
 ### Errors
 
@@ -203,6 +239,7 @@ await crypto.deleteSecretsForConnector("github");
 - `ConflictError` (409)
 - `ValidationError` (400)
 - `TooManyRequestsError` (429)
+- `UnprocessableEntityError` (422)
 - `ServiceUnavailableError` (503)
 - `InternalError` (500)
 

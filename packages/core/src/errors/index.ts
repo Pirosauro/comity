@@ -6,6 +6,7 @@ export * from "./internal.js";
 export * from "./not-found.js";
 export * from "./service-unavailable.js";
 export * from "./too-many-requests.js";
+export * from "./types.js";
 export * from "./unauthorized.js";
 export * from "./unprocessable-entity.js";
 export * from "./validation.js";

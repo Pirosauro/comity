@@ -1,4 +1,5 @@
-import type { ErrorMeta } from "./base.js";
+import type { ErrorMeta } from "./types.js";
+
 import { BaseError } from "./base.js";
 
 /**
@@ -30,10 +31,8 @@ export class ServiceUnavailableError extends BaseError {
   readonly code = "SERVICE_UNAVAILABLE";
 
   /**
-   * Creates a new ServiceUnavailableError.
-   *
-   * @param message - Human-readable error message (defaults to "Service unavailable")
-   * @param meta - Additional error metadata (retry timing, maintenance info, etc.)
+   * @param message Human-readable error message (defaults to "Service unavailable")
+   * @param meta Additional error metadata (retry timing, maintenance info, etc.)
    */
   constructor(message = "Service unavailable", meta?: ErrorMeta) {
     super(message, {

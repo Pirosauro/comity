@@ -1,4 +1,5 @@
-import type { ErrorMeta } from "./base.js";
+import type { ErrorMeta } from "./types.js";
+
 import { BaseError } from "./base.js";
 
 /**
@@ -30,8 +31,8 @@ export class ConflictError extends BaseError {
   /**
    * Creates a new ConflictError.
    *
-   * @param message - Human-readable error message describing the conflict
-   * @param meta - Additional error metadata (details, context, etc.)
+   * @param message Human-readable error message describing the conflict
+   * @param meta Additional error metadata (details, context, etc.)
    */
   constructor(message: string, meta?: ErrorMeta) {
     super(message, {

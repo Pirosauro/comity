@@ -1,4 +1,5 @@
-import type { ErrorMeta } from "./base.js";
+import type { ErrorMeta } from "./types.js";
+
 import { BaseError } from "./base.js";
 
 /**
@@ -31,10 +32,8 @@ export class InternalError extends BaseError {
   readonly code = "INTERNAL_ERROR";
 
   /**
-   * Creates a new InternalError.
-   *
-   * @param message - Human-readable error message (defaults to "Internal error")
-   * @param meta - Additional error metadata (cause, context, etc.)
+   * @param message Human-readable error message (defaults to "Internal error")
+   * @param meta Additional error metadata (cause, context, etc.)
    */
   constructor(message = "Internal error", meta?: ErrorMeta) {
     super(message, {
