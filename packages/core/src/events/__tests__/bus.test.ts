@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { InternalError } from "../../errors/internal.js";
 import { EventBus } from "../bus.js";
 
-interface TestEvents {
+interface TestEvents extends Record<string, unknown> {
   userCreated: { id: string; name: string };
   userDeleted: { id: string };
   dataUpdated: { key: string; value: unknown };

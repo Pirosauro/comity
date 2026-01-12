@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { HookBus } from "../bus.js";
 
-interface TestHooks {
+interface TestHooks extends Record<string, unknown> {
   beforeSave: string;
   afterSave: number;
   onError: boolean;

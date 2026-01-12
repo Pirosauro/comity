@@ -3,7 +3,7 @@ import { ConflictError } from "../../errors/conflict.js";
 import { NotFoundError } from "../../errors/not-found.js";
 import { DiContainer } from "../container.js";
 
-interface TestServices {
+interface TestServices extends Record<string | symbol, unknown> {
   logger: { log: (message: string) => void };
   userService: { getUser: (id: string) => string };
   config: { apiUrl: string };

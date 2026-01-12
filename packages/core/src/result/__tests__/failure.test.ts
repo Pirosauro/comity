@@ -15,7 +15,7 @@ describe("failure", () => {
 
   it("should work with different error types", () => {
     const error = new Error("Generic error");
-    const result = failure(error);
+    const result = failure(error as any);
 
     expect(result.success).toBe(false);
     expect(result.error).toBe(error);
@@ -31,9 +31,7 @@ describe("isFailure", () => {
   });
 
   it("should return false for success results", () => {
-    const result = { success: true, value: "test" };
-
-    expect(isFailure(result)).toBe(false);
+    expect(isFailure({ success: true, value: "test" })).toBe(false);
   });
 
   it("should narrow types correctly", () => {
