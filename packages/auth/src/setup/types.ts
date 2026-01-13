@@ -26,7 +26,13 @@ export type AuthModuleEvents = {
    * Emitted when authentication succeeds.
    */
   "@comity/auth:authorized": {
+    /**
+     *
+     */
     context: AuthContext;
+    /**
+     *
+     */
     timestamp: number;
   };
 
@@ -34,7 +40,13 @@ export type AuthModuleEvents = {
    * Emitted when authentication fails.
    */
   "@comity/auth:authorization-failed": {
+    /**
+     *
+     */
     reason: string;
+    /**
+     *
+     */
     timestamp: number;
   };
 
@@ -42,7 +54,13 @@ export type AuthModuleEvents = {
    * Emitted when a session refresh succeeds.
    */
   "@comity/auth:refreshed": {
+    /**
+     *
+     */
     context: AuthContext;
+    /**
+     *
+     */
     timestamp: number;
   };
 
@@ -50,7 +68,13 @@ export type AuthModuleEvents = {
    * Emitted when a session refresh fails.
    */
   "@comity/auth:refresh-failed": {
+    /**
+     *
+     */
     reason: string;
+    /**
+     *
+     */
     timestamp: number;
   };
 };
@@ -59,6 +83,9 @@ export type AuthModuleEvents = {
  * Context injected by the auth module.
  */
 export type AuthModuleContext = {
+  /**
+   *
+   */
   auth: AuthOrchestrator<any, any, any, any>;
 };
 
@@ -71,7 +98,10 @@ export interface AuthModuleOptions<
   R,
   I extends Record<string, unknown>,
   S extends Record<string, unknown>,
-  E extends string
+  E extends string,
 > {
+  /**
+   *
+   */
   orchestrator: AuthOrchestrator<R, I, S, E>;
 }

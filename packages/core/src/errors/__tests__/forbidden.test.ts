@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { ForbiddenError } from "../forbidden.js";
 
 describe("ForbiddenError", () => {
@@ -6,7 +6,7 @@ describe("ForbiddenError", () => {
     const error = new ForbiddenError("Access denied");
 
     expect(error.message).toBe("Access denied");
-    expect(error.code).toBe("FORBIDDEN");
+    expect(error.code).toBe("core:forbidden");
     expect(error.name).toBe("ForbiddenError");
     expect(error.meta.httpStatus).toBe(403);
   });
@@ -15,7 +15,7 @@ describe("ForbiddenError", () => {
     const error = new ForbiddenError("Custom forbidden message");
 
     expect(error.message).toBe("Custom forbidden message");
-    expect(error.code).toBe("FORBIDDEN");
+    expect(error.code).toBe("core:forbidden");
     expect(error.meta.httpStatus).toBe(403);
   });
 

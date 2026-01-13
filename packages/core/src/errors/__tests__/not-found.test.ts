@@ -6,7 +6,7 @@ describe("NotFoundError", () => {
     const error = new NotFoundError("user");
 
     expect(error.message).toBe("user not found");
-    expect(error.code).toBe("NOT_FOUND");
+    expect(error.code).toBe("core:not_found");
     expect(error.name).toBe("NotFoundError");
     expect(error.meta.httpStatus).toBe(404);
   });
@@ -15,7 +15,7 @@ describe("NotFoundError", () => {
     const error = new NotFoundError("file", { path: "/tmp/test.txt" });
 
     expect(error.message).toBe("file not found");
-    expect(error.code).toBe("NOT_FOUND");
+    expect(error.code).toBe("core:not_found");
     expect(error.meta.httpStatus).toBe(404);
     expect(error.meta.path).toBe("/tmp/test.txt");
   });

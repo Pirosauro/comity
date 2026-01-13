@@ -1,36 +1,51 @@
 import type { DiContainer } from "@comity/core/di";
 import type { EventBus } from "@comity/core/events";
 import type { HookBus } from "@comity/core/hooks";
+import type { ModuleSetupContext } from "./types.js";
 
-import { KernelInvalidStateError } from "./errors/invalid-state.js";
+import { KernelInvalidStateError } from "./errors/kernel-invalid-state.js";
 import { Lifecycle } from "./lifecycle.js";
 
 /**
  * Kernel configuration options
  */
-export type KernelConfig = {
+export type KernelConfig<
+  Services extends Record<string | symbol, unknown> = Record<
+    string | symbol,
+    unknown
+  >,
+  Events extends Record<string, unknown> = Record<string, unknown>,
+  Hooks extends Record<string, unknown> = Record<string, unknown>,
+> = {
   /** */
-  services: DiContainer;
+  services: DiContainer<Services>;
 
   /** */
-  events: EventBus;
+  events: EventBus<Events>;
 
   /** */
-  hooks: HookBus;
+  hooks: HookBus<Hooks>;
 };
 
 /**
  * Kernel class
  */
-export class Kernel {
+export class Kernel<
+  Services extends Record<string | symbol, unknown> = Record<
+    string | symbol,
+    unknown
+  >,
+  Events extends Record<string, unknown> = Record<string, unknown>,
+  Hooks extends Record<string, unknown> = Record<string, unknown>,
+> {
   /** Service container */
-  #services;
+  #services: Omit<DiContainer, "#private">;
 
   /** Event bus */
-  #events;
+  #events: Omit<EventBus, "#private">;
 
   /** Hook bus */
-  #hooks;
+  #hooks: Omit<HookBus, "#private">;
 
   /** Lifecycle manager */
   #lifecycle = new Lifecycle();
@@ -38,91 +53,96 @@ export class Kernel {
   /**
    * @param config Kernel configuration options
    */
-  constructor(config: KernelConfig) {
-    this.#services = config.services;
-    this.#events = config.events;
-    this.#hooks = config.hooks;
+  constructor(config: KernelConfig<Services, Events, Hooks>) {
+    // Services
+    this.#services = {
+      /**
+       * @param {...Parameters<typeof config.services.define>} args DiContainer.define parameters
+       * @returns DiContainer.define return value
+       */
+      define: (...args: Parameters<typeof config.services.define>) => {
+        this.assertNotSealed("service.define");
+
+        return config.services.define(...args);
+      },
+
+      /**
+       * @param {...Parameters<typeof config.services.resolve>} args DiContainer.resolve parameters
+       * @returns DiContainer.resolve return value
+       */
+      resolve: (...args: Parameters<typeof config.services.resolve>) => {
+        this.assertSealed("service.resolve");
+
+        return config.services.resolve(...args);
+      },
+    };
+
+    // Events
+    this.#events = {
+      /**
+       * @param {...Parameters<typeof config.events.subscribe>} args EventBus.subscribe parameters
+       * @returns EventBus.subscribe return value
+       */
+      subscribe: (...args: Parameters<typeof config.events.subscribe>) => {
+        this.assertNotSealed("event.subscribe");
+
+        return config.events.subscribe(...args);
+      },
+
+      /**
+       * @param {...Parameters<typeof config.events.emit>} args EventBus.emit parameters
+       * @returns EventBus.emit return value
+       */
+      emit: (...args: Parameters<typeof config.events.emit>) => {
+        this.assertSealed("event.emit");
+
+        return config.events.emit(...args);
+      },
+    };
+
+    // Hooks
+    this.#hooks = {
+      /**
+       * @param {...Parameters<typeof config.hooks.define>} args HookBus.define parameters
+       * @returns HookBus.define return value
+       */
+      define: (...args: Parameters<typeof config.hooks.define>) => {
+        this.assertNotSealed("hook.define");
+
+        return config.hooks.define(...args);
+      },
+
+      /**
+       * @param {...Parameters<typeof config.hooks.execute>} args HookBus.execute parameters
+       * @returns HookBus.execute return value
+       */
+      execute: (...args: Parameters<typeof config.hooks.execute>) => {
+        this.assertSealed("hook.execute");
+
+        return config.hooks.execute(...args);
+      },
+    };
   }
 
   /**
    * @returns DiContainer compatible instance
    */
-  get services(): Omit<DiContainer, "#private"> {
-    return {
-      /**
-       * @param {...Parameters<DiContainer["define"]>} args DiContainer.define parameters
-       * @returns DiContainer.define return value
-       */
-      define: (...args: Parameters<DiContainer["define"]>) => {
-        this.assertNotSealed("service.define");
-
-        return this.#services.define(...args);
-      },
-
-      /**
-       * @param {...Parameters<DiContainer["resolve"]>} args DiContainer.resolve parameters
-       * @returns DiContainer.resolve return value
-       */
-      resolve: (...args: Parameters<DiContainer["resolve"]>) => {
-        this.assertSealed("service.resolve");
-
-        return this.#services.resolve(...args);
-      },
-    };
+  get services() {
+    return this.#services;
   }
 
   /**
    * @returns EventBus compatible instance
    */
-  get events(): Omit<EventBus, "#private"> {
-    return {
-      /**
-       * @param {...Parameters<EventBus["subscribe"]>} args EventBus.subscribe parameters
-       * @returns EventBus.subscribe return value
-       */
-      subscribe: (...args: Parameters<EventBus["subscribe"]>) => {
-        this.assertNotSealed("event.subscribe");
-
-        return this.#events.subscribe(...args);
-      },
-
-      /**
-       * @param {...Parameters<EventBus["emit"]>} args EventBus.emit parameters
-       * @returns EventBus.emit return value
-       */
-      emit: (...args: Parameters<EventBus["emit"]>) => {
-        this.assertSealed("event.emit");
-
-        return this.#events.emit(...args);
-      },
-    };
+  get events() {
+    return this.#events;
   }
 
   /**
    * @returns HookBus compatible instance
    */
-  get hooks(): Omit<HookBus, "#private"> {
-    return {
-      /**
-       * @param {...Parameters<HookBus["define"]>} args HookBus.define parameters
-       * @returns HookBus.define return value
-       */
-      define: (...args: Parameters<HookBus["define"]>) => {
-        this.assertNotSealed("hook.define");
-
-        return this.#hooks.define(...args);
-      },
-
-      /**
-       * @param {...Parameters<HookBus["execute"]>} args HookBus.execute parameters
-       * @returns HookBus.execute return value
-       */
-      execute: (...args: Parameters<HookBus["execute"]>) => {
-        this.assertSealed("hook.execute");
-
-        return this.#hooks.execute(...args);
-      },
-    };
+  get hooks() {
+    return this.#hooks;
   }
 
   /**
@@ -167,5 +187,30 @@ export class Kernel {
         state: this.#lifecycle.state,
       });
     }
+  }
+
+  /**
+   * Create a module context
+   *
+   * @returns Module context
+   *
+   * @remarks
+   * This method creates and returns a context object that can be used
+   * during module setup. The context includes access to the services container,
+   * event bus, and hook bus of the kernel.
+   *
+   * Why is this method needed?
+   * This method encapsulates the creation of the module setup context,
+   * ensuring that the context is constructed consistently and correctly
+   * whenever it is needed. It provides a clear and centralized way to
+   * obtain the necessary components for module setup, promoting code
+   * reuse and maintainability.
+   */
+  createModuleSetupContext(): ModuleSetupContext {
+    return {
+      services: this.services,
+      events: this.events,
+      hooks: this.hooks,
+    };
   }
 }

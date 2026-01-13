@@ -2,7 +2,7 @@ import { DiContainer } from "@comity/core/di";
 import { EventBus } from "@comity/core/events";
 import { HookBus } from "@comity/core/hooks";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { KernelInvalidStateError } from "../errors/invalid-state.js";
+import { KernelInvalidStateError } from "../errors/kernel-invalid-state.js";
 import { Kernel } from "../kernel.js";
 
 interface TestHooks extends Record<string, unknown> {
@@ -178,6 +178,19 @@ describe("Kernel", () => {
       kernel.seal();
 
       expect(kernel.services.resolve("test")).toBe("value");
+    });
+  });
+
+  describe("createModuleSetupContext", () => {
+    it("should return module setup context", () => {
+      const ctx = kernel.createModuleSetupContext();
+
+      expect(ctx).toHaveProperty("services");
+      expect(ctx).toHaveProperty("events");
+      expect(ctx).toHaveProperty("hooks");
+      expect(ctx.services).toBe(kernel.services);
+      expect(ctx.events).toBe(kernel.events);
+      expect(ctx.hooks).toBe(kernel.hooks);
     });
   });
 });

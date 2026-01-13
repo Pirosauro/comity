@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { InternalError } from "../internal.js";
 
 describe("InternalError", () => {
@@ -6,7 +6,7 @@ describe("InternalError", () => {
     const error = new InternalError("Internal server error");
 
     expect(error.message).toBe("Internal server error");
-    expect(error.code).toBe("INTERNAL_ERROR");
+    expect(error.code).toBe("core:internal");
     expect(error.name).toBe("InternalError");
     expect(error.meta.httpStatus).toBe(500);
   });
@@ -15,7 +15,7 @@ describe("InternalError", () => {
     const error = new InternalError("Custom internal error message");
 
     expect(error.message).toBe("Custom internal error message");
-    expect(error.code).toBe("INTERNAL_ERROR");
+    expect(error.code).toBe("core:internal");
     expect(error.meta.httpStatus).toBe(500);
   });
 

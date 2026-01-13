@@ -28,7 +28,7 @@ import { BaseError } from "./base.js";
  * ```
  */
 export class BadRequestError extends BaseError {
-  readonly code = "BAD_REQUEST";
+  readonly code = "core:bad_request";
 
   /**
    * @param message Human-readable error message describing the bad request

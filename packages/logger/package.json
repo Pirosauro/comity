@@ -24,7 +24,8 @@
   "scripts": {
     "build": "node ../../scripts/build.mjs",
     "prepublish": "node ../../scripts/build.mjs",
-    "dev": "node ../../scripts/build.mjs --watch"
+    "dev": "node ../../scripts/build.mjs --watch",
+    "test": "vitest run --coverage"
   },
   "files": [
     "./dist",
@@ -44,6 +45,16 @@
         "default": "./dist/cjs/index.js"
       }
     },
+    "./factories": {
+      "import": {
+        "types": "./dist/types/factories/index.d.ts",
+        "default": "./dist/esm/factories/index.js"
+      },
+      "require": {
+        "types": "./dist/types/factories/index.d.ts",
+        "default": "./dist/cjs/factories/index.js"
+      }
+    },
     "./setup": {
       "import": {
         "types": "./dist/types/setup/index.d.ts",
@@ -57,6 +68,9 @@
   },
   "typesVersions": {
     "*": {
+      "factories": [
+        "./dist/types/factories/index.d.ts"
+      ],
       "setup": [
         "./dist/types/setup/index.d.ts"
       ]
@@ -68,11 +82,11 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@comity/application": "workspace:*",
-    "pino": "^10.1.0"
+    "@comity/core": "workspace:*",
+    "pino": "^10.1.1"
   },
   "devDependencies": {
-    "@types/node": "^24.10.4",
+    "@types/node": "^24.10.7",
     "typescript": "^5.9.3"
   }
 }

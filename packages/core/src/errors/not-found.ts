@@ -24,7 +24,7 @@ import { BaseError } from "./base.js";
  * ```
  */
 export class NotFoundError extends BaseError {
-  readonly code = "NOT_FOUND";
+  readonly code = "core:not_found";
 
   /**
    * @param entity Name of the entity that was not found (e.g., "user", "file", "record")

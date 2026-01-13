@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { BadRequestError } from "../bad-request.js";
 
 describe("BadRequestError", () => {
@@ -6,7 +6,7 @@ describe("BadRequestError", () => {
     const error = new BadRequestError("Invalid request");
 
     expect(error.message).toBe("Invalid request");
-    expect(error.code).toBe("BAD_REQUEST");
+    expect(error.code).toBe("core:bad_request");
     expect(error.name).toBe("BadRequestError");
     expect(error.meta.httpStatus).toBe(400);
   });
@@ -15,7 +15,7 @@ describe("BadRequestError", () => {
     const error = new BadRequestError("Custom bad request message");
 
     expect(error.message).toBe("Custom bad request message");
-    expect(error.code).toBe("BAD_REQUEST");
+    expect(error.code).toBe("core:bad_request");
     expect(error.meta.httpStatus).toBe(400);
   });
 

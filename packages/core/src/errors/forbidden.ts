@@ -26,7 +26,7 @@ import { BaseError } from "./base.js";
  * ```
  */
 export class ForbiddenError extends BaseError {
-  readonly code = "FORBIDDEN";
+  readonly code = "core:forbidden";
 
   /**
    * Creates a new ForbiddenError.

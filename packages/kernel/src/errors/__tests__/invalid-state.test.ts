@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { KernelInvalidStateError } from "../invalid-state.js";
+import { KernelInvalidStateError } from "../kernel-invalid-state.js";
 
 describe("KernelInvalidStateError", () => {
   it("should create error with meta", () => {
@@ -9,7 +9,7 @@ describe("KernelInvalidStateError", () => {
     });
 
     expect(error.message).toBe("Invalid kernel state");
-    expect(error.code).toBe("@comity/kernel:invalid_state");
+    expect(error.code).toBe("kernel:invalid_state");
     expect(error.name).toBe("KernelInvalidStateError");
     expect(error.meta.httpStatus).toBe(409);
     expect(error.meta.action).toBe("test action");

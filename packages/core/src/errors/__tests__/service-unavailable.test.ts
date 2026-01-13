@@ -1,25 +1,25 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { ServiceUnavailableError } from "../service-unavailable.js";
 
 describe("ServiceUnavailableError", () => {
   it("should create error with default message", () => {
     const error = new ServiceUnavailableError(
-      "Service temporarily unavailable"
+      "Service temporarily unavailable",
     );
 
     expect(error.message).toBe("Service temporarily unavailable");
-    expect(error.code).toBe("SERVICE_UNAVAILABLE");
+    expect(error.code).toBe("core:service_unavailable");
     expect(error.name).toBe("ServiceUnavailableError");
     expect(error.meta.httpStatus).toBe(503);
   });
 
   it("should create error with custom message", () => {
     const error = new ServiceUnavailableError(
-      "Custom service unavailable message"
+      "Custom service unavailable message",
     );
 
     expect(error.message).toBe("Custom service unavailable message");
-    expect(error.code).toBe("SERVICE_UNAVAILABLE");
+    expect(error.code).toBe("core:service_unavailable");
     expect(error.meta.httpStatus).toBe(503);
   });
 

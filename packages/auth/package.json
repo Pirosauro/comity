@@ -118,10 +118,10 @@
     "@comity/logger": "workspace:*",
     "hono": "^4.11.3",
     "jose": "^6.1.3",
-    "zod": "^4.2.1"
+    "zod": "^4.3.5"
   },
   "devDependencies": {
-    "@types/node": "^24.10.4",
+    "@types/node": "^24.10.7",
     "typescript": "^5.9.3"
   }
 }

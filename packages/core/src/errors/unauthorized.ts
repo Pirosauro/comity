@@ -35,7 +35,7 @@ import { BaseError } from "./base.js";
  * ```
  */
 export class UnauthorizedError extends BaseError {
-  readonly code = "UNAUTHORIZED";
+  readonly code = "core:unauthorized";
 
   /**
    * @param message Human-readable error message (defaults to "Authentication required")

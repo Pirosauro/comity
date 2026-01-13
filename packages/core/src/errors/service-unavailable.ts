@@ -28,7 +28,7 @@ import { BaseError } from "./base.js";
  * ```
  */
 export class ServiceUnavailableError extends BaseError {
-  readonly code = "SERVICE_UNAVAILABLE";
+  readonly code = "core:service_unavailable";
 
   /**
    * @param message Human-readable error message (defaults to "Service unavailable")

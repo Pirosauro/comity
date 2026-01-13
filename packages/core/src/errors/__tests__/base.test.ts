@@ -1,11 +1,11 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { BaseError } from "../base.js";
 
 class TestError extends BaseError {
-  readonly code = "TEST_ERROR";
+  readonly code = "test:error";
 
-  constructor(message: string, meta?: Record<string, unknown>) {
-    super(message, meta);
+  constructor(message: string, meta: Record<string, unknown> = {}) {
+    super(message, meta as any);
   }
 }
 
@@ -14,7 +14,7 @@ describe("BaseError", () => {
     const error = new TestError("test message");
 
     expect(error.message).toBe("test message");
-    expect(error.code).toBe("TEST_ERROR");
+    expect(error.code).toBe("test:error");
     expect(error.name).toBe("TestError");
     expect(error.meta).toEqual({});
   });

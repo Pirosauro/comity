@@ -14,19 +14,19 @@ import { BaseError } from "./base.js";
  * ```typescript
  * // Invalid data format
  * if (!isValidDate(dateString)) {
- *   throw new UnprocessableEntityError("Invalid date format", {
+ *   throw new DomainViolationError("Invalid date format", {
  *     details: { field: "date", value: dateString }
  *   });
  * }
  */
-export class UnprocessableEntityError extends BaseError {
-  readonly code = "UNPROCESSABLE_ENTITY";
+export class DomainViolationError extends BaseError {
+  readonly code = "core:domain_violation";
 
   /**
-   * @param message Human-readable error message (defaults to "Unprocessable Entity")
+   * @param message Human-readable error message (defaults to "Domain Violation")
    * @param meta Additional error metadata (invalid fields, validation errors, etc.)
    */
-  constructor(message = "Unprocessable Entity", meta?: ErrorMeta) {
+  constructor(message = "Domain Violation", meta?: ErrorMeta) {
     super(message, {
       httpStatus: 422,
       ...meta,

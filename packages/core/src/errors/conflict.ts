@@ -26,7 +26,7 @@ import { BaseError } from "./base.js";
  * ```
  */
 export class ConflictError extends BaseError {
-  readonly code = "CONFLICT";
+  readonly code = "core:conflict";
 
   /**
    * Creates a new ConflictError.

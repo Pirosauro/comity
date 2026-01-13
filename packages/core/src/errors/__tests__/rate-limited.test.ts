@@ -1,26 +1,26 @@
-import { describe, it, expect } from "vitest";
-import { TooManyRequestsError } from "../too-many-requests.js";
+import { describe, expect, it } from "vitest";
+import { RateLimitedError } from "../rate-limited.js";
 
-describe("TooManyRequestsError", () => {
+describe("RateLimitedError", () => {
   it("should create error with default message", () => {
-    const error = new TooManyRequestsError("Rate limit exceeded");
+    const error = new RateLimitedError("Rate limit exceeded");
 
     expect(error.message).toBe("Rate limit exceeded");
-    expect(error.code).toBe("TOO_MANY_REQUESTS");
-    expect(error.name).toBe("TooManyRequestsError");
+    expect(error.code).toBe("core:rate_limited");
+    expect(error.name).toBe("RateLimitedError");
     expect(error.meta.httpStatus).toBe(429);
   });
 
   it("should create error with custom message", () => {
-    const error = new TooManyRequestsError("Custom rate limit message");
+    const error = new RateLimitedError("Custom rate limit message");
 
     expect(error.message).toBe("Custom rate limit message");
-    expect(error.code).toBe("TOO_MANY_REQUESTS");
+    expect(error.code).toBe("core:rate_limited");
     expect(error.meta.httpStatus).toBe(429);
   });
 
   it("should include additional metadata", () => {
-    const error = new TooManyRequestsError("API quota exceeded", {
+    const error = new RateLimitedError("API quota exceeded", {
       limit: 1000,
       remaining: 0,
       resetTime: "2024-01-01T00:00:00Z",
@@ -35,16 +35,16 @@ describe("TooManyRequestsError", () => {
   });
 
   it("should be instanceof Error", () => {
-    const error = new TooManyRequestsError("Test");
+    const error = new RateLimitedError("Test");
 
     expect(error).toBeInstanceOf(Error);
-    expect(error).toBeInstanceOf(TooManyRequestsError);
+    expect(error).toBeInstanceOf(RateLimitedError);
   });
 
   it("should have correct stack trace", () => {
-    const error = new TooManyRequestsError("Test");
+    const error = new RateLimitedError("Test");
 
     expect(error.stack).toBeDefined();
-    expect(error.stack).toContain("TooManyRequestsError");
+    expect(error.stack).toContain("RateLimitedError");
   });
 });

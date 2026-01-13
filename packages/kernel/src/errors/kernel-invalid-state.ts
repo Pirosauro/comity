@@ -7,7 +7,7 @@ import { BaseError } from "@comity/core/errors";
  */
 export class KernelInvalidStateError extends BaseError {
   /** Error code */
-  readonly code = "@comity/kernel:invalid_state";
+  readonly code = "kernel:invalid_state";
 
   /**
    * @param meta Error metadata

@@ -3,7 +3,7 @@ import type { ErrorMeta } from "./types.js";
 import { BaseError } from "./base.js";
 
 /**
- * Error thrown when the request rate limit has been exceeded.
+ * Error thrown when the rate limit has been exceeded.
  *
  * @remarks
  * This error corresponds to HTTP 429 status and is typically thrown when
@@ -29,14 +29,14 @@ import { BaseError } from "./base.js";
  * });
  * ```
  */
-export class TooManyRequestsError extends BaseError {
-  readonly code = "TOO_MANY_REQUESTS";
+export class RateLimitedError extends BaseError {
+  readonly code = "core:rate_limited";
 
   /**
-   * @param message Human-readable error message (defaults to "Too many requests")
+   * @param message Human-readable error message (defaults to "Rate limited")
    * @param meta Additional error metadata (limits, reset times, etc.)
    */
-  constructor(message = "Too many requests", meta?: ErrorMeta) {
+  constructor(message = "Rate limited", meta?: ErrorMeta) {
     super(message, {
       httpStatus: 429,
       ...meta,

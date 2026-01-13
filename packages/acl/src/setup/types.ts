@@ -88,5 +88,5 @@ export interface AclModuleOptions<
  */
 export interface AclModuleContext {
   /** Access control service for evaluating permissions */
-  readonly acl: AccessControlProvider;
+  acl: AccessControlProvider;
 }

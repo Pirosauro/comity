@@ -15,27 +15,27 @@ import { BaseError } from "./base.js";
  * // Schema validation failure
  * const result = userSchema.safeParse(input);
  * if (!result.success) {
- *   throw new ValidationError("Invalid user data", {
+ *   throw new InvalidInputError("Invalid user data", {
  *     details: result.error.format()
  *   });
  * }
  *
  * // Business rule violation
  * if (age < 18) {
- *   throw new ValidationError("User must be 18 or older", {
+ *   throw new InvalidInputError("User must be 18 or older", {
  *     details: { field: "age", provided: age, minimum: 18 }
  *   });
  * }
  * ```
  */
-export class ValidationError extends BaseError {
-  readonly code = "VALIDATION_ERROR";
+export class InvalidInputError extends BaseError {
+  readonly code = "core:invalid_input";
 
   /**
    * @param message Human-readable error message describing the validation failure
    * @param meta Additional error metadata (validation details, field info, etc.)
    */
-  constructor(message = "Validation Error", meta?: ErrorMeta) {
+  constructor(message = "Invalid Input", meta?: ErrorMeta) {
     super(message, {
       httpStatus: 400,
       ...meta,

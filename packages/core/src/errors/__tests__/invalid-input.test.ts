@@ -1,26 +1,26 @@
 import { describe, expect, it } from "vitest";
-import { ValidationError } from "../validation.js";
+import { InvalidInputError } from "../invalid-input.js";
 
-describe("ValidationError", () => {
+describe("InvalidInputError", () => {
   it("should create error with default message", () => {
-    const error = new ValidationError();
+    const error = new InvalidInputError();
 
-    expect(error.message).toBe("Validation Error");
-    expect(error.code).toBe("VALIDATION_ERROR");
-    expect(error.name).toBe("ValidationError");
+    expect(error.message).toBe("Invalid Input");
+    expect(error.code).toBe("core:invalid_input");
+    expect(error.name).toBe("InvalidInputError");
     expect(error.meta.httpStatus).toBe(400);
   });
 
   it("should create error with custom message", () => {
-    const error = new ValidationError("Custom validation message");
+    const error = new InvalidInputError("Custom validation message");
 
     expect(error.message).toBe("Custom validation message");
-    expect(error.code).toBe("VALIDATION_ERROR");
+    expect(error.code).toBe("core:invalid_input");
     expect(error.meta.httpStatus).toBe(400);
   });
 
   it("should include additional metadata", () => {
-    const error = new ValidationError("Invalid input", {
+    const error = new InvalidInputError("Invalid input", {
       field: "username",
       rule: "required",
     });
@@ -31,16 +31,16 @@ describe("ValidationError", () => {
   });
 
   it("should be instanceof Error", () => {
-    const error = new ValidationError("Test");
+    const error = new InvalidInputError("Test");
 
     expect(error).toBeInstanceOf(Error);
-    expect(error).toBeInstanceOf(ValidationError);
+    expect(error).toBeInstanceOf(InvalidInputError);
   });
 
   it("should have correct stack trace", () => {
-    const error = new ValidationError("Test");
+    const error = new InvalidInputError("Test");
 
     expect(error.stack).toBeDefined();
-    expect(error.stack).toContain("ValidationError");
+    expect(error.stack).toContain("InvalidInputError");
   });
 });

@@ -94,11 +94,11 @@
     "@comity/hydration": "workspace:*",
     "@comity/logger": "workspace:*",
     "hono": "^4.11.3",
-    "preact": "^10.28.1",
-    "preact-render-to-string": "^6.6.4"
+    "preact": "^10.28.2",
+    "preact-render-to-string": "^6.6.5"
   },
   "devDependencies": {
-    "@types/node": "^24.10.4",
+    "@types/node": "^24.10.7",
     "typescript": "^5.9.3"
   }
 }

@@ -29,7 +29,7 @@ import { BaseError } from "./base.js";
  * ```
  */
 export class InternalError extends BaseError {
-  readonly code = "INTERNAL_ERROR";
+  readonly code = "core:internal";
 
   /**
    * @param message Human-readable error message (defaults to "Internal error")

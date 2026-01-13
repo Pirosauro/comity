@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { UnauthorizedError } from "../unauthorized.js";
 
 describe("UnauthorizedError", () => {
@@ -6,7 +6,7 @@ describe("UnauthorizedError", () => {
     const error = new UnauthorizedError("Authentication required");
 
     expect(error.message).toBe("Authentication required");
-    expect(error.code).toBe("UNAUTHORIZED");
+    expect(error.code).toBe("core:unauthorized");
     expect(error.name).toBe("UnauthorizedError");
     expect(error.meta.httpStatus).toBe(401);
   });
@@ -15,7 +15,7 @@ describe("UnauthorizedError", () => {
     const error = new UnauthorizedError("Custom unauthorized message");
 
     expect(error.message).toBe("Custom unauthorized message");
-    expect(error.code).toBe("UNAUTHORIZED");
+    expect(error.code).toBe("core:unauthorized");
     expect(error.meta.httpStatus).toBe(401);
   });
 

@@ -6,7 +6,7 @@ describe("ConflictError", () => {
     const error = new ConflictError("Resource conflict");
 
     expect(error.message).toBe("Resource conflict");
-    expect(error.code).toBe("CONFLICT");
+    expect(error.code).toBe("core:conflict");
     expect(error.name).toBe("ConflictError");
     expect(error.meta.httpStatus).toBe(409);
   });
@@ -15,7 +15,7 @@ describe("ConflictError", () => {
     const error = new ConflictError("Custom conflict message");
 
     expect(error.message).toBe("Custom conflict message");
-    expect(error.code).toBe("CONFLICT");
+    expect(error.code).toBe("core:conflict");
     expect(error.meta.httpStatus).toBe(409);
   });
 

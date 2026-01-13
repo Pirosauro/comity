@@ -1,4 +1,4 @@
-import type { ErrorMeta } from "./types.js";
+import type { ErrorCode, ErrorMeta } from "./types.js";
 
 /**
  * Base error class for all Comity framework errors
@@ -48,7 +48,7 @@ import type { ErrorMeta } from "./types.js";
  */
 export abstract class BaseError extends Error {
   /** Stable, machine-readable error code */
-  abstract readonly code: string;
+  abstract readonly code: ErrorCode;
 
   /** Additional metadata associated with this error */
   readonly meta: Omit<ErrorMeta, "cause">;
@@ -59,7 +59,7 @@ export abstract class BaseError extends Error {
    * @param meta - Error metadata including HTTP status, details, and cause
    * @protected
    */
-  protected constructor(message: string, { cause, ...meta }: ErrorMeta = {}) {
+  protected constructor(message: string, { cause, ...meta }: ErrorMeta) {
     super(message, cause ? { cause } : undefined);
 
     this.name = new.target.name;
