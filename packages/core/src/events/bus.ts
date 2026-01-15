@@ -72,6 +72,12 @@ export class EventBus<
    * @param payload Event payload
    *
    * @typeParam K - Key of the event in the Events record
+   *
+   * @remarks
+   * EventBus.emit MUST NOT be awaited in adapters or synchronous contexts,
+   * as event handlers are executed asynchronously in the background. Awaiting
+   * this method would introduce unwanted latency and block the main execution
+   * flow.
    */
   async emit<K extends keyof Events>(
     event: K,
