@@ -1,8 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { html } from "../../response/html.js";
-import { json } from "../../response/json.js";
-import { redirect } from "../../response/redirect.js";
-import { text } from "../../response/text.js";
+import { html, json, redirect, text } from "../../../response/index.js";
 import { HonoHttpAdapter } from "../adapter.js";
 
 describe("HonoHttpAdapter", () => {
@@ -130,7 +127,7 @@ describe("HonoHttpAdapter", () => {
     });
 
     it("should convert non-string body to string", async () => {
-      const response = {
+      const response: any = {
         intent: "text" as const,
         status: 200,
         body: 123,

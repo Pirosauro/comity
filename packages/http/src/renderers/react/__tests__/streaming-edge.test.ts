@@ -1,13 +1,20 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ReactStreamingHtmlRenderer } from "../streaming-edge.js";
 
+// Mock react-dom/server
+vi.mock("react-dom/server", () => ({
+  renderToReadableStream: vi.fn(),
+}));
+
+import { renderToReadableStream } from "react-dom/server";
+
 describe("ReactStreamingHtmlRenderer", () => {
   const mockTemplates = {
     default: vi.fn((data) => `<div>${data.message}</div>`),
     error: vi.fn((data) => `<div>Error: ${data.error}</div>`),
   };
 
-  const options = {
+  const options: any = {
     templates: mockTemplates,
     timeout: 5000,
   };
@@ -16,6 +23,7 @@ describe("ReactStreamingHtmlRenderer", () => {
 
   beforeEach(() => {
     renderer = new ReactStreamingHtmlRenderer(options);
+    vi.clearAllMocks();
   });
 
   it("should render successful contract with streaming", async () => {
@@ -28,17 +36,9 @@ describe("ReactStreamingHtmlRenderer", () => {
 
     // Mock renderToReadableStream
     const mockStream = new ReadableStream();
-    const mockRenderToReadableStream = vi.fn().mockResolvedValue(mockStream);
-    vi.doMock("react-dom/server", () => ({
-      renderToReadableStream: mockRenderToReadableStream,
-    }));
+    (renderToReadableStream as any).mockResolvedValue(mockStream);
 
-    // Re-import to use the mock
-    const { ReactStreamingHtmlRenderer: MockedRenderer } =
-      await import("../streaming-edge.js");
-    const mockedRenderer = new MockedRenderer(options);
-
-    const result = await mockedRenderer.render(contract);
+    const result = await renderer.render(contract);
 
     expect(result).toEqual({
       intent: "html",
@@ -47,7 +47,7 @@ describe("ReactStreamingHtmlRenderer", () => {
       abort: expect.any(Function),
       headers: { "custom-header": "value" },
     });
-    expect(mockRenderToReadableStream).toHaveBeenCalledWith(
+    expect(renderToReadableStream).toHaveBeenCalledWith(
       "<div>Hello World</div>",
       { signal: expect.any(AbortSignal) },
     );
@@ -62,16 +62,9 @@ describe("ReactStreamingHtmlRenderer", () => {
     };
 
     const mockStream = new ReadableStream();
-    const mockRenderToReadableStream = vi.fn().mockResolvedValue(mockStream);
-    vi.doMock("react-dom/server", () => ({
-      renderToReadableStream: mockRenderToReadableStream,
-    }));
+    (renderToReadableStream as any).mockResolvedValue(mockStream);
 
-    const { ReactStreamingHtmlRenderer: MockedRenderer } =
-      await import("../streaming-edge.js");
-    const mockedRenderer = new MockedRenderer(options);
-
-    const result = await mockedRenderer.render(contract);
+    const result = await renderer.render(contract);
 
     expect(result).toEqual({
       intent: "html",
@@ -79,7 +72,7 @@ describe("ReactStreamingHtmlRenderer", () => {
       stream: mockStream,
       abort: expect.any(Function),
     });
-    expect(mockRenderToReadableStream).toHaveBeenCalledWith(
+    expect(renderToReadableStream).toHaveBeenCalledWith(
       "<div>Error: Something went wrong</div>",
       { signal: expect.any(AbortSignal) },
     );
@@ -93,16 +86,9 @@ describe("ReactStreamingHtmlRenderer", () => {
     };
 
     const mockStream = new ReadableStream();
-    const mockRenderToReadableStream = vi.fn().mockResolvedValue(mockStream);
-    vi.doMock("react-dom/server", () => ({
-      renderToReadableStream: mockRenderToReadableStream,
-    }));
+    (renderToReadableStream as any).mockResolvedValue(mockStream);
 
-    const { ReactStreamingHtmlRenderer: MockedRenderer } =
-      await import("../streaming-edge.js");
-    const mockedRenderer = new MockedRenderer(options);
-
-    const result = await mockedRenderer.render(contract);
+    const result = await renderer.render(contract);
 
     expect(result.status).toBe(200);
   });
@@ -115,16 +101,9 @@ describe("ReactStreamingHtmlRenderer", () => {
     };
 
     const mockStream = new ReadableStream();
-    const mockRenderToReadableStream = vi.fn().mockResolvedValue(mockStream);
-    vi.doMock("react-dom/server", () => ({
-      renderToReadableStream: mockRenderToReadableStream,
-    }));
+    (renderToReadableStream as any).mockResolvedValue(mockStream);
 
-    const { ReactStreamingHtmlRenderer: MockedRenderer } =
-      await import("../streaming-edge.js");
-    const mockedRenderer = new MockedRenderer(options);
-
-    const result = await mockedRenderer.render(contract);
+    const result = await renderer.render(contract);
 
     expect(result.status).toBe(500);
   });
@@ -138,16 +117,9 @@ describe("ReactStreamingHtmlRenderer", () => {
     };
 
     const mockStream = new ReadableStream();
-    const mockRenderToReadableStream = vi.fn().mockResolvedValue(mockStream);
-    vi.doMock("react-dom/server", () => ({
-      renderToReadableStream: mockRenderToReadableStream,
-    }));
+    (renderToReadableStream as any).mockResolvedValue(mockStream);
 
-    const { ReactStreamingHtmlRenderer: MockedRenderer } =
-      await import("../streaming-edge.js");
-    const mockedRenderer = new MockedRenderer(options);
-
-    const result = await mockedRenderer.render(contract);
+    const result: any = await renderer.render(contract);
 
     expect(result.headers).toEqual({ "x-custom": "header" });
   });
@@ -159,20 +131,11 @@ describe("ReactStreamingHtmlRenderer", () => {
       locale: { locale: "en", direction: "ltr" as const },
     };
 
-    const mockRenderToReadableStream = vi
-      .fn()
-      .mockRejectedValue(new Error("Streaming error"));
-    vi.doMock("react-dom/server", () => ({
-      renderToReadableStream: mockRenderToReadableStream,
-    }));
-
-    const { ReactStreamingHtmlRenderer: MockedRenderer } =
-      await import("../streaming-edge.js");
-    const mockedRenderer = new MockedRenderer(options);
-
-    await expect(mockedRenderer.render(contract)).rejects.toThrow(
-      "Streaming error",
+    (renderToReadableStream as any).mockRejectedValue(
+      new Error("Streaming error"),
     );
+
+    await expect(renderer.render(contract)).rejects.toThrow("Streaming error");
   });
 
   it("should abort stream when timeout is reached", async () => {
@@ -182,21 +145,31 @@ describe("ReactStreamingHtmlRenderer", () => {
       locale: { locale: "en", direction: "ltr" as const },
     };
 
-    // Mock a slow renderToReadableStream that takes longer than timeout
-    const mockRenderToReadableStream = vi.fn(
-      () =>
-        new Promise((resolve) =>
-          setTimeout(() => resolve(new ReadableStream()), 6000),
-        ),
+    // Mock renderToReadableStream to reject with AbortError when aborted
+    (renderToReadableStream as any).mockImplementation(
+      (element: any, options: any) => {
+        return new Promise((resolve, reject) => {
+          const timeout = setTimeout(() => {
+            if (options.signal.aborted) {
+              reject(new Error("Aborted"));
+            } else {
+              resolve(new ReadableStream());
+            }
+          }, 200); // Resolve quickly but check abort
+
+          options.signal.addEventListener("abort", () => {
+            clearTimeout(timeout);
+            reject(new Error("Aborted"));
+          });
+        });
+      },
     );
-    vi.doMock("react-dom/server", () => ({
-      renderToReadableStream: mockRenderToReadableStream,
-    }));
 
-    const { ReactStreamingHtmlRenderer: MockedRenderer } =
-      await import("../streaming-edge.js");
-    const mockedRenderer = new MockedRenderer({ ...options, timeout: 100 });
+    const timeoutRenderer = new ReactStreamingHtmlRenderer({
+      ...options,
+      timeout: 100,
+    });
 
-    await expect(mockedRenderer.render(contract)).rejects.toThrow();
+    await expect(timeoutRenderer.render(contract)).rejects.toThrow("Aborted");
   });
 });

@@ -1,10 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
-import { HtmlRenderer } from "../orchestrator.js";
+import { HtmlRendererOrchestrator } from "../orchestrator.js";
 
 describe("HtmlRenderer", () => {
   it("should throw error when no renderers provided", () => {
     expect(() => {
-      new HtmlRenderer([]);
+      // @ts-expect-error
+      new HtmlRendererOrchestrator([]);
     }).toThrow("HtmlRenderer requires at least one renderer");
   });
 
@@ -20,7 +21,10 @@ describe("HtmlRenderer", () => {
       render: vi.fn(),
     };
 
-    const renderer = new HtmlRenderer([mockRenderer1, mockRenderer2]);
+    const renderer = new HtmlRendererOrchestrator([
+      mockRenderer1,
+      mockRenderer2,
+    ]);
     const contract = {
       success: true,
       data: { message: "test" },
@@ -50,7 +54,10 @@ describe("HtmlRenderer", () => {
       }),
     };
 
-    const renderer = new HtmlRenderer([mockRenderer1, mockRenderer2]);
+    const renderer = new HtmlRendererOrchestrator([
+      mockRenderer1,
+      mockRenderer2,
+    ]);
     const contract = {
       success: true,
       data: { message: "test" },
@@ -76,7 +83,10 @@ describe("HtmlRenderer", () => {
       render: vi.fn().mockRejectedValue(new Error("Renderer 2 failed")),
     };
 
-    const renderer = new HtmlRenderer([mockRenderer1, mockRenderer2]);
+    const renderer = new HtmlRendererOrchestrator([
+      mockRenderer1,
+      mockRenderer2,
+    ]);
     const contract = {
       success: false,
       data: { error: "test" },
@@ -106,7 +116,7 @@ describe("HtmlRenderer", () => {
       }),
     };
 
-    const renderer = new HtmlRenderer([mockRenderer]);
+    const renderer = new HtmlRendererOrchestrator([mockRenderer]);
     const contract = {
       success: true,
       data: { message: "test" },

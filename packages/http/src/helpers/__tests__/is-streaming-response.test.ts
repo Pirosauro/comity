@@ -78,7 +78,7 @@ describe("isStreamingResponse", () => {
   });
 
   it("should return false for redirect response", () => {
-    const response = {
+    const response: any = {
       intent: "redirect" as const,
       status: 302,
       location: "/new-path",

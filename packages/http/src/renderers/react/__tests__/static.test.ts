@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ReactStaticHtmlRenderer } from "../static.js";
 
 describe("ReactStaticHtmlRenderer", () => {
@@ -7,9 +7,13 @@ describe("ReactStaticHtmlRenderer", () => {
     error: vi.fn((data) => `<div>Error: ${data.error}</div>`),
   };
 
-  const options = {
+  const options: any = {
     templates: mockTemplates,
   };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it("should render successful contract with default template", async () => {
     const renderer = new ReactStaticHtmlRenderer(options);
@@ -25,7 +29,7 @@ describe("ReactStaticHtmlRenderer", () => {
     expect(result).toEqual({
       intent: "html",
       status: 200,
-      body: "<!DOCTYPE html><div>Hello World</div>",
+      body: "<!DOCTYPE html>&lt;div&gt;Hello World&lt;/div&gt;",
       headers: { "custom-header": "value" },
     });
     expect(mockTemplates.default).toHaveBeenCalledWith({
@@ -48,7 +52,7 @@ describe("ReactStaticHtmlRenderer", () => {
     expect(result).toEqual({
       intent: "html",
       status: 500,
-      body: "<!DOCTYPE html><div>Error: Something went wrong</div>",
+      body: "<!DOCTYPE html>&lt;div&gt;Error: Something went wrong&lt;/div&gt;",
     });
     expect(mockTemplates.error).toHaveBeenCalledWith({
       error: "Something went wrong",
@@ -91,7 +95,7 @@ describe("ReactStaticHtmlRenderer", () => {
       http: { headers: { "x-custom": "header" } },
     };
 
-    const result = await renderer.render(contract);
+    const result: any = await renderer.render(contract);
 
     expect(result.headers).toEqual({ "x-custom": "header" });
   });

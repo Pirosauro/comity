@@ -1,4 +1,4 @@
-import { BaseError } from "@comity/core/errors";
+import { InternalError } from "@comity/core/errors";
 import { failure, success } from "@comity/core/result";
 import { describe, expect, it } from "vitest";
 import { isHttpResult } from "../is-http-result.js";
@@ -18,7 +18,7 @@ describe("isHttpResult", () => {
   });
 
   it("should return true for failed Result", () => {
-    const error = new BaseError("TEST_ERROR", "Test error");
+    const error = new InternalError();
     const result = failure(error);
 
     const isValid = isHttpResult(result);
