@@ -5,6 +5,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { KernelInvalidStateError } from "../errors/kernel-invalid-state.js";
 import { Kernel } from "../kernel.js";
 
+interface TestServices extends Record<string, unknown> {
+  testService: string;
+}
+
 interface TestHooks extends Record<string, unknown> {
   testHook: string;
 }
@@ -14,10 +18,10 @@ interface TestEvents extends Record<string, unknown> {
 }
 
 describe("Kernel", () => {
-  let services: DiContainer;
+  let services: DiContainer<TestServices>;
   let events: EventBus<TestEvents>;
   let hooks: HookBus<TestHooks>;
-  let kernel: Kernel;
+  let kernel: Kernel<TestServices, TestEvents, TestHooks>;
 
   beforeEach(() => {
     services = new DiContainer();
@@ -52,17 +56,13 @@ describe("Kernel", () => {
     it("should throw when defining services after sealing", () => {
       kernel.seal();
 
-      expect(() => kernel.services.define("test", () => "value")).toThrow(
-        KernelInvalidStateError,
-      );
+      expect(() => kernel.services.define("test", () => "value")).toThrow(KernelInvalidStateError);
     });
 
     it("should throw when resolving services before sealing", () => {
       kernel.services.define("test", () => "value");
 
-      expect(() => kernel.services.resolve("test")).toThrow(
-        KernelInvalidStateError,
-      );
+      expect(() => kernel.services.resolve("test")).toThrow(KernelInvalidStateError);
     });
 
     it("should allow resolving services after sealing", () => {
@@ -95,15 +95,11 @@ describe("Kernel", () => {
     it("should throw when subscribing after sealing", () => {
       kernel.seal();
 
-      expect(() => kernel.events.subscribe("testEvent", vi.fn())).toThrow(
-        KernelInvalidStateError,
-      );
+      expect(() => kernel.events.subscribe("testEvent", vi.fn())).toThrow(KernelInvalidStateError);
     });
 
     it("should throw when emitting before sealing", () => {
-      expect(() => kernel.events.emit("testEvent", { id: 1 })).toThrow(
-        KernelInvalidStateError,
-      );
+      expect(() => kernel.events.emit("testEvent", { id: 1 })).toThrow(KernelInvalidStateError);
     });
 
     it("should allow emitting after sealing", async () => {
@@ -126,8 +122,8 @@ describe("Kernel", () => {
 
     it("should allow defining hooks before sealing", async () => {
       const handler = vi.fn((value: string) => value + "!");
-      kernel.hooks.define("testHook", handler as any);
 
+      kernel.hooks.define("testHook", handler);
       kernel.seal();
 
       const result = await kernel.hooks.execute("testHook", "test");
@@ -137,22 +133,19 @@ describe("Kernel", () => {
     it("should throw when defining hooks after sealing", () => {
       kernel.seal();
 
-      expect(() => kernel.hooks.define("testHook", vi.fn())).toThrow(
-        KernelInvalidStateError,
-      );
+      expect(() => kernel.hooks.define("testHook", vi.fn())).toThrow(KernelInvalidStateError);
     });
 
     it("should throw when executing hooks before sealing", () => {
       kernel.hooks.define("testHook", vi.fn());
 
-      expect(() => kernel.hooks.execute("testHook", "test")).toThrow(
-        KernelInvalidStateError,
-      );
+      expect(() => kernel.hooks.execute("testHook", "test")).toThrow(KernelInvalidStateError);
     });
 
     it("should allow executing hooks after sealing", async () => {
       const handler = vi.fn((value: string) => value.toUpperCase());
-      kernel.hooks.define("testHook", handler as any);
+
+      kernel.hooks.define("testHook", handler);
       kernel.seal();
 
       const result = await kernel.hooks.execute("testHook", "hello");
@@ -165,6 +158,7 @@ describe("Kernel", () => {
       const result = kernel.seal();
 
       expect(result.success).toBe(true);
+
       if (result.success) {
         expect(result.value).toBe("sealed");
       }

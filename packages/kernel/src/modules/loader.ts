@@ -36,7 +36,7 @@ import { resolveModuleOrder } from "./resolver.js";
  * ```
  */
 export async function loadModules(
-  kernel: Kernel,
+  kernel: Kernel<Record<string, unknown>, Record<string, unknown>, Record<string, unknown>>,
   modules: readonly ModuleMeta[],
   options: Record<string, unknown> = {},
 ): Promise<Result<void, ModuleLoadError>> {

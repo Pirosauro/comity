@@ -1,34 +1,53 @@
-import { describe, expect, it } from "vitest";
+import { success } from "@comity/core/result";
+import { describe, expect, it, vi } from "vitest";
 import { ModuleResolutionError } from "../../errors/module-resolution.js";
 import { resolveModuleOrder } from "../resolver.js";
 
 describe("resolveModuleOrder", () => {
   it("should resolve modules with no dependencies", () => {
     const modules = [
-      { name: "moduleA", version: "1.0.0" },
-      { name: "moduleB", version: "1.0.0" },
+      {
+        name: "moduleA",
+        version: "1.0.0",
+        setup: vi.fn(async () => success(async () => success(undefined))),
+      },
+      {
+        name: "moduleB",
+        version: "1.0.0",
+        setup: vi.fn(async () => success(async () => success(undefined))),
+      },
     ];
 
-    const result = resolveModuleOrder(modules as any[]);
+    const result = resolveModuleOrder(modules);
 
     expect(result.success).toBe(true);
+
     if (result.success) {
       expect(result.value).toHaveLength(2);
       expect(result.value.map((m) => m.name)).toEqual(
-        expect.arrayContaining(["moduleA", "moduleB"]),
+        expect.arrayContaining(["moduleA", "moduleB"])
       );
     }
   });
 
   it("should resolve modules with dependencies", () => {
     const modules = [
-      { name: "moduleA", dependsOn: ["moduleB"] },
-      { name: "moduleB" },
+      {
+        name: "moduleA",
+        dependsOn: ["moduleB"],
+        version: "1.0.0",
+        setup: vi.fn(async () => success(async () => success(undefined))),
+      },
+      {
+        name: "moduleB",
+        version: "1.0.0",
+        setup: vi.fn(async () => success(async () => success(undefined))),
+      },
     ];
-
-    const result = resolveModuleOrder(modules as any[]);
+    const result = resolveModuleOrder(modules);
 
     expect(result.success).toBe(true);
+
     if (result.success) {
       expect(result.value.map((m) => m.name)).toEqual(["moduleB", "moduleA"]);
     }
@@ -36,12 +55,26 @@ describe("resolveModuleOrder", () => {
 
   it("should handle complex dependencies", () => {
     const modules = [
-      { name: "app", dependsOn: ["auth", "db"] },
-      { name: "auth", dependsOn: ["db"] },
-      { name: "db" },
+      {
+        name: "app",
+        dependsOn: ["auth", "db"],
+        version: "1.0.0",
+        setup: vi.fn(async () => success(async () => success(undefined))),
+      },
+      {
+        name: "auth",
+        dependsOn: ["db"],
+        version: "1.0.0",
+        setup: vi.fn(async () => success(async () => success(undefined))),
+      },
+      {
+        name: "db",
+        version: "1.0.0",
+        setup: vi.fn(async () => success(async () => success(undefined))),
+      },
     ];
 
-    const result = resolveModuleOrder(modules as any[]);
+    const result = resolveModuleOrder(modules);
 
     expect(result.success).toBe(true);
     if (result.success) {
@@ -51,11 +84,21 @@ describe("resolveModuleOrder", () => {
 
   it("should detect cycles", () => {
     const modules = [
-      { name: "moduleA", dependsOn: ["moduleB"] },
-      { name: "moduleB", dependsOn: ["moduleA"] },
+      {
+        name: "moduleA",
+        dependsOn: ["moduleB"],
+        version: "1.0.0",
+        setup: vi.fn(async () => success(async () => success(undefined))),
+      },
+      {
+        name: "moduleB",
+        dependsOn: ["moduleA"],
+        version: "1.0.0",
+        setup: vi.fn(async () => success(async () => success(undefined))),
+      },
     ];
 
-    const result = resolveModuleOrder(modules as any[]);
+    const result = resolveModuleOrder(modules);
 
     expect(result.success).toBe(false);
     if (!result.success) {
@@ -67,9 +110,16 @@ describe("resolveModuleOrder", () => {
   });
 
   it("should detect self-dependency", () => {
-    const modules = [{ name: "moduleA", dependsOn: ["moduleA"] }];
+    const modules = [
+      {
+        name: "moduleA",
+        dependsOn: ["moduleA"],
+        version: "1.0.0",
+        setup: vi.fn(async () => success(async () => success(undefined))),
+      },
+    ];
 
-    const result = resolveModuleOrder(modules as any[]);
+    const result = resolveModuleOrder(modules);
 
     expect(result.success).toBe(false);
     if (!result.success) {
@@ -79,9 +129,16 @@ describe("resolveModuleOrder", () => {
   });
 
   it("should handle missing dependencies", () => {
-    const modules = [{ name: "moduleA", dependsOn: ["missing"] }];
+    const modules = [
+      {
+        name: "moduleA",
+        dependsOn: ["missing"],
+        version: "1.0.0",
+        setup: vi.fn(async () => success(async () => success(undefined))),
+      },
+    ];
 
-    const result = resolveModuleOrder(modules as any[]);
+    const result = resolveModuleOrder(modules);
 
     expect(result.success).toBe(false);
     if (!result.success) {
@@ -94,11 +151,20 @@ describe("resolveModuleOrder", () => {
 
   it("should handle optional dependencies", () => {
     const modules = [
-      { name: "moduleA", optionalDependsOn: ["missing"] },
-      { name: "moduleB" },
+      {
+        name: "moduleA",
+        optionalDependsOn: ["missing"],
+        version: "1.0.0",
+        setup: vi.fn(async () => success(async () => success(undefined))),
+      },
+      {
+        name: "moduleB",
+        version: "1.0.0",
+        setup: vi.fn(async () => success(async () => success(undefined))),
+      },
     ];
 
-    const result = resolveModuleOrder(modules as any[]);
+    const result = resolveModuleOrder(modules);
 
     expect(result.success).toBe(true);
     if (result.success) {
@@ -108,20 +174,31 @@ describe("resolveModuleOrder", () => {
 
   it("should sort by priority", () => {
     const modules = [
-      { name: "low", priority: 200 },
-      { name: "high", priority: 50 },
-      { name: "default", priority: 100 },
+      {
+        name: "low",
+        priority: 200,
+        version: "1.0.0",
+        setup: vi.fn(async () => success(async () => success(undefined))),
+      },
+      {
+        name: "high",
+        priority: 50,
+        version: "1.0.0",
+        setup: vi.fn(async () => success(async () => success(undefined))),
+      },
+      {
+        name: "default",
+        priority: 100,
+        version: "1.0.0",
+        setup: vi.fn(async () => success(async () => success(undefined))),
+      },
     ];
 
-    const result = resolveModuleOrder(modules as any[]);
+    const result = resolveModuleOrder(modules);
 
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.value.map((m) => m.name)).toEqual([
-        "high",
-        "default",
-        "low",
-      ]);
+      expect(result.value.map((m) => m.name)).toEqual(["high", "default", "low"]);
     }
   });
 

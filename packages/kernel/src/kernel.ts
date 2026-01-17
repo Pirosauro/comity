@@ -10,12 +10,9 @@ import { Lifecycle } from "./lifecycle.js";
  * Kernel configuration options
  */
 export type KernelConfig<
-  Services extends Record<string | symbol, unknown> = Record<
-    string | symbol,
-    unknown
-  >,
-  Events extends Record<string, unknown> = Record<string, unknown>,
-  Hooks extends Record<string, unknown> = Record<string, unknown>,
+  Services extends { [K in keyof Services]: unknown },
+  Events extends { [K in keyof Events]: unknown },
+  Hooks extends { [K in keyof Hooks]: unknown },
 > = {
   /** */
   services: DiContainer<Services>;
@@ -31,21 +28,36 @@ export type KernelConfig<
  * Kernel class
  */
 export class Kernel<
-  Services extends Record<string | symbol, unknown> = Record<
-    string | symbol,
-    unknown
-  >,
-  Events extends Record<string, unknown> = Record<string, unknown>,
-  Hooks extends Record<string, unknown> = Record<string, unknown>,
+  Services extends { [K in keyof Services]: unknown },
+  Events extends { [K in keyof Events]: unknown },
+  Hooks extends { [K in keyof Hooks]: unknown },
 > {
   /** Service container */
-  #services: Omit<DiContainer, "#private">;
+  #services: {
+    /**  */
+    define: DiContainer<Services>["define"]
+
+    /**  */
+    resolve: DiContainer<Services>["resolve"]
+  };
 
   /** Event bus */
-  #events: Omit<EventBus, "#private">;
+  #events: {
+    /**  */
+    subscribe: EventBus<Events>["subscribe"]
+
+    /**  */
+    emit: EventBus<Events>["emit"]
+  };
 
   /** Hook bus */
-  #hooks: Omit<HookBus, "#private">;
+  #hooks: {
+    /**  */
+    define: HookBus<Hooks>["define"]
+
+    /**  */
+    execute: HookBus<Hooks>["execute"]
+  };
 
   /** Lifecycle manager */
   #lifecycle = new Lifecycle();
@@ -60,7 +72,7 @@ export class Kernel<
        * @param {...Parameters<typeof config.services.define>} args DiContainer.define parameters
        * @returns DiContainer.define return value
        */
-      define: (...args: Parameters<typeof config.services.define>) => {
+      define: <K extends keyof Services>(...args: Parameters<typeof config.services.define<K>>) => {
         this.assertNotSealed("service.define");
 
         return config.services.define(...args);
@@ -70,7 +82,7 @@ export class Kernel<
        * @param {...Parameters<typeof config.services.resolve>} args DiContainer.resolve parameters
        * @returns DiContainer.resolve return value
        */
-      resolve: (...args: Parameters<typeof config.services.resolve>) => {
+      resolve: <K extends keyof Services>(...args: Parameters<typeof config.services.resolve<K>>) => {
         this.assertSealed("service.resolve");
 
         return config.services.resolve(...args);
@@ -83,7 +95,7 @@ export class Kernel<
        * @param {...Parameters<typeof config.events.subscribe>} args EventBus.subscribe parameters
        * @returns EventBus.subscribe return value
        */
-      subscribe: (...args: Parameters<typeof config.events.subscribe>) => {
+      subscribe: <K extends keyof Events>(...args: Parameters<typeof config.events.subscribe<K>>) => {
         this.assertNotSealed("event.subscribe");
 
         return config.events.subscribe(...args);
@@ -93,7 +105,7 @@ export class Kernel<
        * @param {...Parameters<typeof config.events.emit>} args EventBus.emit parameters
        * @returns EventBus.emit return value
        */
-      emit: (...args: Parameters<typeof config.events.emit>) => {
+      emit: <K extends keyof Events>(...args: Parameters<typeof config.events.emit<K>>) => {
         this.assertSealed("event.emit");
 
         return config.events.emit(...args);
@@ -106,7 +118,7 @@ export class Kernel<
        * @param {...Parameters<typeof config.hooks.define>} args HookBus.define parameters
        * @returns HookBus.define return value
        */
-      define: (...args: Parameters<typeof config.hooks.define>) => {
+      define: <K extends keyof Hooks>(...args: Parameters<typeof config.hooks.define<K>>) => {
         this.assertNotSealed("hook.define");
 
         return config.hooks.define(...args);
@@ -116,7 +128,7 @@ export class Kernel<
        * @param {...Parameters<typeof config.hooks.execute>} args HookBus.execute parameters
        * @returns HookBus.execute return value
        */
-      execute: (...args: Parameters<typeof config.hooks.execute>) => {
+      execute: <K extends keyof Hooks>(...args: Parameters<typeof config.hooks.execute<K>>) => {
         this.assertSealed("hook.execute");
 
         return config.hooks.execute(...args);

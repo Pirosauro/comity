@@ -22,10 +22,7 @@ import { NotFoundError } from "../errors/not-found.js";
  * ```
  */
 export class DiContainer<
-  Services extends Record<string | symbol, unknown> = Record<
-    string | symbol,
-    unknown
-  >,
+  Services extends { [K in keyof Services]: unknown },
 > implements DiContainerContract<Services> {
   /** Factories map */
   #factories = new Map<keyof Services, () => Services[keyof Services]>();

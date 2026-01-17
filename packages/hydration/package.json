@@ -17,14 +17,8 @@
     "comity",
     "comityjs",
     "hydration",
-    "ssr",
-    "server-side rendering",
-    "rendering",
     "islands",
     "composability",
-    "react",
-    "preact",
-    "hono",
     "framework",
     "typescript",
     "javascript"
@@ -32,7 +26,8 @@
   "scripts": {
     "build": "node ../../scripts/build.mjs",
     "prepublish": "node ../../scripts/build.mjs",
-    "dev": "node ../../scripts/build.mjs --watch"
+    "dev": "node ../../scripts/build.mjs --watch",
+    "test": "vitest run --coverage"
   },
   "files": [
     "./dist",
@@ -62,6 +57,26 @@
         "default": "./dist/cjs/client/index.js"
       }
     },
+    "./client/strategies": {
+      "import": {
+        "types": "./dist/types/client/strategies/index.d.ts",
+        "default": "./dist/esm/client/strategies/index.js"
+      },
+      "require": {
+        "types": "./dist/types/client/strategies/index.d.ts",
+        "default": "./dist/cjs/client/strategies/index.js"
+      }
+    },
+    "./server": {
+      "import": {
+        "types": "./dist/types/server/index.d.ts",
+        "default": "./dist/esm/server/index.js"
+      },
+      "require": {
+        "types": "./dist/types/server/index.d.ts",
+        "default": "./dist/cjs/server/index.js"
+      }
+    },
     "./setup": {
       "import": {
         "types": "./dist/types/setup/index.d.ts",
@@ -72,19 +87,6 @@
         "default": "./dist/cjs/setup/index.js"
       }
     },
-    "./vite": {
-      "import": {
-        "types": "./dist/types/vite/index.d.ts",
-        "default": "./dist/esm/vite/index.js"
-      },
-      "require": {
-        "types": "./dist/types/vite/index.d.ts",
-        "default": "./dist/cjs/vite/index.js"
-      }
-    },
-    "./types": {
-      "types": "./module.d.ts"
-    },
     "./package.json": "./package.json"
   },
   "typesVersions": {
@@ -92,14 +94,14 @@
       "client": [
         "./dist/types/client/index.d.ts"
       ],
+      "client/strategies": [
+        "./dist/types/client/strategies/index.d.ts"
+      ],
+      "server": [
+        "./dist/types/server/index.d.ts"
+      ],
       "setup": [
         "./dist/types/setup/index.d.ts"
-      ],
-      "vite": [
-        "./dist/types/vite/index.d.ts"
-      ],
-      "types": [
-        "./module.d.ts"
       ]
     }
   },
@@ -109,13 +111,12 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@comity/application": "workspace:*",
     "@comity/core": "workspace:*",
-    "@comity/logger": "workspace:*",
-    "vite": "^7.3.1"
+    "@comity/kernel": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^24.10.7",
+    "@types/node": "^24.10.9",
+    "jsdom": "^27.4.0",
     "typescript": "^5.9.3"
   }
 }

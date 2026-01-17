@@ -30,7 +30,7 @@ import { InternalError } from "../errors/internal.js";
  * ```
  */
 export class EventBus<
-  Events extends Record<string, unknown> = Record<string, unknown>,
+  Events extends { [K in keyof Events]: unknown },
 > implements EventBusContract<Events> {
   /** Event handlers mapped by event name */
   #handlers = new Map<keyof Events, Set<EventHandler<Events[keyof Events]>>>();

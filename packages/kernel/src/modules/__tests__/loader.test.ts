@@ -1,8 +1,19 @@
+import type { ResultFailure } from "@comity/core/result";
+
+import { BaseError } from "@comity/core/errors";
 import { failure, success } from "@comity/core/result";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ModuleLoadError } from "../../errors/module-load.js";
 import { ModuleResolutionError } from "../../errors/module-resolution.js";
 import { loadModules } from "../loader.js";
+
+class TestError extends BaseError {
+  readonly code = "mock:error";
+
+  constructor(meta: Record<string, unknown>) {
+    super("Test error occurred", meta);
+  }
+}
 
 describe("loadModules", () => {
   let mockKernel: any;
@@ -23,7 +34,7 @@ describe("loadModules", () => {
       },
     ];
 
-    const result = await loadModules(mockKernel, modules as any[]);
+    const result = await loadModules(mockKernel, modules);
 
     expect(result.success).toBe(true);
     expect(mockKernel.seal).toHaveBeenCalled();
@@ -32,74 +43,87 @@ describe("loadModules", () => {
   it("should handle module resolution failure", async () => {
     // Mock resolveModuleOrder to return failure
     const mockResolver = vi.fn(() =>
-      failure(new ModuleResolutionError({ reason: "cycle_detected" })),
+      failure(new ModuleResolutionError({ reason: "cycle_detected" }))
     );
     vi.doMock("../resolver.js", () => ({ resolveModuleOrder: mockResolver }));
 
     const modules = [
       {
         name: "moduleA",
+        version: "1.0.0",
+        setup: vi.fn(async () => success(async () => success(undefined))),
         dependsOn: ["moduleA"], // cycle
       },
     ];
 
-    const result = await loadModules(mockKernel, modules as any[]);
+    const result = (await loadModules(mockKernel, modules)) as ResultFailure;
 
     expect(result.success).toBe(false);
-    expect((result as any).error).toBeInstanceOf(ModuleLoadError);
-    expect((result as any).error.meta.reason).toBe("resolution_failed");
+    expect(result.error).toBeInstanceOf(ModuleLoadError);
+    expect(result.error.meta.reason).toBe("resolution_failed");
   });
 
   it("should handle setup function failure", async () => {
     const modules = [
       {
         name: "moduleA",
-        setup: vi.fn(async () => failure(new Error("Setup failed"))),
+        version: "1.0.0",
+        setup: vi.fn(async () => failure(new Error("Setup failed") as any)),
       },
     ];
 
-    const result = await loadModules(mockKernel, modules as any[]);
+    const result = (await loadModules(mockKernel, modules)) as ResultFailure;
 
     expect(result.success).toBe(false);
-    expect((result as any).error).toBeInstanceOf(ModuleLoadError);
-    expect((result as any).error.meta.reason).toBe("setup_failed");
-    expect((result as any).error.meta.module).toBe("moduleA");
+    expect(result.error).toBeInstanceOf(ModuleLoadError);
+    expect(result.error.meta.reason).toBe("setup_failed");
+    expect(result.error.meta.module).toBe("moduleA");
   });
 
   it("should handle apply failure", async () => {
     const modules = [
       {
         name: "moduleA",
+        version: "1.0.0",
         setup: vi.fn(async () =>
-          success(async () => failure(new Error("Apply failed"))),
+          success(async () =>
+            failure(
+              new TestError({
+                reason: "apply failed",
+                module: "moduleA",
+              })
+            )
+          )
         ),
       },
     ];
 
-    const result = await loadModules(mockKernel, modules as any[]);
+    const result = (await loadModules(mockKernel, modules)) as ResultFailure;
 
     expect(result.success).toBe(false);
-    expect((result as any).error).toBeInstanceOf(ModuleLoadError);
-    expect((result as any).error.meta.reason).toBe("apply_failed");
-    expect((result as any).error.meta.module).toBe("moduleA");
+    expect(result.error).toBeInstanceOf(ModuleLoadError);
+    expect(result.error.meta.reason).toBe("apply_failed");
+    expect(result.error.meta.module).toBe("moduleA");
   });
 
   it("should pass options to setup", async () => {
     const setupFn = vi.fn(async (options) => {
       expect(options).toEqual({ key: "value" });
+
       return success(async () => success(undefined));
     });
 
     const modules = [
       {
         name: "moduleA",
+        version: "1.0.0",
         setup: setupFn,
       },
     ];
 
     const options = { moduleA: { key: "value" } };
 
-    await loadModules(mockKernel, modules as any[], options);
+    await loadModules(mockKernel, modules, options);
 
     expect(setupFn).toHaveBeenCalledWith({ key: "value" });
   });
@@ -108,16 +132,18 @@ describe("loadModules", () => {
     const modules = [
       {
         name: "moduleA",
+        version: "1.0.0",
         dependsOn: ["moduleB"],
         setup: vi.fn(async () => success(async () => success(undefined))),
       },
       {
         name: "moduleB",
+        version: "1.0.0",
         setup: vi.fn(async () => success(async () => success(undefined))),
       },
     ];
 
-    const result = await loadModules(mockKernel, modules as any[]);
+    const result = await loadModules(mockKernel, modules);
 
     expect(result.success).toBe(true);
     // Assuming resolver orders them correctly

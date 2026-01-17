@@ -27,7 +27,7 @@ import type { HookHandler } from "./handler.js";
  * ```
  */
 export class HookBus<
-  Hooks extends Record<string, unknown> = Record<string, unknown>,
+  Hooks extends { [K in keyof Hooks]: unknown },
 > implements HookBusContract<Hooks> {
   /** Hook handlers mapped by hook name */
   #handlers: {

@@ -55,12 +55,25 @@
         "default": "./dist/cjs/errors/index.js"
       }
     },
+    "./modules": {
+      "import": {
+        "types": "./dist/types/modules/index.d.ts",
+        "default": "./dist/esm/modules/index.js"
+      },
+      "require": {
+        "types": "./dist/types/modules/index.d.ts",
+        "default": "./dist/cjs/modules/index.js"
+      }
+    },
     "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
       "errors": [
         "./dist/types/errors/index.d.ts"
+      ],
+      "modules": [
+        "./dist/types/modules/index.d.ts"
       ]
     }
   },
@@ -71,10 +84,10 @@
   "sideEffects": false,
   "dependencies": {
     "@comity/core": "workspace:*",
-    "hono": "^4.11.3"
+    "hono": "^4.11.4"
   },
   "devDependencies": {
-    "@types/node": "^24.10.7",
+    "@types/node": "^24.10.9",
     "typescript": "^5.9.3"
   }
 }
