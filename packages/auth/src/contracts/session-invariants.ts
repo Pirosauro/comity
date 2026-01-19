@@ -1,7 +1,7 @@
 import type { Result, ResultFailure } from "@comity/core/result";
 import type { AuthSession } from "./session.js";
 
-import { InvalidSessiondError } from "../errors/invalid-session.js";
+import { InvalidSessionError } from "../errors/invalid-session.js";
 
 /**
  * Reasons why an AuthSession violates domain invariants.
@@ -41,8 +41,8 @@ export type AuthSessionInvariantReason =
  */
 function invalid(
   reason: AuthSessionInvariantReason
-): ResultFailure<InvalidSessiondError<AuthSessionInvariantReason>, "ok"> {
-  return { ok: false, error: new InvalidSessiondError({ reason }) };
+): ResultFailure<InvalidSessionError<AuthSessionInvariantReason>, "ok"> {
+  return { ok: false, error: new InvalidSessionError({ reason }) };
 }
 
 /**
@@ -55,9 +55,9 @@ function invalid(
 export function checkSessionInvariants(
   session: AuthSession,
   now: number
-): Result<void, InvalidSessiondError<AuthSessionInvariantReason>, "ok"> {
+): Result<void, InvalidSessionError<AuthSessionInvariantReason>, "ok"> {
   // Session id
-  if (typeof session.id === "string") {
+  if (typeof session.id !== "string" || session.id.length === 0) {
     return invalid(AUTH_SESSION_INVARIANT_REASONS.SESSION_ID_MISSING);
   }
 
@@ -110,8 +110,11 @@ export function checkSessionInvariants(
     return invalid(AUTH_SESSION_INVARIANT_REASONS.ASSURANCE_VERSION_INVALID);
   }
 
-  // Assurance context validity
-  if (typeof session.assurance.context !== "object" || session.assurance.context === null) {
+  // Assurance context validity (if present)
+  if (
+    session.assurance.context !== undefined &&
+    (typeof session.assurance.context !== "object" || session.assurance.context === null)
+  ) {
     return invalid(AUTH_SESSION_INVARIANT_REASONS.ASSURANCE_CONTEXT_INVALID);
   }
 

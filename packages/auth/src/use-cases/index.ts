@@ -9,3 +9,8 @@ export * from "./refresh/max-refresh-age.js";
 export * from "./revocation/composite-policy.js";
 export * from "./revocation/expired-session-policy.js";
 export * from "./revocation/version-mismatch-policy.js";
+export * from "./session-create.js";
+export * from "./session-refresh.js";
+export * from "./session-revoke.js";
+export * from "./session-step-up.js";
+

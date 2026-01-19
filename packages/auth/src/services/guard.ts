@@ -136,7 +136,7 @@ export class AuthGuard {
    * @throws SessionRefreshExpiredError
    * @throws SessionRefreshNotAllowedError
    */
-  asssertRefreshable(session: AuthSession, now: number): void {
+  assertRefreshable(session: AuthSession, now: number): void {
     this.assert(session, now);
 
     if (!this.#refresh) {

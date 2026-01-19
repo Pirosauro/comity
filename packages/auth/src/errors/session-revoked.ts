@@ -19,7 +19,7 @@ export class SessionRevokedError extends BaseError {
   constructor(meta?: SessionRevokedErrorMeta) {
     super("Session revoked", {
       httpStatus: 401,
-      meta,
+      ...meta,
     });
   }
 }

@@ -13,32 +13,37 @@ export interface ContextBoundOptions extends AuthSessionAssuranceContext {}
  * Bound assurance policy.
  */
 export class BoundAssurancePolicy implements AuthSessionAssurancePolicy {
-  /** Minimum required assurance score */
-  #bounds: AuthSessionAssurancePolicy;
+  /** Context bounds that must match the session assurance context */
+  #bounds: ContextBoundOptions;
 
   /**
    * @param bounds The required bounds
    */
-  constructor(bounds: AuthSessionAssurancePolicy) {
+  constructor(bounds: ContextBoundOptions) {
     this.#bounds = bounds;
   }
 
   /**
    * @inheritdoc
    */
-  assert(session: AuthSession) {
+  assert(session: AuthSession, now: number): void {
     const context = session.assurance.context || {};
 
-    // Check each bound
-    Object.entries(this.#bounds).forEach(([key, value]) => {
-      if (context[key as keyof typeof context] !== value) {
+    for (const [key, expected] of Object.entries(this.#bounds)) {
+      if (expected === undefined) {
+        continue;
+      }
+
+      const actual = context[key as keyof typeof context];
+
+      if (actual !== expected) {
         throw new AssuranceRequiredError({
           reason: "out_of_bounds",
           policy: "bound",
-          expected: { [key]: value },
-          actual: { [key]: context[key as keyof typeof context] },
+          expected: { [key]: expected },
+          actual: { [key]: actual },
         });
       }
-    });
+    }
   }
 }

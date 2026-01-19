@@ -22,7 +22,7 @@ export class AssuranceRequiredError extends BaseError {
   constructor(meta?: AssuranceRequiredErrorMeta) {
     super("Higher assurance required", {
       httpStatus: 403,
-      meta,
+      ...meta,
     });
   }
 }

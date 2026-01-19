@@ -15,7 +15,7 @@ export class DefaultRefreshPolicy implements AuthSessionRefreshPolicy {
   /**
    * @inheritdoc
    */
-  assert(session: AuthSession): void {
+  assert(session: AuthSession, now: number): void {
     const refresh = session.refresh;
 
     // Refresh must be enabled
@@ -24,7 +24,7 @@ export class DefaultRefreshPolicy implements AuthSessionRefreshPolicy {
     }
 
     // Refresh expiration (if present) must not be exceeded
-    if (typeof refresh.expiresAt === "number" && refresh.expiresAt <= Date.now()) {
+    if (typeof refresh.expiresAt === "number" && refresh.expiresAt <= now) {
       throw new SessionRefreshExpiredError();
     }
   }

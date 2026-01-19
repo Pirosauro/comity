@@ -23,8 +23,12 @@ export class ExpiredSessionRevocationPolicy implements AuthSessionRevocationPoli
    * @inheritdoc
    */
   assert(session: AuthSession, now: number) {
+    // Use the earliest applicable expiry: explicit expiresAt, or fallback to createdAt + age
+    const explicitExpiry = session.expiresAt;
+    const fallbackExpiry = session.createdAt + this.#age;
+
     const expiration =
-      session.expiresAt !== undefined ? session.expiresAt : session.createdAt + this.#age;
+      typeof explicitExpiry === "number" ? Math.min(explicitExpiry, fallbackExpiry) : fallbackExpiry;
 
     if (now >= expiration) {
       throw new SessionRevokedError({ reason: "expired" });

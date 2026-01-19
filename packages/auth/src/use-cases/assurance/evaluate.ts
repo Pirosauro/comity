@@ -15,7 +15,7 @@ export function evaluateAssurance(input: CreateSessionInput, now: number): AuthS
     score: 0,
     evaluatedAt: now,
     version: 0,
-    ...(input.context ? input.context : {}),
+    ...(input.context ? { context: input.context } : {}),
   };
 
   return assurance;

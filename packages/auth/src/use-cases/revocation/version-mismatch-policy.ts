@@ -17,7 +17,7 @@ export class VersionMismatchRevocationPolicy implements AuthSessionRevocationPol
   /**
    * @inheritdoc
    */
-  assert(session: AuthSession): void {
+  assert(session: AuthSession, now: number): void {
     const version = session.assurance.version;
 
     if (typeof version !== "number" || version < this.#version) {

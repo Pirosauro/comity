@@ -38,7 +38,7 @@ export interface CreateSessionInput {
 /**
  * Create Session
  */
-export interface CreateSessionUseCase {
+export interface CreateSession {
   /**
    *
    */

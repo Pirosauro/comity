@@ -13,13 +13,13 @@ export interface InvalidSessionErrorMeta<T extends string> extends ErrorMeta {
 /**
  * Thrown when a session is invalid.
  */
-export class InvalidSessiondError<T extends string> extends BaseError {
+export class InvalidSessionError<T extends string> extends BaseError {
   readonly code = "auth:session_invalid";
 
   constructor(meta?: InvalidSessionErrorMeta<T>) {
     super("Invalid session", {
       httpStatus: 401,
-      meta,
+      ...meta,
     });
   }
 }
