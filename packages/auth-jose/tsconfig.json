@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "lib": ["ES2022"],
+    "noEmit": false,
+    "outDir": "dist",
+    "paths": {
+      "jose/errors": ["./node_modules/jose/dist/types/util/errors.d.ts"]
+    },
+    "rootDir": "src",
+    "types": ["node"]
+  },
+  "exclude": ["node_modules", "dist", "**/__tests__/**"],
+  "include": ["src/**/*"]
+}
