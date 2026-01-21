@@ -14,7 +14,7 @@ describe("StepUpRequiredPolicy", () => {
       evaluatedAt: 1000,
       version: 1,
     },
-    transport: "web",
+    transport: { type: "web" },
   };
 
   it("should pass when session has valid stepUp", () => {

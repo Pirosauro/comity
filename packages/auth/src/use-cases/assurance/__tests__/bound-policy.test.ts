@@ -21,7 +21,8 @@ describe("BoundAssurancePolicy", () => {
         channel: "web",
       },
     },
-    transport: "web",
+    transport: { type: "bearer" },
+    verifiedAt: 1000,
   };
 
   it("should pass when context matches all bounds", () => {

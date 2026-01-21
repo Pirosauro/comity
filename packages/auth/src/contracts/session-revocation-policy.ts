@@ -7,9 +7,9 @@ export interface AuthSessionRevocationPolicy {
   /**
    * Evaluate the revocation status of a session.
    *
-   * @param session The authentication session to evaluate.
-   * @param now Current timestamp
-   * @throws SessionRevokedError
+   * @param session - The authentication session to evaluate
+   * @param now - Current timestamp in milliseconds
+   * @throws {SessionRevokedError} - If the session is considered revoked
    */
   assert(session: AuthSession, now: number): void;
 }

@@ -1,303 +1,271 @@
 # @comity/auth
 
-The `@comity/auth` package provides JWT-based authentication for Comity applications. It includes middleware for request authentication, token management utilities, and a comprehensive event system for monitoring authentication flows.
+`@comity/auth` is the core authentication domain module for Comity.
 
-This package integrates seamlessly with Hono applications and provides type-safe user context, automatic token refresh, and flexible configuration options.
+It provides:
 
-## Features
+- authenticated session lifecycle management
+- policy-based assurance and validation
+- step-up authentication support
+- refresh and revocation handling
+- a clean, minimal facade for consumers
 
-- JWT token generation and verification using JOSE
-- Automatic authentication middleware for Hono routes
-- Flexible token extraction from headers and cookies
-- Token refresh with configurable time windows
-- Two-factor authentication support
-- Comprehensive event system for authentication monitoring
-- Type-safe user context in Hono requests
-- Custom error classes for different authentication failures
-- Cookie-based session management
+The module is **infrastructure-agnostic** and **fully configurable at runtime**.
 
-## Quickstart
+---
 
-Install the monorepo (pnpm workspace):
+## Design Goals
 
-```bash
-pnpm install
+- Pure domain logic
+- No persistence or transport assumptions
+- Strong invariants and explicit validation
+- Event-driven observability
+- Easy composition with downstream auth modules (JWT, OIDC, etc.)
+
+---
+
+## High-Level Architecture
+
+```text
+┌───────────────────────┐
+│ AuthFacade            │  ← public API
+└───────────┬───────────┘
+            │
+┌───────────▼───────────┐
+│ Use Cases             │
+│ - CreateSession       │
+│ - RefreshSession      │
+│ - StepUpSession       │
+│ - RevokeSession       │
+└───────────┬───────────┘
+            │
+┌───────────▼───────────┐
+│ AuthGuard             │
+│ - invariants          │
+│ - revocation          │
+│ - assurance           │
+│ - refresh             │
+└───────────┬───────────┘
+            │
+┌───────────▼───────────┐
+│ Policies &            │
+│ Evaluators            │
+└───────────┬───────────┘
+            │
+┌───────────▼───────────┐
+│ AuthSessionRepository │
+└───────────────────────┘
 ```
 
-Create a Hono app with authentication:
+---
+
+## Module Setup
+
+The module must be configured explicitly.
 
 ```ts
-import { Hono } from "hono";
-import { createApplication } from "@comity/application";
-import authSetup from "@comity/auth/setup";
-
-const app = new Hono();
-
-// Configure auth options
-const authOptions = {
-  secret: process.env.JWT_SECRET!,
-  lifetime: 3600,
-  cookie: {
-    name: "auth-token",
-    httpOnly: true,
-    secure: true,
-    sameSite: "strict",
-  },
-};
-
-(async () => {
-  const modules = [authSetup(authOptions)];
-
-  await createApplication(app, modules);
-
-  export default app;
-})();
+module: ModuleMeta<AuthModuleOptions>;
 ```
 
-## API
+### Required Options
 
-### Module Setup
+- `repository: AuthSessionRepository`
+- `evaluator: AuthSessionAssuranceEvaluator`
 
-- `authSetup(options)`
+### Optional Options
 
-  Returns a Comity module that configures JWT authentication. The options object includes:
+- `guard.assurance: AuthSessionAssurancePolicy`
+- `guard.refresh: AuthSessionRefreshPolicy`
+- `guard.revocation: AuthSessionRevocationPolicy`
 
-  ```ts
-  interface AuthModuleOptions {
-    secret: string; // JWT signing secret (required)
-    lifetime?: number; // Token lifetime in seconds
-    issuer?: string; // JWT issuer claim
-    audience?: string | string[]; // JWT audience claim
-    algorithm?: "HS256" | "HS384" | "HS512"; // Signing algorithm
-    maxRefreshWindow?: number; // Maximum age for token refresh (seconds)
-    minRefreshWindow?: number; // Minimum time before refresh allowed (seconds)
-    header?: {
-      name?: string; // Authorization header name
-      prefix?: string; // Token prefix (default: "Bearer ")
-    };
-    cookie?: {
-      name?: string; // Cookie name for token storage
-      httpOnly?: boolean; // Cookie httpOnly flag
-      secure?: boolean; // Cookie secure flag
-      sameSite?: "strict"; // Cookie sameSite policy
-      domain?: string; // Cookie domain
-      path?: string; // Cookie path
-      maxAge?: number; // Cookie max age
-    };
-  }
-  ```
+---
 
-### Auth Service
-
-The auth module provides utility functions for authentication operations:
-
-- `handleLogin(user, c, options)` - Generate JWT and set user context
-- `handleLogout(c, options)` - Clear user context and delete auth cookie
-- `handleRefresh(c, options)` - Refresh JWT token within allowed window
-- `signToken(user, options?)` - Generate JWT token directly
-
-### Middleware
-
-The module automatically applies JWT middleware to all routes. The middleware:
-
-- Extracts tokens from Authorization headers or cookies
-- Verifies JWT signatures and claims
-- Sets authenticated user in Hono context
-- Emits authentication events
-- Handles token refresh and expiration
-
-### Types
+## Public API – AuthFacade
 
 ```ts
-// User object (extendable)
-type AuthUser<T = {}> = { id: string } & T;
-
-// JWT payload structure
-interface JWTPayload {
-  sub?: string;
-  iat?: number;
-  exp?: number;
-  iss?: string;
-  aud?: string | string[];
-  verified?: number; // 2FA timestamp
-  user: AuthUser;
-}
-
-// Hono context with auth variables
-interface AuthModuleHonoContext {
-  Variables: {
-    user?: AuthUser;
-  };
+export interface AuthFacade {
+  createSession(input: CreateSessionInput, now: number): Promise<AuthSession>;
+  refreshSession(input: RefreshSessionInput, now: number): Promise<AuthSession>;
+  stepUpSession(input: StepUpSessionInput, now: number): Promise<AuthSession>;
+  revokeSession(sessionId: string, reason: string, now: number): Promise<void>;
+  assertSession(session: AuthSession, now: number): void;
 }
 ```
 
-## Authentication Flow
+### Key Characteristics
 
-### Login
+- Stateless
+- No domain objects leaked
+- No guard or repository exposed
+- All methods are deterministic given inputs
+
+---
+
+## Session Lifecycle
+
+```text
+Create → (Assert) → Use → Refresh → Step-Up → Revoke
+```
+
+### CreateSession
+
+- Builds a new `AuthSession`
+- Evaluates assurance
+- Validates invariants and policies
+- Persists the session
+- Emits `session_created`
+
+### RefreshSession
+
+- Loads session from repository
+- Validates invariants, revocation, assurance, refresh window
+- Creates a new session instance
+- Emits `session_refreshed`
+
+### StepUpSession
+
+- Loads parent session
+- Re-evaluates assurance with stronger context
+- Creates child session linked via `stepUp.parent`
+- Emits `stepup_completed`
+
+### RevokeSession
+
+- Revokes session by id
+- No validation required
+- Emits `session_revoked`
+
+---
+
+## AuthGuard
+
+`AuthGuard` centralizes **all validation logic**.
 
 ```ts
-app.post("/login", async (c) => {
-  const credentials = await c.req.json();
-  // Validate credentials (your logic)
-  const user = await validateCredentials(credentials);
-  // Generate token and set context
-  const token = await handleLogin(user, c, authOptions);
-
-  return c.json({ token, user });
-});
+guard.assert(session, now);
 ```
 
-### Protected Routes
+Internally it performs:
+
+1. Structural invariants
+2. Revocation policy
+3. Assurance policy
+4. Optional refresh policy
+
+The guard:
+
+- emits evaluation events
+- throws domain errors
+- is **never exposed** publicly
+
+---
+
+## Assurance Evaluation
+
+Assurance is evaluated **only when sessions are created or stepped up**.
 
 ```ts
-app.get("/profile", async (c) => {
-  const user = c.get("user");
-
-  if (!user) {
-    return c.json({ error: "Unauthorized" }, 401);
-  }
-
-  return c.json({ profile: await getUserProfile(user.id) });
-});
+evaluator.evaluate(input, now): AuthSessionAssurance
 ```
 
-### Token Refresh
+### Design Choice
+
+- Assurance is immutable once assigned
+- It represents **historical authentication strength**
+- It is not re-evaluated on refresh or reuse
+
+Evaluators are injected and can be:
+
+- single
+- composite
+- environment-specific
+
+---
+
+## Repository
 
 ```ts
-app.post("/refresh", async (c) => {
-  try {
-    const token = await handleRefresh(c, authOptions);
-
-    return c.json({ token });
-  } catch (error) {
-    if (error instanceof TokenExpiredError) {
-      return c.json({ error: "Token too old to refresh" }, 401);
-    }
-
-    throw error;
-  }
-});
+export interface AuthSessionRepository {
+  get(id: AuthSessionId): Promise<AuthSession | undefined>;
+  create(session: AuthSession): Promise<void>;
+  update(session: AuthSession): Promise<void>;
+  revoke(id: AuthSessionId, reason: string, at: number): Promise<void>;
+}
 ```
 
-### Logout
+### Rationale
 
-```ts
-app.post("/logout", async (c) => {
-  await handleLogout(c, authOptions);
+- Repository may return `undefined` (not found)
+- Not-found is a domain concern, not an infrastructure failure
+- Use cases decide how to react and emit events accordingly
 
-  return c.json({ message: "Logged out" });
-});
-```
+---
 
-## Events & Hooks
+## Events
 
-The auth module emits events for monitoring authentication flows:
+### Evaluation Events
 
-```ts
-// Listen for authentication events
-ctx.onEvent("user-logged-in", ({ user, token }) => {
-  console.log(`User ${user.id} logged in`);
-});
+Emitted during validation:
 
-ctx.onEvent("user-logged-out", ({ user }) => {
-  console.log(`User ${user.id} logged out`);
-});
+- `session_validated`
+- `session_invalid`
+- `assurance_rejected`
+- `refresh_validated`
+- `refresh_rejected`
 
-ctx.onEvent("token-refreshed", ({ outdated, current }) => {
-  console.log("Token refreshed");
-});
+### Session Events
 
-ctx.onEvent("authentication-failed", ({ reason, ip, userAgent }) => {
-  console.log(`Auth failed: ${reason} from ${ip}`);
-});
+Emitted during lifecycle changes:
 
-ctx.onEvent("token-verified", ({ user, ip }) => {
-  console.log(`Token verified for user ${user.id}`);
-});
-```
+- `session_created`
+- `session_refreshed`
+- `session_revoked`
+- `stepup_completed`
 
-## Error Handling
+All events are re-emitted via `ctx.events`.
 
-The package provides specific error classes:
+---
 
-```ts
-import { TokenExpiredError, TokenInvalidError } from "@comity/auth/errors";
+## Why This Design
 
-app.use("/api/*", async (c, next) => {
-  try {
-    await next();
-  } catch (error) {
-    if (error instanceof TokenExpiredError) {
-      return c.json({ error: "Token expired" }, 401);
-    }
-    if (error instanceof TokenInvalidError) {
-      return c.json({ error: "Invalid token" }, 401);
-    }
-    throw error;
-  }
-});
-```
+### Why a Facade?
 
-## Configuration Examples
+- Prevents leaking domain internals
+- Enables future refactors
+- Simplifies onboarding
 
-### Basic Setup
+### Why Policies?
 
-```ts
-authSetup({
-  secret: process.env.JWT_SECRET!,
-});
-```
+- Business rules change
+- Auth requirements differ per environment
+- Policies must be replaceable
 
-### Advanced Configuration
+### Why No Defaults?
 
-```ts
-authSetup({
-  secret: process.env.JWT_SECRET!,
-  lifetime: 3600, // 1 hour
-  issuer: "my-app",
-  audience: "my-app-users",
-  algorithm: "HS256",
-  maxRefreshWindow: 86400 * 7, // 7 days
-  minRefreshWindow: 300, // 5 minutes
-  header: {
-    name: "authorization",
-    prefix: "Bearer ",
-  },
-  cookie: {
-    name: "auth-session",
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    maxAge: 3600,
-  },
-});
-```
+- Security-sensitive domain
+- Explicit is safer than implicit
 
-### Two-Factor Authentication
+---
 
-```ts
-// During 2FA verification
-const token = await c.auth.signToken(user, {
-  verified: Date.now(), // Mark as 2FA verified
-});
-```
+## Intended Extensions
 
-## Development & Tests
+This module is meant to be extended by:
 
-Run the package tests (from repository root):
+- `@comity/auth-jose`
+- `@comity/auth-oidc`
+- `@comity/auth-webauthn`
+- custom application policies
 
-```bash
-pnpm -w -F @comity/auth test
-```
+---
 
-Run the full monorepo test suite:
+## Summary
 
-```bash
-pnpm -w test
-```
+`@comity/auth` is:
 
-Linting and type checks are provided at the workspace level; run your usual tooling as needed.
+- a **domain kernel**
+- policy-driven
+- event-first
+- minimal but extensible
 
-## License
-
-See the package `LICENSE` in the repository root.
+It provides strong guarantees while remaining flexible enough
+to support real-world authentication systems.

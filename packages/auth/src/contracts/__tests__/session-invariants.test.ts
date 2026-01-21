@@ -13,7 +13,8 @@ describe("checkSessionInvariants", () => {
       evaluatedAt: 1000,
       version: 1,
     },
-    transport: "web",
+    transport: { type: "web" },
+    verifiedAt: 1000,
   };
 
   describe("session id validation", () => {
@@ -442,7 +443,7 @@ describe("checkSessionInvariants", () => {
   });
 
   describe("transport validation", () => {
-    it("should fail when transport is not a string", () => {
+    it("should fail when transport is not an object", () => {
       const session = { ...validSession, transport: 123 as any };
       const result = checkSessionInvariants(session, 2000);
 
@@ -455,8 +456,21 @@ describe("checkSessionInvariants", () => {
       }
     });
 
-    it("should fail when transport is empty string", () => {
-      const session = { ...validSession, transport: "" };
+    it("should fail when transport type is not a string", () => {
+      const session = { ...validSession, transport: { type: 123 as any } };
+      const result = checkSessionInvariants(session, 2000);
+
+      expect(result.ok).toBe(false);
+
+      if (!result.ok) {
+        expect(result.error.meta["reason"]).toBe(
+          AUTH_SESSION_INVARIANT_REASONS.SESSION_TRANSPORT_INVALID
+        );
+      }
+    });
+
+    it("should fail when transport type is empty string", () => {
+      const session = { ...validSession, transport: { type: "" } };
       const result = checkSessionInvariants(session, 2000);
 
       expect(result.ok).toBe(false);

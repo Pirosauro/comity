@@ -4,22 +4,20 @@ import type { AuthSession } from "../../contracts/session.js";
 import { AssuranceRequiredError } from "../../errors/assurance-required.js";
 
 /**
- * Freshness assurance policy.
+ * Assurance policy that enforces a maximum age requirement.
  */
 export class FreshnessAssurancePolicy implements AuthSessionAssurancePolicy {
   /** Maximum allowed age in milliseconds */
   #age: number;
 
   /**
-   * @param age The maximum allowed age in milliseconds
+   * @param age - Maximum allowed age in milliseconds
    */
   constructor(age: number) {
     this.#age = age;
   }
 
-  /**
-   * @inheritdoc
-   */
+  /** @inheritdoc */
   assert(session: AuthSession, now: number) {
     const age = now - session.assurance.evaluatedAt;
 

@@ -1,13 +1,18 @@
 /**
+ * Identity unique identifier
+ */
+export type IdentityId = string;
+
+/**
  * Identity contract
  */
 export interface Identity {
   /** Identity unique identifier */
-  id: string;
+  readonly id: IdentityId;
 
   /** Identity roles */
-  roles: readonly string[];
+  readonly roles: readonly string[];
 
   /** Optional claims */
-  claims?: Record<string, unknown>;
+  readonly claims?: Readonly<Record<string, unknown>>;
 }

@@ -4,22 +4,20 @@ import type { AuthSession } from "../../contracts/session.js";
 import { AssuranceRequiredError } from "../../errors/assurance-required.js";
 
 /**
- * Score assurance policy.
+ * Assurance policy that enforces a minimum score requirement.
  */
 export class ScoreAssurancePolicy implements AuthSessionAssurancePolicy {
   /** Minimum required assurance score */
   #score: number;
 
   /**
-   * @param score The minimum required score
+   * @param score - Minimum required score
    */
   constructor(score: number) {
     this.#score = score;
   }
 
-  /**
-   * @inheritdoc
-   */
+  /** @inheritdoc */
   assert(session: AuthSession) {
     const assurance = session.assurance;
 

@@ -11,73 +11,110 @@ import { AssuranceRequiredError } from "../errors/assurance-required.js";
 import { SessionRefreshExpiredError } from "../errors/session-refresh-expired.js";
 import { SessionRevokedError } from "../errors/session-revoked.js";
 
+/** Event emitter combining evaluation and refresh emitters. */
+interface AuthGuardEmitter extends AuthEvaluationEmitter, AuthRefreshEvaluationEmitter {}
+
 /**
- * AuthGuard policies
+ * Configuration of policies used by `AuthGuard`.
  */
-export interface AuthGuardPolicies {
+export interface AuthGuardOptions {
   /** Session assurance policy */
-  assurance: AuthSessionAssurancePolicy;
+  assurance?: AuthSessionAssurancePolicy;
 
   /** Session revocation policy */
-  revocation: AuthSessionRevocationPolicy;
+  revocation?: AuthSessionRevocationPolicy;
 
   /** Session refresh policy */
-  refresh?: AuthSessionRefreshPolicy | undefined;
+  refresh?: AuthSessionRefreshPolicy;
+
+  /** Event emitter */
+  emitter?: AuthGuardEmitter;
 }
 
 /**
- * AuthGuard
+ * Orchestrates session verification using configured policies.
  *
- * Orchestrates session verification:
- * - invariants
- * - revocation
- * - assurance
- *
- * Pure domain service.
+ * Coordinates invariant checks, revocation checks and assurance policies
+ * and emits evaluation events.
  */
 export class AuthGuard {
   /** Session revocation policy */
-  #revocation: AuthSessionRevocationPolicy;
+  #revocation: AuthSessionRevocationPolicy | undefined;
 
   /** Session assurance policy */
-  #assurance: AuthSessionAssurancePolicy;
+  #assurance: AuthSessionAssurancePolicy | undefined;
 
   /** Session refresh policy */
-  #refresh?: AuthSessionRefreshPolicy | undefined;
+  #refresh: AuthSessionRefreshPolicy | undefined;
 
   /** Event emitter */
-  #events: AuthEvaluationEmitter & AuthRefreshEvaluationEmitter;
+  #emitter: AuthGuardEmitter | undefined;
 
   /**
-   * @param policies The policies to apply
-   * @param events Event emitter
+   * @param options - Policies and emitters used by the guard
    */
-  constructor(
-    policies: AuthGuardPolicies,
-    events: AuthEvaluationEmitter & AuthRefreshEvaluationEmitter
-  ) {
-    this.#assurance = policies.assurance;
-    this.#revocation = policies.revocation;
-    this.#refresh = policies.refresh;
-    this.#events = events;
+  constructor(options: AuthGuardOptions) {
+    this.#assurance = options.assurance;
+    this.#revocation = options.revocation;
+    this.#refresh = options.refresh;
+    this.#emitter = options.emitter;
   }
 
   /**
-   * Verifies a session
+   * Verifies that a session meets structural and policy requirements.
    *
-   * @param session The authenticated session
-   * @param context The assurance context
-   * @param now The current timestamp
-   * @throws SessionRevokedError
-   * @throws AssuranceRequiredError
+   * @param session - Authenticated session to verify
+   * @param now - Current timestamp in milliseconds
+   * @param refresh - Whether to validate refresh eligibility
+   * @throws {InvalidSessionError} - If the session violates structural invariants
+   * @throws {SessionRevokedError} - If the session is revoked by policy
+   * @throws {AssuranceRequiredError} - If the session does not meet assurance policy
    */
-  assert(session: AuthSession, now: number): void {
+  assert(session: AuthSession, now: number, refresh: boolean = false): void {
     // 1. Structural invariants
+    this.assertInvariants(session, now);
+
+    /* 2. Revocation */
+    this.assertRevocation(session, now);
+
+    // 3. Assurance
+    this.assertAssurance(session, now);
+
+    // 4. Emit event
+    this.#emitter?.sessionValidated({
+      sessionId: session.id,
+      assuranceScore: session.assurance.score,
+      createdAt: session.createdAt,
+      ...(session.verifiedAt ? { verifiedAt: session.verifiedAt } : {}),
+      ...(session.expiresAt ? { expiresAt: session.expiresAt } : {}),
+      ...(session.scopes ? { scopes: session.scopes } : {}),
+    });
+
+    // 5. Refresh (if applicable)
+    if (refresh && this.#refresh) {
+      this.assertRefreshable(session, now);
+
+      // Emit event
+      this.#emitter?.refreshValidated({
+        sessionId: session.id,
+        at: now,
+      });
+    }
+  }
+
+  /**
+   * Validates session structural invariants and throws on failure.
+   *
+   * @param session - Session to validate
+   * @param now - Current timestamp in milliseconds
+   * @throws {InvalidSessionError} - If the session violates domain invariants
+   */
+  assertInvariants(session: AuthSession, now: number): void {
     const invariant = checkSessionInvariants(session, now);
 
     if (!invariant.ok) {
       // Emit event
-      this.#events.sessionInvalid({
+      this.#emitter?.sessionInvalid({
         sessionId: session.id,
         at: now,
         reason: invariant.error.meta["reason"] as string,
@@ -85,26 +122,21 @@ export class AuthGuard {
 
       throw invariant.error;
     }
+  }
 
-    /* 2. Revocation */
+  /**
+   * Ensures session meets the configured assurance policy.
+   *
+   * @param session - Session under evaluation
+   * @param now - Current timestamp in milliseconds
+   * @throws {AssuranceRequiredError} - If assurance policy rejects the session
+   */
+  assertAssurance(session: AuthSession, now: number): void {
     try {
-      this.#revocation.assert(session, now);
+      this.#assurance?.assert(session, now);
     } catch (error) {
       // Emit event
-      this.#events.sessionInvalid({
-        sessionId: session.id,
-        at: now,
-        ...(error instanceof SessionRevokedError ? { reason: error.meta["reason"] as string } : {}),
-      });
-
-      throw error;
-    }
-    // 3. Assurance
-    try {
-      this.#assurance.assert(session, now);
-    } catch (error) {
-      // Emit event
-      this.#events.sessionRejected({
+      this.#emitter?.assuranceRejected({
         sessionId: session.id,
         ...(error instanceof AssuranceRequiredError
           ? { reason: error.meta["reason"] as string, policy: error.meta["policy"] as string }
@@ -113,48 +145,51 @@ export class AuthGuard {
 
       throw error;
     }
-
-    // 4. Emit event
-    this.#events.sessionValidated({
-      sessionId: session.id,
-      assuranceScore: session.assurance.score,
-      createdAt: session.createdAt,
-      ...(session.verifiedAt ? { verifiedAt: session.verifiedAt } : {}),
-      ...(session.expiresAt ? { expiresAt: session.expiresAt } : {}),
-      ...(session.scopes ? { scopes: session.scopes } : {}),
-    });
   }
 
   /**
-   * Verifies that a session is refreshable
+   * Applies the revocation policy and throws if the session is revoked.
    *
-   * @param session The authenticated session
-   * @param now The current timestamp
-   * @throws SessionRevokedError
-   * @throws AssuranceRequiredError
-   * @throws SessionRefreshDisabledError
-   * @throws SessionRefreshExpiredError
-   * @throws SessionRefreshNotAllowedError
+   * @param session - Session to check for revocation
+   * @param now - Current timestamp in milliseconds
+   * @throws {SessionRevokedError} - If the session is revoked by policy
+   */
+  assertRevocation(session: AuthSession, now: number): void {
+    try {
+      this.#revocation?.assert(session, now);
+    } catch (error) {
+      // Emit event
+      this.#emitter?.sessionInvalid({
+        sessionId: session.id,
+        at: now,
+        ...(error instanceof SessionRevokedError ? { reason: error.meta["reason"] as string } : {}),
+      });
+
+      throw error;
+    }
+  }
+
+  /**
+   * Verifies that a session is eligible for refresh according to the refresh policy.
+   *
+   * @param session - Authenticated session
+   * @param now - Current timestamp in milliseconds
+   * @throws {SessionRefreshExpiredError} - If the refresh window has expired
+   * @throws {SessionRefreshNotAllowedError} - If refresh is not allowed for the session
    */
   assertRefreshable(session: AuthSession, now: number): void {
-    this.assert(session, now);
-
-    if (!this.#refresh) {
-      return;
-    }
-
     try {
-      this.#refresh.assert(session, now);
+      this.#refresh?.assert(session, now);
     } catch (error) {
       if (error instanceof SessionRefreshExpiredError) {
         // Emit event
-        this.#events.refreshRejected({
+        this.#emitter?.refreshRejected({
           sessionId: session.id,
           at: session.refresh?.expiresAt ?? now,
           reason: "refresh_expired",
         });
       } else if (error instanceof BaseError) {
-        this.#events.refreshRejected({
+        this.#emitter?.refreshRejected({
           sessionId: session.id,
           at: session.refresh?.expiresAt ?? now,
           reason: error.meta["reason"] as string,
@@ -163,11 +198,5 @@ export class AuthGuard {
 
       throw error;
     }
-
-    // Emit event
-    this.#events.refreshValidated({
-      sessionId: session.id,
-      at: now,
-    });
   }
 }

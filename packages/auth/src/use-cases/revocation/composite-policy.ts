@@ -2,23 +2,22 @@ import type { AuthSessionRevocationPolicy } from "../../contracts/session-revoca
 import type { AuthSession } from "../../contracts/session.js";
 
 /**
- * Combines multiple revocation policies.
+ * Combines multiple revocation policies with OR logic.
+ *
  * Any policy may revoke the session.
  */
 export class CompositeRevocationPolicy implements AuthSessionRevocationPolicy {
-  /** The list of revocation policies to combine */
+  /** Collection of revocation policies to combine */
   #policies: AuthSessionRevocationPolicy[];
 
   /**
-   * @param policies Session revocation policies to combine
+   * @param policies - Session revocation policies to combine
    */
   constructor(readonly policies: AuthSessionRevocationPolicy[]) {
     this.#policies = policies;
   }
 
-  /**
-   * @inheritdoc
-   */
+  /** @inheritdoc */
   assert(session: AuthSession, now: number) {
     // Evaluate each policy in sequence
     for (const policy of this.#policies) {

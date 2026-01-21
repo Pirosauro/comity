@@ -14,7 +14,8 @@ describe("ExpiredSessionRevocationPolicy", () => {
       evaluatedAt: 1000,
       version: 1,
     },
-    transport: "web",
+    transport: { type: "web" },
+    verifiedAt: 1000,
   };
 
   it("should pass when session is not expired (no explicit expiresAt)", () => {

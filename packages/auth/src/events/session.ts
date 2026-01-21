@@ -1,5 +1,5 @@
 /**
- * Interface for emitting authentication session events.
+ * Event emitter interface for session lifecycle events.
  */
 export interface AuthSessionEmitter {
   /** Emitted when a new session is created. */
@@ -16,40 +16,43 @@ export interface AuthSessionEmitter {
 
   /** Emitted when a session is revoked. */
   sessionRevoked(payload: {
-    /** Session identifier. */
+    /** Session identifier */
     sessionId: string;
 
-    /** Reason for revocation. */
+    /** Reason for revocation */
     reason: string;
 
-    /** Timestamp when the session was revoked. */
+    /** Timestamp when the session was revoked */
     revokedAt: number;
   }): void;
 
   /** Emitted when a session is refreshed. */
   sessionRefreshed(payload: {
-    /** Session identifier. */
+    /** Session identifier */
     sessionId: string;
 
-    /** Timestamp when the session was refreshed. */
+    /** Original session identifier */
+    originalId: string;
+
+    /** Timestamp when the session was refreshed */
     refreshedAt: number;
 
-    /** New expiration timestamp after refresh. */
-    newExpiresAt?: number;
+    /** New expiration timestamp after refresh */
+    expiresAt?: number;
   }): void;
 
   /** Emitted when a step-up authentication is completed. */
   stepUpCompleted(payload: {
-    /** Session identifier. */
+    /** Session identifier */
     sessionId: string;
 
-    /** Parent session identifier. */
-    parentSessionId: string;
+    /** Parent session identifier */
+    parentId: string;
 
-    /** New assurance score after step-up. */
-    newAssuranceScore: number;
+    /** New assurance score after step-up */
+    assuranceScore: number;
 
-    /** Timestamp when step-up was completed. */
+    /** Timestamp when step-up was completed */
     at: number;
   }): void;
 }

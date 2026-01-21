@@ -3,7 +3,7 @@ import type { ErrorMeta } from "@comity/core/errors";
 import { BaseError } from "@comity/core/errors";
 
 /**
- * Metadata for a SessionRevokedError
+ * Metadata for a SessionRevokedError.
  */
 export interface SessionRevokedErrorMeta extends ErrorMeta {
   /** Reason for the session revocation */
@@ -16,6 +16,9 @@ export interface SessionRevokedErrorMeta extends ErrorMeta {
 export class SessionRevokedError extends BaseError {
   readonly code = "auth:session_revoked";
 
+  /**
+   * @param meta - Optional error metadata
+   */
   constructor(meta?: SessionRevokedErrorMeta) {
     super("Session revoked", {
       httpStatus: 401,

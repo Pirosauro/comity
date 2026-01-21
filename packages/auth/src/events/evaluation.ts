@@ -1,49 +1,49 @@
 /**
- * Interface for emitting authentication events.
+ * Event emitter interface for authentication evaluation lifecycle.
  */
 export interface AuthEvaluationEmitter {
   /** Emitted when a session is successfully validated. */
   sessionValidated(payload: {
-    /** Session identifier  */
-    sessionId: string;
+    /** Session identifier */
+    readonly sessionId: string;
 
     /** Assurance score */
-    assuranceScore: number;
+    readonly assuranceScore: number;
 
     /** Creation timestamp */
-    createdAt: number;
+    readonly createdAt: number;
 
     /** Verification timestamp */
-    verifiedAt?: number;
+    readonly verifiedAt?: number;
 
     /** Expiration timestamp */
-    expiresAt?: number;
+    readonly expiresAt?: number;
 
     /** Scopes */
-    scopes?: string[];
+    readonly scopes?: readonly string[];
   }): void;
 
   /** Emitted when a session is determined to be invalid. */
   sessionInvalid(payload: {
-    /** Session identifier, if available. */
-    sessionId?: string;
+    /** Session identifier, if available */
+    readonly sessionId?: string;
 
-    /** Timestamp */
-    at: number;
+    /** Timestamp when invalidation was detected */
+    readonly at: number;
 
-    /** Reason for invalidation. */
-    reason?: string;
+    /** Reason for invalidation */
+    readonly reason?: string;
   }): void;
 
-  /** Emitted when session rejected. */
-  sessionRejected(payload: {
-    /** Session identifier. */
-    sessionId: string;
+  /** Emitted when a session is rejected due to assurance requirements. */
+  assuranceRejected(payload: {
+    /** Session identifier */
+    readonly sessionId: string;
 
-    /** Reason for the assurance requirement. */
-    reason?: string;
+    /** Reason for the assurance requirement */
+    readonly reason?: string;
 
-    /** The policy that required the assurance. */
-    policy?: string;
+    /** The policy that required the assurance */
+    readonly policy?: string;
   }): void;
 }

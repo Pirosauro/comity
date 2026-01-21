@@ -1,53 +1,52 @@
+import type { IdentityId } from "./identity.js";
+
 /**
- * Session assurance level.
- *
- * Higher values represent stronger authentication.
- * The scale is application-defined.
+ * Numeric score representing session assurance strength.
  */
 export type AuthSessionAssuranceScore = number;
 
 /**
- * Authentication context information.
+ * Authentication context information used to evaluate assurance.
  */
 export interface AuthSessionAssuranceContext {
   /** Identity identifier */
-  identityId?: string;
+  readonly identityId?: IdentityId;
 
   /** Identity provider identifier */
-  providerId?: string;
+  readonly providerId?: string;
 
   /** Optional user agent string */
-  userAgent?: string;
+  readonly userAgent?: string;
 
   /** Optional IP address */
-  ipAddress?: string;
+  readonly ipAddress?: string;
 
   /** Optional device identifier */
-  deviceId?: string;
+  readonly deviceId?: string;
 
   /** Optional channel ("web", "mobile", "cli", "api", ...) */
-  channel?: string;
+  readonly channel?: string;
 }
 
 /**
- * Information about how and when a given assurance level was obtained.
+ * Snapshot of how and when a given assurance level was obtained.
  */
-export interface AuthSessionAssurance {
+export interface AuthSessionAssurance<C extends Record<string, unknown> = {}> {
   /** Authentication methods used (invariant: non-empty array) */
-  methods: string[];
+  readonly methods: readonly string[];
 
   /** Optional external identity attestation */
-  proof?: string;
+  readonly proof?: string;
 
   /** Assurance score (invariant: >= 0, derived from policy) */
-  score: AuthSessionAssuranceScore;
+  readonly score: AuthSessionAssuranceScore;
 
   /** When assurance was evaluated (invariant: valid timestamp) */
-  evaluatedAt: number;
+  readonly evaluatedAt: number;
 
   /** Assurance version (invariant: non-negative integer) */
-  version: number;
+  readonly version: number;
 
   /** Contextual information (invariant: immutable) */
-  context?: AuthSessionAssuranceContext;
+  readonly context?: AuthSessionAssuranceContext & Readonly<C>;
 }

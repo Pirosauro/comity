@@ -1,50 +1,52 @@
 import type { AuthSessionAssurance } from "./session-assurance.js";
+import type { AuthSessionTransport } from "./session-transport.js";
 
-/** Session transport mechanisms */
+/** Identifier for an authenticated session. */
 export type AuthSessionId = string;
 
 /**
  * Authenticated session domain model.
  *
- * This model is protocol-agnostic (no JWT, cookies, HTTP).
+ * This model is protocol-agnostic and represents session state used by
+ * policy checks and event emitters.
  */
 export interface AuthSession {
   /** Session identifier (invariant: unique, immutable) */
-  id: AuthSessionId;
+  readonly id: AuthSessionId;
 
   /** Session creation time (invariant: valid timestamp, immutable) */
-  createdAt: number;
+  readonly createdAt: number;
 
   /** Hard expiration (invariant: > createdAt if present, immutable) */
-  expiresAt?: number;
+  readonly expiresAt?: number;
 
   /** Last strong authentication time (invariant: >= createdAt if present) */
-  verifiedAt?: number;
+  readonly verifiedAt: number;
 
   /** Authentication assurance snapshot (invariant: non-null, valid) */
-  assurance: AuthSessionAssurance;
+  readonly assurance: AuthSessionAssurance;
 
   /** Session transport mechanism (invariant: valid transport type) */
-  transport: string;
+  readonly transport: AuthSessionTransport;
 
   /** Refresh capabilities (invariant: immutable if present) */
-  refresh?: {
+  readonly refresh?: {
     /** Session can be refreshed (invariant: boolean) */
-    enabled: boolean;
+    readonly enabled: boolean;
 
     /** Hard refresh expiration (invariant: > createdAt if present) */
-    expiresAt?: number;
+    readonly expiresAt?: number;
   };
 
   /** Step-up metadata (invariant: immutable if present) */
-  stepUp?: {
+  readonly stepUp?: {
     /** Session resulted from step-up (invariant: references valid session) */
-    parent: AuthSessionId;
+    readonly parent: AuthSessionId;
 
     /** When step-up was completed (invariant: valid timestamp) */
-    at: number;
+    readonly at: number;
   };
 
   /** Authorization scopes (invariant: immutable array if present) */
-  scopes?: string[];
+  readonly scopes?: readonly string[];
 }

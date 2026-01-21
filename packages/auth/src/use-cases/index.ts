@@ -1,4 +1,5 @@
 export * from "./assurance/bound-policy.js";
+export * from "./assurance/composite-evaluator.js";
 export * from "./assurance/composite-policy.js";
 export * from "./assurance/freshness-policy.js";
 export * from "./assurance/score-policy.js";
@@ -13,4 +14,3 @@ export * from "./session-create.js";
 export * from "./session-refresh.js";
 export * from "./session-revoke.js";
 export * from "./session-step-up.js";
-

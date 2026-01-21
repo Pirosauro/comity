@@ -14,7 +14,8 @@ describe("MaxRefreshAgePolicy", () => {
       evaluatedAt: 1000,
       version: 1,
     },
-    transport: "web",
+    transport: { type: "bearer" },
+    verifiedAt: 1000,
   };
 
   it("should pass when session age is within limit", () => {

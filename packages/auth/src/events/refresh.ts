@@ -1,25 +1,25 @@
 /**
- * Interface for authentication refresh evaluation events.
+ * Event emitter interface for refresh evaluation events.
  */
 export interface AuthRefreshEvaluationEmitter {
   /** Emitted when a refresh token is validated. */
   refreshValidated(payload: {
-    /** Session identifier. */
+    /** Session identifier */
     sessionId: string;
 
-    /** Timestamp when validation occurred. */
+    /** Timestamp when validation occurred */
     at: number;
   }): void;
 
   /** Emitted when a refresh token is rejected. */
   refreshRejected(payload: {
-    /** Session identifier. */
+    /** Session identifier */
     sessionId: string;
 
-    /** Reason for rejection. */
+    /** Reason for rejection */
     reason: string;
 
-    /** Timestamp when rejection occurred. */
+    /** Timestamp when rejection occurred */
     at: number;
   }): void;
 }

@@ -29,7 +29,8 @@
   "scripts": {
     "build": "node ../../scripts/build.mjs",
     "prepublish": "node ../../scripts/build.mjs",
-    "dev": "node ../../scripts/build.mjs --watch"
+    "dev": "node ../../scripts/build.mjs --watch",
+    "test": "vitest run --coverage"
   },
   "files": [
     "./dist",
@@ -59,6 +60,16 @@
         "default": "./dist/cjs/errors/index.js"
       }
     },
+    "./events": {
+      "import": {
+        "types": "./dist/types/events/index.d.ts",
+        "default": "./dist/esm/events/index.js"
+      },
+      "require": {
+        "types": "./dist/types/events/index.d.ts",
+        "default": "./dist/cjs/events/index.js"
+      }
+    },
     "./setup": {
       "import": {
         "types": "./dist/types/setup.d.ts",
@@ -86,6 +97,9 @@
       "errors": [
         "./dist/types/errors/index.d.ts"
       ],
+      "events": [
+        "./dist/types/events/index.d.ts"
+      ],
       "setup": [
         "./dist/types/setup.d.ts"
       ],
@@ -100,7 +114,8 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@comity/core": "workspace:*"
+    "@comity/core": "workspace:*",
+    "@comity/kernel": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^24.10.9",

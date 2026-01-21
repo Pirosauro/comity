@@ -23,13 +23,13 @@ export interface AuthTokenInvalidErrorMeta extends ErrorMeta {
 }
 
 /**
- * Invalid authentication token error.
+ * Thrown when the authentication token is invalid.
  */
 export class AuthTokenInvalidError extends BaseError {
   readonly code = "auth:token_invalid";
 
   /**
-   * @param meta Optional error metadata
+   * @param meta - Optional error metadata
    */
   constructor(meta?: AuthTokenInvalidErrorMeta) {
     super("Invalid authentication token", { httpStatus: 401, ...meta });

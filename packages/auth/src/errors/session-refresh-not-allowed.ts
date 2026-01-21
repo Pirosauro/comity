@@ -3,7 +3,7 @@ import type { ErrorMeta } from "@comity/core/errors";
 import { BaseError } from "@comity/core/errors";
 
 /**
- * Metadata for a SessionRefreshNotAllowedError
+ * Metadata for a SessionRefreshNotAllowedError.
  */
 export interface SessionRefreshNotAllowedErrorMeta extends ErrorMeta {
   /** Reason why the session refresh is not allowed */
@@ -11,13 +11,13 @@ export interface SessionRefreshNotAllowedErrorMeta extends ErrorMeta {
 }
 
 /**
- * Thrown when the refresh of a session is not allowed.
+ * Thrown when the refresh of a session is not allowed by policy.
  */
 export class SessionRefreshNotAllowedError extends BaseError {
   readonly code = "auth:refresh_not_allowed";
 
   /**
-   * @param meta Error metadata
+   * @param meta - Optional error metadata
    */
   constructor(meta?: SessionRefreshNotAllowedErrorMeta) {
     super("Session refresh not allowed", {

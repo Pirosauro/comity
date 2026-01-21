@@ -1,3 +1,5 @@
+import type { AuthSession } from "../../contracts/session.js";
+
 import { BaseError } from "@comity/core/errors";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AssuranceRequiredError } from "../../errors/assurance-required.js";
@@ -14,7 +16,7 @@ describe("AuthGuard", () => {
   let events: {
     sessionValidated: ReturnType<typeof vi.fn>;
     sessionInvalid: ReturnType<typeof vi.fn>;
-    sessionRejected: ReturnType<typeof vi.fn>;
+    assuranceRejected: ReturnType<typeof vi.fn>;
     refreshValidated: ReturnType<typeof vi.fn>;
     refreshRejected: ReturnType<typeof vi.fn>;
   };
@@ -27,19 +29,24 @@ describe("AuthGuard", () => {
     events = {
       sessionValidated: vi.fn(),
       sessionInvalid: vi.fn(),
-      sessionRejected: vi.fn(),
+      assuranceRejected: vi.fn(),
       refreshValidated: vi.fn(),
       refreshRejected: vi.fn(),
     };
-    guard = new AuthGuard(
+    guard = new AuthGuard({
       // @ts-expect-error
-      { assurance: assurancePolicy, revocation: revocationPolicy, refresh: refreshPolicy },
-      events
-    );
+      assurance: assurancePolicy,
+      // @ts-expect-error
+      revocation: revocationPolicy,
+      // @ts-expect-error
+      refresh: refreshPolicy,
+      // @ts-expect-error
+      emitter: events,
+    });
   });
 
   describe("assert", () => {
-    const validSession = {
+    const validSession: AuthSession = {
       id: "session1",
       createdAt: 1000,
       assurance: {
@@ -48,8 +55,9 @@ describe("AuthGuard", () => {
         evaluatedAt: 1000,
         version: 1,
       },
-      transport: "web",
+      transport: { type: "bearer" },
       refresh: { enabled: true },
+      verifiedAt: 1000,
     };
 
     it("should validate a valid session", () => {
@@ -61,6 +69,7 @@ describe("AuthGuard", () => {
         sessionId: "session1",
         assuranceScore: 1,
         createdAt: 1000,
+        verifiedAt: 1000,
       });
     });
 
@@ -94,7 +103,7 @@ describe("AuthGuard", () => {
       });
 
       expect(() => guard.assert(validSession, 2000)).toThrow(AssuranceRequiredError);
-      expect(events.sessionRejected).toHaveBeenCalledWith({
+      expect(events.assuranceRejected).toHaveBeenCalledWith({
         sessionId: "session1",
         reason: "step_up",
         policy: "freshness",
@@ -104,7 +113,7 @@ describe("AuthGuard", () => {
     it("should emit sessionValidated with all optional fields", () => {
       const sessionWithOptionals = {
         ...validSession,
-        verifiedAt: 1500,
+        verifiedAt: 1000,
         expiresAt: 5000,
         scopes: ["read", "write"],
       };
@@ -115,9 +124,41 @@ describe("AuthGuard", () => {
         sessionId: "session1",
         assuranceScore: 1,
         createdAt: 1000,
-        verifiedAt: 1500,
+        verifiedAt: 1000,
         expiresAt: 5000,
         scopes: ["read", "write"],
+      });
+    });
+
+    it("should emit sessionValidated without optional fields", () => {
+      const sessionMinimal: AuthSession = {
+        id: "session1",
+        createdAt: 1000,
+        assurance: {
+          methods: ["password"],
+          score: 1,
+          evaluatedAt: 1000,
+          version: 1,
+        },
+        transport: { type: "bearer" },
+        verifiedAt: 1000,
+      };
+
+      guard.assert(sessionMinimal, 2000);
+
+      expect(events.sessionValidated).toHaveBeenCalledWith({
+        sessionId: "session1",
+        assuranceScore: 1,
+        createdAt: 1000,
+      });
+    });
+
+    it("should emit refreshValidated when refresh is requested", () => {
+      guard.assert(validSession, 2000, true);
+
+      expect(events.refreshValidated).toHaveBeenCalledWith({
+        sessionId: "session1",
+        at: 2000,
       });
     });
 
@@ -139,14 +180,14 @@ describe("AuthGuard", () => {
       });
 
       expect(() => guard.assert(validSession, 2000)).toThrow(Error);
-      expect(events.sessionRejected).toHaveBeenCalledWith({
+      expect(events.assuranceRejected).toHaveBeenCalledWith({
         sessionId: "session1",
       });
     });
   });
 
   describe("assertRefreshable", () => {
-    const validSession = {
+    const validSession: AuthSession = {
       id: "session1",
       createdAt: 1000,
       assurance: {
@@ -155,18 +196,23 @@ describe("AuthGuard", () => {
         evaluatedAt: 1000,
         version: 1,
       },
-      transport: "web",
+      transport: { type: "bearer" },
       refresh: { enabled: true },
+      verifiedAt: 1000,
     };
 
     it("should validate refreshable session without refresh policy", () => {
-      const guardNoRefresh = new AuthGuard(
+      const guardNoRefresh = new AuthGuard({
         // @ts-expect-error
-        { assurance: assurancePolicy, revocation: revocationPolicy },
-        events
-      );
+        assurance: assurancePolicy,
+        // @ts-expect-error
+        revocation: revocationPolicy,
+        // @ts-expect-error
+        emitter: events,
+      });
 
       guardNoRefresh.assertRefreshable(validSession, 2000);
+
       expect(events.refreshValidated).not.toHaveBeenCalled();
     });
 
@@ -174,10 +220,7 @@ describe("AuthGuard", () => {
       guard.assertRefreshable(validSession, 2000);
 
       expect(refreshPolicy.assert).toHaveBeenCalledWith(validSession, 2000);
-      expect(events.refreshValidated).toHaveBeenCalledWith({
-        sessionId: "session1",
-        at: 2000,
-      });
+      expect(events.refreshValidated).not.toHaveBeenCalled();
     });
 
     it("should throw for refresh expired", () => {
@@ -234,21 +277,22 @@ describe("AuthGuard", () => {
       });
     });
 
-    it("should rethrow non-BaseError errors", () => {
+    it("should rethrow non-BaseError errors without emitting event", () => {
       refreshPolicy.assert.mockImplementation(() => {
         throw new Error("Generic error");
       });
 
       expect(() => guard.assertRefreshable(validSession, 2000)).toThrow(Error);
+      expect(events.refreshRejected).not.toHaveBeenCalled();
     });
 
-    it("should call assert before checking refresh policy", () => {
-      revocationPolicy.assert.mockImplementation(() => {
-        throw new SessionRevokedError({ reason: "revoked" });
-      });
+    it("should not call other policies before checking refresh", () => {
+      // assertRefreshable only checks refresh policy, not other policies
+      guard.assertRefreshable(validSession, 2000);
 
-      expect(() => guard.assertRefreshable(validSession, 2000)).toThrow(SessionRevokedError);
-      expect(refreshPolicy.assert).not.toHaveBeenCalled();
+      expect(refreshPolicy.assert).toHaveBeenCalledWith(validSession, 2000);
+      expect(revocationPolicy.assert).not.toHaveBeenCalled();
+      expect(assurancePolicy.assert).not.toHaveBeenCalled();
     });
   });
 });

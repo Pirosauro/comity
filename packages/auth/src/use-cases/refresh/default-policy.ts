@@ -5,16 +5,14 @@ import { SessionRefreshExpiredError } from "../../errors/session-refresh-expired
 import { SessionRefreshNotAllowedError } from "../../errors/session-refresh-not-allowed.js";
 
 /**
- * Default refresh policy.
+ * Default refresh policy with standard validation rules.
  *
  * Rules:
- * - refresh must be enabled
- * - refresh expiration (if present) must not be exceeded
+ * - Refresh must be enabled
+ * - Refresh expiration (if present) must not be exceeded
  */
 export class DefaultRefreshPolicy implements AuthSessionRefreshPolicy {
-  /**
-   * @inheritdoc
-   */
+  /** @inheritdoc */
   assert(session: AuthSession, now: number): void {
     const refresh = session.refresh;
 

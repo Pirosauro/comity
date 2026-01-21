@@ -3,13 +3,13 @@ import type { ErrorMeta } from "@comity/core/errors";
 import { BaseError } from "@comity/core/errors";
 
 /**
- * Metadata for an AssuranceRequiredError
+ * Metadata for an AssuranceRequiredError.
  */
 export interface AssuranceRequiredErrorMeta extends ErrorMeta {
   /** Reason for the assurance requirement */
   reason: string;
 
-  /** The policy that required the assurance */
+  /** Policy that required the assurance */
   policy: string;
 }
 
@@ -19,6 +19,9 @@ export interface AssuranceRequiredErrorMeta extends ErrorMeta {
 export class AssuranceRequiredError extends BaseError {
   readonly code = "auth:assurance_required";
 
+  /**
+   * @param meta - Optional metadata describing the assurance requirement
+   */
   constructor(meta?: AssuranceRequiredErrorMeta) {
     super("Higher assurance required", {
       httpStatus: 403,

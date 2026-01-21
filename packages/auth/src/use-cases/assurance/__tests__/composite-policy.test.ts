@@ -15,7 +15,7 @@ describe("CompositeAssurancePolicy", () => {
       evaluatedAt: 1000,
       version: 1,
     },
-    transport: "web",
+    transport: { type: "web" },
   };
 
   it("should pass when all policies pass", () => {

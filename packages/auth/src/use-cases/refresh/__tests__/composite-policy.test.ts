@@ -15,11 +15,12 @@ describe("CompositeRefreshPolicy", () => {
       evaluatedAt: 1000,
       version: 1,
     },
-    transport: "web",
+    transport: { type: "bearer" },
     refresh: {
       enabled: true,
       expiresAt: 5000,
     },
+    verifiedAt: 1000,
   };
 
   it("should pass when all policies pass", () => {

@@ -15,8 +15,9 @@ describe("CompositeRevocationPolicy", () => {
       evaluatedAt: 1000,
       version: 2,
     },
-    transport: "web",
+    transport: { type: "web" },
     expiresAt: 5000,
+    verifiedAt: 1000,
   };
 
   it("should pass when all policies pass", () => {

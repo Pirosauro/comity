@@ -14,7 +14,8 @@ describe("VersionMismatchRevocationPolicy", () => {
       evaluatedAt: 1000,
       version: 5,
     },
-    transport: "web",
+    transport: { type: "web" },
+    verifiedAt: 1000,
   };
 
   it("should pass when version matches", () => {

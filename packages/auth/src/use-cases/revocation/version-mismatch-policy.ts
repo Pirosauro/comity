@@ -4,19 +4,20 @@ import type { AuthSession } from "../../contracts/session.js";
 import { SessionRevokedError } from "../../errors/session-revoked.js";
 
 /**
- * Revokes sessions when their version is older than the current identity version.
+ * Revocation policy that revokes sessions with outdated version numbers.
  */
 export class VersionMismatchRevocationPolicy implements AuthSessionRevocationPolicy {
-  /** Version */
+  /** Current expected version */
   #version: number;
 
+  /**
+   * @param version - Expected minimum version
+   */
   constructor(version: number) {
     this.#version = version;
   }
 
-  /**
-   * @inheritdoc
-   */
+  /** @inheritdoc */
   assert(session: AuthSession, now: number): void {
     const version = session.assurance.version;
 

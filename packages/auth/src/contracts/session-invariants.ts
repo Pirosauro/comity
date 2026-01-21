@@ -34,10 +34,10 @@ export type AuthSessionInvariantReason =
   (typeof AUTH_SESSION_INVARIANT_REASONS)[keyof typeof AUTH_SESSION_INVARIANT_REASONS];
 
 /**
- * Creates a ResultFailure representing an invalid session.
+ * Creates a failure `Result` representing an invalid session.
  *
- * @param reason The reason for the invalid session
- * @returns A ResultFailure with an InvalidSessiondError
+ * @param reason - The reason for the invalid session
+ * @returns A `ResultFailure` containing an `InvalidSessionError`
  */
 function invalid(
   reason: AuthSessionInvariantReason
@@ -46,11 +46,11 @@ function invalid(
 }
 
 /**
- * Checks AuthSession structural invariants.
+ * Validates `AuthSession` structural invariants.
  *
- * @param session The session to validate
- * @param now The current timestamp in milliseconds
- * @returns A Result indicating whether the session is valid or not
+ * @param session - The session to validate
+ * @param now - The current timestamp in milliseconds
+ * @returns A `Result` indicating whether the session is valid or a failure
  */
 export function checkSessionInvariants(
   session: AuthSession,
@@ -119,7 +119,11 @@ export function checkSessionInvariants(
   }
 
   // Session transport validity
-  if (typeof session.transport !== "string" || session.transport.length === 0) {
+  if (
+    typeof session.transport !== "object" ||
+    typeof session.transport.type !== "string" ||
+    session.transport.type.length === 0
+  ) {
     return invalid(AUTH_SESSION_INVARIANT_REASONS.SESSION_TRANSPORT_INVALID);
   }
 

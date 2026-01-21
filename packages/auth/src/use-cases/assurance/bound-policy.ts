@@ -5,27 +5,22 @@ import type { AuthSession } from "../../contracts/session.js";
 import { AssuranceRequiredError } from "../../errors/assurance-required.js";
 
 /**
- * Options for context-bound assurance policy
- */
-export interface ContextBoundOptions extends AuthSessionAssuranceContext {}
-
-/**
- * Bound assurance policy.
+ * Assurance policy that enforces context bounds.
+ *
+ * Validates that session assurance context matches required bounds.
  */
 export class BoundAssurancePolicy implements AuthSessionAssurancePolicy {
   /** Context bounds that must match the session assurance context */
-  #bounds: ContextBoundOptions;
+  #bounds: AuthSessionAssuranceContext;
 
   /**
-   * @param bounds The required bounds
+   * @param bounds - Required bounds
    */
-  constructor(bounds: ContextBoundOptions) {
+  constructor(bounds: AuthSessionAssuranceContext) {
     this.#bounds = bounds;
   }
 
-  /**
-   * @inheritdoc
-   */
+  /** @inheritdoc */
   assert(session: AuthSession, now: number): void {
     const context = session.assurance.context || {};
 
