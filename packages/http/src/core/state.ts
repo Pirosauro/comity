@@ -40,12 +40,25 @@ export function createHttpState(): HttpState {
   const store = new Map<string, unknown>();
 
   return {
+    /**
+     *
+     * @param key
+     */
     get<T = unknown>(key: string): T | undefined {
       return store.get(key) as T | undefined;
     },
+    /**
+     *
+     * @param key
+     * @param value
+     */
     set<T = unknown>(key: string, value: T): void {
       store.set(key, value);
     },
+    /**
+     *
+     * @param key
+     */
     has(key: string): boolean {
       return store.has(key);
     },
