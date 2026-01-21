@@ -46,87 +46,12 @@
         "default": "./dist/cjs/index.js"
       }
     },
-    "./adapters/hono": {
-      "import": {
-        "types": "./dist/types/adapters/hono/index.d.ts",
-        "default": "./dist/esm/adapters/hono/index.js"
-      },
-      "require": {
-        "types": "./dist/types/adapters/hono/index.d.ts",
-        "default": "./dist/cjs/adapters/hono/index.js"
-      }
-    },
-    "./renderers": {
-      "import": {
-        "types": "./dist/types/renderers/index.d.ts",
-        "default": "./dist/esm/renderers/index.js"
-      },
-      "require": {
-        "types": "./dist/types/renderers/index.d.ts",
-        "default": "./dist/cjs/renderers/index.js"
-      }
-    },
-    "./renderers/react": {
-      "node": {
-        "import": {
-          "types": "./dist/types/renderers/react/node.d.ts",
-          "default": "./dist/esm/renderers/react/node.js"
-        },
-        "require": {
-          "types": "./dist/types/renderers/react/node.d.ts",
-          "default": "./dist/cjs/renderers/react/node.js"
-        }
-      },
-      "default": {
-        "import": {
-          "types": "./dist/types/renderers/react/index.d.ts",
-          "default": "./dist/esm/renderers/react/index.js"
-        },
-        "require": {
-          "types": "./dist/types/renderers/react/index.d.ts",
-          "default": "./dist/cjs/renderers/react/index.js"
-        }
-      }
-    },
-    "./response": {
-      "import": {
-        "types": "./dist/types/response/index.d.ts",
-        "default": "./dist/esm/response/index.js"
-      },
-      "require": {
-        "types": "./dist/types/response/index.d.ts",
-        "default": "./dist/cjs/response/index.js"
-      }
-    },
-    "./setup": {
-      "import": {
-        "types": "./dist/types/setup/index.d.ts",
-        "default": "./dist/esm/setup/index.js"
-      },
-      "require": {
-        "types": "./dist/types/setup/index.d.ts",
-        "default": "./dist/cjs/setup/index.js"
-      }
-    },
     "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
-      "adapters/hono": [
-        "./dist/types/adapters/hono/index.d.ts"
-      ],
-      "renderers": [
-        "./dist/types/renderers/index.d.ts"
-      ],
-      "renderers/react": [
-        "./dist/types/renderers/react/index.d.ts",
-        "./dist/types/renderers/react/node.d.ts"
-      ],
-      "response": [
-        "./dist/types/response/index.d.ts"
-      ],
-      "setup": [
-        "./dist/types/setup/index.d.ts"
+      "*": [
+        "./dist/types/index.d.ts"
       ]
     }
   },
