@@ -1,6 +1,5 @@
-import type { DiContainer } from "@comity/core/di";
-import type { EventBus } from "@comity/core/events";
-import type { HookBus } from "@comity/core/hooks";
+import type { DiContainer } from "@comity/primitives/di";
+import type { EventBus, HookBus } from "@comity/primitives/lifecycle";
 
 /**
  * Token type
@@ -9,11 +8,6 @@ export type Token<T extends string> = symbol & {
   /** Token type string */
   __type?: T;
 };
-
-/**
- * Kernel state type
- */
-export type KernelState = "open" | "sealed" | "running" | "stopped";
 
 /**
  * Module setup context type

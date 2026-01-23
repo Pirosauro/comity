@@ -1,15 +1,15 @@
-import type { DiContainer } from "@comity/core/di";
-import type { EventBus } from "@comity/core/events";
-import type { HookBus } from "@comity/core/hooks";
+import type { DiContainer } from "@comity/primitives/di";
+import type { EventBus, HookBus } from "@comity/primitives/lifecycle";
+import type { KernelEvents } from "./lifecycle/events.js";
 import type { ModuleSetupContext } from "./types.js";
 
 import { KernelInvalidStateError } from "./errors/kernel-invalid-state.js";
 import { Lifecycle } from "./lifecycle.js";
 
 /**
- * Kernel configuration options
+ * Kernel context
  */
-export type KernelConfig<
+export type KernelContext<
   Services extends { [K in keyof Services]: unknown },
   Events extends { [K in keyof Events]: unknown },
   Hooks extends { [K in keyof Hooks]: unknown },
@@ -35,105 +35,118 @@ export class Kernel<
   /** Service container */
   #services: {
     /**  */
-    define: DiContainer<Services>["define"]
+    define: DiContainer<Services>["define"];
 
     /**  */
-    resolve: DiContainer<Services>["resolve"]
+    resolve: DiContainer<Services>["resolve"];
   };
 
   /** Event bus */
   #events: {
     /**  */
-    subscribe: EventBus<Events>["subscribe"]
+    subscribe: EventBus<Events>["subscribe"];
 
     /**  */
-    emit: EventBus<Events>["emit"]
+    emit: EventBus<Events>["emit"];
   };
 
   /** Hook bus */
   #hooks: {
     /**  */
-    define: HookBus<Hooks>["define"]
+    define: HookBus<Hooks>["define"];
 
     /**  */
-    execute: HookBus<Hooks>["execute"]
+    execute: HookBus<Hooks>["execute"];
   };
 
   /** Lifecycle manager */
   #lifecycle = new Lifecycle();
 
+  /** Kernel events */
+  #emitter: KernelEvents | undefined;
+
   /**
-   * @param config Kernel configuration options
+   * @param context Kernel context
+   * @param emitter Kernel events emitter
    */
-  constructor(config: KernelConfig<Services, Events, Hooks>) {
+  constructor(context: KernelContext<Services, Events, Hooks>, emitter?: KernelEvents) {
     // Services
     this.#services = {
       /**
-       * @param {...Parameters<typeof config.services.define>} args DiContainer.define parameters
+       * @param {...Parameters<typeof context.services.define>} args DiContainer.define parameters
        * @returns DiContainer.define return value
        */
-      define: <K extends keyof Services>(...args: Parameters<typeof config.services.define<K>>) => {
+      define: <K extends keyof Services>(
+        ...args: Parameters<typeof context.services.define<K>>
+      ) => {
         this.assertNotSealed("service.define");
 
-        return config.services.define(...args);
+        return context.services.define(...args);
       },
 
       /**
-       * @param {...Parameters<typeof config.services.resolve>} args DiContainer.resolve parameters
+       * @param {...Parameters<typeof context.services.resolve>} args DiContainer.resolve parameters
        * @returns DiContainer.resolve return value
        */
-      resolve: <K extends keyof Services>(...args: Parameters<typeof config.services.resolve<K>>) => {
+      resolve: <K extends keyof Services>(
+        ...args: Parameters<typeof context.services.resolve<K>>
+      ) => {
         this.assertSealed("service.resolve");
 
-        return config.services.resolve(...args);
+        return context.services.resolve(...args);
       },
     };
 
     // Events
     this.#events = {
       /**
-       * @param {...Parameters<typeof config.events.subscribe>} args EventBus.subscribe parameters
+       * @param {...Parameters<typeof context.events.subscribe>} args EventBus.subscribe parameters
        * @returns EventBus.subscribe return value
        */
-      subscribe: <K extends keyof Events>(...args: Parameters<typeof config.events.subscribe<K>>) => {
+      subscribe: <K extends keyof Events>(
+        ...args: Parameters<typeof context.events.subscribe<K>>
+      ) => {
         this.assertNotSealed("event.subscribe");
 
-        return config.events.subscribe(...args);
+        return context.events.subscribe(...args);
       },
 
       /**
-       * @param {...Parameters<typeof config.events.emit>} args EventBus.emit parameters
+       * @param {...Parameters<typeof context.events.emit>} args EventBus.emit parameters
        * @returns EventBus.emit return value
        */
-      emit: <K extends keyof Events>(...args: Parameters<typeof config.events.emit<K>>) => {
+      emit: <K extends keyof Events>(...args: Parameters<typeof context.events.emit<K>>) => {
         this.assertSealed("event.emit");
 
-        return config.events.emit(...args);
+        return context.events.emit(...args);
       },
     };
 
     // Hooks
     this.#hooks = {
       /**
-       * @param {...Parameters<typeof config.hooks.define>} args HookBus.define parameters
+       * @param {...Parameters<typeof context.hooks.define>} args HookBus.define parameters
        * @returns HookBus.define return value
        */
-      define: <K extends keyof Hooks>(...args: Parameters<typeof config.hooks.define<K>>) => {
+      define: <K extends keyof Hooks>(...args: Parameters<typeof context.hooks.define<K>>) => {
         this.assertNotSealed("hook.define");
 
-        return config.hooks.define(...args);
+        return context.hooks.define(...args);
       },
 
       /**
-       * @param {...Parameters<typeof config.hooks.execute>} args HookBus.execute parameters
+       * @param {...Parameters<typeof context.hooks.execute>} args HookBus.execute parameters
        * @returns HookBus.execute return value
        */
-      execute: <K extends keyof Hooks>(...args: Parameters<typeof config.hooks.execute<K>>) => {
+      execute: <K extends keyof Hooks>(...args: Parameters<typeof context.hooks.execute<K>>) => {
         this.assertSealed("hook.execute");
 
-        return config.hooks.execute(...args);
+        return context.hooks.execute(...args);
       },
     };
+
+    // Events
+    this.#emitter = emitter;
   }
 
   /**
@@ -168,7 +181,46 @@ export class Kernel<
    * @returns Result of the lifecycle seal operation
    */
   seal(): ReturnType<Lifecycle["seal"]> {
-    return this.#lifecycle.seal();
+    const result = this.#lifecycle.seal();
+
+    // Notify kernel events
+    if (result.success && this.#emitter?.kernelSealed) {
+      this.#emitter.kernelSealed();
+    }
+
+    return result;
+  }
+
+  /**
+   * Start the kernel
+   *
+   * @returns Result of the lifecycle start operation
+   */
+  start() {
+    const result = this.#lifecycle.start();
+
+    // Notify kernel events
+    if (result.success && this.#emitter?.kernelStarted) {
+      this.#emitter.kernelStarted();
+    }
+
+    return result;
+  }
+
+  /**
+   * Stop the kernel
+   *
+   * @returns Result of the lifecycle stop operation
+   */
+  stop() {
+    const result = this.#lifecycle.stop();
+
+    // Notify kernel events
+    if (result.success && this.#emitter?.kernelStopped) {
+      this.#emitter.kernelStopped();
+    }
+
+    return result;
   }
 
   /**

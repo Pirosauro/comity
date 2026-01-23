@@ -1,4 +1,4 @@
-import { success } from "@comity/core/result";
+import { success } from "@comity/primitives/result";
 import { describe, expect, it, vi } from "vitest";
 import { ModuleResolutionError } from "../../errors/module-resolution.js";
 import { resolveModuleOrder } from "../resolver.js";
@@ -103,7 +103,7 @@ describe("resolveModuleOrder", () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error).toBeInstanceOf(ModuleResolutionError);
-      expect(result.error.meta.reason).toBe("cycle_detected");
+      expect(result.error.meta.reason).toBe("cycle-detected");
       expect(result.error.meta.cycle).toContain("moduleA");
       expect(result.error.meta.cycle).toContain("moduleB");
     }
@@ -123,7 +123,7 @@ describe("resolveModuleOrder", () => {
 
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.meta.reason).toBe("cycle_detected");
+      expect(result.error.meta.reason).toBe("cycle-detected");
       expect(result.error.meta.cycle).toEqual(["moduleA"]);
     }
   });
@@ -143,7 +143,7 @@ describe("resolveModuleOrder", () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error).toBeInstanceOf(ModuleResolutionError);
-      expect(result.error.meta.reason).toBe("missing_dependency");
+      expect(result.error.meta.reason).toBe("missing-dependency");
       expect(result.error.meta.module).toBe("moduleA");
       expect(result.error.meta.dependency).toBe("missing");
     }
@@ -169,6 +169,89 @@ describe("resolveModuleOrder", () => {
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.value).toHaveLength(2);
+    }
+  });
+
+  it("should resolve optional dependencies when they exist", () => {
+    const modules = [
+      {
+        name: "moduleA",
+        optionalDependsOn: ["moduleB"],
+        version: "1.0.0",
+        setup: vi.fn(async () => success(async () => success(undefined))),
+      },
+      {
+        name: "moduleB",
+        version: "1.0.0",
+        setup: vi.fn(async () => success(async () => success(undefined))),
+      },
+    ];
+
+    const result = resolveModuleOrder(modules);
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.value.map((m) => m.name)).toEqual(["moduleB", "moduleA"]);
+    }
+  });
+
+  it("should handle both dependsOn and optionalDependsOn", () => {
+    const modules = [
+      {
+        name: "moduleA",
+        dependsOn: ["moduleB"],
+        optionalDependsOn: ["moduleC", "missing"],
+        version: "1.0.0",
+        setup: vi.fn(async () => success(async () => success(undefined))),
+      },
+      {
+        name: "moduleB",
+        version: "1.0.0",
+        setup: vi.fn(async () => success(async () => success(undefined))),
+      },
+      {
+        name: "moduleC",
+        version: "1.0.0",
+        setup: vi.fn(async () => success(async () => success(undefined))),
+      },
+    ];
+
+    const result = resolveModuleOrder(modules);
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.value).toHaveLength(3);
+      // moduleB and moduleC should come before moduleA
+      const moduleAIndex = result.value.findIndex((m) => m.name === "moduleA");
+      const moduleBIndex = result.value.findIndex((m) => m.name === "moduleB");
+      const moduleCIndex = result.value.findIndex((m) => m.name === "moduleC");
+
+      expect(moduleBIndex).toBeLessThan(moduleAIndex);
+      expect(moduleCIndex).toBeLessThan(moduleAIndex);
+    }
+  });
+
+  it("should deduplicate dependencies", () => {
+    const modules = [
+      {
+        name: "moduleA",
+        dependsOn: ["moduleB"],
+        optionalDependsOn: ["moduleB", "moduleB"], // duplicates
+        version: "1.0.0",
+        setup: vi.fn(async () => success(async () => success(undefined))),
+      },
+      {
+        name: "moduleB",
+        version: "1.0.0",
+        setup: vi.fn(async () => success(async () => success(undefined))),
+      },
+    ];
+
+    const result = resolveModuleOrder(modules);
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.value.map((m) => m.name)).toEqual(["moduleB", "moduleA"]);
     }
   });
 

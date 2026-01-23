@@ -1,6 +1,5 @@
-import { DiContainer } from "@comity/core/di";
-import { EventBus } from "@comity/core/events";
-import { HookBus } from "@comity/core/hooks";
+import { DiContainer } from "@comity/primitives/di";
+import { EventBus, HookBus } from "@comity/primitives/lifecycle";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { KernelInvalidStateError } from "../errors/kernel-invalid-state.js";
 import { Kernel } from "../kernel.js";
@@ -185,6 +184,116 @@ describe("Kernel", () => {
       expect(ctx.services).toBe(kernel.services);
       expect(ctx.events).toBe(kernel.events);
       expect(ctx.hooks).toBe(kernel.hooks);
+    });
+  });
+
+  describe("start", () => {
+    it("should start the kernel", () => {
+      kernel.seal();
+
+      const result = kernel.start();
+
+      expect(result.success).toBe(true);
+
+      if (result.success) {
+        expect(result.value).toBe("running");
+      }
+    });
+
+    it("should call kernelStarted event when emitter is provided", () => {
+      const emitter = {
+        kernelSealed: vi.fn(),
+        kernelStarted: vi.fn(),
+        kernelStopped: vi.fn(),
+      };
+
+      const kernelWithEmitter = new Kernel({ services, events, hooks }, emitter);
+      kernelWithEmitter.seal();
+      kernelWithEmitter.start();
+
+      expect(emitter.kernelStarted).toHaveBeenCalledTimes(1);
+    });
+
+    it("should not call kernelStarted event on failure", () => {
+      const emitter = {
+        kernelSealed: vi.fn(),
+        kernelStarted: vi.fn(),
+        kernelStopped: vi.fn(),
+      };
+
+      const kernelWithEmitter = new Kernel({ services, events, hooks }, emitter);
+      // Don't seal, so start fails
+
+      kernelWithEmitter.start();
+
+      expect(emitter.kernelStarted).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("stop", () => {
+    it("should stop the kernel", () => {
+      kernel.seal();
+      kernel.start();
+
+      const result = kernel.stop();
+
+      expect(result.success).toBe(true);
+
+      if (result.success) {
+        expect(result.value).toBe("sealed");
+      }
+    });
+
+    it("should call kernelStopped event when emitter is provided", () => {
+      const emitter = {
+        kernelSealed: vi.fn(),
+        kernelStarted: vi.fn(),
+        kernelStopped: vi.fn(),
+      };
+
+      const kernelWithEmitter = new Kernel({ services, events, hooks }, emitter);
+      kernelWithEmitter.seal();
+      kernelWithEmitter.start();
+      kernelWithEmitter.stop();
+
+      expect(emitter.kernelStopped).toHaveBeenCalledTimes(1);
+    });
+
+    it("should not call kernelStopped event on failure", () => {
+      const emitter = {
+        kernelSealed: vi.fn(),
+        kernelStarted: vi.fn(),
+        kernelStopped: vi.fn(),
+      };
+
+      const kernelWithEmitter = new Kernel({ services, events, hooks }, emitter);
+      // Don't start, so stop fails
+
+      kernelWithEmitter.stop();
+
+      expect(emitter.kernelStopped).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("seal with emitter", () => {
+    it("should call kernelSealed event when emitter is provided", () => {
+      const emitter = {
+        kernelSealed: vi.fn(),
+        kernelStarted: vi.fn(),
+        kernelStopped: vi.fn(),
+      };
+
+      const kernelWithEmitter = new Kernel({ services, events, hooks }, emitter);
+      kernelWithEmitter.seal();
+
+      expect(emitter.kernelSealed).toHaveBeenCalledTimes(1);
+    });
+
+    it("should work without emitter", () => {
+      const kernelNoEmitter = new Kernel({ services, events, hooks });
+      const result = kernelNoEmitter.seal();
+
+      expect(result.success).toBe(true);
     });
   });
 });

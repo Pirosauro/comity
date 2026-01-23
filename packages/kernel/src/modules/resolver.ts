@@ -1,7 +1,7 @@
-import type { Result } from "@comity/core/result";
+import type { Result } from "@comity/primitives/result";
 import type { ModuleMeta } from "./types.js";
 
-import { failure, isFailure, success } from "@comity/core/result";
+import { failure, isFailure, success } from "@comity/primitives/result";
 import { ModuleResolutionError } from "../errors/module-resolution.js";
 
 /**
@@ -74,7 +74,7 @@ export function resolveModuleOrder(
     if (stack.includes(mod.name)) {
       return failure(
         new ModuleResolutionError({
-          reason: "cycle_detected",
+          reason: "cycle-detected",
           module: mod.name,
           cycle: [...stack, mod.name],
         })
@@ -93,7 +93,7 @@ export function resolveModuleOrder(
       if (dep === mod.name) {
         return failure(
           new ModuleResolutionError({
-            reason: "cycle_detected",
+            reason: "cycle-detected",
             module: mod.name,
             cycle: [mod.name],
           })
@@ -106,7 +106,7 @@ export function resolveModuleOrder(
       if (!parent && !(mod.optionalDependsOn || []).includes(dep)) {
         return failure(
           new ModuleResolutionError({
-            reason: "missing_dependency",
+            reason: "missing-dependency",
             module: mod.name,
             dependency: dep,
           })

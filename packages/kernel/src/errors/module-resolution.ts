@@ -1,6 +1,6 @@
 import type { ModuleResolutionErrorMeta } from "./types.js";
 
-import { BaseError } from "@comity/core/errors";
+import { BaseError } from "@comity/primitives/errors";
 
 /**
  * Module resolution error
@@ -27,7 +27,7 @@ import { BaseError } from "@comity/core/errors";
  */
 export class ModuleResolutionError extends BaseError {
   /** Error code  */
-  readonly code = "kernel:module_resolution_failed";
+  readonly code = "kernel:module-resolution-failed";
 
   /**
    * @param meta Error metadata

@@ -9,7 +9,7 @@ describe("KernelInvalidStateError", () => {
     });
 
     expect(error.message).toBe("Invalid kernel state");
-    expect(error.code).toBe("kernel:invalid_state");
+    expect(error.code).toBe("kernel:invalid-state");
     expect(error.name).toBe("KernelInvalidStateError");
     expect(error.meta.httpStatus).toBe(409);
     expect(error.meta.action).toBe("test action");

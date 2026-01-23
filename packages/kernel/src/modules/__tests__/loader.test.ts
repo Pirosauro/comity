@@ -1,7 +1,7 @@
-import type { ResultFailure } from "@comity/core/result";
+import type { ResultFailure } from "@comity/primitives/result";
 
-import { BaseError } from "@comity/core/errors";
-import { failure, success } from "@comity/core/result";
+import { BaseError } from "@comity/primitives/errors";
+import { failure, success } from "@comity/primitives/result";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ModuleLoadError } from "../../errors/module-load.js";
 import { ModuleResolutionError } from "../../errors/module-resolution.js";
@@ -43,7 +43,7 @@ describe("loadModules", () => {
   it("should handle module resolution failure", async () => {
     // Mock resolveModuleOrder to return failure
     const mockResolver = vi.fn(() =>
-      failure(new ModuleResolutionError({ reason: "cycle_detected" }))
+      failure(new ModuleResolutionError({ reason: "cycle-detected" }))
     );
     vi.doMock("../resolver.js", () => ({ resolveModuleOrder: mockResolver }));
 
@@ -60,7 +60,7 @@ describe("loadModules", () => {
 
     expect(result.success).toBe(false);
     expect(result.error).toBeInstanceOf(ModuleLoadError);
-    expect(result.error.meta.reason).toBe("resolution_failed");
+    expect(result.error.meta.reason).toBe("resolution-failed");
   });
 
   it("should handle setup function failure", async () => {
@@ -76,7 +76,7 @@ describe("loadModules", () => {
 
     expect(result.success).toBe(false);
     expect(result.error).toBeInstanceOf(ModuleLoadError);
-    expect(result.error.meta.reason).toBe("setup_failed");
+    expect(result.error.meta.reason).toBe("setup-failed");
     expect(result.error.meta.module).toBe("moduleA");
   });
 
@@ -102,7 +102,7 @@ describe("loadModules", () => {
 
     expect(result.success).toBe(false);
     expect(result.error).toBeInstanceOf(ModuleLoadError);
-    expect(result.error.meta.reason).toBe("apply_failed");
+    expect(result.error.meta.reason).toBe("apply-failed");
     expect(result.error.meta.module).toBe("moduleA");
   });
 
@@ -147,5 +147,51 @@ describe("loadModules", () => {
 
     expect(result.success).toBe(true);
     // Assuming resolver orders them correctly
+  });
+
+  it("should pass undefined options when not provided", async () => {
+    const setupFn = vi.fn(async (options) => {
+      expect(options).toBeUndefined();
+
+      return success(async () => success(undefined));
+    });
+
+    const modules = [
+      {
+        name: "moduleA",
+        version: "1.0.0",
+        setup: setupFn,
+      },
+    ];
+
+    await loadModules(mockKernel, modules);
+
+    expect(setupFn).toHaveBeenCalledWith(undefined);
+  });
+
+  it("should create module setup context for each module", async () => {
+    const modules = [
+      {
+        name: "moduleA",
+        version: "1.0.0",
+        setup: vi.fn(async () => success(async () => success(undefined))),
+      },
+      {
+        name: "moduleB",
+        version: "1.0.0",
+        setup: vi.fn(async () => success(async () => success(undefined))),
+      },
+    ];
+
+    await loadModules(mockKernel, modules);
+
+    expect(mockKernel.createModuleSetupContext).toHaveBeenCalledTimes(1);
+  });
+
+  it("should handle empty module array", async () => {
+    const result = await loadModules(mockKernel, []);
+
+    expect(result.success).toBe(true);
+    expect(mockKernel.seal).toHaveBeenCalled();
   });
 });

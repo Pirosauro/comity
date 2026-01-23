@@ -1,6 +1,6 @@
 import type { ModuleLoadErrorMeta } from "./types.js";
 
-import { BaseError } from "@comity/core/errors";
+import { BaseError } from "@comity/primitives/errors";
 
 /**
  * Module load error
@@ -22,7 +22,7 @@ import { BaseError } from "@comity/core/errors";
  */
 export class ModuleLoadError extends BaseError {
   /** Error code */
-  readonly code = "kernel:module_load";
+  readonly code = "kernel:module-load";
 
   /**
    * @param meta Error metadata

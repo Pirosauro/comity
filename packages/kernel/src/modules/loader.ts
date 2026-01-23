@@ -1,8 +1,8 @@
-import type { Result } from "@comity/core/result";
+import type { Result } from "@comity/primitives/result";
 import type { Kernel } from "../kernel.js";
 import type { ModuleMeta } from "./types.js";
 
-import { failure, isFailure, success } from "@comity/core/result";
+import { failure, isFailure, success } from "@comity/primitives/result";
 import { ModuleLoadError } from "../errors/module-load.js";
 import { resolveModuleOrder } from "./resolver.js";
 
@@ -46,7 +46,7 @@ export async function loadModules(
   if (isFailure(ordered)) {
     return failure(
       new ModuleLoadError({
-        reason: "resolution_failed",
+        reason: "resolution-failed",
         cause: ordered.error,
       })
     );
@@ -62,7 +62,7 @@ export async function loadModules(
     if (isFailure(setup)) {
       return failure(
         new ModuleLoadError({
-          reason: "setup_failed",
+          reason: "setup-failed",
           module: mod.name,
           cause: setup.error,
         })
@@ -76,7 +76,7 @@ export async function loadModules(
     if (isFailure(result)) {
       return failure(
         new ModuleLoadError({
-          reason: "apply_failed",
+          reason: "apply-failed",
           module: mod.name,
           cause: result.error,
         })

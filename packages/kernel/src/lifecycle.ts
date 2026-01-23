@@ -1,7 +1,7 @@
-import type { Result } from "@comity/core/result";
-import type { KernelState } from "./types.js";
+import type { Result } from "@comity/primitives/result";
+import type { KernelState } from "./lifecycle/state.js";
 
-import { failure, success } from "@comity/core/result";
+import { failure, success } from "@comity/primitives/result";
 import { KernelInvalidStateError } from "./errors/kernel-invalid-state.js";
 
 /**

@@ -1,13 +1,13 @@
 import type { KernelInvalidStateErrorMeta } from "./types.js";
 
-import { BaseError } from "@comity/core/errors";
+import { BaseError } from "@comity/primitives/errors";
 
 /**
  * Invalid kernel state error
  */
 export class KernelInvalidStateError extends BaseError {
   /** Error code */
-  readonly code = "kernel:invalid_state";
+  readonly code = "kernel:invalid-state";
 
   /**
    * @param meta Error metadata

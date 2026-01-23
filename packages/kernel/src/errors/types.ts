@@ -1,5 +1,5 @@
-import type { ErrorMeta } from "@comity/core/errors";
-import type { KernelState } from "../types.js";
+import type { ErrorMeta } from "@comity/primitives/errors";
+import type { KernelState } from "../lifecycle/state.js";
 
 /**
  * Kernel invalid state error metadata
@@ -16,9 +16,9 @@ export interface KernelInvalidStateErrorMeta extends ErrorMeta {
  * Module resolution error reason types
  */
 export type ModuleResolutionErrorReason =
-  | "cycle_detected"
-  | "missing_dependency"
-  | "incompatible_modules";
+  | "cycle-detected"
+  | "missing-dependency"
+  | "incompatible-modules";
 
 /**
  * Module resolution error metadata
@@ -49,9 +49,9 @@ export interface ModuleResolutionErrorMeta extends ErrorMeta {
  * Module load error reasons
  */
 export type ModuleLoadErrorReason =
-  | "resolution_failed"
-  | "setup_failed"
-  | "apply_failed";
+  | "resolution-failed"
+  | "setup-failed"
+  | "apply-failed";
 
 /**
  * Module load error metadata

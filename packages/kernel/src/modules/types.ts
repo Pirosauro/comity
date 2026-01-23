@@ -1,5 +1,5 @@
-import type { BaseError } from "@comity/core/errors";
-import type { Result } from "@comity/core/result";
+import type { BaseError } from "@comity/primitives/errors";
+import type { Result } from "@comity/primitives/result";
 import type { ModuleSetupContext } from "../types.js";
 
 /**

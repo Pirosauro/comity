@@ -1,7 +1,7 @@
 {
-  "name": "@comity/kernel",
+  "name": "@comity/primitives",
   "version": "1.0.0",
-  "description": "Runtime orchestrator providing lifecycle, DI, and shared services for Comity",
+  "description": "Foundational primitives shared across Comity packages (events, results, cancellation, composition).",
   "type": "module",
   "author": "Filippo Bovo <hello@filippobovo.com>",
   "license": "MIT",
@@ -13,15 +13,17 @@
   "bugs": {
     "url": "https://github.com/comityjs/framework/issues"
   },
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "keywords": [
     "comity",
-    "comityjs",
-    "framework",
-    "kernel",
-    "runtime",
-    "orchestrator",
-    "lifecycle",
-    "dependency-injection"
+    "primitives",
+    "infrastructure",
+    "events",
+    "result",
+    "abort",
+    "composition"
   ],
   "scripts": {
     "build": "node ../../scripts/build.mjs",
@@ -47,6 +49,26 @@
         "default": "./dist/cjs/index.js"
       }
     },
+    "./di": {
+      "import": {
+        "types": "./dist/types/di/index.d.ts",
+        "default": "./dist/esm/di/index.js"
+      },
+      "require": {
+        "types": "./dist/types/di/index.d.ts",
+        "default": "./dist/cjs/di/index.js"
+      }
+    },
+    "./errors": {
+      "import": {
+        "types": "./dist/types/errors/index.d.ts",
+        "default": "./dist/esm/errors/index.js"
+      },
+      "require": {
+        "types": "./dist/types/errors/index.d.ts",
+        "default": "./dist/cjs/errors/index.js"
+      }
+    },
     "./lifecycle": {
       "import": {
         "types": "./dist/types/lifecycle/index.d.ts",
@@ -57,25 +79,31 @@
         "default": "./dist/cjs/lifecycle/index.js"
       }
     },
-    "./modules": {
+    "./result": {
       "import": {
-        "types": "./dist/types/modules/index.d.ts",
-        "default": "./dist/esm/modules/index.js"
+        "types": "./dist/types/result/index.d.ts",
+        "default": "./dist/esm/result/index.js"
       },
       "require": {
-        "types": "./dist/types/modules/index.d.ts",
-        "default": "./dist/cjs/modules/index.js"
+        "types": "./dist/types/result/index.d.ts",
+        "default": "./dist/cjs/result/index.js"
       }
     },
     "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
+      "di": [
+        "./dist/types/di/index.d.ts"
+      ],
+      "errors": [
+        "./dist/types/errors/index.d.ts"
+      ],
       "lifecycle": [
         "./dist/types/lifecycle/index.d.ts"
       ],
-      "modules": [
-        "./dist/types/modules/index.d.ts"
+      "result": [
+        "./dist/types/result/index.d.ts"
       ]
     }
   },
@@ -84,9 +112,7 @@
     "access": "public"
   },
   "sideEffects": false,
-  "dependencies": {
-    "@comity/primitives": "workspace:*"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/node": "^24.10.9",
     "typescript": "^5.9.3"
