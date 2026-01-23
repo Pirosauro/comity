@@ -19,10 +19,7 @@ export type KernelState = "open" | "sealed" | "running" | "stopped";
  * Module setup context type
  */
 export interface ModuleSetupContext<
-  Services extends Record<string | symbol, unknown> = Record<
-    string | symbol,
-    unknown
-  >,
+  Services extends Record<symbol, unknown> = Record<symbol, unknown>,
   Events extends Record<string, unknown> = Record<string, unknown>,
   Hooks extends Record<string, unknown> = Record<string, unknown>,
 > {

@@ -20,7 +20,16 @@ export const module: ModuleMeta<AuthModuleOptions> = {
   dependsOn: ["@comity/core", "@comity/kernel"],
   incompatibleWith: [],
 
-  /** @inheritdoc */
+  /**
+   * Initializes the auth module with provided configuration options.
+   *
+   * Sets up the facade, guard, use cases, and event emitters.
+   * Registers the auth facade in the kernel services.
+   *
+   * @param options - Module configuration object with repository and evaluator
+   * @returns Success result containing the auth context
+   * @throws {Error} - If required options (repository or evaluator) are not provided
+   */
   setup: async (options) => {
     const AUTH_TOKEN = createToken("auth");
 

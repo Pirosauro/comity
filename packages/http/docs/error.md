@@ -8,11 +8,11 @@ directly to their response model.
 
 ## Core Concepts
 
-| Concept | Responsibility |
-|------|------|
-| HttpError | What went wrong (HTTP-aware) |
-| HttpResult | Success or failure outcome |
-| HttpResponse | Final HTTP output |
+| Concept      | Responsibility               |
+| ------------ | ---------------------------- |
+| HttpError    | What went wrong (HTTP-aware) |
+| HttpResult   | Success or failure outcome   |
+| HttpResponse | Final HTTP output            |
 
 ---
 
@@ -33,7 +33,7 @@ export interface HttpError {
   status: number;
 
   /**
-   * Human-readable message (optional).
+   * Stable human-readable message (optional).
    */
   message?: string;
 

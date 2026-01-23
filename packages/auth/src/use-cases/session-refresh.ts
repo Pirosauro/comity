@@ -50,7 +50,7 @@ export class RefreshSession {
    * @param input - Refresh input
    * @param now - Current timestamp in milliseconds
    * @returns Refreshed session
-   * @throws {Error} - If refresh cannot be completed
+   * @throws {InvalidSessionError | SessionRefreshExpiredError | SessionRefreshNotAllowedError} - If refresh cannot be completed
    */
   async execute(input: RefreshSessionInput, now: number): Promise<AuthSession> {
     // 1. Fetch original session

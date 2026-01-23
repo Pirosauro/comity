@@ -47,13 +47,13 @@ import { ModuleResolutionError } from "../errors/module-resolution.js";
  * ```
  */
 export function resolveModuleOrder(
-  input: ModuleMeta[] | readonly ModuleMeta[],
-): Result<ModuleMeta[], ModuleResolutionError> {
-  const result: ModuleMeta[] = [];
+  input: ModuleMeta<Record<string, unknown>>[] | readonly ModuleMeta<Record<string, unknown>>[]
+): Result<ModuleMeta<Record<string, unknown>>[], ModuleResolutionError> {
+  const result: ModuleMeta<Record<string, unknown>>[] = [];
   const visited = new Set<string>();
   const modules = [...input].sort(
     // Sort modules by priority first (ascending, default 100)
-    (a, b) => (a.priority || 100) - (b.priority || 100),
+    (a, b) => (a.priority || 100) - (b.priority || 100)
   );
 
   /**
@@ -64,8 +64,8 @@ export function resolveModuleOrder(
    * @returns Result indicating success or failure
    */
   const visit = (
-    mod: ModuleMeta,
-    stack: string[] = [],
+    mod: ModuleMeta<Record<string, unknown>>,
+    stack: string[] = []
   ): Result<void, ModuleResolutionError> => {
     // If already visited, skip
     if (visited.has(mod.name)) return success(undefined);
@@ -77,7 +77,7 @@ export function resolveModuleOrder(
           reason: "cycle_detected",
           module: mod.name,
           cycle: [...stack, mod.name],
-        }),
+        })
       );
     }
 
@@ -85,7 +85,7 @@ export function resolveModuleOrder(
     const next = [...stack, mod.name];
 
     const dependencies = Array.from(
-      new Set([...(mod.dependsOn || []), ...(mod.optionalDependsOn || [])]),
+      new Set([...(mod.dependsOn || []), ...(mod.optionalDependsOn || [])])
     );
 
     // Visit dependencies first
@@ -96,7 +96,7 @@ export function resolveModuleOrder(
             reason: "cycle_detected",
             module: mod.name,
             cycle: [mod.name],
-          }),
+          })
         );
       }
 
@@ -109,7 +109,7 @@ export function resolveModuleOrder(
             reason: "missing_dependency",
             module: mod.name,
             dependency: dep,
-          }),
+          })
         );
       }
 

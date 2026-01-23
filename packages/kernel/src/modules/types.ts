@@ -5,14 +5,14 @@ import type { ModuleSetupContext } from "../types.js";
 /**
  * Module setup function
  */
-export type ModuleSetupFn = (
-  ctx: ModuleSetupContext,
-) => Promise<Result<void, BaseError>>;
+export type ModuleSetupFn = (ctx: ModuleSetupContext) => Promise<Result<void, BaseError>>;
 
 /**
  * Module metadata
  */
-export interface ModuleMeta {
+export interface ModuleMeta<
+  Options extends { [K in keyof Options]: unknown } = Record<string, unknown>,
+> {
   /** Unique module identifier */
   readonly name: string;
 
@@ -37,7 +37,5 @@ export interface ModuleMeta {
    * Called during module loading.
    * Must be pure and side-effect free.
    */
-  readonly setup: (
-    options: unknown,
-  ) => Promise<Result<ModuleSetupFn, BaseError>>;
+  readonly setup: (options?: Options) => Promise<Result<ModuleSetupFn, BaseError>>;
 }

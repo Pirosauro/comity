@@ -1,12 +1,11 @@
-import { createHttpState } from "./core/state.js";
+import type { HttpFacade } from "./contracts/http-facade.js";
 import type { HttpContext, HttpEvent } from "./core/context.js";
-import type { HttpError } from "./core/error.js";
 import type { HttpRequest } from "./core/request.js";
 import type { HttpResult } from "./core/result.js";
 import type { HttpState } from "./core/state.js";
-import type { HttpMiddleware, HttpNext } from "./pipeline/middleware.js";
+import { createHttpState } from "./core/state.js";
 import type { HttpPipeline } from "./pipeline/http.js";
-import type { HttpFacade } from "./contracts/http-facade.js";
+import type { HttpMiddleware } from "./pipeline/middleware.js";
 
 /**
  * Creates a default HttpState and a strongly typed helper to mutate it.
@@ -22,14 +21,27 @@ export { createHttpState } from "./core/state.js";
  * @param request Immutable HTTP request snapshot.
  * @param signal Abort signal to observe request cancellation.
  * @param emit Event emitter for adapter/kernel integration.
+ * @param options
+ * @param options.request
+ * @param options.signal
+ * @param options.emit
  * @returns A mutable HttpContext for the request lifecycle.
  * @throws Error if setResponse is called more than once.
  * @example
  * const ctx = createHttpContext({ request, signal, emit });
  */
 export function createHttpContext(options: {
+  /**
+   *
+   */
   request: HttpRequest;
+  /**
+   *
+   */
   signal?: AbortSignal;
+  /**
+   *
+   */
   emit?: <E extends HttpEvent>(event: E) => void;
 }): HttpContext {
   const state: HttpState = createHttpState();
@@ -37,6 +49,10 @@ export function createHttpContext(options: {
   const signal = options.signal ?? new AbortController().signal;
   const emit = options.emit ?? (() => {});
 
+  /**
+   *
+   * @param result
+   */
   const setResponse = (result: HttpResult): void => {
     if (response) {
       throw new Error("HTTP response already set");
@@ -46,6 +62,9 @@ export function createHttpContext(options: {
 
   return {
     request: options.request,
+    /**
+     *
+     */
     get response() {
       return response;
     },
@@ -66,13 +85,19 @@ export function createHttpContext(options: {
  * const pipeline = createHttpPipeline(logger, handler);
  * const result = await pipeline.execute(ctx);
  */
-export function createHttpPipeline(
-  ...middleware: readonly HttpMiddleware[]
-): HttpPipeline {
+export function createHttpPipeline(...middleware: readonly HttpMiddleware[]): HttpPipeline {
   return {
+    /**
+     *
+     * @param ctx
+     */
     async execute(ctx: HttpContext): Promise<HttpResult> {
       let index = -1;
 
+      /**
+       *
+       * @param i
+       */
       const dispatch = async (i: number): Promise<void> => {
         if (i <= index) {
           throw new Error("next() called multiple times");
@@ -106,9 +131,17 @@ export function createHttpFacade(): HttpFacade {
   const middleware: HttpMiddleware[] = [];
 
   return {
+    /**
+     *
+     * @param {...any} items
+     */
     use(...items: readonly HttpMiddleware[]): void {
       middleware.push(...items);
     },
+    /**
+     *
+     * @param ctx
+     */
     async handle(ctx: HttpContext): Promise<HttpResult> {
       const pipeline = createHttpPipeline(...middleware);
       return pipeline.execute(ctx);

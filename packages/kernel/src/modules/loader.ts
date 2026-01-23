@@ -38,7 +38,7 @@ import { resolveModuleOrder } from "./resolver.js";
 export async function loadModules(
   kernel: Kernel<Record<string, unknown>, Record<string, unknown>, Record<string, unknown>>,
   modules: readonly ModuleMeta[],
-  options: Record<string, unknown> = {},
+  options: Record<string, Record<string, unknown>> = {}
 ): Promise<Result<void, ModuleLoadError>> {
   const ordered = resolveModuleOrder(modules);
 
@@ -48,7 +48,7 @@ export async function loadModules(
       new ModuleLoadError({
         reason: "resolution_failed",
         cause: ordered.error,
-      }),
+      })
     );
   }
 
@@ -65,7 +65,7 @@ export async function loadModules(
           reason: "setup_failed",
           module: mod.name,
           cause: setup.error,
-        }),
+        })
       );
     }
 
@@ -79,7 +79,7 @@ export async function loadModules(
           reason: "apply_failed",
           module: mod.name,
           cause: result.error,
-        }),
+        })
       );
     }
   }

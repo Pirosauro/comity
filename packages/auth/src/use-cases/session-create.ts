@@ -71,7 +71,7 @@ export class CreateSession {
    * @param input - Session creation input
    * @param now - Current timestamp in milliseconds
    * @returns Created session
-   * @throws {Error} - If creation fails
+   * @throws {InvalidSessionError | AssuranceRequiredError} - If creation fails
    */
   async execute(input: CreateSessionInput, now: number): Promise<AuthSession> {
     // 1. Build session

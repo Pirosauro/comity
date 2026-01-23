@@ -1,6 +1,4 @@
-import { defineConfig } from "prettier";
-
-export default defineConfig({
+export default {
   printWidth: 100,
   tabWidth: 2,
   useTabs: false,
@@ -9,4 +7,4 @@ export default defineConfig({
   trailingComma: "es5",
   bracketSpacing: true,
   arrowParens: "always",
-});
+};

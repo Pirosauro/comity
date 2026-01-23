@@ -18,31 +18,31 @@ export type AuthModuleHooks = {
 
 /** Events emitted by the module */
 export type AuthModuleEvents = {
-  /** Emitted when a session is validated */
+  /** Emitted when a session passes all validation checks */
   "@comity/auth:session_validated": Parameters<AuthEvaluationEmitter["sessionValidated"]>[0];
 
-  /** Emitted when a session assurance is rejected */
+  /** Emitted when assurance requirements are not met */
   "@comity/auth:assurance_rejected": Parameters<AuthEvaluationEmitter["assuranceRejected"]>[0];
 
-  /** Emitted when a session is invalid */
+  /** Emitted when a session fails validation */
   "@comity/auth:session_invalid": Parameters<AuthEvaluationEmitter["sessionInvalid"]>[0];
 
-  /** Emitted when a refresh is validated */
+  /** Emitted when a refresh request passes validation */
   "@comity/auth:refresh_validated": Parameters<AuthRefreshEvaluationEmitter["refreshValidated"]>[0];
 
-  /** Emitted when a refresh is rejected */
+  /** Emitted when a refresh request is rejected */
   "@comity/auth:refresh_rejected": Parameters<AuthRefreshEvaluationEmitter["refreshRejected"]>[0];
 
-  /** Emitted when a session is created */
+  /** Emitted after a new session is successfully created */
   "@comity/auth:session_created": Parameters<AuthSessionEmitter["sessionCreated"]>[0];
 
-  /** Emitted when a session is refreshed */
+  /** Emitted after a session is successfully refreshed */
   "@comity/auth:session_refreshed": Parameters<AuthSessionEmitter["sessionRefreshed"]>[0];
 
-  /** Emitted when a session is revoked */
+  /** Emitted after a session is successfully revoked */
   "@comity/auth:session_revoked": Parameters<AuthSessionEmitter["sessionRevoked"]>[0];
 
-  /** Emitted when a step-up is completed */
+  /** Emitted after step-up authentication is successfully completed */
   "@comity/auth:step_up_completed": Parameters<AuthSessionEmitter["stepUpCompleted"]>[0];
 };
 

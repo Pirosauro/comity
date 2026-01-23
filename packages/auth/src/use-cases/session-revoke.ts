@@ -46,7 +46,7 @@ export class RevokeSession {
    *
    * @param input - Revocation input
    * @param now - Current timestamp in milliseconds
-   * @throws {Error} - If revocation fails
+   * @throws No errors thrown (revocation is always successful)
    */
   async execute(input: RevokeSessionInput, now: number): Promise<void> {
     // 1. Load session (throws if not found)
