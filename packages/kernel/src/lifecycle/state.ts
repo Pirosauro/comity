@@ -1,5 +1,4 @@
-
 /**
  * Kernel state type
  */
-export type KernelState = "open" | "sealed" | "running" | "stopped";
+export type KernelLifecycleState = "open" | "sealed" | "running" | "stopped";

@@ -3,8 +3,8 @@ import type { EventBus, HookBus } from "@comity/primitives/lifecycle";
 import type { KernelEvents } from "./lifecycle/events.js";
 import type { ModuleSetupContext } from "./types.js";
 
-import { KernelInvalidStateError } from "./errors/kernel-invalid-state.js";
-import { Lifecycle } from "./lifecycle.js";
+import { InvalidLifecycleStateError } from "./errors/invalid-lifecycle-state.js";
+import { Lifecycle } from "./internal/lifecycle.js";
 
 /**
  * Kernel context
@@ -227,11 +227,11 @@ export class Kernel<
    * Assert that the kernel is not sealed
    *
    * @param action Action name
-   * @throws {KernelInvalidStateError} If the kernel is sealed
+   * @throws {InvalidLifecycleStateError} If the kernel is sealed
    */
   private assertNotSealed(action: string): void {
     if (this.#lifecycle.is("sealed")) {
-      throw new KernelInvalidStateError({
+      throw new InvalidLifecycleStateError({
         action,
         state: this.#lifecycle.state,
       });
@@ -242,11 +242,11 @@ export class Kernel<
    * Assert that the kernel is sealed
    *
    * @param action Action name
-   * @throws {KernelInvalidStateError} If the kernel is not sealed
+   * @throws {InvalidLifecycleStateError} If the kernel is not sealed
    */
   private assertSealed(action: string): void {
     if (!this.#lifecycle.is("sealed")) {
-      throw new KernelInvalidStateError({
+      throw new InvalidLifecycleStateError({
         action,
         state: this.#lifecycle.state,
       });

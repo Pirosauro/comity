@@ -1,6 +1,26 @@
-import type { ModuleLoadErrorMeta } from "./types.js";
+import type { ErrorMeta } from "@comity/primitives/errors";
 
 import { BaseError } from "@comity/primitives/errors";
+
+/**
+ * Module load error reasons
+ */
+export type ModuleLoadErrorReason = "resolution-failed" | "setup-failed" | "apply-failed";
+
+/**
+ * Module load error metadata
+ */
+export interface ModuleLoadErrorMeta extends ErrorMeta {
+  /**
+   *
+   */
+  reason: ModuleLoadErrorReason;
+
+  /**
+   *
+   */
+  module?: string;
+}
 
 /**
  * Module load error

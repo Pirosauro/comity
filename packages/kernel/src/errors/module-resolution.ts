@@ -1,6 +1,39 @@
-import type { ModuleResolutionErrorMeta } from "./types.js";
+import type { ErrorMeta } from "@comity/primitives/errors";
 
 import { BaseError } from "@comity/primitives/errors";
+
+/**
+ * Module resolution error reason types
+ */
+export type ModuleResolutionErrorReason =
+  | "cycle-detected"
+  | "missing-dependency"
+  | "incompatible-modules";
+
+/**
+ * Module resolution error metadata
+ */
+export interface ModuleResolutionErrorMeta extends ErrorMeta {
+  /**
+   * Reason for the module resolution failure
+   */
+  reason: ModuleResolutionErrorReason;
+
+  /**
+   * Module involved in the error
+   */
+  module?: string;
+
+  /**
+   * Dependency involved in the error
+   */
+  dependency?: string;
+
+  /**
+   * Cycle detected (if reason is "cycle_detected")
+   */
+  cycle?: string[];
+}
 
 /**
  * Module resolution error

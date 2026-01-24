@@ -1,2 +1,2 @@
 export { KernelEvents } from "./events.js";
-export { KernelState } from "./state.js";
+export { KernelLifecycleState } from "./state.js";

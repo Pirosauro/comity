@@ -18,9 +18,7 @@
     "comityjs",
     "framework",
     "http",
-    "typescript",
-    "hono",
-    "react"
+    "typescript"
   ],
   "scripts": {
     "build": "node ../../scripts/build.mjs",
@@ -46,12 +44,48 @@
         "default": "./dist/cjs/index.js"
       }
     },
+    "./adapter": {
+      "import": {
+        "types": "./dist/types/adapter/index.d.ts",
+        "default": "./dist/esm/adapter/index.js"
+      },
+      "require": {
+        "types": "./dist/types/adapter/index.d.ts",
+        "default": "./dist/cjs/adapter/index.js"
+      }
+    },
+    "./lifecycle": {
+      "import": {
+        "types": "./dist/types/lifecycle/index.d.ts",
+        "default": "./dist/esm/lifecycle/index.js"
+      },
+      "require": {
+        "types": "./dist/types/lifecycle/index.d.ts",
+        "default": "./dist/cjs/lifecycle/index.js"
+      }
+    },
+    "./setup": {
+      "import": {
+        "types": "./dist/types/setup/index.d.ts",
+        "default": "./dist/esm/setup/index.js"
+      },
+      "require": {
+        "types": "./dist/types/setup/index.d.ts",
+        "default": "./dist/cjs/setup/index.js"
+      }
+    },
     "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
-      "*": [
-        "./dist/types/index.d.ts"
+      "adapter": [
+        "dist/types/adapter/index.d.ts"
+      ],
+      "lifecycle": [
+        "dist/types/lifecycle/index.d.ts"
+      ],
+      "setup": [
+        "dist/types/setup/index.d.ts"
       ]
     }
   },
@@ -61,12 +95,12 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@comity/core": "workspace:*",
+    "@comity/primitives": "workspace:*",
     "@comity/kernel": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^24.10.9",
-    "hono": "^4.11.4",
+    "hono": "^4.11.5",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "typescript": "^5.9.3"

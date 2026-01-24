@@ -1,7 +1,7 @@
 import { DiContainer } from "@comity/primitives/di";
 import { EventBus, HookBus } from "@comity/primitives/lifecycle";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { KernelInvalidStateError } from "../errors/kernel-invalid-state.js";
+import { InvalidLifecycleStateError } from "../errors/invalid-lifecycle-state.js";
 import { Kernel } from "../kernel.js";
 
 interface TestServices extends Record<string, unknown> {
@@ -55,13 +55,15 @@ describe("Kernel", () => {
     it("should throw when defining services after sealing", () => {
       kernel.seal();
 
-      expect(() => kernel.services.define("test", () => "value")).toThrow(KernelInvalidStateError);
+      expect(() => kernel.services.define("test", () => "value")).toThrow(
+        InvalidLifecycleStateError
+      );
     });
 
     it("should throw when resolving services before sealing", () => {
       kernel.services.define("test", () => "value");
 
-      expect(() => kernel.services.resolve("test")).toThrow(KernelInvalidStateError);
+      expect(() => kernel.services.resolve("test")).toThrow(InvalidLifecycleStateError);
     });
 
     it("should allow resolving services after sealing", () => {
@@ -94,11 +96,13 @@ describe("Kernel", () => {
     it("should throw when subscribing after sealing", () => {
       kernel.seal();
 
-      expect(() => kernel.events.subscribe("testEvent", vi.fn())).toThrow(KernelInvalidStateError);
+      expect(() => kernel.events.subscribe("testEvent", vi.fn())).toThrow(
+        InvalidLifecycleStateError
+      );
     });
 
     it("should throw when emitting before sealing", () => {
-      expect(() => kernel.events.emit("testEvent", { id: 1 })).toThrow(KernelInvalidStateError);
+      expect(() => kernel.events.emit("testEvent", { id: 1 })).toThrow(InvalidLifecycleStateError);
     });
 
     it("should allow emitting after sealing", async () => {
@@ -132,13 +136,13 @@ describe("Kernel", () => {
     it("should throw when defining hooks after sealing", () => {
       kernel.seal();
 
-      expect(() => kernel.hooks.define("testHook", vi.fn())).toThrow(KernelInvalidStateError);
+      expect(() => kernel.hooks.define("testHook", vi.fn())).toThrow(InvalidLifecycleStateError);
     });
 
     it("should throw when executing hooks before sealing", () => {
       kernel.hooks.define("testHook", vi.fn());
 
-      expect(() => kernel.hooks.execute("testHook", "test")).toThrow(KernelInvalidStateError);
+      expect(() => kernel.hooks.execute("testHook", "test")).toThrow(InvalidLifecycleStateError);
     });
 
     it("should allow executing hooks after sealing", async () => {
