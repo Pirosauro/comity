@@ -1,13 +1,11 @@
-/**
- * HTTP response interface.
- */
+/** HTTP response. */
 export interface HttpResponse {
-  /** HTTP status code */
+  /** HTTP status code. */
   status: number;
 
-  /** HTTP headers */
+  /** HTTP headers. */
   headers?: Record<string, string>;
 
-  /** HTTP body */
+  /** HTTP body. */
   body?: unknown;
 }

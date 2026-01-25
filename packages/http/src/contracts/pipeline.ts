@@ -1,11 +1,11 @@
 import type { HttpContext } from "../contracts/context.js";
 
-/**
- * HTTP pipeline interface.
- */
+/** HTTP middleware pipeline. */
 export interface HttpPipeline {
   /**
-   * Execute the pipeline.
+   * Executes the pipeline.
+   * @param ctx - HTTP context.
+   * @returns - Promise that resolves when pipeline completes.
    */
   execute(ctx: HttpContext): Promise<void>;
 }

@@ -1,12 +1,13 @@
 import type { HttpContext } from "./context.js";
 import type { HttpResponse } from "./response.js";
 
-/**
- * Maps an error to an HTTP response.
- */
+/** Maps errors to HTTP responses. */
 export interface HttpErrorMapper {
   /**
-   *
+   * Maps an error to an HTTP response.
+   * @param error - Error to map.
+   * @param ctx - HTTP context.
+   * @returns - HTTP response.
    */
   map(error: unknown, ctx: HttpContext): HttpResponse;
 }

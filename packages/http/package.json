@@ -44,16 +44,6 @@
         "default": "./dist/cjs/index.js"
       }
     },
-    "./adapter": {
-      "import": {
-        "types": "./dist/types/adapter/index.d.ts",
-        "default": "./dist/esm/adapter/index.js"
-      },
-      "require": {
-        "types": "./dist/types/adapter/index.d.ts",
-        "default": "./dist/cjs/adapter/index.js"
-      }
-    },
     "./lifecycle": {
       "import": {
         "types": "./dist/types/lifecycle/index.d.ts",
@@ -78,9 +68,6 @@
   },
   "typesVersions": {
     "*": {
-      "adapter": [
-        "dist/types/adapter/index.d.ts"
-      ],
       "lifecycle": [
         "dist/types/lifecycle/index.d.ts"
       ],
@@ -95,19 +82,11 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@comity/primitives": "workspace:*",
-    "@comity/kernel": "workspace:*"
+    "@comity/kernel": "workspace:*",
+    "@comity/primitives": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^24.10.9",
-    "hono": "^4.11.5",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3",
     "typescript": "^5.9.3"
-  },
-  "peerDependencies": {
-    "hono": "^4.11.4",
-    "react": "^18.0.0 || ^19.0.0",
-    "react-dom": "^18.0.0 || ^19.0.0"
   }
 }

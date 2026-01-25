@@ -1,29 +1,17 @@
-/**
- * HTTP error interface.
- */
+/** HTTP error. */
 export interface HttpError {
-  /**
-   * Stable error code (machine readable).
-   */
+  /** Stable error code (machine readable). */
   code: string;
 
-  /**
-   * HTTP status to return.
-   */
+  /** HTTP status code. */
   status: number;
 
-  /**
-   * Human-readable message (optional).
-   */
+  /** Human-readable message (optional). */
   message?: string;
 
-  /**
-   * Optional structured details.
-   */
+  /** Optional structured details. */
   details?: unknown;
 
-  /**
-   * Original error (never serialized).
-   */
+  /** Original error (never serialized). */
   cause?: unknown;
 }

@@ -1,21 +1,19 @@
 import type { HttpError } from "./error.js";
 import type { HttpResponse } from "./response.js";
 
-/**
- * HTTP result type.
- */
+/** HTTP result. */
 export type HttpResult =
   | {
-      /** Success result */
+      /** Success result. */
       ok: true;
 
-      /** Response */
+      /** Response. */
       response: HttpResponse;
     }
   | {
-      /** Failure result */
+      /** Failure result. */
       ok: false;
 
-      /** Error */
+      /** Error. */
       error: HttpError;
     };

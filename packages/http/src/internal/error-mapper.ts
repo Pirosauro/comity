@@ -1,9 +1,10 @@
-import type { HttpError } from "../contracts/error.js";
 import type { HttpErrorMapper } from "../contracts/error-mapper.js";
+import type { HttpError } from "../contracts/error.js";
 import type { HttpResponse } from "../contracts/response.js";
 
 /**
  * Checks if an error matches the HttpError interface.
+ * @param error
  */
 function isHttpError(error: unknown): error is HttpError {
   return (
@@ -25,13 +26,21 @@ export const defaultHttpErrorMapper: HttpErrorMapper = {
    */
   map(error, _ctx): HttpResponse {
     if (isHttpError(error)) {
+      const body: Record<string, unknown> = {
+        code: error.code,
+      };
+
+      if (error["message"]) {
+        body["message"] = error["message"];
+      }
+
+      if (error["details"]) {
+        body["details"] = error["details"];
+      }
+
       return {
         status: error.status,
-        body: {
-          code: error.code,
-          ...(error.message && { message: error.message }),
-          ...(error.details && { details: error.details }),
-        },
+        body,
       };
     }
 

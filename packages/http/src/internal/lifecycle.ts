@@ -5,57 +5,31 @@ import { failure, success } from "@comity/primitives/result";
 import { InvalidLifecycleStateError } from "../errors/invalid-lifecycle-state.js";
 
 /**
- * Lifecycle manager for the kernel
+ * Lifecycle manager for the HTTP facade.
  *
  * @remarks
- * Manages the state transitions of the kernel through its lifecycle stages:
- * "open", "sealed", and "running".
- *
- * @example
- * ```typescript
- * const lifecycle = new Lifecycle();
- * console.log(lifecycle.state); // "open"
- *
- * const sealResult = lifecycle.seal();
- * if (sealResult.success) {
- *   console.log(sealResult.value); // "sealed"
- * }
- *
- * const startResult = lifecycle.start();
- * if (startResult.success) {
- *   console.log(startResult.value); // "running"
- * }
- * ```
+ * Manages state transitions through "open", "sealed", and "running" stages.
  */
 export class Lifecycle {
   #state: HttpLifecycleState = "open";
 
-  /**
-   * @returns Current kernel state
-   */
+  /** Current lifecycle state. */
   get state(): HttpLifecycleState {
     return this.#state;
   }
 
   /**
-   * Check if the current state matches the given state
-   *
-   * @param what State to check against
-   * @returns True if the current state matches the given state, false otherwise
+   * Checks if the current state matches the given state.
+   * @param what - State to check against.
+   * @returns - True if state matches.
    */
   is(what: HttpLifecycleState): boolean {
     return this.#state === what;
   }
 
   /**
-   * Seal the kernel
-   *
-   * @returns Result of the lifecycle seal operation
-   *
-   * @remarks
-   * Sealing the kernel transitions it to a state where services can be resolved,
-   * events can be emitted, and hooks can be executed. After sealing, no further
-   * modifications to services, events, or hooks are allowed.
+   * Transitions to sealed state (no more middleware can be registered).
+   * @returns - Result containing the new state or error.
    */
   seal(): Result<HttpLifecycleState, InvalidLifecycleStateError> {
     // Can only seal from "open" state
@@ -75,14 +49,8 @@ export class Lifecycle {
   }
 
   /**
-   * Start the kernel
-   *
-   * @returns Result of the lifecycle start operation
-   *
-   * @remarks
-   * Starting the kernel transitions it to a "running" state where it can
-   * actively process requests, resolve services, and handle events.
-   * This operation can only be performed from the "sealed" state.
+   * Transitions to running state (can process requests).
+   * @returns - Result containing the new state or error.
    */
   start(): Result<HttpLifecycleState, InvalidLifecycleStateError> {
     if (this.#state !== "sealed") {
@@ -101,14 +69,8 @@ export class Lifecycle {
   }
 
   /**
-   * Stop the kernel
-   *
-   * @returns Result of the lifecycle stop operation
-   *
-   * @remarks
-   * Stopping the kernel transitions it back to the "sealed" state from
-   * the "running" state. This operation can only be performed when
-   * the kernel is currently "running".
+   * Transitions back to sealed state from running state.
+   * @returns - Result containing the new state or error.
    */
   stop(): Result<HttpLifecycleState, InvalidLifecycleStateError> {
     if (this.#state !== "running") {

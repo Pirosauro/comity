@@ -1,67 +1,55 @@
-/**
- * Pipeline state container.
- *
- * Provides namespaced storage.
- */
+/** Namespaced storage for pipeline state. */
 export interface HttpState {
   /**
    * Retrieves a value from the shared pipeline state.
-   * @param key The namespaced key.
-   * @returns The stored value or undefined.
-   * @example
-   * state.get<string>("userId");
+   *
+   * @param key - Namespaced key.
+   * @returns Stored value or undefined.
    */
   get<T = unknown>(key: string): T | undefined;
 
   /**
    * Stores a value into the shared pipeline state.
-   * @param key The namespaced key.
-   * @param value The value to persist.
-   * @example
-   * state.set("traceId", "abc123");
+   *
+   * @param key - Namespaced key.
+   * @param value - Value to persist.
    */
   set<T = unknown>(key: string, value: T): void;
 
   /**
    * Checks if a key exists in the shared pipeline state.
-   * @param key The namespaced key.
-   * @returns True when the key is present.
-   * @example
-   * state.has("user");
+   *
+   * @param key - Namespaced key.
+   * @returns True if key is present.
    */
   has(key: string): boolean;
 }
 
 /**
  * Creates a default in-memory HttpState implementation.
- * @returns A mutable HttpState instance.
- * @example
- * const state = createHttpState();
+ *
+ * @returns Mutable HttpState instance.
  */
 export function createHttpState(): HttpState {
   const store = new Map<string, unknown>();
 
   return {
     /**
-     *
-     * @param key
+     * @inheritdoc
      */
     get<T = unknown>(key: string): T | undefined {
       return store.get(key) as T | undefined;
     },
 
     /**
-     *
-     * @param key
-     * @param value
+     * @inheritdoc
      */
     set<T = unknown>(key: string, value: T): void {
       store.set(key, value);
     },
 
     /**
-     *
-     * @param key
+     * @inheritdoc
      */
     has(key: string): boolean {
       return store.has(key);

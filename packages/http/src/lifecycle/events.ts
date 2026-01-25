@@ -1,47 +1,47 @@
-import type { HttpError } from "../contracts/error.js";
-
-/**
- *
- */
+/** HTTP request lifecycle events. */
 export interface HttpEvents {
   /**
-   *
+   * Emitted when a request begins processing.
+   * @param payload - Request start payload.
    */
   requestStarted(payload: {
-    /** Request ID */
+    /** Request ID. */
     id: string;
 
-    /** HTTP method */
+    /** HTTP method. */
     method: string;
 
-    /** Request path */
+    /** Request path. */
     path: string;
   }): void;
 
   /**
-   *
+   * Emitted when a request completes successfully.
+   * @param payload - Request completion payload.
    */
   requestCompleted(payload: {
-    /** Request ID */
+    /** Request ID. */
     id: string;
 
-    /** HTTP status code */
+    /** HTTP status code. */
     status: number;
 
-    /** Request duration in milliseconds */
+    /** Request duration in milliseconds. */
     duration: number;
   }): void;
+
   /**
-   *
+   * Emitted when a request fails.
+   * @param payload - Request failure payload.
    */
   requestFailed(payload: {
-    /** Request ID */
+    /** Request ID. */
     id: string;
 
-    /** Error */
-    error: HttpError;
+    /** Error code. */
+    code: string;
 
-    /** Request duration in milliseconds */
+    /** Request duration in milliseconds. */
     duration: number;
   }): void;
 }

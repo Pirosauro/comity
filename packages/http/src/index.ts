@@ -1,4 +1,4 @@
-export { HttpContext, HttpEvent } from "./contracts/context.js";
+export { HttpContext } from "./contracts/context.js";
 export { HttpErrorMapper } from "./contracts/error-mapper.js";
 export { HttpError } from "./contracts/error.js";
 export { HttpFacade } from "./contracts/facade.js";

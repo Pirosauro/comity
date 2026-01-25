@@ -1,11 +1,12 @@
 import type { HttpContext } from "../contracts/context.js";
-import type { HttpError } from "../contracts/error.js";
 import type { HttpFacade } from "../contracts/facade.js";
 import type { HttpMiddleware } from "../contracts/middleware.js";
 import type { HttpResult } from "../contracts/result.js";
 import type { HttpEvents } from "../lifecycle/events.js";
 
+import { BaseError, DomainViolationError, InternalError } from "@comity/primitives/errors";
 import { InvalidLifecycleStateError } from "../errors/invalid-lifecycle-state.js";
+import { Lifecycle } from "./lifecycle.js";
 import { DefaultHttpPipeline } from "./pipeline.js";
 
 /**
@@ -63,10 +64,16 @@ export class DefaultHttpFacade implements HttpFacade {
     }
 
     if (!this.pipeline) {
-      throw new Error("HTTP pipeline not initialized");
+      throw new InvalidLifecycleStateError({
+        action: "handle",
+        state: this.state.state,
+      });
     }
 
-    this.state.running();
+    const startResult = this.state.start();
+    if (!startResult.success) {
+      // Just continue - we're already running
+    }
 
     this.emitter.requestStarted({
       id: ctx.request.id,
@@ -77,19 +84,36 @@ export class DefaultHttpFacade implements HttpFacade {
     try {
       await this.pipeline.execute(ctx);
 
-      const result = ctx.response!;
+      if (!ctx.response) {
+        throw new DomainViolationError("HTTP pipeline completed without setting a response", {
+          contract: "HttpMiddleware",
+          expectation: "ctx.setResponse() must be called exactly once",
+        });
+      }
 
-      this.emitter.requestCompleted({
-        id: ctx.request.id,
-        status: result.response.status,
-        duration: performance.now() - start,
-      });
+      const result = ctx.response;
+
+      if (result.ok) {
+        this.emitter.requestCompleted({
+          id: ctx.request.id,
+          status: result.response.status,
+          duration: performance.now() - start,
+        });
+      }
 
       return result;
-    } catch (error) {
+    } catch (cause) {
+      // Normalize error
+      const error =
+        cause instanceof BaseError
+          ? cause
+          : new InternalError("Unhandled error in HTTP pipeline", {
+              cause,
+            });
+
       this.emitter.requestFailed({
         id: ctx.request.id,
-        error: error as HttpError,
+        code: error.code,
         duration: performance.now() - start,
       });
 

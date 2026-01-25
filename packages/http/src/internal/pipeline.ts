@@ -3,21 +3,18 @@ import type { HttpPipeline } from "../contracts/pipeline.js";
 import { HttpMiddlewareContractViolationError } from "../errors/middleware-contract-violation.js";
 import type { HttpMiddleware } from "../index.js";
 
-/**
- *
- */
+/** Default HTTP middleware pipeline implementation. */
 export class DefaultHttpPipeline implements HttpPipeline {
   constructor(private readonly middlewares: readonly HttpMiddleware[]) {}
 
   /**
-   *
-   * @param ctx
+   * @inheritdoc
    */
   async execute(ctx: HttpContext): Promise<void> {
     let index = -1;
 
     /**
-     *
+     * Dispatches to middleware at the given index.
      * @param i
      */
     const dispatch = async (i: number): Promise<void> => {
