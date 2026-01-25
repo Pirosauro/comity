@@ -1,4 +1,8 @@
-/** HTTP error. */
+/**
+ * Represents an HTTP error.
+ *
+ * @comity ai-jsdoc-skip
+ */
 export interface HttpError {
   /** Stable error code (machine readable). */
   code: string;

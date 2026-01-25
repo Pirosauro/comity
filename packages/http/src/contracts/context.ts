@@ -2,7 +2,11 @@ import type { HttpRequest } from "./request.js";
 import type { HttpResult } from "./result.js";
 import type { HttpState } from "./state.js";
 
-/** HTTP execution context for the entire request lifecycle. */
+/**
+ * HTTP execution context for the entire request lifecycle.
+ *
+ * @comity ai-jsdoc-skip
+ */
 export interface HttpContext {
   /** Immutable snapshot of the incoming HTTP request. */
   readonly request: HttpRequest;
@@ -18,6 +22,7 @@ export interface HttpContext {
 
   /**
    * Finalizes the response (can only be called once).
+   *
    * @param result - Final HTTP result.
    * @throws {Error} - If called more than once.
    */

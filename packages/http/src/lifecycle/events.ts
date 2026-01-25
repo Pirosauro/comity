@@ -1,7 +1,12 @@
-/** HTTP request lifecycle events. */
+/**
+ * HTTP request lifecycle events.
+ *
+ * @comity ai-jsdoc-skip
+ */
 export interface HttpEvents {
   /**
    * Emitted when a request begins processing.
+   *
    * @param payload - Request start payload.
    */
   requestStarted(payload: {
@@ -17,6 +22,7 @@ export interface HttpEvents {
 
   /**
    * Emitted when a request completes successfully.
+   *
    * @param payload - Request completion payload.
    */
   requestCompleted(payload: {
@@ -32,6 +38,7 @@ export interface HttpEvents {
 
   /**
    * Emitted when a request fails.
+   *
    * @param payload - Request failure payload.
    */
   requestFailed(payload: {

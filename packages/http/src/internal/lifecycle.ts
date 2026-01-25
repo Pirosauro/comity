@@ -7,21 +7,24 @@ import { InvalidLifecycleStateError } from "../errors/invalid-lifecycle-state.js
 /**
  * Lifecycle manager for the HTTP facade.
  *
- * @remarks
- * Manages state transitions through "open", "sealed", and "running" stages.
+ * @comity ai-jsdoc-skip
  */
 export class Lifecycle {
+  /** Current state. */
   #state: HttpLifecycleState = "open";
 
-  /** Current lifecycle state. */
+  /**
+   * @returns Current state.
+   */
   get state(): HttpLifecycleState {
     return this.#state;
   }
 
   /**
    * Checks if the current state matches the given state.
+   *
    * @param what - State to check against.
-   * @returns - True if state matches.
+   * @returns True if state matches.
    */
   is(what: HttpLifecycleState): boolean {
     return this.#state === what;
@@ -29,7 +32,9 @@ export class Lifecycle {
 
   /**
    * Transitions to sealed state (no more middleware can be registered).
-   * @returns - Result containing the new state or error.
+   *
+   * @returns Result containing the new state or error.
+   * @throws {InvalidLifecycleStateError} - If not in "open" state.
    */
   seal(): Result<HttpLifecycleState, InvalidLifecycleStateError> {
     // Can only seal from "open" state
@@ -50,7 +55,9 @@ export class Lifecycle {
 
   /**
    * Transitions to running state (can process requests).
-   * @returns - Result containing the new state or error.
+   *
+   * @returns Result containing the new state or error.
+   * @throws {InvalidLifecycleStateError} - If not in "sealed" state.
    */
   start(): Result<HttpLifecycleState, InvalidLifecycleStateError> {
     if (this.#state !== "sealed") {
@@ -70,7 +77,9 @@ export class Lifecycle {
 
   /**
    * Transitions back to sealed state from running state.
-   * @returns - Result containing the new state or error.
+   *
+   * @returns Result containing the new state or error.
+   * @throws {InvalidLifecycleStateError} - If not in "running" state.
    */
   stop(): Result<HttpLifecycleState, InvalidLifecycleStateError> {
     if (this.#state !== "running") {

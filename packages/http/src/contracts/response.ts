@@ -1,4 +1,8 @@
-/** HTTP response. */
+/**
+ * Represents an HTTP response.
+ *
+ * @comity ai-jsdoc-skip
+ */
 export interface HttpResponse {
   /** HTTP status code. */
   status: number;

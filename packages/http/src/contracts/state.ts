@@ -1,4 +1,8 @@
-/** Namespaced storage for pipeline state. */
+/**
+ * Shared mutable state for the HTTP pipeline.
+ *
+ * @comity ai-jsdoc-skip
+ */
 export interface HttpState {
   /**
    * Retrieves a value from the shared pipeline state.
@@ -29,30 +33,26 @@ export interface HttpState {
  * Creates a default in-memory HttpState implementation.
  *
  * @returns Mutable HttpState instance.
+ *
+ * @comity ai-jsdoc-skip
  */
 export function createHttpState(): HttpState {
   const store = new Map<string, unknown>();
 
   return {
-    /**
-     * @inheritdoc
-     */
+    /** @inheritdoc  */
     get<T = unknown>(key: string): T | undefined {
       return store.get(key) as T | undefined;
     },
 
-    /**
-     * @inheritdoc
-     */
+    /** @inheritdoc  */
     set<T = unknown>(key: string, value: T): void {
       store.set(key, value);
     },
 
-    /**
-     * @inheritdoc
-     */
+    /** @inheritdoc  */
     has(key: string): boolean {
       return store.has(key);
     },
-  };
+  } as HttpState;
 }

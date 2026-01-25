@@ -1,13 +1,18 @@
 import type { HttpContext } from "./context.js";
 import type { HttpResponse } from "./response.js";
 
-/** Maps errors to HTTP responses. */
+/**
+ * Maps errors to HTTP responses.
+ *
+ * @comity ai-jsdoc-skip
+ */
 export interface HttpErrorMapper {
   /**
    * Maps an error to an HTTP response.
+   *
    * @param error - Error to map.
    * @param ctx - HTTP context.
-   * @returns - HTTP response.
+   * @returns HTTP response.
    */
   map(error: unknown, ctx: HttpContext): HttpResponse;
 }

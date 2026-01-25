@@ -3,7 +3,11 @@ import type { HttpLifecycleState } from "../lifecycle/state.js";
 
 import { BaseError } from "@comity/primitives/errors";
 
-/** HTTP invalid state error metadata. */
+/**
+ * HTTP invalid state error metadata.
+ *
+ * @comity ai-jsdoc-skip
+ */
 export interface InvalidLifecycleStateErrorMeta extends ErrorMeta {
   /** Current state. */
   state: HttpLifecycleState;

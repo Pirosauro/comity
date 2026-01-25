@@ -1,7 +1,11 @@
 import type { HttpError } from "./error.js";
 import type { HttpResponse } from "./response.js";
 
-/** HTTP result. */
+/**
+ * HTTP result.
+ *
+ * @comity ai-jsdoc-skip
+ */
 export type HttpResult =
   | {
       /** Success result. */

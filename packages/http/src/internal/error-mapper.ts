@@ -4,7 +4,11 @@ import type { HttpResponse } from "../contracts/response.js";
 
 /**
  * Checks if an error matches the HttpError interface.
- * @param error
+ *
+ * @param error - The error to check.
+ * @returns true if the error is an instance of HttpError, false otherwise.
+ *
+ * @comity ai-jsdoc-skip
  */
 function isHttpError(error: unknown): error is HttpError {
   return (
@@ -17,23 +21,31 @@ function isHttpError(error: unknown): error is HttpError {
   );
 }
 
+/**
+ * Default HTTP error mapper.
+ *
+ * @comity ai-jsdoc-skip
+ */
 export const defaultHttpErrorMapper: HttpErrorMapper = {
   /**
    * Maps an error to an HTTP response.
-   * @param error The error to map.
-   * @param _ctx The HTTP context (unused in default implementation).
+   *
+   * @param error - The error to map.
+   * @param ctx - The HTTP context (unused in default implementation).
    * @returns An HTTP response.
    */
-  map(error, _ctx): HttpResponse {
+  map(error, ctx): HttpResponse {
     if (isHttpError(error)) {
       const body: Record<string, unknown> = {
         code: error.code,
       };
 
+      // Include message and details if available
       if (error["message"]) {
         body["message"] = error["message"];
       }
 
+      // Include details if available
       if (error["details"]) {
         body["details"] = error["details"];
       }
@@ -44,6 +56,7 @@ export const defaultHttpErrorMapper: HttpErrorMapper = {
       };
     }
 
+    // Handle aborted requests
     if (error instanceof DOMException && error.name === "AbortError") {
       return { status: 499 };
     }
