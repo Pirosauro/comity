@@ -2,15 +2,15 @@ import type { ModuleMeta } from "@comity/kernel/modules";
 import type { AuthJoseEventEmitter } from "../events/auth-jose.js";
 import type { JoseAuthModuleOptions } from "./types.js";
 
-import { success } from "@comity/core/result";
 import { createToken } from "@comity/kernel";
+import { success } from "@comity/primitives/result";
 import { JoseAuthTokenService } from "../services/auth-token.js";
 
 export const module: ModuleMeta = {
   name: "@comity/auth-jose",
   version: "1.0.0",
 
-  dependsOn: ["@comity/core", "@comity/kernel", "@comity/auth"],
+  dependsOn: ["@comity/primitives", "@comity/kernel", "@comity/auth"],
   incompatibleWith: [],
 
   /** @inheritdoc */

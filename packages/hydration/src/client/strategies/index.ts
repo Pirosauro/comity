@@ -1,5 +1,5 @@
-export * from "./idle.js";
-export * from "./immediate.js";
-export * from "./interaction.js";
-export * from "./media.js";
-export * from "./visible.js";
+export { idle } from "./idle.js";
+export { immediate } from "./immediate.js";
+export { interaction } from "./interaction.js";
+export { media } from "./media.js";
+export { visible } from "./visible.js";

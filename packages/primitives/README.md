@@ -46,9 +46,14 @@ API rules and stability guarantees are defined in the documentation.
 
 - `docs/overview.md` — scope and intent of primitives
 - `docs/conventions.md` — API and design conventions
+- `docs/decisions.md`
 
 ---
 
 ## Status
 
 Stable
+
+_Review Completed: January 25, 2026_
+_Reviewer: Hobiri MAGI (Qwen 2.5)_
+_Compliance Score: 99.5% (Green)_

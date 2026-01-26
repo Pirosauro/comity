@@ -20,15 +20,15 @@ export interface ModuleSetupContext<
   /**
    * Services container
    */
-  services: Omit<DiContainer<Services>, "#private">;
+  services: Pick<DiContainer<Services>, "define" | "resolve">;
 
   /**
    * Event bus
    */
-  events: Omit<EventBus<Events>, "#private">;
+  events: Pick<EventBus<Events>, "subscribe" | "emit">;
 
   /**
    * Hook bus
    */
-  hooks: Omit<HookBus<Hooks>, "#private">;
+  hooks: Pick<HookBus<Hooks>, "define" | "execute">;
 }

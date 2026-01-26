@@ -120,8 +120,8 @@ export class Lifecycle {
       );
     }
 
-    // Transition to "sealed" state
-    this.#state = "sealed";
+    // Transition to "stopped" state
+    this.#state = "stopped";
 
     return success(this.#state);
   }

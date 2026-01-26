@@ -114,7 +114,7 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@comity/core": "workspace:*",
+    "@comity/primitives": "workspace:*",
     "@comity/kernel": "workspace:*"
   },
   "devDependencies": {

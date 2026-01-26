@@ -101,7 +101,7 @@
   "sideEffects": false,
   "dependencies": {
     "@comity/auth": "workspace:*",
-    "@comity/core": "workspace:*",
+    "@comity/primitives": "workspace:*",
     "@comity/kernel": "workspace:*",
     "jose": "^6.1.3"
   },

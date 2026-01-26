@@ -1,0 +1,104 @@
+{
+  "meta": {
+    "name": "@comity/http",
+    "version": "1.0.0",
+    "layer": "module",
+    "category": "infrastructure",
+    "authoritative": true
+  },
+
+  "description": "HTTP runtime module providing request/response pipeline, middleware execution, lifecycle integration, and adapter-facing abstractions.",
+
+  "allowed_concepts": [
+    "http request/response abstraction",
+    "middleware pipelines",
+    "lifecycle-aware execution",
+    "event emission",
+    "error normalization",
+    "protocol-level invariants"
+  ],
+
+  "business_logic_definition": {
+    "excluded": [
+      "routing decisions",
+      "authentication rules",
+      "authorization rules",
+      "domain validation",
+      "application-specific policies"
+    ],
+    "note": "HTTP-level invariants (e.g. ensuring a response exists, abort handling, middleware contract enforcement) are NOT business logic."
+  },
+
+  "errors": {
+    "allowed": [
+      "BaseError",
+      "DomainViolationError",
+      "InternalError",
+      "InvalidLifecycleStateError",
+      "HttpMiddlewareContractViolationError"
+    ],
+    "rules": [
+      "All thrown errors MUST extend BaseError",
+      "Errors MAY represent protocol or contract violations",
+      "Errors MUST NOT encode application business rules"
+    ]
+  },
+
+  "events": {
+    "allowed": true,
+    "semantics": "observational",
+    "rules": [
+      "Events MUST NOT influence control flow",
+      "Event payloads MUST be log-safe",
+      "Events MAY expose identifiers and status codes",
+      "Events MUST NOT expose full request or response objects"
+    ]
+  },
+
+  "middleware": {
+    "allowed": true,
+    "semantics": "infrastructure pipeline",
+    "rules": [
+      "Middleware MAY short-circuit execution",
+      "Middleware MAY set the response",
+      "Middleware MUST respect HttpContext contract",
+      "Calling next() multiple times is a contract violation"
+    ]
+  },
+
+  "lifecycle": {
+    "allowed": true,
+    "rules": [
+      "Lifecycle state transitions MUST be enforced",
+      "Using the facade in invalid states is a CRITICAL violation"
+    ]
+  },
+
+  "adapters": {
+    "allowed": true,
+    "rules": [
+      "Adapters translate framework-specific APIs into HttpContext",
+      "Adapters MUST NOT contain business rules",
+      "Adapters MAY depend on framework libraries"
+    ]
+  },
+
+  "public_api": {
+    "rules": [
+      "Public contracts are stable by default",
+      "Facades are the primary public behavior surface",
+      "Internal implementations MUST NOT be exported"
+    ]
+  },
+
+  "review_exceptions": [
+    {
+      "code": "3.1",
+      "exception": "Middleware and pipeline logic are NOT considered business logic in this module"
+    },
+    {
+      "code": "1.2",
+      "exception": "HTTP orchestration logic is allowed inside this module"
+    }
+  ]
+}

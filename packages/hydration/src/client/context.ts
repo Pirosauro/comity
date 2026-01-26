@@ -1,4 +1,4 @@
-import type { EventBus } from "@comity/core/events";
+import type { EventBus } from "@comity/primitives/events";
 import type { IslandHydrationEvents } from "../contracts/events.js";
 import type { IslandRegistry } from "./registry.js";
 

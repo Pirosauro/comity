@@ -1,1 +1,1 @@
-export * from "./island.js";
+export { renderIslandHtml } from "./island.js";

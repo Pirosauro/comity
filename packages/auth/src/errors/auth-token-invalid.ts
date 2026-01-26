@@ -1,6 +1,6 @@
-import type { ErrorMeta } from "@comity/core/errors";
+import type { ErrorMeta } from "@comity/primitives/errors";
 
-import { BaseError } from "@comity/core/errors";
+import { BaseError } from "@comity/primitives/errors";
 
 export const AUTH_TOKEN_INVALID_REASONS = {
   TOKEN_INVALID: "token_invalid",

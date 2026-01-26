@@ -1,4 +1,4 @@
-import type { Result, ResultFailure } from "@comity/core/result";
+import type { Result, ResultFailure } from "@comity/primitives/result";
 import type { AuthSession } from "./session.js";
 
 import { InvalidSessionError } from "../errors/invalid-session.js";

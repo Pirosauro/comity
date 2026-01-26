@@ -48,10 +48,7 @@ export default defineConfig([
        * Global TypeScript quality rules
        */
       "@typescript-eslint/no-explicit-any": "error",
-      "@typescript-eslint/consistent-type-imports": [
-        "error",
-        { prefer: "type-imports" },
-      ],
+      "@typescript-eslint/consistent-type-imports": ["error", { prefer: "type-imports" }],
 
       /**
        * JSDoc Requirements
@@ -91,13 +88,42 @@ export default defineConfig([
       "jsdoc/require-description": [
         "warn",
         {
-          contexts: [
-            "ClassDeclaration",
-            "TSInterfaceDeclaration",
-            "TSTypeAliasDeclaration",
-          ],
+          contexts: ["ClassDeclaration", "TSInterfaceDeclaration", "TSTypeAliasDeclaration"],
         },
       ],
+      "jsdoc/sort-tags": [
+        "warn",
+        {
+          tagSequence: [
+            { tags: ["typeParam", "template"] },
+            { tags: ["param"] },
+            { tags: ["returns"] },
+            { tags: ["throws"] },
+            { tags: ["remarks"] },
+            { tags: ["example"] },
+            { tags: ["deprecated", "see", "comity"] },
+          ],
+          linesBetween: 1,
+          reportTagGroupSpacing: true,
+          reportIntraTagGroupSpacing: false,
+        },
+      ],
+      // "jsdoc/tag-lines": [
+      //   "warn",
+      //   "any",
+      //   {
+      //     startLines: 1,
+      //     endLines: 0,
+      //     tags: {
+      //       param: { lines: "never" },
+      //       returns: { lines: "never" },
+      //       throws: { lines: "never" },
+      //       remarks: { lines: "always" },
+      //       example: { lines: "always" },
+      //       comity: { lines: "always" },
+      //     },
+      //   },
+      // ],
     },
     ignores: [
       ...IGNORED_GLOBS,
@@ -160,10 +186,7 @@ export default defineConfig([
        * Determinism
        */
       "no-restricted-globals": ["error", "Date", "performance", "crypto"],
-      "no-restricted-properties": [
-        "error",
-        { object: "Math", property: "random" },
-      ],
+      "no-restricted-properties": ["error", { object: "Math", property: "random" }],
 
       /**
        * Error handling
@@ -173,8 +196,7 @@ export default defineConfig([
         "error",
         {
           selector: "ThrowStatement",
-          message:
-            "Domain must never throw. Use Result<T, E> for all failures.",
+          message: "Domain must never throw. Use Result<T, E> for all failures.",
         },
       ],
     },
@@ -191,10 +213,7 @@ export default defineConfig([
        * Determinism
        */
       "no-restricted-globals": ["error", "Date", "performance", "crypto"],
-      "no-restricted-properties": [
-        "error",
-        { object: "Math", property: "random" },
-      ],
+      "no-restricted-properties": ["error", { object: "Math", property: "random" }],
 
       /**
        * Error handling – Result pattern
@@ -204,8 +223,7 @@ export default defineConfig([
         "error",
         {
           selector: "ThrowStatement",
-          message:
-            "Core must not throw for business logic. Use Result<T, E> instead.",
+          message: "Core must not throw for business logic. Use Result<T, E> instead.",
         },
       ],
     },

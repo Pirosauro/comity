@@ -1,6 +1,6 @@
 import type { ModuleMeta } from "@comity/kernel/modules";
 
-import { success } from "@comity/core/result";
+import { success } from "@comity/primitives/result";
 
 /**
  * Module metadata
@@ -26,7 +26,7 @@ export const module: ModuleMeta = {
     });
   },
 
-  dependsOn: ["@comity/core", "@comity/kernel"],
+  dependsOn: ["@comity/primitives", "@comity/kernel"],
   incompatibleWith: [],
 };
 

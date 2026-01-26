@@ -5,7 +5,7 @@ import type { AuthSession } from "../contracts/session.js";
 import type { AuthEvaluationEmitter } from "../events/evaluation.js";
 import type { AuthRefreshEvaluationEmitter } from "../events/refresh.js";
 
-import { BaseError } from "@comity/core/errors";
+import { BaseError } from "@comity/primitives/errors";
 import { checkSessionInvariants } from "../contracts/session-invariants.js";
 import { AssuranceRequiredError } from "../errors/assurance-required.js";
 import { SessionRefreshExpiredError } from "../errors/session-refresh-expired.js";

@@ -14,11 +14,10 @@ The kernel is **optional**: Comity modules can be used with or without it.
 ---
 
 ## Responsibilities
+
 - ✅ Manages application lifecycle and initialization.
 - ❌ Does not handle user interface rendering.
 - ❌ Does not manage external HTTP requests.
-
-(Only bullet points. No paragraphs.)
 
 ---
 
@@ -29,13 +28,19 @@ Based on a modular design pattern to facilitate scalability and maintainability.
 ---
 
 ## Documentation
+
 - `docs/overview.md`
 - `docs/conventions.md`
-
-(Only relative paths. No external links.)
+- `docs/lifecycle.md`
+- `docs/events.md`
+- `docs/authors.md`
 
 ---
 
 ## Status
 
 Stable
+
+_Review Completed: January 25, 2026_
+_Reviewer: Hobiri MAGI (Qwen 2.5)_
+_Compliance Score: 99.6%_

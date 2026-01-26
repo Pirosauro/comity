@@ -1,7 +1,7 @@
 {
   "name": "@comity/hydration",
   "version": "1.0.0",
-  "description": "Hydration module for server-rendered applications with Comity framework",
+  "description": "Hydration module for server-rendered applications with the Comity framework",
   "type": "module",
   "author": "Filippo Bovo <hello@filippobovo.com>",
   "license": "MIT",
@@ -111,7 +111,7 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@comity/core": "workspace:*",
+    "@comity/primitives": "workspace:*",
     "@comity/kernel": "workspace:*"
   },
   "devDependencies": {

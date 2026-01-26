@@ -5,8 +5,8 @@ import type { AuthRefreshEvaluationEmitter } from "../events/refresh.js";
 import type { AuthSessionEmitter } from "../events/session.js";
 import type { AuthModuleOptions } from "./types.js";
 
-import { success } from "@comity/core/result";
 import { createToken } from "@comity/kernel";
+import { success } from "@comity/primitives/result";
 import { AuthGuard } from "../services/guard.js";
 import { CreateSession } from "../use-cases/session-create.js";
 import { RefreshSession } from "../use-cases/session-refresh.js";
@@ -17,7 +17,7 @@ export const module: ModuleMeta<AuthModuleOptions> = {
   name: "@comity/auth",
   version: "1.0.0",
 
-  dependsOn: ["@comity/core", "@comity/kernel"],
+  dependsOn: ["@comity/primitives", "@comity/kernel"],
   incompatibleWith: [],
 
   /**

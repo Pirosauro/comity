@@ -1,6 +1,6 @@
-import type { ErrorMeta } from "@comity/core/errors";
+import type { ErrorMeta } from "@comity/primitives/errors";
 
-import { BaseError } from "@comity/core/errors";
+import { BaseError } from "@comity/primitives/errors";
 
 export const INVALID_JWT_REASONS = {
   JWT_TOKEN_EXPIRED: "jwt_token_expired",

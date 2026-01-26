@@ -7,14 +7,21 @@ import { HttpMiddlewareContractViolationError } from "../errors/middleware-contr
 /**
  * Default HTTP middleware pipeline implementation.
  *
+ * @remarks
+ * Executes middleware sequentially using a Koa-style `next()` contract.
+ *
+ * Rules:
+ * - `next()` may be called at most once per middleware
+ * - middleware must either call `next()` or finalize the response via `ctx.setResponse()`
+ *
  * @comity ai-jsdoc-skip
  */
 export class DefaultHttpPipeline implements HttpPipeline {
-  /** List of middleware functions. */
+  /** Ordered list of middleware functions. */
   #middlewares: readonly HttpMiddleware[];
 
   /**
-   * @param middlewares - The middleware functions to include in the pipeline.
+   * @param middlewares - The middleware functions to execute.
    */
   constructor(middlewares: readonly HttpMiddleware[]) {
     this.#middlewares = middlewares;
@@ -22,15 +29,17 @@ export class DefaultHttpPipeline implements HttpPipeline {
 
   /**
    * Executes the middleware pipeline.
-   * @param ctx - The HTTP context to pass through the middleware.
-   * @throws {HttpMiddlewareContractViolationError} - If `HttpMiddleware.next()` is called multiple times.
+   *
+   * @param ctx - The HTTP context.
+   * @throws {HttpMiddlewareContractViolationError} If `next()` is called multiple times.
    */
   async execute(ctx: HttpContext): Promise<void> {
     let index = -1;
 
     /**
-     * Dispatches to middleware at the given index.
-     * @param i - The current index in the middleware array.
+     * Dispatches the middleware at the given index.
+     *
+     * @param i - The index of the middleware to dispatch.
      */
     const dispatch = async (i: number): Promise<void> => {
       if (i <= index) {
@@ -43,9 +52,13 @@ export class DefaultHttpPipeline implements HttpPipeline {
 
       const middleware = this.#middlewares[i];
 
+      // No more middleware to execute
       if (!middleware) return;
 
-      await middleware(ctx, () => dispatch(i + 1));
+      // Execute the current middleware
+      await middleware(ctx, async () => {
+        await dispatch(i + 1);
+      });
     };
 
     await dispatch(0);

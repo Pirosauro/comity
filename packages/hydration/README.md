@@ -1,48 +1,35 @@
 # @comity/hydration
 
-Comity hydration module for server-rendered applications.
+Hydration module for server-rendered applications with the Comity framework.
 
 ---
 
 ## Purpose
 
-This package provides essential functionality to hydrate client-side rendered parts of server-rendered applications using the Comity framework. It ensures that interactive components are properly initialized and state is synchronized between server and client, providing a smooth user experience without re-renders or flashes of unstyled content (FOUC).
+Enables interactive islands in server-rendered applications by handling the hydration process based on user interactions, media queries, or other conditions.
 
 ---
 
-## Scope
+## Responsibilities
 
-This package:
-
-- Hydrates client-side components with server-rendered HTML
-- Synchronizes component states across the server and client
-- Supports various hydration strategies for different parts of the application
-
-This package does NOT:
-
-- Handle routing or navigation on the client side
-- Manage global state management solutions like Redux or MobX
-- Provide server-side rendering (SSR) capabilities
+- ✅ Manages island hydration triggered by user interactions
+- ✅ Supports hydration based on media queries
+- ✅ Provides strategies for immediate, idle, and visible hydration
+- ❌ Does not handle server-side rendering
+- ❌ Does not manage application state
 
 ---
 
-## Public API
+## Architecture
 
-The public API includes:
-
-- `hydrateRoot`: Function to initiate hydration of a root component.
-- `registerStrategy`: Function to register custom hydration strategies.
-
-For detailed usage and examples, please refer to the official documentation:
-
-- [Comity Documentation](https://github.com/comityjs/framework#readme)
+Based on a strategy pattern to determine when and how islands should be hydrated.
 
 ---
 
-## Related Packages
+## Documentation
 
-- [@comity/core]: Core utilities for the Comity framework
-- [@comity/kernel]: Kernel module for dependency injection in Comity applications
+- `docs/overview.md`
+- `docs/conventions.md`
 
 ---
 

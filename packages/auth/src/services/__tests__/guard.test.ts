@@ -1,6 +1,6 @@
 import type { AuthSession } from "../../contracts/session.js";
 
-import { BaseError } from "@comity/core/errors";
+import { BaseError } from "@comity/primitives/errors";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AssuranceRequiredError } from "../../errors/assurance-required.js";
 import { InvalidSessionError } from "../../errors/invalid-session.js";

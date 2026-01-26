@@ -1,3 +1,3 @@
-export * from "./loader.js";
-export * from "./resolver.js";
-export * from "./types.js";
+export { loadModules } from "./loader.js";
+export { resolveModuleOrder } from "./resolver.js";
+export { ModuleMeta, ModuleSetupFn } from "./types.js";

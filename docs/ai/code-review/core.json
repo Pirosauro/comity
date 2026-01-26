@@ -1,0 +1,305 @@
+{
+  "meta": {
+    "name": "comity-core-standards",
+    "version": "1.0.0",
+    "scope": "code-review",
+    "authoritative": true
+  },
+
+  "layers": {
+    "primitives": {
+      "description": "Pure, reusable building blocks without side effects.",
+      "rules": [
+        {
+          "id": "primitives-no-io",
+          "description": "Primitives MUST NOT perform I/O or have side effects"
+        },
+        {
+          "id": "primitives-deterministic",
+          "description": "Primitives MUST be deterministic and pure"
+        },
+        {
+          "id": "primitives-zero-mocks",
+          "description": "Primitives MUST be testable without mocks"
+        }
+      ]
+    },
+
+    "kernel": {
+      "description": "Lifecycle orchestration and module coordination.",
+      "rules": [
+        {
+          "id": "kernel-orchestration-only",
+          "description": "Kernel contains orchestration only, no business rules"
+        },
+        {
+          "id": "kernel-lifecycle-control",
+          "description": "Kernel owns and controls system lifecycle states"
+        },
+        {
+          "id": "kernel-no-business-logic",
+          "description": "Kernel MUST NOT contain domain or business logic"
+        }
+      ]
+    },
+
+    "modules": {
+      "description": "Reusable functional units with domain or infrastructure logic.",
+      "subtypes": {
+        "domain_modules": {
+          "description": "Modules containing pure business logic",
+          "rules": [
+            {
+              "id": "domain-module-no-adapters",
+              "description": "Domain modules MUST NOT depend on adapters"
+            },
+            {
+              "id": "domain-module-explicit-deps",
+              "description": "Domain modules MUST declare explicit dependencies"
+            }
+          ]
+        },
+        "infrastructure_modules": {
+          "description": "Modules providing infrastructure services",
+          "rules": [
+            {
+              "id": "infra-module-no-business-logic",
+              "description": "Infrastructure modules MUST NOT contain business rules"
+            }
+          ]
+        }
+      },
+      "common_rules": [
+        {
+          "id": "module-setup-explicit",
+          "description": "Modules MUST declare setup explicitly via ModuleMeta"
+        },
+        {
+          "id": "module-public-api-stable",
+          "description": "Module public APIs are stable contracts"
+        }
+      ]
+    },
+
+    "adapters": {
+      "description": "Framework and platform-specific integrations.",
+      "rules": [
+        {
+          "id": "adapter-no-business-logic",
+          "description": "Adapters MUST NOT implement business or domain logic"
+        },
+        {
+          "id": "adapter-thin-translation",
+          "description": "Adapters MUST be thin translation layers only"
+        },
+        {
+          "id": "adapter-framework-specific",
+          "description": "Adapters ARE framework-specific and replaceable"
+        },
+        {
+          "id": "adapter-no-module-deps",
+          "description": "Modules MUST NOT depend on adapters"
+        }
+      ]
+    }
+  },
+
+  "errors": {
+    "description": "Error handling conventions.",
+    "rules": [
+      {
+        "id": "baseerror-mandatory",
+        "description": "All errors MUST extend BaseError"
+      },
+      {
+        "id": "error-code-namespaced",
+        "description": "Error codes MUST be namespaced (module:reason)"
+      },
+      {
+        "id": "error-message-safe",
+        "description": "Error messages MUST be safe to log (no sensitive data)"
+      },
+      {
+        "id": "http-status-hint-only",
+        "description": "HTTP status in meta is a hint, not a dependency"
+      }
+    ],
+    "note": "Comity uses exceptions for both expected and unexpected failures. For expected failures, consider Result<T,E> pattern as future enhancement."
+  },
+
+  "public_api": {
+    "description": "Public API surface rules.",
+    "rules": [
+      {
+        "id": "api-intentional-stable",
+        "description": "Public APIs MUST be intentional, stable, and documented"
+      },
+      {
+        "id": "no-internal-exports",
+        "description": "Internal APIs MUST NOT be exported or documented"
+      },
+      {
+        "id": "facades-preferred",
+        "description": "Behavior exposure SHOULD use Facade pattern"
+      },
+      {
+        "id": "sub-entrypoints-conceptual",
+        "description": "Sub-entrypoints MUST represent clear conceptual domains"
+      }
+    ]
+  },
+
+  "events_hooks": {
+    "description": "Event and hook system rules.",
+    "events": {
+      "rules": [
+        {
+          "id": "events-observational",
+          "description": "Events are observational and MUST NOT influence control flow"
+        },
+        {
+          "id": "events-optional",
+          "description": "System MUST function correctly without event listeners"
+        },
+        {
+          "id": "events-payload-safe",
+          "description": "Event payloads MUST be safe to log (identifiers, not objects)"
+        }
+      ]
+    },
+    "hooks": {
+      "rules": [
+        {
+          "id": "hooks-participatory",
+          "description": "Hooks are participatory and MAY influence control flow"
+        },
+        {
+          "id": "hooks-ordered-execution",
+          "description": "Hook execution order MAY matter"
+        },
+        {
+          "id": "hooks-lifecycle-contract",
+          "description": "Hooks are part of lifecycle contracts"
+        }
+      ]
+    },
+    "separation_rule": {
+      "id": "no-event-to-hook",
+      "description": "Events MUST NOT trigger hooks; Hooks MAY emit events"
+    }
+  },
+
+  "testing": {
+    "description": "Testing standards by layer.",
+    "rules": [
+      {
+        "id": "test-behavior-not-implementation",
+        "description": "Tests MUST validate contracts and behavior, not implementations"
+      },
+      {
+        "id": "layer-appropriate-testing",
+        "description": "Testing approach MUST vary by architectural layer"
+      },
+      {
+        "id": "primitives-pure-tests",
+        "description": "Primitives tests MUST be pure and deterministic with zero mocks"
+      },
+      {
+        "id": "adapters-integration-tests",
+        "description": "Adapter tests MAY use integration-style tests and real frameworks"
+      }
+    ]
+  },
+
+  "documentation": {
+    "description": "Documentation and contract standards.",
+    "rules": [
+      {
+        "id": "readme-structured",
+        "description": "README.md MUST follow standard structure (Purpose, Scope, Public API)"
+      },
+      {
+        "id": "docs-separate-from-readme",
+        "description": "Detailed documentation MUST live in docs/ directory"
+      },
+      {
+        "id": "decisions-not-adrs",
+        "description": "Design decisions documented as topic files, not formal ADRs"
+      },
+      {
+        "id": "public-api-documented",
+        "description": "All public APIs MUST be documented"
+      },
+      {
+        "id": "internal-undocumented",
+        "description": "Internal APIs MUST NOT be documented"
+      }
+    ]
+  },
+
+  "class_design": {
+    "description": "Class construction and design standards.",
+    "rules": [
+      {
+        "id": "explicit-fields",
+        "description": "All fields MUST be declared explicitly (no parameter properties)"
+      },
+      {
+        "id": "private-fields-js",
+        "description": "Internal state MUST use #private JavaScript fields"
+      },
+      {
+        "id": "public-access-via-getters",
+        "description": "Public state MUST be exposed via getters"
+      },
+      {
+        "id": "constructor-initializes-fully",
+        "description": "Constructor MUST fully initialize the instance"
+      },
+      {
+        "id": "lifecycle-explicit",
+        "description": "Classes with phases MUST use Lifecycle abstraction"
+      }
+    ]
+  },
+
+  "infrastructure_logic": {
+    "description": "Non-business logic required to enforce protocol, runtime safety, or invariants.",
+    "rules": [
+      {
+        "id": "infra-logic-allowed",
+        "description": "Infrastructure logic (middleware flow control, protocol invariants, safety checks) is NOT business logic."
+      },
+      {
+        "id": "infra-logic-location",
+        "description": "Infrastructure logic MAY live in internal/, middleware/, pipeline/, or facade implementations."
+      }
+    ]
+  },
+
+  "key_principles": {
+    "description": "Cross-cutting architectural principles.",
+    "rules": [
+      {
+        "id": "boundary-clear",
+        "description": "Architectural boundaries MUST be clear and enforced"
+      },
+      {
+        "id": "contracts-stable",
+        "description": "Public contracts MUST be stable and versioned"
+      },
+      {
+        "id": "adapters-replaceable",
+        "description": "Adapters MUST be thin, framework-specific, and replaceable"
+      },
+      {
+        "id": "modules-composable",
+        "description": "Modules MUST be composable and explicitly declare dependencies"
+      },
+      {
+        "id": "kernel-orchestrates",
+        "description": "Kernel orchestrates, modules provide functionality, adapters translate"
+      }
+    ]
+  }
+}

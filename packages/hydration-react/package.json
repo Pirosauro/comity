@@ -148,7 +148,7 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@comity/core": "workspace:*"
+    "@comity/primitives": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^24.10.9",

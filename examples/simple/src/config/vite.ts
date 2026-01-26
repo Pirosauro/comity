@@ -1,17 +1,11 @@
-import { defineConfig } from "vite";
+import honoViteBuildCloudflarePagesPlugin from "@hono/vite-build/cloudflare-pages";
 import honoDevServerPlugin from "@hono/vite-dev-server";
 import honoDevServerCloudflareAdapter from "@hono/vite-dev-server/cloudflare";
-import honoViteBuildCloudflarePagesPlugin from "@hono/vite-build/cloudflare-pages";
-import { withComity } from "@comity/application/vite";
+import { defineConfig } from "vite";
 
 export default defineConfig(({ mode }) => {
-  const comity = withComity({
-    allowedOverrides: ["@comity/auth"],
-  });
-
   if (mode === "client") {
     return {
-      ...comity,
       build: {
         rollupOptions: {
           input: ["./src/client.ts"],
@@ -28,14 +22,13 @@ export default defineConfig(({ mode }) => {
   }
 
   return {
-    ...comity,
     plugins: [
       honoDevServerPlugin({
-        entry: "./src/server.ts",
+        entry: "./src/server.tsx",
         adapter: honoDevServerCloudflareAdapter,
       }),
       honoViteBuildCloudflarePagesPlugin({
-        entry: "./src/server.ts",
+        entry: "./src/server.tsx",
       }),
     ],
   };
