@@ -13,23 +13,20 @@ export interface EventBusContract<Events extends Record<string, unknown>> {
   /**
    * Subscribe to an event with a handler
    *
+   * @typeParam K - Key of the event in the Events record
+   *
    * @param event Event name
    * @param handler Event handler function
-   *
-   * @typeParam K - Key of the event in the Events record
    */
-  subscribe<K extends keyof Events>(
-    event: K,
-    handler: EventHandler<Events[K]>,
-  ): void;
+  subscribe<K extends keyof Events>(event: K, handler: EventHandler<Events[K]>): void;
 
   /**
    * Emit an event with a payload
    *
+   * @typeParam K - Key of the event in the Events record
+   *
    * @param event Event name
    * @param payload Event payload
-   *
-   * @typeParam K - Key of the event in the Events record
    */
   emit<K extends keyof Events>(event: K, payload: Events[K]): Promise<void>;
 }

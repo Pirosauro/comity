@@ -25,6 +25,7 @@ export interface HttpFacade {
    * Used by adapters to process a request.
    *
    * @param ctx - The HTTP context for the current request.
+   *
    * @returns A promise resolving to the HTTP result.
    */
   handle(ctx: HttpContext): Promise<HttpResult>;

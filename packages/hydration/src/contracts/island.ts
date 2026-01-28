@@ -1,54 +1,31 @@
-/**
- * Interaction strategy
- */
-export type IslandHydrationInteractionStrategy = {
-  /** Hydration strategy name */
-  type: "interaction";
-
-  /** Interaction events that trigger hydration */
-  options: ("pointerdown" | "click" | "focusin")[];
-};
-
-/**
- * Media strategy
- */
-export type IslandHydrationMediaStrategy = {
-  /** Hydration strategy name */
-  type: "media";
-
-  /** Media query that triggers hydration */
-  options: string;
-};
-
-/**
- * Other strategies
- */
-export type IslandHydrationOtherStrategy = {
-  /** Hydration strategy name */
-  type: "immediate" | "idle" | "visible" | "never";
-
-  /** Never has options */
-  options?: never;
-};
-
-/**
- * Hydration strategy union type
- */
-export type IslandHydrationStrategy =
-  | IslandHydrationInteractionStrategy
-  | IslandHydrationMediaStrategy
-  | IslandHydrationOtherStrategy;
+import type { HydrationStrategy } from "./strategy.js";
 
 /**
  * Island contract
  */
 export interface IslandContract<Data = unknown> {
-  /** Island unique name */
-  name: string;
+  /** Island unique identifier */
+  id: string;
+
+  /** Island unique component name */
+  component: string;
 
   /** Hydration data */
   data: Data;
 
   /** Hydration strategy */
-  strategy: IslandHydrationStrategy;
+  strategy: HydrationStrategy;
+
+  /** Hydration mode */
+  mode?: "client-only";
 }
+
+/**
+ * Island hydration state
+ */
+export type IslandHydrationState =
+  | "idle" // Initial state
+  | "materialized" // The server HTML has been materialized
+  | "hydrating" // Hydration is in progress
+  | "completed" // Hydration completed successfully
+  | "failed"; // Hydration failed

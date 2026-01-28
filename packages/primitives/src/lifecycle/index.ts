@@ -5,4 +5,3 @@ export { EventBusErrorHandler, EventBusOptions } from "./events/types.js";
 export { HookBus } from "./hooks/bus.js";
 export { HookBusContract } from "./hooks/contract.js";
 export { HookHandler } from "./hooks/handler.js";
-

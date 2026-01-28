@@ -3,10 +3,11 @@ import type { Token } from "./types.js";
 /**
  * Create a new token
  *
- * @param description Token description
- * @returns New token
- *
  * @typeParam T - Token type string
+ *
+ * @param description Token description
+ *
+ * @returns New token
  *
  * @example
  * ```typescript

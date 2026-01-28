@@ -18,20 +18,13 @@ export const module: ModuleMeta<HttpHonoModuleOptions> = {
   name: "@comity/http-hono",
   version: "1.0.0",
 
-  dependsOn: ["@comity/primitives", "@comity/kernel", "@comity/http"],
+  dependsOn: ["@comity/http"],
   incompatibleWith: [],
 
-  /**
-   * Setup factory.
-   *
-   * @param options Module options
-   * @returns Setup function
-   */
+  /** @inheritdoc */
   setup: async (options) => {
     return success(async (ctx) => {
       // No services to register by default
-      // Future: could register facade in services if provided in options
-
       return success(undefined);
     });
   },

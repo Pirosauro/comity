@@ -4,10 +4,11 @@ import type { Result, ResultFailure } from "./types.js";
 /**
  * Failure result factory
  *
- * @param error Error instance
- * @returns Failure result
- *
  * @typeParam Error - Type of the failure error (extends BaseError)
+ *
+ * @param error Error instance
+ *
+ * @returns Failure result
  *
  * @example
  * ```typescript
@@ -15,19 +16,18 @@ import type { Result, ResultFailure } from "./types.js";
  * const result: Result<number, NotFoundError> = failure(error);
  * ```
  */
-export function failure<E extends BaseError = BaseError>(
-  error: E,
-): ResultFailure<E> {
+export function failure<E extends BaseError = BaseError>(error: E): ResultFailure<E> {
   return { success: false, error };
 }
 
 /**
  * Type guard for failure results
  *
- * @param result Result to check
- * @returns True if the result is a failure, false otherwise
- *
  * @typeParam Error - Type of the failure error (extends BaseError)
+ *
+ * @param result Result to check
+ *
+ * @returns True if the result is a failure, false otherwise
  *
  * @example
  * ```typescript
@@ -38,5 +38,5 @@ export function failure<E extends BaseError = BaseError>(
  * ```
  */
 export const isFailure = <E extends BaseError = BaseError>(
-  result: Result<unknown, E>,
+  result: Result<unknown, E>
 ): result is ResultFailure<E> => !result.success;

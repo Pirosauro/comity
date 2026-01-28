@@ -1,2 +1,2 @@
-export { createHonoHandler } from "./adapter/hono-handler.js";
-export { HonoHandlerOptions, HttpHonoModuleOptions } from "./setup/types.js";
+export { httpHonoAdapter } from "./adapter/http.js";
+export { HttpHonoModuleEvents, HttpHonoModuleHooks, HttpHonoModuleOptions } from "./setup/types.js";

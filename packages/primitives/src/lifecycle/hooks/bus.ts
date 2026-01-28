@@ -34,14 +34,7 @@ export class HookBus<
     [K in keyof Hooks]?: Set<HookHandler<Hooks[K]>>;
   } = {};
 
-  /**
-   * Define a hook with a name and a handler
-   *
-   * @param name Hook name
-   * @param handler Hook handler
-   *
-   * @typeParam K - Key of the hook in the Hooks record
-   */
+  /** @inheritdoc */
   define<K extends keyof Hooks>(name: K, handler: HookHandler<Hooks[K]>): void {
     const list = this.#handlers[name] ?? new Set();
 
@@ -49,19 +42,8 @@ export class HookBus<
     this.#handlers[name] = list;
   }
 
-  /**
-   * Execute a hook by name with an initial value
-   *
-   * @param name Hook name
-   * @param initial Initial value
-   * @returns Final value after all handlers have been executed
-   *
-   * @typeParam K - Key of the hook in the Hooks record
-   */
-  async execute<K extends keyof Hooks>(
-    name: K,
-    initial: Hooks[K],
-  ): Promise<Hooks[K]> {
+  /** @inheritdoc */
+  async execute<K extends keyof Hooks>(name: K, initial: Hooks[K]): Promise<Hooks[K]> {
     const handlers = this.#handlers[name];
 
     // No handlers, return initial value

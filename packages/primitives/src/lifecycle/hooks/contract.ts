@@ -14,21 +14,23 @@ export interface HookBusContract<Hooks extends Record<string, unknown>> {
   /**
    * Define a hook with a handler
    *
+   * @typeParam K - Key of the hook in the Hooks record
+   *
    * @param name Hook name
    * @param handler Hook handler function
    *
-   * @typeParam K - Key of the hook in the Hooks record
    */
   define<K extends keyof Hooks>(name: K, handler: HookHandler<Hooks[K]>): void;
 
   /**
    * Execute a hook by name with an initial value
    *
+   * @typeParam K - Key of the hook in the Hooks record
+   *
    * @param name Hook name
    * @param initial Initial value
-   * @returns Final value after all handlers have been executed
    *
-   * @typeParam K - Key of the hook in the Hooks record
+   * @returns Final value after all handlers have been executed
    *
    * @remarks
    * This method executes all handlers associated with the specified hook name,

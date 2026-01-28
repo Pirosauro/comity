@@ -1,5 +1,4 @@
 /**
- * @remarks
  * This index is intentionally empty. Users should import from specific domains:
  *
  * - `@comity/primitives/errors` - Error types and base class

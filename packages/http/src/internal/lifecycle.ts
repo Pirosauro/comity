@@ -24,6 +24,7 @@ export class Lifecycle {
    * Checks if the current state matches the given state.
    *
    * @param what - State to check against.
+   *
    * @returns True if state matches.
    */
   is(what: HttpLifecycleState): boolean {
@@ -34,6 +35,7 @@ export class Lifecycle {
    * Transitions to sealed state (no more middleware can be registered).
    *
    * @returns Result containing the new state or error.
+   *
    * @throws {InvalidLifecycleStateError} - If not in "open" state.
    */
   seal(): Result<HttpLifecycleState, InvalidLifecycleStateError> {
@@ -57,6 +59,7 @@ export class Lifecycle {
    * Transitions to running state (can process requests).
    *
    * @returns Result containing the new state or error.
+   *
    * @throws {InvalidLifecycleStateError} - If not in "sealed" state.
    */
   start(): Result<HttpLifecycleState, InvalidLifecycleStateError> {
@@ -79,6 +82,7 @@ export class Lifecycle {
    * Transitions back to sealed state from running state.
    *
    * @returns Result containing the new state or error.
+   *
    * @throws {InvalidLifecycleStateError} - If not in "running" state.
    */
   stop(): Result<HttpLifecycleState, InvalidLifecycleStateError> {

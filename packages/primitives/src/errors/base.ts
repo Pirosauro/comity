@@ -57,6 +57,7 @@ export abstract class BaseError extends Error {
    * @param message Human-readable error message
    * @param meta.cause The underlying cause of the error
    * @param meta - Error metadata including HTTP status, details, and cause
+   *
    * @protected
    */
   protected constructor(message: string, { cause, ...meta }: ErrorMeta) {

@@ -17,14 +17,10 @@
     "comity",
     "comityjs",
     "hydration",
-    "ssr",
-    "server-side rendering",
     "rendering",
     "islands",
     "composability",
     "react",
-    "preact",
-    "hono",
     "framework",
     "typescript",
     "javascript"
@@ -52,56 +48,6 @@
         "default": "./dist/cjs/index.js"
       }
     },
-    "./client": {
-      "import": {
-        "types": "./dist/types/client/index.d.ts",
-        "default": "./dist/esm/client/index.js"
-      },
-      "require": {
-        "types": "./dist/types/client/index.d.ts",
-        "default": "./dist/cjs/client/index.js"
-      }
-    },
-    "./core": {
-      "import": {
-        "types": "./dist/types/core/index.d.ts",
-        "default": "./dist/esm/core/index.js"
-      },
-      "require": {
-        "types": "./dist/types/core/index.d.ts",
-        "default": "./dist/cjs/core/index.js"
-      }
-    },
-    "./errors": {
-      "import": {
-        "types": "./dist/types/errors/index.d.ts",
-        "default": "./dist/esm/errors/index.js"
-      },
-      "require": {
-        "types": "./dist/types/errors/index.d.ts",
-        "default": "./dist/cjs/errors/index.js"
-      }
-    },
-    "./runtime": {
-      "import": {
-        "types": "./dist/types/runtime/index.d.ts",
-        "default": "./dist/esm/runtime/index.js"
-      },
-      "require": {
-        "types": "./dist/types/runtime/index.d.ts",
-        "default": "./dist/cjs/runtime/index.js"
-      }
-    },
-    "./server": {
-      "import": {
-        "types": "./dist/types/server/index.d.ts",
-        "default": "./dist/esm/server/index.js"
-      },
-      "require": {
-        "types": "./dist/types/server/index.d.ts",
-        "default": "./dist/cjs/server/index.js"
-      }
-    },
     "./setup": {
       "import": {
         "types": "./dist/types/setup/index.d.ts",
@@ -112,33 +58,12 @@
         "default": "./dist/cjs/setup/index.js"
       }
     },
-    "./types": {
-      "types": "./module.d.ts"
-    },
     "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
-      "client": [
-        "./dist/types/client/index.d.ts"
-      ],
-      "core": [
-        "./dist/types/core/index.d.ts"
-      ],
-      "errors": [
-        "./dist/types/errors/index.d.ts"
-      ],
-      "runtime": [
-        "./dist/types/runtime/index.d.ts"
-      ],
-      "server": [
-        "./dist/types/server/index.d.ts"
-      ],
       "setup": [
         "./dist/types/setup/index.d.ts"
-      ],
-      "types": [
-        "./module.d.ts"
       ]
     }
   },
@@ -148,12 +73,13 @@
   },
   "sideEffects": false,
   "dependencies": {
+    "@comity/hydration": "workspace:*",
     "@comity/primitives": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^24.10.9",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
     "typescript": "^5.9.3"
   },
   "peerDependencies": {

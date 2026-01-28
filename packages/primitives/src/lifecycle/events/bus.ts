@@ -47,42 +47,16 @@ export class EventBus<
     }
   }
 
-  /**
-   * Subcribe to an event
-   *
-   * @param event Event name
-   * @param handler Event handler
-   *
-   * @typeParam K - Key of the event in the Events record
-   */
-  subscribe<K extends keyof Events>(
-    event: K,
-    handler: EventHandler<Events[K]>,
-  ): void {
+  /** @inheritdoc */
+  subscribe<K extends keyof Events>(event: K, handler: EventHandler<Events[K]>): void {
     const set = this.#handlers.get(event) ?? new Set();
 
     set.add(handler as EventHandler<unknown>);
     this.#handlers.set(event, set);
   }
 
-  /**
-   * Emit an event with a payload
-   *
-   * @param event Event name
-   * @param payload Event payload
-   *
-   * @typeParam K - Key of the event in the Events record
-   *
-   * @remarks
-   * EventBus.emit MUST NOT be awaited in adapters or synchronous contexts,
-   * as event handlers are executed asynchronously in the background. Awaiting
-   * this method would introduce unwanted latency and block the main execution
-   * flow.
-   */
-  async emit<K extends keyof Events>(
-    event: K,
-    payload: Events[K],
-  ): Promise<void> {
+  /** @inheritdoc */
+  async emit<K extends keyof Events>(event: K, payload: Events[K]): Promise<void> {
     const handlers = this.#handlers.get(event);
 
     // No handlers, nothing to do
@@ -98,10 +72,10 @@ export class EventBus<
             new InternalError("Event handler failed", {
               event,
               cause,
-            }),
+            })
           );
         }
-      }),
+      })
     );
   }
 }

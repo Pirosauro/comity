@@ -33,11 +33,13 @@ export class DiContainer<
   /**
    * Define a service factory
    *
+   * @typeParam K - Key of the service in the Services record
+   *
    * @param key - Service identifier
    * @param factory - Factory function to create the service instance
+   *
    * @throws {ConflictError} If the service is already registered
    *
-   * @typeParam K - Key of the service in the Services record
    */
   define<K extends keyof Services>(key: K, factory: () => Services[K]): void {
     if (this.#factories.has(key)) {
@@ -52,12 +54,14 @@ export class DiContainer<
   /**
    * Resolve a service by its identifier
    *
+   * @typeParam K - Key of the service in the Services record
+   *
    * @param key - Service identifier
+   *
    * @returns The service instance
    *
    * @throws {NotFoundError} If the service is not registered
    *
-   * @typeParam K - Key of the service in the Services record
    */
   resolve<K extends keyof Services>(key: K): Services[K] {
     // Return existing instance if available

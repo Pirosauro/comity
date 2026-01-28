@@ -30,7 +30,7 @@ export class NotFoundError extends BaseError {
    * @param message Human-readable error message describing the not found error
    * @param meta Additional error metadata (criteria, context, etc.)
    */
-  constructor(message: string ="Resource not found", meta?: ErrorMeta) {
+  constructor(message: string = "Resource not found", meta?: ErrorMeta) {
     super(message, {
       httpStatus: 404,
       ...meta,

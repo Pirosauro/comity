@@ -57,24 +57,24 @@
         "default": "./dist/cjs/client/index.js"
       }
     },
-    "./client/strategies": {
+    "./errors": {
       "import": {
-        "types": "./dist/types/client/strategies/index.d.ts",
-        "default": "./dist/esm/client/strategies/index.js"
+        "types": "./dist/types/errors/index.d.ts",
+        "default": "./dist/esm/errors/index.js"
       },
       "require": {
-        "types": "./dist/types/client/strategies/index.d.ts",
-        "default": "./dist/cjs/client/strategies/index.js"
+        "types": "./dist/types/errors/index.d.ts",
+        "default": "./dist/cjs/errors/index.js"
       }
     },
-    "./server": {
+    "./lifecycle": {
       "import": {
-        "types": "./dist/types/server/index.d.ts",
-        "default": "./dist/esm/server/index.js"
+        "types": "./dist/types/lifecycle/index.d.ts",
+        "default": "./dist/esm/lifecycle/index.js"
       },
       "require": {
-        "types": "./dist/types/server/index.d.ts",
-        "default": "./dist/cjs/server/index.js"
+        "types": "./dist/types/lifecycle/index.d.ts",
+        "default": "./dist/cjs/lifecycle/index.js"
       }
     },
     "./setup": {
@@ -94,11 +94,11 @@
       "client": [
         "./dist/types/client/index.d.ts"
       ],
-      "client/strategies": [
-        "./dist/types/client/strategies/index.d.ts"
+      "errors": [
+        "./dist/types/errors/index.d.ts"
       ],
-      "server": [
-        "./dist/types/server/index.d.ts"
+      "lifecycle": [
+        "./dist/types/lifecycle/index.d.ts"
       ],
       "setup": [
         "./dist/types/setup/index.d.ts"

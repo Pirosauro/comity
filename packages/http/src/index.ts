@@ -1,3 +1,4 @@
+export { HttpAdapter } from "./contracts/adapter.js";
 export { HttpContext } from "./contracts/context.js";
 export { HttpErrorMapper } from "./contracts/error-mapper.js";
 export { HttpError } from "./contracts/error.js";
@@ -10,3 +11,5 @@ export { HttpResponse } from "./contracts/response.js";
 export { HttpResult } from "./contracts/result.js";
 export { createHttpState, HttpState } from "./contracts/state.js";
 export { HttpStatus } from "./contracts/status.js";
+export { HttpModuleEvents, HttpModuleHooks, HttpModuleOptions } from "./setup/types.js";
+

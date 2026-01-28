@@ -1,23 +1,53 @@
 import type { ModuleMeta } from "@comity/kernel/modules";
-import { success } from "@comity/primitives/result";
+import type { HttpModuleOptions } from "./types.js";
+
+import { DomainViolationError } from "@comity/primitives/errors";
+import { failure, success } from "@comity/primitives/result";
+import { DefaultHttpFacade } from "../internal/facade.js";
 
 /**
  * Metadata for the HTTP module.
  *
  * @comity ai-jsdoc-skip
  */
-export const module: ModuleMeta = {
+export const module: ModuleMeta<HttpModuleOptions> = {
   name: "@comity/http",
   version: "1.0.0",
 
-  dependsOn: ["@comity/primitives", "@comity/kernel"],
+  dependsOn: [],
   incompatibleWith: [],
 
   /** @inheritdoc */
-  setup: async (ctx) => {
+  setup: async (options) => {
+    if (!options?.adapter) {
+      return failure(new DomainViolationError("HTTP adapter is required"));
+    }
+
     return success(async (ctx) => {
-      // NOTE: pipeline wiring happens in higher-level modules
-      // or app-level configuration
+      const facade = new DefaultHttpFacade({
+        /** @inheritdoc */
+        requestStarted: (p) => {
+          ctx.events.emit("@comity/http:request-started", p);
+        },
+
+        /** @inheritdoc */
+        requestCompleted: (p) => {
+          ctx.events.emit("@comity/http:request-completed", p);
+        },
+
+        /** @inheritdoc */
+        requestFailed: (p) => {
+          ctx.events.emit("@comity/http:request-failed", p);
+        },
+      });
+
+      // Apply middlewares
+      options?.middlewares?.forEach((middleware) => {
+        facade.use(middleware);
+      });
+
+      // Attach adapter to the facade
+      options.adapter.attach(facade);
 
       return success(undefined);
     });

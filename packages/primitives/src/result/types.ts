@@ -3,10 +3,11 @@ import type { BaseError } from "../errors/base.js";
 /**
  * Success result contract
  *
+ * @typeParam Value - Type of the success value
+ *
  * @param value Result value
  * @param meta Optional metadata
  *
- * @typeParam Value - Type of the success value
  */
 export type ResultSuccess<Value, Discriminator extends string = "success"> = {
   /** Result value */
@@ -19,10 +20,11 @@ export type ResultSuccess<Value, Discriminator extends string = "success"> = {
 /**
  * Failure result contract
  *
- * @param error Error instance
- *
  * @typeParam Error - Type of the failure error (extends BaseError)
  * @typeParam Discriminator - Key used to discriminate success/failure (default: 'success')
+ *
+ * @param error - Error instance
+ *
  */
 export type ResultFailure<
   E extends BaseError = BaseError,
@@ -54,11 +56,13 @@ type PreventReservedDiscriminator<K extends string> = K extends "value"
 
 /**
  * Generic result type for fallible operations.
- * Uses 'success' discriminator for semantic clarity.
  *
  * @typeParam Value - Type of the success value
  * @typeParam E - Type of the failure error (extends BaseError)
  * @typeParam Discriminator - Key used to discriminate success/failure (default: 'success')
+ *
+ * @remarks
+ * Uses 'success' discriminator for semantic clarity.
  *
  * @example
  * Successful result

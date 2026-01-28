@@ -1,11 +1,14 @@
-export { IslandHydrationEvents } from "./contracts/events.js";
+export { HydrationSchedulingAdapter } from "./contracts/hydration-scheduler.js";
+export { IslandDiscoveryAdapter } from "./contracts/island-discoverer.js";
+export { IslandHydrationAdapter } from "./contracts/island-hydrator.js";
+export { IslandContract } from "./contracts/island.js";
 export {
-  IslandContract,
-  IslandHydrationInteractionStrategy,
-  IslandHydrationMediaStrategy,
-  IslandHydrationOtherStrategy,
-  IslandHydrationStrategy,
-} from "./contracts/island.js";
+  HydrationInteractionStrategy,
+  HydrationMediaStrategy,
+  HydrationOtherStrategy,
+  HydrationStrategy,
+} from "./contracts/strategy.js";
+export { HydrationController, HydrationControllerOptions } from "./core/controller.js";
 export { IslandSerializer, JsonIslandSerializer } from "./core/serializer.js";
 export {
   HydrationModuleContext,
