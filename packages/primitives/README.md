@@ -6,47 +6,52 @@ Foundational primitives shared across the Comity ecosystem.
 
 ## Purpose
 
-Defines stable, framework-agnostic building blocks used by Comity packages.
-Primitives encode concepts, not implementations.
-
-Provide a common semantic foundation and prevent duplication and drift across modules.
+Defines stable, framework-agnostic building blocks used across Comity packages to prevent duplication and drift. Primitives encode concepts, not implementations.
 
 ---
 
-## What belongs here
+## Scope
 
-- ✅ Errors and result semantics
-- ✅ Event and lifecycle signaling
-- ✅ Dependency wiring primitives
-- ✅ Small, stable domain-neutral abstractions
+This package:
 
----
+- ✅ provides error primitives and result semantics
+- ✅ exposes lifecycle signaling via events and hooks
+- ✅ offers minimal dependency wiring primitives
 
-## What does NOT belong here
+This package does NOT:
 
-- ❌ Framework logic
-- ❌ Runtime behavior
-- ❌ Helpers, utilities, or convenience APIs
-- ❌ Business or domain-specific rules
-
-> If a concept requires contextual explanation or behavioral configuration,
-> it does not belong in `@comity/primitives`.
+- ❌ include framework/runtime behavior
+- ❌ provide helpers, utilities, or convenience APIs
+- ❌ encode business or domain-specific rules
 
 ---
 
 ## Public API
 
-The public API is intentionally small and disciplined.
+Disciplined, concept-first surface divided into domains:
+- errors: BaseError and concrete error types
+- lifecycle: EventBus and HookBus contracts and implementations
+- di: minimal container for service wiring
+- result: success/failure factories and contracts
 
-API rules and stability guarantees are defined in the documentation.
+No exhaustive reference; see docs for constraints.
 
 ---
 
 ## Documentation
 
-- `docs/overview.md` — scope and intent of primitives
-- `docs/conventions.md` — API and design conventions
-- `docs/decisions.md`
+- docs/overview.md
+- docs/conventions.md
+- docs/decisions/
+
+---
+
+## Related Packages
+
+- @comity/kernel
+- @comity/http
+- @comity/html-runtime
+- @comity/auth
 
 ---
 

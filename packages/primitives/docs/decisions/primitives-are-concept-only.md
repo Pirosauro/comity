@@ -1,5 +1,15 @@
-## Primitives are concept-only
+# Decision: Primitives are concept-only
 
-Primitives define semantic contracts, not behavior.
+## Context
 
-Any API that introduces policy, orchestration, or side effects is excluded.
+Shared modules often drift into helpers or orchestration, creating instability and hidden coupling.
+
+## Decision
+
+Primitives define semantic contracts only. They exclude policy, orchestration, side effects, and environment-specific behavior.
+
+## Consequences
+
+- APIs remain stable and predictable over time.
+- Convenience layers and behaviors live in higher-level packages.
+- Documentation emphasizes intent and constraints rather than implementation.

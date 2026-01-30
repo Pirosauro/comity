@@ -14,7 +14,7 @@ import { BaseError } from "./base.js";
  * ```typescript
  * // Rate limit exceeded
  * if (user.requestsThisHour >= HOURLY_LIMIT) {
- *   throw new TooManyRequestsError("Hourly request limit exceeded", {
+ *   throw new RateLimitedError("Hourly request limit exceeded", {
  *     details: {
  *       limit: HOURLY_LIMIT,
  *       current: user.requestsThisHour,
@@ -24,7 +24,7 @@ import { BaseError } from "./base.js";
  * }
  *
  * // API quota exceeded
- * throw new TooManyRequestsError("API quota exceeded for this month", {
+ * throw new RateLimitedError("API quota exceeded for this month", {
  *   details: { resetDate: getFirstDayOfNextMonth() }
  * });
  * ```

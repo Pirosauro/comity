@@ -1,5 +1,15 @@
-## Stability over convenience
+# Decision: Stability over convenience
 
-Once a primitive is documented as public, it is considered stable by default.
+## Context
 
-Convenience APIs are intentionally excluded to preserve long-term clarity.
+Convenience APIs create churn and hidden coupling, undermining the stability expected from primitives.
+
+## Decision
+
+Once documented as public, primitives are stable by default. Convenience APIs are excluded to preserve clarity and long-term maintainability.
+
+## Consequences
+
+- Breaking changes require strong justification.
+- Consumers rely on predictable contracts across versions.
+- Helper layers belong in dedicated, non-primitive packages.
