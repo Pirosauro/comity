@@ -1,18 +1,37 @@
 import type { HttpHtmlResponse } from "@comity/http";
 import type { Result } from "@comity/primitives/result";
-import type { HtmlView } from "../contracts/view.js";
 import type { HtmlRenderFailureError } from "../errors/render-failure.js";
 
 /**
- *
+ * HTML render options
  */
-export interface HtmlRenderer {
+export interface HtmlRendererOptions {
+  /** HTTP status code */
+  status?: number;
+
+  /** HTTP headers to include in the response */
+  headers?: Record<string, string>;
+
+  /** Time in milliseconds */
+  timeout?: number;
+}
+
+/**
+ * HTML renderer contract
+ */
+export interface HtmlRenderer<T> {
   /**
-   * Attempts to render the given contract.
+   * Attempts to render the given view.
    *
-   * @param contract - HTML contract to render
+   * @param view - HTML view to render
+   * @param options - Render options
    *
    * @returns Render result
+   *
+   * @typeparam T - Type of HTML view
    */
-  render(contract: HtmlView): Promise<Result<HttpHtmlResponse, HtmlRenderFailureError, "ok">>;
+  render(
+    view: T,
+    options?: HtmlRendererOptions
+  ): Promise<Result<HttpHtmlResponse, HtmlRenderFailureError, "ok">>;
 }

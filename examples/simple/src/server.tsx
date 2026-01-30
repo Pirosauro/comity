@@ -5,10 +5,10 @@ import { loadModules } from "@comity/kernel/modules";
 import { DiContainer } from "@comity/primitives/di";
 import { EventBus, HookBus } from "@comity/primitives/lifecycle";
 import { Hono } from "hono";
-import { presentError } from "./presenters/error.js";
 import { presentHello } from "./presenters/hello.js";
-import { htmlRenderer } from "./renderers/html.js";
+import { renderHtml } from "./renderers/html.js";
 import { helloUseCase } from "./use-cases/hello.js";
+import { HelloView } from "./views/hello.js";
 
 const app = new Hono();
 
@@ -37,22 +37,32 @@ await loadModules(kernel, modules, {
 
 app.get("/", async (c) => {
   const result = helloUseCase();
-  const contract = result.success ? presentHello(result) : presentError(result.error);
-  const response = await htmlRenderer.render(contract);
 
-  if (response.ok) {
-    const headers = new Headers(response.value.headers);
-
-    // Content-Type se non presente
-    if (!headers.has("content-type")) {
-      headers.set("content-type", "text/html; charset=utf-8");
-    }
-
-    return new Response(response.value.stream, {
-      status: response.value.status,
-      headers,
+  if (result.success) {
+    const contract = presentHello(result);
+    const response = await renderHtml(<HelloView {...contract.data} />, {
+      status: 200,
     });
+
+    if (response.ok) {
+      const headers = new Headers(response.value.headers);
+
+      // Content-Type se non presente
+      if (!headers.has("content-type")) {
+        headers.set("content-type", "text/html; charset=utf-8");
+      }
+
+      return new Response(response.value.stream, {
+        status: response.value.status,
+        headers,
+      });
+    }
   }
+
+  // const contract = result.success ? presentHello(result) : presentError(result.error);
+  // const response = await renderHtml(<HelloView {...contract.value} />, {
+  //   status: response.ok ? 200 : 500,
+  // });
 
   return c.text("Internal Server Error", 500);
 });

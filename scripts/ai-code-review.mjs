@@ -23,17 +23,24 @@ async function main() {
   console.log("Starting architectural code review...");
 
   try {
-    const standardsJson = readFile(resolve("docs/ai/code-review/standards.json"), "json");
+    const standardsJson = readFile(resolve("docs/ai/code-review/core.json"), "json");
     const standards = `
-<COMITY_STANDARDS>
+<CORE_STANDARDS>
 ${JSON.stringify(standardsJson, null, 2)}
-</COMITY_STANDARDS>
+</CORE_STANDARDS>
 `;
     const profileJson = readFile(resolve(PROFILE), "json");
     const profile = `
 <MODULE_PROFILE>
 ${JSON.stringify(profileJson, null, 2)}
 </MODULE_PROFILE>
+`;
+
+    const jsdocJson = readFile(resolve("docs/ai/code-review/jsdoc.json"), "json");
+    const jsdoc = `
+<JSDOC_STANDARDS>
+${JSON.stringify(jsdocJson, null, 2)}
+</JSDOC_STANDARDS>
 `;
     const prompt = readFile(resolve("docs/ai/code-review/prompts/full.md"), "text");
     const files = resolveSourceFiles(TARGET);
@@ -43,6 +50,7 @@ ${JSON.stringify(profileJson, null, 2)}
       const input = prompt
         .replace("{{global_standards_json}}", standards)
         .replace("{{module_profile_json}}", profile)
+        .replace("{{jsdoc_standards_json}}", jsdoc)
         .replace("{{file_path}}", file)
         .replace("{{file_content}}", content);
 

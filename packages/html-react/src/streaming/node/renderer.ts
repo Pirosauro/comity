@@ -1,7 +1,7 @@
-import type { HtmlRenderer, HtmlView } from "@comity/html-runtime";
+import type { HtmlRenderer, HtmlRendererOptions } from "@comity/html-runtime";
 import type { HttpHtmlResponse } from "@comity/http";
 import type { Result } from "@comity/primitives/result";
-import type { ReactStreamingHtmlRenderOptions } from "../types.js";
+import type { ReactElement } from "react";
 
 import { HtmlRenderFailureError } from "@comity/html-runtime/errors";
 import { PassThrough, Readable } from "node:stream";
@@ -10,23 +10,13 @@ import { renderToPipeableStream } from "react-dom/server";
 /**
  * React streaming HTML renderer (Node)
  */
-export class ReactStreamingHtmlRenderer implements HtmlRenderer {
-  #options: ReactStreamingHtmlRenderOptions;
-
-  /**
-   * @param options - Renderer options
-   */
-  constructor(options: ReactStreamingHtmlRenderOptions) {
-    this.#options = options;
-  }
-
+export class ReactStreamingHtmlRenderer implements HtmlRenderer<ReactElement> {
   /** @inheritdoc */
-  async render(view: HtmlView): Promise<Result<HttpHtmlResponse, HtmlRenderFailureError, "ok">> {
-    const { templates, timeout = 5000, onError } = this.#options;
-    const status = view.http?.status ?? 200;
-    const template =
-      templates[status] ?? (status >= 200 && status < 300 ? templates.default : templates.error);
-
+  async render(
+    view: ReactElement,
+    options?: HtmlRendererOptions
+  ): Promise<Result<HttpHtmlResponse, HtmlRenderFailureError, "ok">> {
+    const status = options?.status ?? 200;
     const stream = new PassThrough({ highWaterMark: 16_384 });
 
     let abort!: () => void;
@@ -34,10 +24,10 @@ export class ReactStreamingHtmlRenderer implements HtmlRenderer {
     const timer = setTimeout(() => {
       abort?.();
       stream.destroy(new Error("SSR timeout"));
-    }, timeout);
+    }, options?.timeout ?? 5000);
 
     try {
-      const result = renderToPipeableStream(await template(view.data), {
+      const result = renderToPipeableStream(view, {
         /** @inheritdoc */
         onShellReady() {
           clearTimeout(timer);
@@ -47,14 +37,11 @@ export class ReactStreamingHtmlRenderer implements HtmlRenderer {
 
         /** @inheritdoc */
         onShellError(error) {
-          onError?.(error);
           stream.destroy(error as Error);
         },
 
         /** @inheritdoc */
-        onError(error) {
-          onError?.(error);
-        },
+        onError(error) {},
       });
 
       abort = result.abort;
@@ -66,13 +53,12 @@ export class ReactStreamingHtmlRenderer implements HtmlRenderer {
           status: status,
           stream: Readable.toWeb(stream) as ReadableStream<Uint8Array>,
           abort,
-          ...(view.http?.headers && { headers: view.http.headers }),
+          ...(options?.headers && { headers: options.headers }),
         },
       };
     } catch (cause) {
       clearTimeout(timer);
       stream.destroy(cause as Error);
-      onError?.(cause as Error);
 
       return {
         ok: false,

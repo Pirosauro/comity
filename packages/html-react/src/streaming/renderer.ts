@@ -1,7 +1,7 @@
-import type { HtmlRenderer, HtmlView } from "@comity/html-runtime";
+import type { HtmlRenderer, HtmlRendererOptions } from "@comity/html-runtime";
 import type { HttpHtmlResponse } from "@comity/http";
 import type { Result } from "@comity/primitives/result";
-import type { ReactStreamingHtmlRenderOptions } from "./types.js";
+import type { ReactElement } from "react";
 
 import { HtmlRenderFailureError } from "@comity/html-runtime/errors";
 import { renderToReadableStream } from "react-dom/server";
@@ -9,28 +9,18 @@ import { renderToReadableStream } from "react-dom/server";
 /**
  * React streaming HTML renderer (Web / Edge)
  */
-export class ReactStreamingHtmlRenderer implements HtmlRenderer {
-  #options: ReactStreamingHtmlRenderOptions;
-
-  /**
-   * @param options - Renderer options
-   */
-  constructor(options: ReactStreamingHtmlRenderOptions) {
-    this.#options = options;
-  }
-
+export class ReactStreamingHtmlRenderer implements HtmlRenderer<ReactElement> {
   /** @inheritdoc */
-  async render(view: HtmlView): Promise<Result<HttpHtmlResponse, HtmlRenderFailureError, "ok">> {
-    const { templates, timeout = 5000, onError } = this.#options;
-    const status = view.http?.status ?? 200;
-    const template =
-      templates[status] ?? (status >= 200 && status < 300 ? templates.default : templates.error);
-
+  async render(
+    view: ReactElement,
+    options?: HtmlRendererOptions
+  ): Promise<Result<HttpHtmlResponse, HtmlRenderFailureError, "ok">> {
+    const status = options?.status ?? 200;
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), timeout);
+    const timer = setTimeout(() => controller.abort(), options?.timeout ?? 5000);
 
     try {
-      const stream = await renderToReadableStream(await template(view.data), {
+      const stream = await renderToReadableStream(view, {
         signal: controller.signal,
       });
 
@@ -41,12 +31,10 @@ export class ReactStreamingHtmlRenderer implements HtmlRenderer {
           status: status,
           stream,
           abort: controller.abort.bind(controller),
-          ...(view.http?.headers && { headers: view.http.headers }),
+          ...(options?.headers && { headers: options.headers }),
         },
       };
     } catch (cause) {
-      onError?.(cause);
-
       return {
         ok: false,
         error: new HtmlRenderFailureError({

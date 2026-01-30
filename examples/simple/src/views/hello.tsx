@@ -1,14 +1,14 @@
 import type { HelloViewModel } from "../view-models/hello.js";
 
-import { Counter } from "../components/counter.js";
-// import { Island } from "../hydration/island.js";
 import { Island } from "@comity/hydration-react";
+import { Counter } from "../components/counter.js";
+import { DefaultLayout } from "../themes/default/layout.js";
 
 export function HelloView(props: HelloViewModel) {
   const data = { initial: 1 };
 
   return (
-    <>
+    <DefaultLayout title="">
       <h1>{props.title}</h1>
       <p>{props.message}</p>
 
@@ -22,6 +22,6 @@ export function HelloView(props: HelloViewModel) {
       >
         <Counter {...data} />
       </Island>
-    </>
+    </DefaultLayout>
   );
 }

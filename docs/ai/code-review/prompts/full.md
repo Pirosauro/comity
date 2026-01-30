@@ -11,10 +11,6 @@ Do NOT infer intent beyond what is explicitly present.
 
 ⸻
 
-MODE: FULL_FILE
-
-⸻
-
 AUTHORITATIVE INPUTS
 
 You are given:
@@ -45,6 +41,11 @@ GLOBAL STANDARDS (AUTHORITATIVE)
 
 MODULE PROFILE (AUTHORITATIVE)
 {{module_profile_json}}
+
+⸻
+
+JSDOC STANDARDS (AUTHORITATIVE)
+{{jsdoc_standards_json}}
 
 ⸻
 
