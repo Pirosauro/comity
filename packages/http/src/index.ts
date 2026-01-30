@@ -7,9 +7,21 @@ export { HttpMethod } from "./contracts/method.js";
 export { HttpMiddleware, HttpNext } from "./contracts/middleware.js";
 export { HttpPipeline } from "./contracts/pipeline.js";
 export { HttpRequest } from "./contracts/request.js";
-export { HttpResponse } from "./contracts/response.js";
+export {
+  AnyHttpResponse,
+  HTTP_INTENTS,
+  HttpBaseResponse,
+  HttpHtmlResponse,
+  HttpIntent,
+  HttpIntentResponse,
+  HttpJsonResponse,
+  HttpRedirectResponse,
+  HttpResponse,
+  HttpStaticResponse,
+  HttpStreamingResponse,
+  HttpTextResponse,
+} from "./contracts/response.js";
 export { HttpResult } from "./contracts/result.js";
 export { createHttpState, HttpState } from "./contracts/state.js";
 export { HttpStatus } from "./contracts/status.js";
 export { HttpModuleEvents, HttpModuleHooks, HttpModuleOptions } from "./setup/types.js";
-

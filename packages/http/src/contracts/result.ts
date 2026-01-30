@@ -1,5 +1,5 @@
 import type { HttpError } from "./error.js";
-import type { HttpResponse } from "./response.js";
+import type { AnyHttpResponse } from "./response.js";
 
 /**
  * HTTP result.
@@ -12,7 +12,7 @@ export type HttpResult =
       ok: true;
 
       /** Response. */
-      response: HttpResponse;
+      response: AnyHttpResponse;
     }
   | {
       /** Failure result. */

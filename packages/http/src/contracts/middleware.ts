@@ -5,7 +5,9 @@ import type { HttpContext } from "../contracts/context.js";
  *
  * @param ctx - Mutable HTTP context for the current request.
  * @param next - Invokes the next middleware in the chain.
+ *
  * @returns A promise that resolves when the next middleware has been invoked, or void if not a promise.
+ *
  * @throws {Error} If an error occurs during the execution of the middleware.
  *
  * @comity ai-jsdoc-skip

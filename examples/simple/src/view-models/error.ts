@@ -1,7 +1,7 @@
 /**
  * Error view model
  */
-export interface ErrorViewModel extends Record<string, unknown> {
+export interface ErrorViewModel {
   /** HTTP status code */
   readonly status: number;
 

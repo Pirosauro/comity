@@ -1,7 +1,7 @@
 /**
  * Hello view model
  */
-export interface HelloViewModel extends Record<string, unknown> {
+export interface HelloViewModel {
   /** Page title */
   readonly title: string;
 

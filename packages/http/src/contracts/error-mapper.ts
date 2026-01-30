@@ -1,5 +1,5 @@
 import type { HttpContext } from "./context.js";
-import type { HttpResponse } from "./response.js";
+import type { AnyHttpResponse } from "./response.js";
 
 /**
  * Maps errors to HTTP responses.
@@ -12,7 +12,8 @@ export interface HttpErrorMapper {
    *
    * @param error - Error to map.
    * @param ctx - HTTP context.
+   *
    * @returns HTTP response.
    */
-  map(error: unknown, ctx: HttpContext): HttpResponse;
+  map(error: unknown, ctx: HttpContext): AnyHttpResponse;
 }

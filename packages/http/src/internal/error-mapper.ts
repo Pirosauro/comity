@@ -1,11 +1,12 @@
 import type { HttpErrorMapper } from "../contracts/error-mapper.js";
 import type { HttpError } from "../contracts/error.js";
-import type { HttpResponse } from "../contracts/response.js";
+import type { AnyHttpResponse } from "../contracts/response.js";
 
 /**
  * Checks if an error matches the HttpError interface.
  *
  * @param error - The error to check.
+ *
  * @returns true if the error is an instance of HttpError, false otherwise.
  *
  * @comity ai-jsdoc-skip
@@ -32,9 +33,10 @@ export const defaultHttpErrorMapper: HttpErrorMapper = {
    *
    * @param error - The error to map.
    * @param ctx - The HTTP context (unused in default implementation).
+   *
    * @returns An HTTP response.
    */
-  map(error, ctx): HttpResponse {
+  map(error, ctx): AnyHttpResponse {
     if (isHttpError(error)) {
       const body: Record<string, unknown> = {
         code: error.code,

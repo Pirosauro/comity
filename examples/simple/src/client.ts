@@ -1,32 +1,22 @@
-import type { IslandHydrationEvents } from "@comity/hydration";
+import type { IslandComponentRegistry } from "@comity/hydration-react";
 
-import { createHydrationRuntime, HydrationContext, IslandRegistry } from "@comity/hydration/client";
-import { EventBus } from "@comity/primitives/events";
+import { createHydrationRuntime } from "@comity/hydration-react";
+import { registerIslandElement } from "@comity/hydration/client";
 
-// import { startHydration } from "./hydration/client.js";
-// import { registerIsland } from "./hydration/registry.js";
-
-// // register islands
-// registerIsland("counter", Counter);
-
-// // start hydration
-// startHydration();
+registerIslandElement();
 
 // Create the island registry
-const registry = new IslandRegistry();
-
-// Register islands
-registry.register("counter", () => import("./components/counter.island.js"));
-
-// Create the event bus and hydration context
-const events = new EventBus<IslandHydrationEvents>();
-const ctx = new HydrationContext({
-  registry,
-  events,
-});
+const registry: IslandComponentRegistry = {
+  /**
+   *
+   * @returns
+   */
+  // @ts-expect-error
+  counter: () => import("./components/counter.js"),
+};
 
 // Create the hydration runtime
-const runtime = createHydrationRuntime(ctx);
-
-// Start the hydration process
-runtime.start();
+createHydrationRuntime({
+  root: document,
+  islands: registry,
+});

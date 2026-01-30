@@ -1,50 +1,70 @@
-import type { HttpResponse } from "@comity/http";
-
-import { DiContainer } from "@comity/core/di";
-import { EventBus } from "@comity/core/events";
-import { HookBus } from "@comity/core/hooks";
-import { HonoHttpAdapter } from "@comity/http/adapters/hono";
+import { httpHonoAdapter } from "@comity/http-hono";
+import http from "@comity/http/setup";
 import { Kernel } from "@comity/kernel";
+import { loadModules } from "@comity/kernel/modules";
+import { DiContainer } from "@comity/primitives/di";
+import { EventBus, HookBus } from "@comity/primitives/lifecycle";
 import { Hono } from "hono";
-// import { renderHtml } from "./renderers/react-static.js";
 import { presentError } from "./presenters/error.js";
 import { presentHello } from "./presenters/hello.js";
 import { htmlRenderer } from "./renderers/html.js";
 import { helloUseCase } from "./use-cases/hello.js";
 
-const app = new Hono<{ Variables: { "http:result": HttpResponse } }>();
-const services = new DiContainer();
-const events = new EventBus();
-const hooks = new HookBus();
+const app = new Hono();
+
+/* ───────────────── Kernel setup ───────────────── */
+
 const kernel = new Kernel({
-  events,
-  hooks,
-  services,
+  services: new DiContainer(),
+  events: new EventBus(),
+  hooks: new HookBus(),
 });
-const adapter = new HonoHttpAdapter();
 
-(async () => {
-  app.get("/", async (c, next) => {
-    const result = helloUseCase();
+/* ───────────────── Module loading ───────────────── */
 
-    const contract = result.success
-      ? presentHello(result)
-      : presentError(result.error);
+/* ───────────────── HTTP runtime ───────────────── */
 
-    const response = await htmlRenderer.render(contract);
+const adapter = httpHonoAdapter(app);
+const modules = [http];
 
-    return adapter.send(response, c);
-  });
+await loadModules(kernel, modules, {
+  http: {
+    adapter,
+  },
+});
 
-  app.get("/api/hello", (c) => {
-    const result = helloUseCase();
+/* ───────────────── Routes (app-level) ───────────────── */
 
-    if (!result.success) {
-      return c.json({ error: result.error.code }, 500);
+app.get("/", async (c) => {
+  const result = helloUseCase();
+  const contract = result.success ? presentHello(result) : presentError(result.error);
+  const response = await htmlRenderer.render(contract);
+
+  if (response.ok) {
+    const headers = new Headers(response.value.headers);
+
+    // Content-Type se non presente
+    if (!headers.has("content-type")) {
+      headers.set("content-type", "text/html; charset=utf-8");
     }
 
-    return c.json(result.value);
-  });
-})();
+    return new Response(response.value.stream, {
+      status: response.value.status,
+      headers,
+    });
+  }
+
+  return c.text("Internal Server Error", 500);
+});
+
+// app.get("/api/hello", (c) => {
+//   const result = helloUseCase();
+
+//   if (!result.success) {
+//     return c.json({ error: result.error.code }, 500);
+//   }
+
+//   return c.json(result.value);
+// });
 
 export default app;
