@@ -1,7 +1,7 @@
 {
-  "name": "@comity/kernel",
+  "name": "@comity/sql-kysely",
   "version": "1.0.0",
-  "description": "Runtime orchestrator providing lifecycle, DI, and shared services for Comity",
+  "description": "Kysely ORM adapter for @comity/sql contracts",
   "type": "module",
   "author": "Filippo Bovo <hello@filippobovo.com>",
   "license": "MIT",
@@ -18,13 +18,10 @@
   },
   "keywords": [
     "comity",
-    "comityjs",
-    "framework",
-    "kernel",
-    "runtime",
-    "orchestrator",
-    "lifecycle",
-    "dependency-injection"
+    "sql",
+    "kysely",
+    "adapter",
+    "typescript"
   ],
   "scripts": {
     "build": "node ../../scripts/build.mjs",
@@ -52,37 +49,10 @@
         "default": "./dist/cjs/index.js"
       }
     },
-    "./lifecycle": {
-      "import": {
-        "types": "./dist/types/lifecycle/index.d.ts",
-        "default": "./dist/esm/lifecycle/index.js"
-      },
-      "require": {
-        "types": "./dist/types/lifecycle/index.d.ts",
-        "default": "./dist/cjs/lifecycle/index.js"
-      }
-    },
-    "./modules": {
-      "import": {
-        "types": "./dist/types/modules/index.d.ts",
-        "default": "./dist/esm/modules/index.js"
-      },
-      "require": {
-        "types": "./dist/types/modules/index.d.ts",
-        "default": "./dist/cjs/modules/index.js"
-      }
-    },
     "./package.json": "./package.json"
   },
   "typesVersions": {
-    "*": {
-      "lifecycle": [
-        "./dist/types/lifecycle/index.d.ts"
-      ],
-      "modules": [
-        "./dist/types/modules/index.d.ts"
-      ]
-    }
+    "*": {}
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
@@ -91,7 +61,9 @@
   "sideEffects": false,
   "private": false,
   "dependencies": {
-    "@comity/primitives": "workspace:*"
+    "@comity/kernel": "workspace:*",
+    "@comity/sql": "workspace:*",
+    "kysely": "^0.28.11"
   },
   "devDependencies": {
     "@types/node": "^24.10.9",

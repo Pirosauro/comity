@@ -41,6 +41,7 @@ export class Lifecycle {
    * Check if the current state matches the given state
    *
    * @param what State to check against
+   *
    * @returns True if the current state matches the given state, false otherwise
    */
   is(what: KernelLifecycleState): boolean {

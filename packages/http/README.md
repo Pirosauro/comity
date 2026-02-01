@@ -1,33 +1,37 @@
 # @comity/http
 
-HTTP module for Comity framework applications
+HTTP module for Comity framework applications.
 
 ---
 
 ## Purpose
 
-Provides a transport-agnostic HTTP pipeline with middleware, lifecycle events, and explicit response handling.
+Provides a transport-agnostic HTTP pipeline with middleware, lifecycle events, and explicit response handling. It defines contracts for adapters and facades without binding to any specific server/runtime.
 
 ---
 
-## Responsibilities
+## Scope
 
-- ✅ Executes HTTP requests through an ordered middleware pipeline
-- ✅ Manages request-scoped context and state
-- ✅ Produces a structured `HttpResult`
-- ✅ Emits lifecycle events for observability
-- ❌ Does not bind to any HTTP server or runtime
-- ❌ Does not implement adapters (Hono, Fetch, etc.)
-- ❌ Does not perform rendering or serialization
+This package:
+- ✅ executes HTTP requests through an ordered middleware pipeline
+- ✅ manages request-scoped context and state
+- ✅ produces a structured HttpResult
+- ✅ emits lifecycle events for observability
+
+This package does NOT:
+- ❌ bind to any HTTP server or runtime
+- ❌ implement adapters (Hono, Fetch, etc.)
+- ❌ perform rendering or serialization
+- ❌ encode application business rules
 
 ---
 
-## Architecture
+## Public API
 
-The module is based on a Pipeline + Middleware model.
-
-Adapters translate incoming requests into an `HttpContext`,
-invoke the pipeline, and render the resulting `HttpResult`.
+- Contracts — request, context, result, middleware, pipeline
+- Facade — lifecycle-aware orchestrator that executes the pipeline
+- Lifecycle — request lifecycle events
+- Setup — kernel module metadata and setup function
 
 ---
 
@@ -37,6 +41,14 @@ invoke the pipeline, and render the resulting `HttpResult`.
 - `docs/conventions.md`
 - `docs/architecture.md`
 - `docs/events.md`
+
+---
+
+## Related Packages
+
+- @comity/kernel
+- @comity/http-hono
+- @comity/primitives
 
 ---
 

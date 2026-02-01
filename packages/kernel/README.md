@@ -1,29 +1,36 @@
 # @comity/kernel
 
-Orchestration runtime for Comity applications.
+Runtime orchestrator for Comity applications.
 
 ---
 
 ## Purpose
 
-Provides a minimal orchestration layer for Comity-based systems.
-It coordinates **module lifecycle**, **service registration**, and **event flow**, without imposing a framework or runtime model.
-
-The kernel is **optional**: Comity modules can be used with or without it.
+Provides a minimal orchestration layer that coordinates module lifecycle, service registration, and event/hook signaling without imposing a framework or runtime model. The kernel is optional.
 
 ---
 
-## Responsibilities
+## Scope
 
-- ✅ Manages application lifecycle and initialization.
-- ❌ Does not handle user interface rendering.
-- ❌ Does not manage external HTTP requests.
+This package:
+
+- ✅ manages application lifecycle and initialization
+- ✅ coordinates module setup and shared context
+- ✅ exposes lifecycle events (observable) and hook execution (participatory)
+
+This package does NOT:
+
+- ❌ perform UI rendering or transport concerns
+- ❌ manage HTTP or external protocols
+- ❌ encode application or domain policies
 
 ---
 
-## Architecture
+## Public API
 
-Based on a modular design pattern to facilitate scalability and maintainability.
+- Kernel — orchestrator with lifecycle control and context
+- Lifecycle — state machine contracts and helpers
+- Modules — metadata, resolver, and loader contracts
 
 ---
 
@@ -33,7 +40,14 @@ Based on a modular design pattern to facilitate scalability and maintainability.
 - `docs/conventions.md`
 - `docs/lifecycle.md`
 - `docs/events.md`
-- `docs/authors.md`
+
+---
+
+## Related Packages
+
+- @comity/primitives
+- @comity/http
+- @comity/kernel-adapters
 
 ---
 

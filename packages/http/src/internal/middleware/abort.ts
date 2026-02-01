@@ -5,6 +5,7 @@ import type { HttpMiddleware } from "../../contracts/middleware.js";
  *
  * @param ctx - HTTP context.
  * @param next - Function to invoke the next middleware.
+ *
  * @throws {DOMException} - Throws an error if the request is aborted.
  *
  * @comity ai-jsdoc-skip

@@ -74,6 +74,7 @@ export class Kernel<
     this.#services = {
       /**
        * @param {...Parameters<typeof context.services.define>} args DiContainer.define parameters
+       *
        * @returns DiContainer.define return value
        */
       define: <K extends keyof Services>(
@@ -86,6 +87,7 @@ export class Kernel<
 
       /**
        * @param {...Parameters<typeof context.services.resolve>} args DiContainer.resolve parameters
+       *
        * @returns DiContainer.resolve return value
        */
       resolve: <K extends keyof Services>(
@@ -101,6 +103,7 @@ export class Kernel<
     this.#events = {
       /**
        * @param {...Parameters<typeof context.events.subscribe>} args EventBus.subscribe parameters
+       *
        * @returns EventBus.subscribe return value
        */
       subscribe: <K extends keyof Events>(
@@ -113,6 +116,7 @@ export class Kernel<
 
       /**
        * @param {...Parameters<typeof context.events.emit>} args EventBus.emit parameters
+       *
        * @returns EventBus.emit return value
        */
       emit: <K extends keyof Events>(...args: Parameters<typeof context.events.emit<K>>) => {
@@ -126,6 +130,7 @@ export class Kernel<
     this.#hooks = {
       /**
        * @param {...Parameters<typeof context.hooks.define>} args HookBus.define parameters
+       *
        * @returns HookBus.define return value
        */
       define: <K extends keyof Hooks>(...args: Parameters<typeof context.hooks.define<K>>) => {
@@ -136,6 +141,7 @@ export class Kernel<
 
       /**
        * @param {...Parameters<typeof context.hooks.execute>} args HookBus.execute parameters
+       *
        * @returns HookBus.execute return value
        */
       execute: <K extends keyof Hooks>(...args: Parameters<typeof context.hooks.execute<K>>) => {
@@ -173,12 +179,13 @@ export class Kernel<
   /**
    * Seal the kernel
    *
+   * @returns Result of the lifecycle seal operation
+   *
    * @remarks
    * Sealing the kernel transitions it to a state where services can be resolved,
    * events can be emitted, and hooks can be executed. After sealing, no further
    * modifications to services, events, or hooks are allowed.
    *
-   * @returns Result of the lifecycle seal operation
    */
   seal(): ReturnType<Lifecycle["seal"]> {
     const result = this.#lifecycle.seal();
@@ -227,6 +234,7 @@ export class Kernel<
    * Assert that the kernel is not sealed
    *
    * @param action Action name
+   *
    * @throws {InvalidLifecycleStateError} If the kernel is sealed
    */
   private assertNotSealed(action: string): void {
@@ -242,6 +250,7 @@ export class Kernel<
    * Assert that the kernel is sealed
    *
    * @param action Action name
+   *
    * @throws {InvalidLifecycleStateError} If the kernel is not sealed
    */
   private assertSealed(action: string): void {

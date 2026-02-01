@@ -31,6 +31,7 @@ export class DefaultHttpPipeline implements HttpPipeline {
    * Executes the middleware pipeline.
    *
    * @param ctx - The HTTP context.
+   *
    * @throws {HttpMiddlewareContractViolationError} If `next()` is called multiple times.
    */
   async execute(ctx: HttpContext): Promise<void> {

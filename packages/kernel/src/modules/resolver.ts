@@ -8,6 +8,7 @@ import { ModuleResolutionError } from "../errors/module-resolution.js";
  * Resolves and reorders modules based on their dependency relationships.
  *
  * @param input - Array of module metadata objects to sort
+ *
  * @returns Result containing modules sorted in dependency order (dependencies first) or an error
  *
  * @remarks
@@ -61,6 +62,7 @@ export function resolveModuleOrder(
    *
    * @param mod Module metadata object
    * @param stack Current stack of module names for cycle detection
+   *
    * @returns Result indicating success or failure
    */
   const visit = (

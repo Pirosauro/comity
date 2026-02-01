@@ -8,6 +8,7 @@ export interface HttpState {
    * Retrieves a value from the shared pipeline state.
    *
    * @param key - Namespaced key.
+   *
    * @returns Stored value or undefined.
    */
   get<T = unknown>(key: string): T | undefined;
@@ -24,6 +25,7 @@ export interface HttpState {
    * Checks if a key exists in the shared pipeline state.
    *
    * @param key - Namespaced key.
+   *
    * @returns True if key is present.
    */
   has(key: string): boolean;

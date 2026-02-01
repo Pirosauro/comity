@@ -12,6 +12,7 @@ import { resolveModuleOrder } from "./resolver.js";
  * @param kernel Target kernel
  * @param modules Modules to load
  * @param options Module-specific options
+ *
  * @returns Result indicating success or failure of the loading process
  *
  * @remarks

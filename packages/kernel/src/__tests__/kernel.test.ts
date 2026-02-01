@@ -244,7 +244,7 @@ describe("Kernel", () => {
       expect(result.success).toBe(true);
 
       if (result.success) {
-        expect(result.value).toBe("sealed");
+        expect(result.value).toBe("stopped");
       }
     });
 

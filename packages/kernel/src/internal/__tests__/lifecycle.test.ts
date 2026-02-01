@@ -38,6 +38,7 @@ describe("Lifecycle", () => {
       const result = lifecycle.seal();
 
       expect(result.success).toBe(true);
+
       if (result.success) {
         expect(result.value).toBe("sealed");
         expect(lifecycle.state).toBe("sealed");
@@ -50,6 +51,7 @@ describe("Lifecycle", () => {
       const result = lifecycle.seal();
 
       expect(result.success).toBe(false);
+
       if (!result.success) {
         expect(result.error).toBeInstanceOf(InvalidLifecycleStateError);
         expect(result.error.meta.action).toBe("seal");
@@ -64,6 +66,7 @@ describe("Lifecycle", () => {
       const result = lifecycle.seal();
 
       expect(result.success).toBe(false);
+
       if (!result.success) {
         expect(result.error.meta.state).toBe("running");
       }
@@ -76,6 +79,7 @@ describe("Lifecycle", () => {
       const result = lifecycle.start();
 
       expect(result.success).toBe(true);
+
       if (result.success) {
         expect(result.value).toBe("running");
         expect(lifecycle.state).toBe("running");
@@ -86,6 +90,7 @@ describe("Lifecycle", () => {
       const result = lifecycle.start();
 
       expect(result.success).toBe(false);
+
       if (!result.success) {
         expect(result.error).toBeInstanceOf(InvalidLifecycleStateError);
         expect(result.error.meta.action).toBe("start");
@@ -114,9 +119,10 @@ describe("Lifecycle", () => {
       const result = lifecycle.stop();
 
       expect(result.success).toBe(true);
+
       if (result.success) {
-        expect(result.value).toBe("sealed");
-        expect(lifecycle.state).toBe("sealed");
+        expect(result.value).toBe("stopped");
+        expect(lifecycle.state).toBe("stopped");
       }
     });
 
@@ -124,6 +130,7 @@ describe("Lifecycle", () => {
       const result = lifecycle.stop();
 
       expect(result.success).toBe(false);
+
       if (!result.success) {
         expect(result.error).toBeInstanceOf(InvalidLifecycleStateError);
         expect(result.error.meta.action).toBe("stop");
@@ -137,6 +144,7 @@ describe("Lifecycle", () => {
       const result = lifecycle.stop();
 
       expect(result.success).toBe(false);
+
       if (!result.success) {
         expect(result.error.meta.state).toBe("sealed");
       }
@@ -154,7 +162,7 @@ describe("Lifecycle", () => {
       expect(lifecycle.state).toBe("running");
 
       lifecycle.stop();
-      expect(lifecycle.state).toBe("sealed");
+      expect(lifecycle.state).toBe("stopped");
     });
 
     it("should not allow invalid transitions", () => {

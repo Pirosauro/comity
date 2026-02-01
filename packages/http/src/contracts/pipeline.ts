@@ -10,7 +10,9 @@ export interface HttpPipeline {
    * Executes the pipeline.
    *
    * @param ctx - HTTP context.
+   *
    * @returns A promise that resolves when the pipeline completes.
+   *
    * @throws {Error} - If an error occurs during execution.
    */
   execute(ctx: HttpContext): Promise<void>;
