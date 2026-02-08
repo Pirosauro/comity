@@ -7,7 +7,7 @@ import { BaseError } from "@comity/primitives/errors";
  */
 export interface SessionRefreshNotAllowedErrorMeta extends ErrorMeta {
   /** Reason why the session refresh is not allowed */
-  reason: string | undefined;
+  reason: string;
 }
 
 /**

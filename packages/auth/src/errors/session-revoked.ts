@@ -7,7 +7,7 @@ import { BaseError } from "@comity/primitives/errors";
  */
 export interface SessionRevokedErrorMeta extends ErrorMeta {
   /** Reason for the session revocation */
-  reason?: string | undefined;
+  reason?: string;
 }
 
 /**

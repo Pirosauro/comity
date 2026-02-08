@@ -1,0 +1,97 @@
+{
+  "name": "@comity/sql",
+  "version": "1.0.0",
+  "description": "SQL boundary abstractions for Comity applications",
+  "type": "module",
+  "author": "Filippo Bovo <hello@filippobovo.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/comityjs/framework#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/comityjs/framework.git"
+  },
+  "bugs": {
+    "url": "https://github.com/comityjs/framework/issues"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "keywords": [
+    "comity",
+    "comityjs",
+    "framework",
+    "sql",
+    "typescript"
+  ],
+  "scripts": {
+    "build": "node ../../scripts/build.mjs",
+    "prepublishOnly": "node ../../scripts/build.mjs",
+    "dev": "node ../../scripts/build.mjs --watch",
+    "test": "vitest run --coverage",
+    "type-check": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint --ext .ts src"
+  },
+  "files": [
+    "./dist",
+    "!./dist/**/*.map"
+  ],
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    },
+    "./errors": {
+      "import": {
+        "types": "./dist/types/errors/index.d.ts",
+        "default": "./dist/esm/errors/index.js"
+      },
+      "require": {
+        "types": "./dist/types/errors/index.d.ts",
+        "default": "./dist/cjs/errors/index.js"
+      }
+    },
+    "./lifecycle": {
+      "import": {
+        "types": "./dist/types/lifecycle/index.d.ts",
+        "default": "./dist/esm/lifecycle/index.js"
+      },
+      "require": {
+        "types": "./dist/types/lifecycle/index.d.ts",
+        "default": "./dist/cjs/lifecycle/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "errors": [
+        "./dist/types/errors/index.d.ts"
+      ],
+      "lifecycle": [
+        "./dist/types/lifecycle/index.d.ts"
+      ]
+    }
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "sideEffects": false,
+  "private": false,
+  "dependencies": {
+    "@comity/primitives": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.9",
+    "typescript": "^5.9.3"
+  }
+}

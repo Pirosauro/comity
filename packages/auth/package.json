@@ -19,7 +19,6 @@
     "auth",
     "authentication",
     "jwt",
-    "jose",
     "token",
     "refresh-token",
     "security",

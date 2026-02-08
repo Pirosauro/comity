@@ -8,6 +8,7 @@ export interface AuthSessionRepository {
    * Find a session by id.
    *
    * @returns the session
+   *
    * @throws InvalidSessionError if the session id is malformed or not found
    */
   get(id: AuthSessionId): Promise<AuthSession>;
@@ -33,6 +34,7 @@ export interface AuthSessionRepository {
    * @param actor - Optional information about who triggered the revocation
    * @param actor.type - Type of actor (e.g., "system", "user", "admin")
    * @param actor.id - Identifier of the actor if applicable
+   *
    * @throws {InvalidSessionError} - If the session id is malformed or not found
    */
   revoke(

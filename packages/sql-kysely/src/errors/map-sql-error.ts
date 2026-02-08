@@ -4,31 +4,29 @@ import { KyselySqlError } from "../errors/kysely.js";
 import { ERROR_MESSAGES } from "../errors/types.js";
 
 /**
- *
+ * Configuration for mapping an error code to a standardized error reason and retriability.
  */
 export interface ErrorConfig {
-  /**
-   *
-   */
+  /** Standardized error reason */
   reason: SqlErrorReason;
-  /**
-   *
-   */
+
+  /** Indicates if the error is retriable */
   retriable: boolean;
-  /**
-   *
-   */
-  message?: string; // override opzionale
+
+  /** Optional custom error message */
+  message?: string;
 }
 
 /**
- *
+ * Collection of error code mappings.
  */
 export type ErrorMappings = Record<string, ErrorConfig>;
 
-// Mappature per driver
+/**
+ * Driver-specific error code mappings.
+ */
 export const DRIVER_ERROR_MAPPINGS: Record<string, ErrorMappings> = {
-  pg: {
+  postgres: {
     "57014": { reason: "cancelled", retriable: true },
     "42601": { reason: "invalid-query", retriable: false },
     "08006": { reason: "connection-failed", retriable: true },
@@ -66,7 +64,7 @@ export function mapSqlError(
     });
   }
 
-  // 2. Driver-specific (Postgres example)
+  // 2. Driver-specific error code mappings
   if (
     adapter in DRIVER_ERROR_MAPPINGS &&
     typeof DRIVER_ERROR_MAPPINGS[adapter] === "object" &&
@@ -79,6 +77,7 @@ export function mapSqlError(
   ) {
     const mapping = DRIVER_ERROR_MAPPINGS[adapter][cause.code];
 
+    // Return mapped error
     if (mapping && mapping.reason) {
       return new KyselySqlError(ERROR_MESSAGES[mapping.reason as keyof typeof ERROR_MESSAGES], {
         reason: mapping.reason,

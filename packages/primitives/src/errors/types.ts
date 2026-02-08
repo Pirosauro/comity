@@ -16,7 +16,7 @@ export type ErrorCode = `${string}:${string}`;
  * structured details, and causal relationships. The metadata object is extensible to
  * allow custom properties for specific error types.
  */
-export type ErrorMeta = {
+export type ErrorMeta = Readonly<{
   /** HTTP status code associated with this error, if applicable */
   httpStatus?: number;
 
@@ -25,4 +25,5 @@ export type ErrorMeta = {
 
   /** The underlying cause of the error */
   cause?: unknown;
-} & Record<string, unknown>;
+}> &
+  Record<string, unknown>;

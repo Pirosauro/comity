@@ -1,11 +1,12 @@
 /**
  * Hook handler function
  *
+ * @typeParam T - The type of value being handled
+ *
  * @param value Current value
  * @param initial Initial value
- * @returns New value or a promise resolving to the new value
  *
- * @typeParam T - The type of value being handled
+ * @returns New value or a promise resolving to the new value
  *
  * @remarks
  * A hook handler is a function that processes a value, potentially

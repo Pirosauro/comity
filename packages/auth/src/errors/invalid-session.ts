@@ -9,7 +9,7 @@ import { BaseError } from "@comity/primitives/errors";
  */
 export interface InvalidSessionErrorMeta<T extends string> extends ErrorMeta {
   /** Reason for the session invalidity */
-  reason?: T | undefined;
+  reason?: T;
 }
 
 /**

@@ -29,7 +29,12 @@ export interface AuthSessionAssuranceContext {
 }
 
 /**
- * Snapshot of how and when a given assurance level was obtained.
+ * Persisted assurance state associated with a session.
+ *
+ * @remarks
+ * This represents the assurance level already achieved and stored.
+ * It MUST NOT be confused with runtime assurance evaluation,
+ * which is performed by policies and evaluators.
  */
 export interface AuthSessionAssurance<C extends Record<string, unknown> = {}> {
   /** Authentication methods used (invariant: non-empty array) */
@@ -44,7 +49,7 @@ export interface AuthSessionAssurance<C extends Record<string, unknown> = {}> {
   /** When assurance was evaluated (invariant: valid timestamp) */
   readonly evaluatedAt: number;
 
-  /** Assurance version (invariant: non-negative integer) */
+  /** Monotonic version used to track assurance upgrades */
   readonly version: number;
 
   /** Contextual information (invariant: immutable) */

@@ -29,8 +29,6 @@ export class ConflictError extends BaseError {
   readonly code = "core:conflict";
 
   /**
-   * Creates a new ConflictError.
-   *
    * @param message Human-readable error message describing the conflict
    * @param meta Additional error metadata (details, context, etc.)
    */

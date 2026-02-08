@@ -7,8 +7,9 @@ export type AuthSessionId = string;
 /**
  * Authenticated session domain model.
  *
- * This model is protocol-agnostic and represents session state used by
- * policy checks and event emitters.
+ * @remarks
+ * All nested contracts (including Assurance) represent stored state,
+ * never derived or contextual evaluations.
  */
 export interface AuthSession {
   /** Session identifier (invariant: unique, immutable) */

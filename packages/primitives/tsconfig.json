@@ -6,7 +6,6 @@
     "noEmit": false,
     "outDir": "dist",
     "rootDir": "src",
-    "tsBuildInfoFile": "dist/.tsbuildinfo",
     "types": ["node"]
   },
   "exclude": ["node_modules", "dist", "**/*.test.ts"],
