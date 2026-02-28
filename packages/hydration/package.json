@@ -111,11 +111,11 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@comity/primitives": "workspace:*",
-    "@comity/kernel": "workspace:*"
+    "@comity/kernel": "workspace:*",
+    "@comity/primitives": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^24.10.9",
+    "@types/node": "^24.11.0",
     "jsdom": "^27.4.0",
     "typescript": "^5.9.3"
   }
