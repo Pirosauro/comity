@@ -1,7 +1,7 @@
 import type { ErrorCode, ErrorMeta } from "./types.js";
 
 /**
- * Base error class for all Comity framework errors
+ * Base error class for all Comity framework errors.
  *
  * @remarks
  * All Comity errors extend this base class to ensure consistent error handling,
@@ -54,8 +54,8 @@ export abstract class BaseError extends Error {
   readonly meta: Omit<ErrorMeta, "cause">;
 
   /**
-   * @param message Human-readable error message
-   * @param meta.cause The underlying cause of the error
+   * @param message - Human-readable, static error message
+   * @param meta.cause - The underlying cause of the error
    * @param meta - Error metadata including HTTP status, details, and cause
    *
    * @protected

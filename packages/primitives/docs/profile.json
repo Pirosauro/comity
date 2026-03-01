@@ -1,0 +1,13 @@
+{
+  "meta": {
+    "name": "@comity/primitives",
+    "version": "1.0.0",
+    "layer": "core",
+    "category": "primitives",
+    "authoritative": true
+  },
+
+  "description": "Collection of foundational utilities and abstractions for Comity framework, including error handling, dependency injection, lifecycle management, and event/hook systems.",
+
+  "review_exceptions": []
+}

@@ -1,4 +1,4 @@
-# Comity — Vision
+# Comity Coding Standards — Vision
 
 Comity was born from a simple frustration:
 backend systems that are either too heavy, too magical, or too fragile.

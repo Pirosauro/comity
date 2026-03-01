@@ -2,7 +2,7 @@ import type { EventBusContract } from "./contract.js";
 import type { EventHandler } from "./handler.js";
 import type { EventBusErrorHandler, EventBusOptions } from "./types.js";
 
-import { InternalError } from "../../errors/internal.js";
+import { EventBusError } from "./error.js";
 
 /**
  * Event Bus implementation
@@ -69,7 +69,7 @@ export class EventBus<
           await h(payload as Readonly<Events[K]>);
         } catch (cause) {
           this.#onError?.(
-            new InternalError("Event handler failed", {
+            new EventBusError("handler_failed", {
               event,
               cause,
             })

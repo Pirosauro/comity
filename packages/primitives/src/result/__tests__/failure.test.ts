@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { InternalError } from "../../errors/internal.js";
+import { TestError } from "../../__mocks__/error.js";
 import { failure, isFailure } from "../failure.js";
 
 describe("failure", () => {
   it("should create a failure result", () => {
-    const error = new InternalError("Test error");
+    const error = new TestError("Test error");
     const result = failure(error);
 
     expect(result).toEqual({
@@ -24,7 +24,7 @@ describe("failure", () => {
 
 describe("isFailure", () => {
   it("should return true for failure results", () => {
-    const error = new InternalError("Test");
+    const error = new TestError("Test");
     const result = failure(error);
 
     expect(isFailure(result)).toBe(true);
@@ -35,7 +35,7 @@ describe("isFailure", () => {
   });
 
   it("should narrow types correctly", () => {
-    const error = new InternalError("Test");
+    const error = new TestError("Test");
     const result = failure(error);
 
     if (isFailure(result)) {

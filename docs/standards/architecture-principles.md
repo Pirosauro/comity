@@ -1,4 +1,4 @@
-# Comity — Architecture Principles
+# Comity Coding Standards — Architecture Principles
 
 This document defines the structural rules that guide Comity’s design decisions.
 

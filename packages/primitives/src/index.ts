@@ -1,7 +1,7 @@
 /**
  * This index is intentionally empty. Users should import from specific domains:
  *
- * - `@comity/primitives/errors` - Error types and base class
+ * - `@comity/primitives/error` - Error types and base class
  * - `@comity/primitives/lifecycle` - Event bus and hook bus
  * - `@comity/primitives/di` - Dependency injection container
  * - `@comity/primitives/result` - Result type for fallible operations

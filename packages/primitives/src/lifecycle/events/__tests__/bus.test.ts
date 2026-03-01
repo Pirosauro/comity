@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { InternalError } from "../../../errors/internal.js";
 import { EventBus } from "../bus.js";
+import { EventBusError } from "../error.js";
 
 interface TestEvents extends Record<string, unknown> {
   userCreated: { id: string; name: string };
@@ -18,12 +18,14 @@ describe("EventBus", () => {
   describe("constructor", () => {
     it("should create bus without options", () => {
       const bus = new EventBus<TestEvents>();
+
       expect(bus).toBeInstanceOf(EventBus);
     });
 
     it("should create bus with error handler", () => {
       const errorHandler = vi.fn();
       const bus = new EventBus<TestEvents>({ errorHandler });
+
       expect(bus).toBeInstanceOf(EventBus);
     });
   });
@@ -33,8 +35,6 @@ describe("EventBus", () => {
       const handler = vi.fn();
 
       bus.subscribe("userCreated", handler);
-
-      // Test via emit
     });
 
     it("should allow multiple handlers for the same event", () => {
@@ -50,9 +50,7 @@ describe("EventBus", () => {
 
   describe("emit", () => {
     it("should do nothing when no handlers are subscribed", async () => {
-      await expect(
-        bus.emit("userCreated", { id: "1", name: "Alice" }),
-      ).resolves.toBeUndefined();
+      await expect(bus.emit("userCreated", { id: "1", name: "Alice" })).resolves.toBeUndefined();
     });
 
     it("should execute a single handler", async () => {
@@ -137,8 +135,10 @@ describe("EventBus", () => {
       await bus.emit("userCreated", { id: "1", name: "Alice" });
 
       expect(errorHandler).toHaveBeenCalledTimes(1);
+
       const error = errorHandler.mock.calls[0][0];
-      expect(error).toBeInstanceOf(InternalError);
+
+      expect(error).toBeInstanceOf(EventBusError);
       expect(error.message).toBe("Event handler failed");
       expect(error.meta.event).toBe("userCreated");
       expect(error.cause).toBeInstanceOf(Error);

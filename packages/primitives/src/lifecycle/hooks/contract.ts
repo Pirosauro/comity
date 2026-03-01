@@ -18,7 +18,6 @@ export interface HookBusContract<Hooks extends Record<string, unknown>> {
    *
    * @param name Hook name
    * @param handler Hook handler function
-   *
    */
   define<K extends keyof Hooks>(name: K, handler: HookHandler<Hooks[K]>): void;
 

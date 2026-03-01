@@ -5,27 +5,37 @@ This document defines the **official error model** for all Comity packages.
 These rules apply to:
 
 - Core packages `@comity/*`
-- Adapters and infrastructure packages
+- Infrastructure and adapter packages
+- Future official extensions
 
 Errors are part of the public contract. Inconsistent errors are considered **API bugs**.
 
 ---
 
-## 1. Error Philosophy
+# 1. Error Philosophy
 
 Comity errors are:
 
 - **Semantic**, not technical
-- **Predictable**, not ad-hoc
-- **Transport-agnostic**, even when they carry hints for transports
+- **Stable**, not incidental
+- **Machine-readable first**
+- **Transport-agnostic**, even when carrying transport hints
 
-Errors represent **what went wrong**, not **how it was handled**.
+Errors represent:
+
+> What went wrong — not how it was handled.
+
+If an error cannot be named precisely, it should not exist.
 
 ---
 
-## 2. BaseError Is Mandatory
+# 2. BaseError Is Mandatory
 
-All errors MUST extend `BaseError` from `@comity/primitives/errors`.
+All errors MUST extend `BaseError` from:
+
+```
+@comity/primitives/errors
+```
 
 ❌ Forbidden:
 
@@ -33,119 +43,290 @@ All errors MUST extend `BaseError` from `@comity/primitives/errors`.
 throw new Error("something went wrong");
 ```
 
+❌ Forbidden:
+
+```ts
+throw "error";
+```
+
 ✅ Required:
 
 ```ts
-throw new InvalidLifecycleStateError({...});
+throw new AuthError("invalid_credentials");
 ```
 
 ---
 
-## 3. Error Shape
+# 3. The Standard Error Model
 
-Every error MUST define:
+Each module MUST expose:
 
-- `code` — stable, namespaced identifier (`module:reason`)
-- `message` — human-readable, safe to log
-- `meta` — optional structured metadata
+- Exactly one public error class
+- A finite `Reason` union
+- A stable namespace
+
+---
+
+## 3.1 Canonical Structure
+
+Each module error must follow this pattern:
 
 ```ts
-export class ForbiddenError extends BaseError {
-  readonly code = "core:forbidden";
+/**
+ * Reasons for EventBus errors.
+ */
+export type EventBusErrorReason =
+  | "handler_failed";
 
-  constructor(message = "Access denied", meta: ErrorMeta = {}) {
-    super(message, { httpStatus: 403, ...meta });
+/**
+ * Stable default messages for each reason.
+ */
+const REASON_MESSAGES: Record<EventBusErrorReason, string> = {
+  handler_failed: "Event handler failed",
+};
+
+/**
+ * EventBus Error.
+ */
+export class EventBusError extends BaseError {
+  readonly code: `event-bus:${EventBusErrorReason}`;
+
+  constructor(reason: EventBusErrorReason, meta?: ErrorMeta) {
+    super(REASON_MESSAGES[reason], {
+      ...meta,
+      reason,
+    });
+
+    this.code = `event-bus:${reason}`;
   }
 }
 ```
 
 ---
 
-## 4. HTTP Status Is a Hint, Not a Dependency
+# 4. Error Properties (Canonical Shape)
 
-- Errors MAY include `httpStatus` in metadata
-- Errors MUST NOT depend on HTTP semantics
-- Non-HTTP consumers MAY ignore it
+Every error instance MUST contain:
 
-```ts
-meta: {
-  httpStatus: 404;
-}
-```
-
-This is a **mapping hint**, not a contract.
+| Field         | Type               | Purpose                   |
+| ------------- | ------------------ | ------------------------- |
+| `code`        | `namespace:reason` | Stable machine identifier |
+| `message`     | string             | Human-readable message    |
+| `meta`        | structured object  | Structured metadata       |
+| `meta.reason` | union literal      | Canonical machine reason  |
 
 ---
 
-## 5. Default Messages (Mandatory)
+## 4.1 `code`
 
-Every public error MUST define a default message.
-
-Rules:
-
-- Neutral, professional tone
-- No implementation details
-- No internal identifiers
-- No stack or system info
+- Must follow: `namespace:reason`
+- Must be derived from the `reason`
+- Must never change once published
 
 Examples:
 
-| Error             | Default Message             |
-| ----------------- | --------------------------- |
-| BadRequestError   | `"Invalid request"`         |
-| UnauthorizedError | `"Authentication required"` |
-| ForbiddenError    | `"Access denied"`           |
-| NotFoundError     | `"Resource not found"`      |
-| ConflictError     | `"Resource conflict"`       |
-| TimeoutError      | `"Operation timed out"`     |
-| InternalError     | `"Internal error"`          |
+```
+auth:invalid_credentials
+sql:timeout
+http:not_found
+di:not_registered
+```
 
 ---
 
-## 6. Error Scope Rules
+## 4.2 `reason`
 
-### Public Errors
+- Machine-readable
+- Finite union type
+- Stable across versions
+- Used for logic and branching
 
-- Declared in `@comity/primitives`
-- Stable and documented
-- Usable across modules
+Example:
 
-### Module Errors
-
-- Namespaced (`http:*`, `auth:*`)
-- May extend primitives
-- Not re-exported by other modules
-
-### Internal Errors
-
-- Never exported
-- Never documented
-- Used only for invariants
+```ts
+export type SqlErrorReason =
+  | "connection_failed"
+  | "timeout"
+  | "invalid_query";
+```
 
 ---
 
-## 7. Error Pollution Rules
+## 4.3 `message`
 
-- Do NOT create new errors unless semantics differ
-- Prefer reusing existing primitives
-- Error explosion is considered API pollution
+- Default message must exist
+- Must be neutral and professional
+- Must not expose internals
+- Must not contain identifiers, SQL, stack traces, etc.
 
-If two errors map to the same recovery action, they should be the same error.
+Examples:
+
+| Reason          | Message                   |
+| --------------- | ------------------------- |
+| `invalid_input` | "Invalid input"           |
+| `unauthorized`  | "Authentication required" |
+| `forbidden`     | "Access denied"           |
+| `not_found`     | "Resource not found"      |
+| `timeout`       | "Operation timed out"     |
 
 ---
 
-## 8. Event + Error Interaction
+## 4.4 `meta`
 
-- Errors may be emitted as events
-- Event payloads MUST NOT include:
-  - stack traces
-  - sensitive metadata
-- Prefer error `code` over full error object
+`meta` MAY include:
+
+- contextual IDs
+- correlation IDs
+- adapter name
+- transport hints (e.g., `httpStatus`)
+- retriable flag
+- safe diagnostic fields
+
+It MUST NOT include:
+
+- stack traces
+- raw queries
+- credentials
+- secrets
+- sensitive tokens
 
 ---
 
-## Summary
+# 5. HTTP Status Is a Hint
+
+Errors MAY include `httpStatus` inside `meta`.
+
+Rules:
+
+- It is a mapping hint
+- It must not introduce transport coupling
+- Non-HTTP consumers may ignore it
+
+Example:
+
+```ts
+meta: {
+  httpStatus: 404
+}
+```
+
+The error remains transport-agnostic.
+
+---
+
+# 6. One Error Class per Module
+
+Each module MUST expose:
+
+- ONE public error class
+- ONE finite `Reason` union
+
+Examples:
+
+- `AuthError`
+- `SqlError`
+- `HttpError`
+- `DiError`
+- `EventBusError`
+
+❌ Forbidden:
+
+- `InvalidInputError`
+- `ConflictError`
+- `SessionExpiredError`
+- Class explosion patterns
+
+If two errors share the same recovery strategy, they must share the same reason.
+
+---
+
+# 7. Primitives Errors Policy
+
+`@comity/primitives/errors` may contain:
+
+- `BaseError`
+- (Optionally) a minimal set of generic, transport-agnostic errors
+
+However:
+
+- New modules MUST NOT introduce new global generic errors.
+- Module-specific semantics belong inside module-specific error classes.
+
+The direction of the framework is:
+
+> Prefer namespaced module errors over global generic errors.
+
+---
+
+# 8. Internal Errors
+
+Internal errors:
+
+- Must not be exported
+- Must not be documented
+- Must not leak outside the module boundary
+- May extend `BaseError` or reuse module error
+
+Use them only for invariant violations.
+
+---
+
+# 9. Error Explosion Rule
+
+Creating a new error class is allowed ONLY if:
+
+- The semantic meaning differs
+- The recovery strategy differs
+- The namespace differs
+
+Otherwise:
+
+Use a new `reason` in the module’s single error class.
+
+Error explosion is considered API pollution.
+
+---
+
+# 10. Versioning Rules
+
+- Adding a new `reason` → MINOR version bump
+- Removing or renaming a `reason` → MAJOR version bump
+- Changing default message wording (without semantic change) → PATCH
+- Changing namespace → MAJOR
+
+Error contracts are part of the public API.
+
+---
+
+# 11. Event + Error Interaction
+
+Errors may be emitted through events.
+
+When emitting:
+
+- Prefer emitting `{ code, reason }`
+- Avoid sending full error objects
+- Never emit stack traces or sensitive metadata
+
+---
+
+# 12. Forbidden Patterns
+
+❌ Throwing raw `Error` ❌ Multiple public error classes per module ❌ Dynamic or unstable `code` values ❌ Encoding dynamic data in `message` ❌ Transport-specific errors (e.g., `HttpNotFoundError`) ❌ Per-case micro error classes
+
+---
+
+# Final Principle
 
 > Errors are part of the language of the system.
 
-If an error cannot be named, it does not exist.
+A Comity error must be:
+
+- Predictable
+- Namespaced
+- Minimal
+- Machine-readable
+- Stable across time
+
+If an error cannot be precisely categorized into a finite semantic reason, the design is incomplete.
+

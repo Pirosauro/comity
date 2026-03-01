@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { ConflictError } from "../../errors/conflict.js";
-import { NotFoundError } from "../../errors/not-found.js";
 import { DiContainer } from "../container.js";
+import { ContainerError } from "../error.js";
 
 interface TestServices extends Record<string | symbol, unknown> {
   logger: { log: (message: string) => void };
@@ -25,16 +24,14 @@ describe("DiContainer", () => {
       expect(factory).not.toHaveBeenCalled();
     });
 
-    it("should throw ConflictError when registering duplicate service", () => {
+    it("should throw ContainerError when registering duplicate service", () => {
       const factory1 = vi.fn(() => ({ log: vi.fn() }));
       const factory2 = vi.fn(() => ({ log: vi.fn() }));
 
       container.define("logger", factory1);
 
-      expect(() => container.define("logger", factory2)).toThrow(ConflictError);
-      expect(() => container.define("logger", factory2)).toThrow(
-        "Service already registered",
-      );
+      expect(() => container.define("logger", factory2)).toThrow(ContainerError);
+      expect(() => container.define("logger", factory2)).toThrow("Service already registered");
     });
 
     it("should allow registering different services", () => {
@@ -50,11 +47,9 @@ describe("DiContainer", () => {
   });
 
   describe("resolve", () => {
-    it("should throw NotFoundError for unregistered service", () => {
-      expect(() => container.resolve("logger")).toThrow(NotFoundError);
-      expect(() => container.resolve("logger")).toThrow(
-        "Service not registered",
-      );
+    it("should throw ContainerError for unregistered service", () => {
+      expect(() => container.resolve("logger")).toThrow(ContainerError);
+      expect(() => container.resolve("logger")).toThrow("Service not registered");
     });
 
     it("should resolve a service using its factory", () => {

@@ -62,14 +62,14 @@
         "default": "./dist/cjs/di/index.js"
       }
     },
-    "./errors": {
+    "./error": {
       "import": {
-        "types": "./dist/types/errors/index.d.ts",
-        "default": "./dist/esm/errors/index.js"
+        "types": "./dist/types/error/index.d.ts",
+        "default": "./dist/esm/error/index.js"
       },
       "require": {
-        "types": "./dist/types/errors/index.d.ts",
-        "default": "./dist/cjs/errors/index.js"
+        "types": "./dist/types/error/index.d.ts",
+        "default": "./dist/cjs/error/index.js"
       }
     },
     "./lifecycle": {
@@ -99,8 +99,8 @@
       "di": [
         "./dist/types/di/index.d.ts"
       ],
-      "errors": [
-        "./dist/types/errors/index.d.ts"
+      "error": [
+        "./dist/types/error/index.d.ts"
       ],
       "lifecycle": [
         "./dist/types/lifecycle/index.d.ts"

@@ -27,3 +27,22 @@ export type ErrorMeta = Readonly<{
   cause?: unknown;
 }> &
   Record<string, unknown>;
+
+/**
+ * Core error reasons for common error scenarios
+ *
+ * @remarks
+ * These reasons can be used in the `details` property of error metadata to provide
+ * standardized machine-readable explanations for common error cases, facilitating
+ * consistent error handling across the application.
+ */
+export type CoreErrorReason =
+  | "not_found"
+  | "invalid_input"
+  | "unauthorized"
+  | "forbidden"
+  | "conflict"
+  | "timeout"
+  | "service_unavailable"
+  | "internal"
+  | "domain_violation";

@@ -15,7 +15,8 @@ export interface DiContainerContract<Services extends Record<string | symbol, un
    *
    * @param name Service identifier
    * @param factory Factory function to create the service instance
-   *
+   * 
+   * @throws {ContainerError} If the service is already registered
    */
   define<K extends keyof Services>(name: K, factory: () => Services[K]): void;
 
@@ -28,6 +29,12 @@ export interface DiContainerContract<Services extends Record<string | symbol, un
    *
    * @returns The service instance
    *
+   * @throws {ContainerError} If the service is not registered
    */
   resolve<K extends keyof Services>(name: K): Services[K];
+
+  /**
+   * Clear all registered services
+   */
+  clear(): void;
 }

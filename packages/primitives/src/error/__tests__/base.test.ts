@@ -1,13 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { BaseError } from "../base.js";
-
-class TestError extends BaseError {
-  readonly code = "test:error";
-
-  constructor(message: string, meta: Record<string, unknown> = {}) {
-    super(message, meta as any);
-  }
-}
+import { TestError } from "../../__mocks__/error.js";
 
 describe("BaseError", () => {
   it("should create error with message", () => {

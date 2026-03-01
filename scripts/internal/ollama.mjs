@@ -1,3 +1,5 @@
+import { Agent, fetch } from "undici";
+
 /**
  * Call the Ollama API with the given prompt.
  *
@@ -9,22 +11,40 @@
 export async function callOllama(host, options = {}) {
   console.log("Calling AI model API...");
 
-  const start = performance.now();
-  const res = await fetch(`${host}/api/generate`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(options),
+  const controller = new AbortController();
+  const agent = new Agent({
+    connectTimeout: 5_000, // 5 seconds to establish connection
+    headersTimeout: 1_200_000, // 600 seconds to receive headers
+    bodyTimeout: 100_000, // 100 seconds to receive body
+    keepAliveTimeout: 10_000,
   });
+  const start = performance.now();
 
-  console.log(`AI thought for ${((performance.now() - start) / 1000).toFixed(2)} s`);
+  try {
+    const res = await fetch(`${host}/api/generate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(options),
+      dispatcher: agent,
+    });
 
-  if (!res.ok) {
-    const text = await res.text();
+    console.log(`AI thought for ${((performance.now() - start) / 1000).toFixed(2)} s`);
 
-    throw new Error(`Ollama error ${res.status}: ${text}`);
+    if (!res.ok) {
+      const text = await res.text();
+
+      throw new Error(`Ollama error ${res.status}: ${text}`);
+    }
+
+    const data = await res.json();
+
+    return data.response.trim();
+  } catch (e) {
+    console.log(`Request failed after ${((performance.now() - start) / 1000).toFixed(2)} s`);
+
+    throw e;
+  } finally {
+    controller.abort();
+    agent.close();
   }
-
-  const data = await res.json();
-
-  return data.response.trim();
 }

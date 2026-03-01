@@ -1,12 +1,15 @@
 import type { DiContainerContract } from "./contract.js";
 
-import { ConflictError } from "../errors/conflict.js";
-import { NotFoundError } from "../errors/not-found.js";
+import { ContainerError } from "./error.js";
 
 /**
  * Dependency Injection Container
  *
  * @typeParam Services - Record of service identifiers and their corresponding types
+ *
+ * @remarks
+ * Lifecycle controls and disposal are demanded to the services themselves.
+ * The container only manages instantiation and caching.
  *
  * @example
  * ```ts
@@ -31,19 +34,11 @@ export class DiContainer<
   #instances = new Map<keyof Services, Services[keyof Services]>();
 
   /**
-   * Define a service factory
-   *
-   * @typeParam K - Key of the service in the Services record
-   *
-   * @param key - Service identifier
-   * @param factory - Factory function to create the service instance
-   *
-   * @throws {ConflictError} If the service is already registered
-   *
+   * @inheritdoc
    */
   define<K extends keyof Services>(key: K, factory: () => Services[K]): void {
     if (this.#factories.has(key)) {
-      throw new ConflictError("Service already registered", {
+      throw new ContainerError("already_registered", {
         service: key,
       });
     }
@@ -52,16 +47,7 @@ export class DiContainer<
   }
 
   /**
-   * Resolve a service by its identifier
-   *
-   * @typeParam K - Key of the service in the Services record
-   *
-   * @param key - Service identifier
-   *
-   * @returns The service instance
-   *
-   * @throws {NotFoundError} If the service is not registered
-   *
+   * @inheritdoc
    */
   resolve<K extends keyof Services>(key: K): Services[K] {
     // Return existing instance if available
@@ -74,7 +60,7 @@ export class DiContainer<
 
     // Service not registered
     if (!factory) {
-      throw new NotFoundError("Service not registered", {
+      throw new ContainerError("not_registered", {
         service: key,
       });
     }
@@ -86,5 +72,12 @@ export class DiContainer<
     this.#instances.set(key, instance);
 
     return instance as Services[K];
+  }
+
+  /**
+   * @inheritdoc
+   */
+  clear(): void {
+    this.#instances.clear();
   }
 }
