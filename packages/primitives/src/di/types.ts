@@ -1,15 +1,14 @@
-import type { PropertyKey } from "./types.js";
+/**
+ * PropertyKey type representing valid keys for service identifiers in the DI container.
+ */
+export type PropertyKey = string | symbol;
 
 /**
- * Dependency Injection Container Contract.
+ * Dependency Injection Container Like interface.
  *
  * @typeParam Services - Record mapping service identifiers to their types.
- *
- * @remarks
- * This interface defines the contract for a Dependency Injection (DI) Container,
- * which allows registering and resolving services by their identifiers.
  */
-export interface DiContainerContract<Services extends Record<PropertyKey, unknown>> {
+export interface DiContainerLike<Services extends Record<PropertyKey, unknown> = {}> {
   /**
    * Register a service with a factory function.
    *
@@ -17,8 +16,6 @@ export interface DiContainerContract<Services extends Record<PropertyKey, unknow
    *
    * @param name - Service identifier.
    * @param factory - Factory function to create the service instance.
-   *
-   * @throws {ContainerError} - If the service is already registered.
    */
   define<K extends keyof Services>(name: K, factory: () => Services[K]): void;
 
@@ -30,8 +27,6 @@ export interface DiContainerContract<Services extends Record<PropertyKey, unknow
    * @param name - Service identifier.
    *
    * @returns - The service instance.
-   *
-   * @throws {ContainerError} - If the service is not registered.
    */
   resolve<K extends keyof Services>(name: K): Services[K];
 

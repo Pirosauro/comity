@@ -1,11 +1,12 @@
 import type { DiContainerContract } from "./contract.js";
+import type { PropertyKey } from "./types.js";
 
 import { ContainerError } from "./error.js";
 
 /**
- * Dependency Injection Container
+ * Dependency Injection Container.
  *
- * @typeParam Services - Record of service identifiers and their corresponding types
+ * @typeParam Services - Record of service identifiers and their corresponding types.
  *
  * @remarks
  * Lifecycle controls and disposal are demanded to the services themselves.
@@ -25,7 +26,7 @@ import { ContainerError } from "./error.js";
  * ```
  */
 export class DiContainer<
-  Services extends { [K in keyof Services]: unknown },
+  Services extends Record<PropertyKey, unknown> = {},
 > implements DiContainerContract<Services> {
   /** Factories map */
   #factories = new Map<keyof Services, () => Services[keyof Services]>();

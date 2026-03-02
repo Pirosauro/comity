@@ -177,4 +177,70 @@ describe("EventBus", () => {
       expect(handler).toHaveBeenCalledTimes(1);
     });
   });
+
+  describe("unsubscribe", () => {
+    it("should remove a specific handler for an event", async () => {
+      const handler = vi.fn();
+
+      bus.subscribe("userCreated", handler);
+      bus.unsubscribe("userCreated", handler);
+
+      await bus.emit("userCreated", { id: "1", name: "Alice" });
+
+      expect(handler).not.toHaveBeenCalled();
+    });
+
+    it("should only remove the specified handler", async () => {
+      const handler1 = vi.fn();
+      const handler2 = vi.fn();
+
+      bus.subscribe("userCreated", handler1);
+      bus.subscribe("userCreated", handler2);
+
+      bus.unsubscribe("userCreated", handler1);
+
+      await bus.emit("userCreated", { id: "1", name: "Alice" });
+
+      expect(handler1).not.toHaveBeenCalled();
+      expect(handler2).toHaveBeenCalledWith({ id: "1", name: "Alice" });
+    });
+
+    it("should handle unsubscribing a non-existent handler", () => {
+      const handler = vi.fn();
+      const nonExistentHandler = vi.fn();
+
+      bus.subscribe("userCreated", handler);
+
+      expect(() => {
+        bus.unsubscribe("userCreated", nonExistentHandler);
+      }).not.toThrow();
+    });
+
+    it("should allow re-subscribing after unsubscribing", async () => {
+      const handler = vi.fn();
+
+      bus.subscribe("userCreated", handler);
+      bus.unsubscribe("userCreated", handler);
+      bus.subscribe("userCreated", handler);
+
+      await bus.emit("userCreated", { id: "1", name: "Alice" });
+
+      expect(handler).toHaveBeenCalledTimes(1);
+    });
+
+    it("should not affect other event types when unsubscribing", async () => {
+      const handler1 = vi.fn();
+      const handler2 = vi.fn();
+
+      bus.subscribe("userCreated", handler1);
+      bus.subscribe("userDeleted", handler2);
+
+      bus.unsubscribe("userCreated", handler1);
+
+      await bus.emit("userDeleted", { id: "1" });
+
+      expect(handler1).not.toHaveBeenCalled();
+      expect(handler2).toHaveBeenCalledWith({ id: "1" });
+    });
+  });
 });

@@ -1,5 +1,5 @@
 {
-  "name": "@comity/kernel",
+  "name": "@comity/composition",
   "version": "1.0.0",
   "description": "Runtime orchestrator providing lifecycle, DI, and shared services for Comity",
   "type": "module",
@@ -20,11 +20,8 @@
     "comity",
     "comityjs",
     "framework",
-    "kernel",
-    "runtime",
-    "orchestrator",
-    "lifecycle",
-    "dependency-injection"
+    "composition",
+    "runtime"
   ],
   "scripts": {
     "build": "node ../../scripts/build.mjs",
@@ -50,16 +47,6 @@
         "default": "./dist/cjs/index.js"
       }
     },
-    "./lifecycle": {
-      "import": {
-        "types": "./dist/types/lifecycle/index.d.ts",
-        "default": "./dist/esm/lifecycle/index.js"
-      },
-      "require": {
-        "types": "./dist/types/lifecycle/index.d.ts",
-        "default": "./dist/cjs/lifecycle/index.js"
-      }
-    },
     "./error": {
       "import": {
         "types": "./dist/types/error/index.d.ts",
@@ -74,9 +61,6 @@
   },
   "typesVersions": {
     "*": {
-      "lifecycle": [
-        "./dist/types/lifecycle/index.d.ts"
-      ],
       "error": [
         "./dist/types/error/index.d.ts"
       ]
@@ -88,6 +72,7 @@
   },
   "sideEffects": false,
   "dependencies": {
+    "@comity/kernel": "workspace:*",
     "@comity/primitives": "workspace:*"
   },
   "devDependencies": {

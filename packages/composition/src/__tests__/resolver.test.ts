@@ -1,9 +1,9 @@
 import { success } from "@comity/primitives/result";
 import { describe, expect, it, vi } from "vitest";
-import { ModuleResolutionError } from "../../errors/module-resolution.js";
-import { resolveModuleOrder } from "../resolver.js";
+import { CompositionError } from "../error/composition.js";
+import { resolveOrder } from "../resolver.js";
 
-describe("resolveModuleOrder", () => {
+describe("resolveOrder", () => {
   it("should resolve modules with no dependencies", () => {
     const modules = [
       {
@@ -18,7 +18,7 @@ describe("resolveModuleOrder", () => {
       },
     ];
 
-    const result = resolveModuleOrder(modules);
+    const result = resolveOrder(modules);
 
     expect(result.success).toBe(true);
 
@@ -34,7 +34,7 @@ describe("resolveModuleOrder", () => {
     const modules = [
       {
         name: "moduleA",
-        dependsOn: ["moduleB"],
+        dependsOn: { moduleB: {} },
         version: "1.0.0",
         setup: vi.fn(async () => success(async () => success(undefined))),
       },
@@ -44,7 +44,7 @@ describe("resolveModuleOrder", () => {
         setup: vi.fn(async () => success(async () => success(undefined))),
       },
     ];
-    const result = resolveModuleOrder(modules);
+    const result = resolveOrder(modules);
 
     expect(result.success).toBe(true);
 
@@ -57,13 +57,13 @@ describe("resolveModuleOrder", () => {
     const modules = [
       {
         name: "app",
-        dependsOn: ["auth", "db"],
+        dependsOn: { auth: {}, db: {} },
         version: "1.0.0",
         setup: vi.fn(async () => success(async () => success(undefined))),
       },
       {
         name: "auth",
-        dependsOn: ["db"],
+        dependsOn: { db: {} },
         version: "1.0.0",
         setup: vi.fn(async () => success(async () => success(undefined))),
       },
@@ -74,7 +74,7 @@ describe("resolveModuleOrder", () => {
       },
     ];
 
-    const result = resolveModuleOrder(modules);
+    const result = resolveOrder(modules);
 
     expect(result.success).toBe(true);
     if (result.success) {
@@ -86,24 +86,24 @@ describe("resolveModuleOrder", () => {
     const modules = [
       {
         name: "moduleA",
-        dependsOn: ["moduleB"],
+        dependsOn: { moduleB: {} },
         version: "1.0.0",
         setup: vi.fn(async () => success(async () => success(undefined))),
       },
       {
         name: "moduleB",
-        dependsOn: ["moduleA"],
+        dependsOn: { moduleA: {} },
         version: "1.0.0",
         setup: vi.fn(async () => success(async () => success(undefined))),
       },
     ];
 
-    const result = resolveModuleOrder(modules);
+    const result = resolveOrder(modules);
 
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error).toBeInstanceOf(ModuleResolutionError);
-      expect(result.error.meta.reason).toBe("cycle-detected");
+      expect(result.error).toBeInstanceOf(CompositionError);
+      expect(result.error.meta.reason).toBe("cycle_detected");
       expect(result.error.meta.cycle).toContain("moduleA");
       expect(result.error.meta.cycle).toContain("moduleB");
     }
@@ -113,17 +113,17 @@ describe("resolveModuleOrder", () => {
     const modules = [
       {
         name: "moduleA",
-        dependsOn: ["moduleA"],
+        dependsOn: { moduleA: {} },
         version: "1.0.0",
         setup: vi.fn(async () => success(async () => success(undefined))),
       },
     ];
 
-    const result = resolveModuleOrder(modules);
+    const result = resolveOrder(modules);
 
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.meta.reason).toBe("cycle-detected");
+      expect(result.error.meta.reason).toBe("cycle_detected");
       expect(result.error.meta.cycle).toEqual(["moduleA"]);
     }
   });
@@ -132,18 +132,18 @@ describe("resolveModuleOrder", () => {
     const modules = [
       {
         name: "moduleA",
-        dependsOn: ["missing"],
+        dependsOn: { missing: {} },
         version: "1.0.0",
         setup: vi.fn(async () => success(async () => success(undefined))),
       },
     ];
 
-    const result = resolveModuleOrder(modules);
+    const result = resolveOrder(modules);
 
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error).toBeInstanceOf(ModuleResolutionError);
-      expect(result.error.meta.reason).toBe("missing-dependency");
+      expect(result.error).toBeInstanceOf(CompositionError);
+      expect(result.error.meta.reason).toBe("missing_dependency");
       expect(result.error.meta.module).toBe("moduleA");
       expect(result.error.meta.dependency).toBe("missing");
     }
@@ -153,7 +153,7 @@ describe("resolveModuleOrder", () => {
     const modules = [
       {
         name: "moduleA",
-        optionalDependsOn: ["missing"],
+        dependsOn: { missing: { optional: true } },
         version: "1.0.0",
         setup: vi.fn(async () => success(async () => success(undefined))),
       },
@@ -164,7 +164,7 @@ describe("resolveModuleOrder", () => {
       },
     ];
 
-    const result = resolveModuleOrder(modules);
+    const result = resolveOrder(modules);
 
     expect(result.success).toBe(true);
     if (result.success) {
@@ -176,7 +176,7 @@ describe("resolveModuleOrder", () => {
     const modules = [
       {
         name: "moduleA",
-        optionalDependsOn: ["moduleB"],
+        dependsOn: { moduleB: { optional: true } },
         version: "1.0.0",
         setup: vi.fn(async () => success(async () => success(undefined))),
       },
@@ -187,7 +187,7 @@ describe("resolveModuleOrder", () => {
       },
     ];
 
-    const result = resolveModuleOrder(modules);
+    const result = resolveOrder(modules);
 
     expect(result.success).toBe(true);
     if (result.success) {
@@ -199,8 +199,7 @@ describe("resolveModuleOrder", () => {
     const modules = [
       {
         name: "moduleA",
-        dependsOn: ["moduleB"],
-        optionalDependsOn: ["moduleC", "missing"],
+        dependsOn: { moduleB: {}, moduleC: { optional: true }, missing: { optional: true } },
         version: "1.0.0",
         setup: vi.fn(async () => success(async () => success(undefined))),
       },
@@ -216,7 +215,7 @@ describe("resolveModuleOrder", () => {
       },
     ];
 
-    const result = resolveModuleOrder(modules);
+    const result = resolveOrder(modules);
 
     expect(result.success).toBe(true);
     if (result.success) {
@@ -228,30 +227,6 @@ describe("resolveModuleOrder", () => {
 
       expect(moduleBIndex).toBeLessThan(moduleAIndex);
       expect(moduleCIndex).toBeLessThan(moduleAIndex);
-    }
-  });
-
-  it("should deduplicate dependencies", () => {
-    const modules = [
-      {
-        name: "moduleA",
-        dependsOn: ["moduleB"],
-        optionalDependsOn: ["moduleB", "moduleB"], // duplicates
-        version: "1.0.0",
-        setup: vi.fn(async () => success(async () => success(undefined))),
-      },
-      {
-        name: "moduleB",
-        version: "1.0.0",
-        setup: vi.fn(async () => success(async () => success(undefined))),
-      },
-    ];
-
-    const result = resolveModuleOrder(modules);
-
-    expect(result.success).toBe(true);
-    if (result.success) {
-      expect(result.value.map((m) => m.name)).toEqual(["moduleB", "moduleA"]);
     }
   });
 
@@ -277,7 +252,7 @@ describe("resolveModuleOrder", () => {
       },
     ];
 
-    const result = resolveModuleOrder(modules);
+    const result = resolveOrder(modules);
 
     expect(result.success).toBe(true);
     if (result.success) {
@@ -286,7 +261,7 @@ describe("resolveModuleOrder", () => {
   });
 
   it("should handle empty modules array", () => {
-    const result = resolveModuleOrder([]);
+    const result = resolveOrder([]);
 
     expect(result.success).toBe(true);
     if (result.success) {
@@ -297,7 +272,7 @@ describe("resolveModuleOrder", () => {
   it("should handle readonly array", () => {
     const modules = [{ name: "moduleA" }] as const;
 
-    const result = resolveModuleOrder(modules as readonly any[]);
+    const result = resolveOrder(modules as readonly any[]);
 
     expect(result.success).toBe(true);
   });

@@ -1,31 +1,32 @@
 import type { DiContainer } from "@comity/primitives/di";
 import type { EventBus, HookBus } from "@comity/primitives/lifecycle";
-import type { KernelEvents } from "./lifecycle/events.js";
-import type { ModuleSetupContext } from "./types.js";
+import type { KernelLifecycleEvents } from "./lifecycle/events.js";
+import type { KernelLifecycleState } from "./lifecycle/types.js";
 
-import { InvalidLifecycleStateError } from "./errors/invalid-lifecycle-state.js";
+import { isSuccess } from "@comity/primitives/result";
+import { KernelError } from "./error/kernel.js";
 import { Lifecycle } from "./internal/lifecycle.js";
 
 /**
- * Kernel context
+ * Kernel context.
  */
 export type KernelContext<
   Services extends { [K in keyof Services]: unknown },
   Events extends { [K in keyof Events]: unknown },
   Hooks extends { [K in keyof Hooks]: unknown },
 > = {
-  /** */
+  /** Service container */
   services: DiContainer<Services>;
 
-  /** */
+  /** Event bus */
   events: EventBus<Events>;
 
-  /** */
+  /** Hook bus */
   hooks: HookBus<Hooks>;
 };
 
 /**
- * Kernel class
+ * Kernel class.
  */
 export class Kernel<
   Services extends { [K in keyof Services]: unknown },
@@ -34,42 +35,48 @@ export class Kernel<
 > {
   /** Service container */
   #services: {
-    /**  */
+    /** Define a service */
     define: DiContainer<Services>["define"];
 
-    /**  */
+    /** Resolve a service */
     resolve: DiContainer<Services>["resolve"];
+
+    /** Clear cached instances */
+    clear: DiContainer<Services>["clear"];
   };
 
   /** Event bus */
   #events: {
-    /**  */
+    /** Subscribe to an event */
     subscribe: EventBus<Events>["subscribe"];
 
-    /**  */
+    /** Unsubscribe from an event */
+    unsubscribe: EventBus<Events>["unsubscribe"];
+
+    /** Emit an event */
     emit: EventBus<Events>["emit"];
   };
 
   /** Hook bus */
   #hooks: {
-    /**  */
+    /** Define a hook */
     define: HookBus<Hooks>["define"];
 
-    /**  */
+    /** Execute a hook */
     execute: HookBus<Hooks>["execute"];
   };
 
   /** Lifecycle manager */
   #lifecycle = new Lifecycle();
 
-  /** Kernel events */
-  #emitter: KernelEvents | undefined;
+  /** Kernel lifecycle events */
+  #emitter: KernelLifecycleEvents | undefined;
 
   /**
    * @param context Kernel context
-   * @param emitter Kernel events emitter
+   * @param emitter Kernel lifecycle events emitter
    */
-  constructor(context: KernelContext<Services, Events, Hooks>, emitter?: KernelEvents) {
+  constructor(context: KernelContext<Services, Events, Hooks>, emitter?: KernelLifecycleEvents) {
     // Services
     this.#services = {
       /**
@@ -80,7 +87,7 @@ export class Kernel<
       define: <K extends keyof Services>(
         ...args: Parameters<typeof context.services.define<K>>
       ) => {
-        this.assertNotSealed("service.define");
+        this.assertLifecycle(() => this.#lifecycle.canDefineServices(), "service.define");
 
         return context.services.define(...args);
       },
@@ -93,9 +100,20 @@ export class Kernel<
       resolve: <K extends keyof Services>(
         ...args: Parameters<typeof context.services.resolve<K>>
       ) => {
-        this.assertSealed("service.resolve");
+        this.assertLifecycle(() => this.#lifecycle.canResolveServices(), "service.resolve");
 
         return context.services.resolve(...args);
+      },
+
+      /**
+       * @param {...Parameters<typeof context.services.clear>} args DiContainer.clear parameters
+       *
+       * @returns DiContainer.clear return value
+       */
+      clear: (...args: Parameters<typeof context.services.clear>) => {
+        this.assertLifecycle(() => this.#lifecycle.canDefineServices(), "service.clear");
+
+        return context.services.clear(...args);
       },
     };
 
@@ -109,9 +127,22 @@ export class Kernel<
       subscribe: <K extends keyof Events>(
         ...args: Parameters<typeof context.events.subscribe<K>>
       ) => {
-        this.assertNotSealed("event.subscribe");
+        this.assertLifecycle(() => this.#lifecycle.canDefineServices(), "event.subscribe");
 
         return context.events.subscribe(...args);
+      },
+
+      /**
+       * @param {...Parameters<typeof context.events.unsubscribe>} args EventBus.unsubscribe parameters
+       *
+       * @returns EventBus.unsubscribe return value
+       */
+      unsubscribe: <K extends keyof Events>(
+        ...args: Parameters<typeof context.events.unsubscribe<K>>
+      ) => {
+        this.assertLifecycle(() => this.#lifecycle.canDefineServices(), "event.unsubscribe");
+
+        return context.events.unsubscribe(...args);
       },
 
       /**
@@ -120,7 +151,7 @@ export class Kernel<
        * @returns EventBus.emit return value
        */
       emit: <K extends keyof Events>(...args: Parameters<typeof context.events.emit<K>>) => {
-        this.assertSealed("event.emit");
+        this.assertLifecycle(() => this.#lifecycle.canEmitEvents(), "event.emit");
 
         return context.events.emit(...args);
       },
@@ -134,7 +165,7 @@ export class Kernel<
        * @returns HookBus.define return value
        */
       define: <K extends keyof Hooks>(...args: Parameters<typeof context.hooks.define<K>>) => {
-        this.assertNotSealed("hook.define");
+        this.assertLifecycle(() => this.#lifecycle.canDefineServices(), "hook.define");
 
         return context.hooks.define(...args);
       },
@@ -145,7 +176,7 @@ export class Kernel<
        * @returns HookBus.execute return value
        */
       execute: <K extends keyof Hooks>(...args: Parameters<typeof context.hooks.execute<K>>) => {
-        this.assertSealed("hook.execute");
+        this.assertLifecycle(() => this.#lifecycle.canExecuteHooks(), "hook.execute");
 
         return context.hooks.execute(...args);
       },
@@ -188,12 +219,12 @@ export class Kernel<
    *
    */
   seal(): ReturnType<Lifecycle["seal"]> {
+    const from = this.#lifecycle.state;
     const result = this.#lifecycle.seal();
+    const to = this.#lifecycle.state;
 
     // Notify kernel events
-    if (result.success && this.#emitter?.kernelSealed) {
-      this.#emitter.kernelSealed();
-    }
+    this.handleLifecycleResult(from, to, result, this.#emitter?.onKernelSealed);
 
     return result;
   }
@@ -204,12 +235,12 @@ export class Kernel<
    * @returns Result of the lifecycle start operation
    */
   start() {
+    const from = this.#lifecycle.state;
     const result = this.#lifecycle.start();
+    const to = this.#lifecycle.state;
 
     // Notify kernel events
-    if (result.success && this.#emitter?.kernelStarted) {
-      this.#emitter.kernelStarted();
-    }
+    this.handleLifecycleResult(from, to, result, this.#emitter?.onKernelStarted);
 
     return result;
   }
@@ -220,26 +251,27 @@ export class Kernel<
    * @returns Result of the lifecycle stop operation
    */
   stop() {
+    const from = this.#lifecycle.state;
     const result = this.#lifecycle.stop();
+    const to = this.#lifecycle.state;
 
     // Notify kernel events
-    if (result.success && this.#emitter?.kernelStopped) {
-      this.#emitter.kernelStopped();
-    }
+    this.handleLifecycleResult(from, to, result, this.#emitter?.onKernelStopped);
 
     return result;
   }
 
   /**
-   * Assert that the kernel is not sealed
+   * Assert a lifecycle condition
    *
-   * @param action Action name
+   * @param predicate - Function that returns a boolean indicating if the condition is met
+   * @param action - Action name for error reporting
    *
-   * @throws {InvalidLifecycleStateError} If the kernel is sealed
+   * @throws {CoreError} If the lifecycle condition is not met
    */
-  private assertNotSealed(action: string): void {
-    if (this.#lifecycle.is("sealed")) {
-      throw new InvalidLifecycleStateError({
+  private assertLifecycle(predicate: () => boolean, action: string): void {
+    if (!predicate()) {
+      throw new KernelError("invalid_lifecycle_state", {
         action,
         state: this.#lifecycle.state,
       });
@@ -247,43 +279,27 @@ export class Kernel<
   }
 
   /**
-   * Assert that the kernel is sealed
+   * Handle lifecycle operation result and emit corresponding events.
    *
-   * @param action Action name
-   *
-   * @throws {InvalidLifecycleStateError} If the kernel is not sealed
+   * @param from - Previous lifecycle state
+   * @param to - Current lifecycle state
+   * @param result - Result of a lifecycle operation (seal, start, stop)
+   * @param onSuccess - Optional callback to execute on successful lifecycle transition
    */
-  private assertSealed(action: string): void {
-    if (!this.#lifecycle.is("sealed")) {
-      throw new InvalidLifecycleStateError({
-        action,
-        state: this.#lifecycle.state,
-      });
-    }
-  }
+  private handleLifecycleResult(
+    from: KernelLifecycleState,
+    to: KernelLifecycleState,
+    result: ReturnType<Lifecycle["seal"] | Lifecycle["start"] | Lifecycle["stop"]>,
+    onSuccess?: () => void
+  ) {
+    if (isSuccess(result)) {
+      if (from !== to) {
+        this.#emitter?.onStateTransition?.(from, to);
+      }
 
-  /**
-   * Create a module context
-   *
-   * @returns Module context
-   *
-   * @remarks
-   * This method creates and returns a context object that can be used
-   * during module setup. The context includes access to the services container,
-   * event bus, and hook bus of the kernel.
-   *
-   * Why is this method needed?
-   * This method encapsulates the creation of the module setup context,
-   * ensuring that the context is constructed consistently and correctly
-   * whenever it is needed. It provides a clear and centralized way to
-   * obtain the necessary components for module setup, promoting code
-   * reuse and maintainability.
-   */
-  createModuleSetupContext(): ModuleSetupContext {
-    return {
-      services: this.services,
-      events: this.events,
-      hooks: this.hooks,
-    };
+      onSuccess?.();
+    } else {
+      this.#emitter?.onError?.(result.error);
+    }
   }
 }

@@ -1,0 +1,100 @@
+{
+  "meta": {
+    "name": "@comity/kernel",
+    "version": "1.0.0",
+    "layer": "core",
+    "category": "orchestrator",
+    "authoritative": true
+  },
+
+  "description": "System orchestrator responsible for lifecycle management, module coordination, dependency wiring, and event/hook propagation.",
+
+  "allowed_concepts": [
+    "lifecycle state machine",
+    "module registration and setup",
+    "dependency coordination",
+    "event bus",
+    "hook execution"
+  ],
+
+  "business_logic_definition": {
+    "excluded": [
+      "domain rules",
+      "application policies",
+      "protocol semantics",
+      "infrastructure concerns"
+    ],
+    "note": "Kernel contains orchestration logic only, never business logic."
+  },
+
+  "lifecycle": {
+    "owner": true,
+    "states": ["open", "sealed", "running", "stopped"],
+    "rules": [
+      "Kernel is the single owner of lifecycle state",
+      "Illegal transitions MUST throw BaseError-derived errors",
+      "Lifecycle violations are CRITICAL"
+    ]
+  },
+
+  "modules": {
+    "allowed": true,
+    "rules": [
+      "Modules MUST declare setup explicitly",
+      "Modules MAY register services, hooks, and events",
+      "Kernel MUST NOT depend on module internals"
+    ]
+  },
+
+  "events": {
+    "allowed": true,
+    "semantics": "observational",
+    "rules": [
+      "Kernel MAY emit lifecycle and coordination events",
+      "Events MUST NOT alter control flow",
+      "Kernel MUST function without any listeners"
+    ]
+  },
+
+  "hooks": {
+    "allowed": true,
+    "semantics": "participatory",
+    "rules": [
+      "Hooks MAY influence execution order",
+      "Hooks are part of explicit lifecycle phases",
+      "Hooks MAY emit events"
+    ]
+  },
+
+  "errors": {
+    "allowed": ["BaseError", "InvalidLifecycleStateError"],
+    "rules": [
+      "All runtime errors MUST extend BaseError",
+      "Kernel MUST NOT define domain-specific error codes"
+    ]
+  },
+
+  "dependency_rules": {
+    "allowed_dependencies": ["@comity/primitives"],
+    "forbidden_dependencies": ["adapters", "framework-specific packages"]
+  },
+
+  "public_api": {
+    "rules": [
+      "Kernel APIs are stable orchestration contracts",
+      "Kernel MUST expose minimal surface",
+      "Internal helpers MUST NOT be exported"
+    ]
+  },
+
+  "review_exceptions": [
+    {
+      "code": "1.2",
+      "exception": "Lifecycle orchestration logic is explicitly allowed"
+    },
+    {
+      "code": "2.1",
+      "exception": "Kernel MAY throw BaseError-derived errors for lifecycle violations"
+    }
+  ]
+}

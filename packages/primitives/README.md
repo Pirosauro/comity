@@ -29,6 +29,7 @@ This package does NOT:
 ## Public API
 
 Disciplined, concept-first surface divided into domains:
+
 - errors: BaseError and concrete error types
 - lifecycle: EventBus and HookBus contracts and implementations
 - di: minimal container for service wiring

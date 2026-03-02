@@ -2,7 +2,7 @@ import type { DiContainer } from "@comity/primitives/di";
 import type { EventBus, HookBus } from "@comity/primitives/lifecycle";
 
 /**
- * Token type
+ * Token type.
  */
 export type Token<T extends string> = symbol & {
   /** Token type string */
@@ -10,25 +10,19 @@ export type Token<T extends string> = symbol & {
 };
 
 /**
- * Module setup context type
+ * Kernel context.
  */
-export interface ModuleSetupContext<
-  Services extends Record<symbol, unknown> = Record<symbol, unknown>,
-  Events extends Record<string, unknown> = Record<string, unknown>,
-  Hooks extends Record<string, unknown> = Record<string, unknown>,
-> {
-  /**
-   * Services container
-   */
-  services: Pick<DiContainer<Services>, "define" | "resolve">;
+export type KernelContext<
+  Services extends { [K in keyof Services]: unknown },
+  Events extends { [K in keyof Events]: unknown },
+  Hooks extends { [K in keyof Hooks]: unknown },
+> = {
+  /** Service container */
+  services: DiContainer<Services>;
 
-  /**
-   * Event bus
-   */
-  events: Pick<EventBus<Events>, "subscribe" | "emit">;
+  /** Event bus */
+  events: EventBus<Events>;
 
-  /**
-   * Hook bus
-   */
-  hooks: Pick<HookBus<Hooks>, "define" | "execute">;
-}
+  /** Hook bus */
+  hooks: HookBus<Hooks>;
+};

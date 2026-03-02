@@ -140,4 +140,19 @@ describe("DiContainer", () => {
       expect(factory).toHaveBeenCalledTimes(1);
     });
   });
+
+  describe("clear", () => {
+    it("should clear all cached instances", () => {
+      const factory = vi.fn(() => ({ log: vi.fn() }));
+
+      container.define("logger", factory);
+      const resolved1 = container.resolve("logger");
+
+      container.clear();
+      const resolved2 = container.resolve("logger");
+
+      expect(factory).toHaveBeenCalledTimes(2);
+      expect(resolved1).not.toBe(resolved2);
+    });
+  });
 });

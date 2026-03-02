@@ -1,19 +1,19 @@
+import type { Kernel } from "@comity/kernel";
 import type { Result } from "@comity/primitives/result";
-import type { Kernel } from "../kernel.js";
 import type { ModuleMeta } from "./types.js";
 
 import { failure, isFailure, success } from "@comity/primitives/result";
-import { ModuleLoadError } from "../errors/module-load.js";
-import { resolveModuleOrder } from "./resolver.js";
+import { CompositionError } from "./error/composition.js";
+import { resolveOrder } from "./resolver.js";
 
 /**
- * Load and apply modules to the kernel
+ * Load and apply modules to the kernel.
  *
- * @param kernel Target kernel
- * @param modules Modules to load
- * @param options Module-specific options
+ * @param kernel - Target kernel.
+ * @param modules - Modules to load.
+ * @param options - Module-specific options.
  *
- * @returns Result indicating success or failure of the loading process
+ * @returns Result indicating success or failure of the loading process.
  *
  * @remarks
  * This function handles the loading and application of modules to the provided kernel.
@@ -36,24 +36,27 @@ import { resolveModuleOrder } from "./resolver.js";
  * }
  * ```
  */
-export async function loadModules(
+export async function load(
   kernel: Kernel<Record<string, unknown>, Record<string, unknown>, Record<string, unknown>>,
   modules: readonly ModuleMeta[],
   options: Record<string, Record<string, unknown>> = {}
-): Promise<Result<void, ModuleLoadError>> {
-  const ordered = resolveModuleOrder(modules);
+): Promise<Result<void, CompositionError>> {
+  const ordered = resolveOrder(modules);
 
   // Handle module resolution errors
   if (isFailure(ordered)) {
     return failure(
-      new ModuleLoadError({
-        reason: "resolution-failed",
+      new CompositionError("resolution_failed", {
         cause: ordered.error,
       })
     );
   }
 
-  const ctx = kernel.createModuleSetupContext();
+  const ctx = {
+    services: kernel.services,
+    events: kernel.events,
+    hooks: kernel.hooks,
+  };
 
   for (const mod of ordered.value) {
     // Setup
@@ -62,8 +65,7 @@ export async function loadModules(
     // Handle setup function retrieval errors
     if (isFailure(setup)) {
       return failure(
-        new ModuleLoadError({
-          reason: "setup-failed",
+        new CompositionError("setup_failed", {
           module: mod.name,
           cause: setup.error,
         })
@@ -71,13 +73,13 @@ export async function loadModules(
     }
 
     // Apply
+    // @ts-expect-error
     const result = await setup.value(ctx);
 
     // Handle application errors
     if (isFailure(result)) {
       return failure(
-        new ModuleLoadError({
-          reason: "apply-failed",
+        new CompositionError("apply_failed", {
           module: mod.name,
           cause: result.error,
         })

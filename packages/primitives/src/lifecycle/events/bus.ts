@@ -1,5 +1,4 @@
-import type { EventBusContract } from "./contract.js";
-import type { EventHandler } from "./handler.js";
+import type { EventBusContract, EventHandler } from "./contract.js";
 import type { EventBusErrorHandler, EventBusOptions } from "./types.js";
 
 import { EventBusError } from "./error.js";
@@ -30,7 +29,7 @@ import { EventBusError } from "./error.js";
  * ```
  */
 export class EventBus<
-  Events extends { [K in keyof Events]: unknown },
+  Events extends Record<string, unknown> = {},
 > implements EventBusContract<Events> {
   /** Event handlers mapped by event name */
   #handlers = new Map<keyof Events, Set<EventHandler<Events[keyof Events]>>>();
@@ -53,6 +52,22 @@ export class EventBus<
 
     set.add(handler as EventHandler<unknown>);
     this.#handlers.set(event, set);
+  }
+
+  /** @inheritdoc */
+  unsubscribe<K extends keyof Events>(event: K, handler: EventHandler<Events[K]>): void {
+    // If no handlers for this event, nothing to do
+    const set = this.#handlers.get(event);
+
+    // No handlers for this event, nothing to do
+    if (!set) return;
+
+    set.delete(handler as EventHandler<unknown>);
+
+    // If no handlers left for this event, remove the entry to free memory
+    if (set.size === 0) {
+      this.#handlers.delete(event);
+    }
   }
 
   /** @inheritdoc */

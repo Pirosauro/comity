@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { InvalidLifecycleStateError } from "../../errors/invalid-lifecycle-state.js";
+import { KernelError } from "../../error/kernel.js";
 import { Lifecycle } from "../lifecycle.js";
 
 describe("Lifecycle", () => {
@@ -53,7 +53,7 @@ describe("Lifecycle", () => {
       expect(result.success).toBe(false);
 
       if (!result.success) {
-        expect(result.error).toBeInstanceOf(InvalidLifecycleStateError);
+        expect(result.error).toBeInstanceOf(KernelError);
         expect(result.error.meta.action).toBe("seal");
         expect(result.error.meta.state).toBe("sealed");
       }
@@ -92,7 +92,7 @@ describe("Lifecycle", () => {
       expect(result.success).toBe(false);
 
       if (!result.success) {
-        expect(result.error).toBeInstanceOf(InvalidLifecycleStateError);
+        expect(result.error).toBeInstanceOf(KernelError);
         expect(result.error.meta.action).toBe("start");
         expect(result.error.meta.state).toBe("open");
       }
@@ -132,7 +132,7 @@ describe("Lifecycle", () => {
       expect(result.success).toBe(false);
 
       if (!result.success) {
-        expect(result.error).toBeInstanceOf(InvalidLifecycleStateError);
+        expect(result.error).toBeInstanceOf(KernelError);
         expect(result.error.meta.action).toBe("stop");
         expect(result.error.meta.state).toBe("open");
       }

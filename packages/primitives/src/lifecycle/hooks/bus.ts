@@ -1,5 +1,4 @@
-import type { HookBusContract } from "./contract.js";
-import type { HookHandler } from "./handler.js";
+import type { HookBusContract, HookHandler } from "./contract.js";
 
 /**
  * Hook bus implementation

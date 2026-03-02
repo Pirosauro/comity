@@ -1,10 +1,10 @@
 import { DiContainer } from "@comity/primitives/di";
 import { EventBus, HookBus } from "@comity/primitives/lifecycle";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { InvalidLifecycleStateError } from "../errors/invalid-lifecycle-state.js";
+import { KernelError } from "../error/kernel.js";
 import { Kernel } from "../kernel.js";
 
-interface TestServices extends Record<string, unknown> {
+interface TestServices extends Record<string | symbol, unknown> {
   testService: string;
 }
 
@@ -41,6 +41,7 @@ describe("Kernel", () => {
 
       expect(typeof svc.define).toBe("function");
       expect(typeof svc.resolve).toBe("function");
+      expect(typeof svc.clear).toBe("function");
     });
 
     it("should allow defining services before sealing", () => {
@@ -55,15 +56,13 @@ describe("Kernel", () => {
     it("should throw when defining services after sealing", () => {
       kernel.seal();
 
-      expect(() => kernel.services.define("test", () => "value")).toThrow(
-        InvalidLifecycleStateError
-      );
+      expect(() => kernel.services.define("test", () => "value")).toThrow(KernelError);
     });
 
     it("should throw when resolving services before sealing", () => {
       kernel.services.define("test", () => "value");
 
-      expect(() => kernel.services.resolve("test")).toThrow(InvalidLifecycleStateError);
+      expect(() => kernel.services.resolve("test")).toThrow(KernelError);
     });
 
     it("should allow resolving services after sealing", () => {
@@ -73,6 +72,13 @@ describe("Kernel", () => {
       const result = kernel.services.resolve("test");
       expect(result).toBe("value");
     });
+
+    it("should allow clearing services before sealing", () => {
+      kernel.services.define("test", () => "value");
+      kernel.services.clear();
+
+      expect(() => kernel.services.resolve("test")).toThrow();
+    });
   });
 
   describe("events getter", () => {
@@ -80,6 +86,7 @@ describe("Kernel", () => {
       const evt = kernel.events;
 
       expect(typeof evt.subscribe).toBe("function");
+      expect(typeof evt.unsubscribe).toBe("function");
       expect(typeof evt.emit).toBe("function");
     });
 
@@ -96,13 +103,22 @@ describe("Kernel", () => {
     it("should throw when subscribing after sealing", () => {
       kernel.seal();
 
-      expect(() => kernel.events.subscribe("testEvent", vi.fn())).toThrow(
-        InvalidLifecycleStateError
-      );
+      expect(() => kernel.events.subscribe("testEvent", vi.fn())).toThrow(KernelError);
+    });
+
+    it("should allow unsubscribing from events before sealing", () => {
+      const handler = vi.fn();
+      kernel.events.subscribe("testEvent", handler);
+      kernel.events.unsubscribe("testEvent", handler);
+
+      kernel.seal();
+
+      kernel.events.emit("testEvent", { id: 1 });
+      expect(handler).not.toHaveBeenCalled();
     });
 
     it("should throw when emitting before sealing", () => {
-      expect(() => kernel.events.emit("testEvent", { id: 1 })).toThrow(InvalidLifecycleStateError);
+      expect(() => kernel.events.emit("testEvent", { id: 1 })).toThrow(KernelError);
     });
 
     it("should allow emitting after sealing", async () => {
@@ -136,13 +152,13 @@ describe("Kernel", () => {
     it("should throw when defining hooks after sealing", () => {
       kernel.seal();
 
-      expect(() => kernel.hooks.define("testHook", vi.fn())).toThrow(InvalidLifecycleStateError);
+      expect(() => kernel.hooks.define("testHook", vi.fn())).toThrow(KernelError);
     });
 
     it("should throw when executing hooks before sealing", () => {
       kernel.hooks.define("testHook", vi.fn());
 
-      expect(() => kernel.hooks.execute("testHook", "test")).toThrow(InvalidLifecycleStateError);
+      expect(() => kernel.hooks.execute("testHook", "test")).toThrow(KernelError);
     });
 
     it("should allow executing hooks after sealing", async () => {
@@ -178,19 +194,6 @@ describe("Kernel", () => {
     });
   });
 
-  describe("createModuleSetupContext", () => {
-    it("should return module setup context", () => {
-      const ctx = kernel.createModuleSetupContext();
-
-      expect(ctx).toHaveProperty("services");
-      expect(ctx).toHaveProperty("events");
-      expect(ctx).toHaveProperty("hooks");
-      expect(ctx.services).toBe(kernel.services);
-      expect(ctx.events).toBe(kernel.events);
-      expect(ctx.hooks).toBe(kernel.hooks);
-    });
-  });
-
   describe("start", () => {
     it("should start the kernel", () => {
       kernel.seal();
@@ -206,31 +209,31 @@ describe("Kernel", () => {
 
     it("should call kernelStarted event when emitter is provided", () => {
       const emitter = {
-        kernelSealed: vi.fn(),
-        kernelStarted: vi.fn(),
-        kernelStopped: vi.fn(),
+        onKernelSealed: vi.fn(),
+        onKernelStarted: vi.fn(),
+        onKernelStopped: vi.fn(),
       };
 
       const kernelWithEmitter = new Kernel({ services, events, hooks }, emitter);
       kernelWithEmitter.seal();
       kernelWithEmitter.start();
 
-      expect(emitter.kernelStarted).toHaveBeenCalledTimes(1);
+      expect(emitter.onKernelStarted).toHaveBeenCalledTimes(1);
     });
 
     it("should not call kernelStarted event on failure", () => {
       const emitter = {
-        kernelSealed: vi.fn(),
-        kernelStarted: vi.fn(),
-        kernelStopped: vi.fn(),
+        onKernelSealed: vi.fn(),
+        onKernelStarted: vi.fn(),
+        onKernelStopped: vi.fn(),
       };
 
       const kernelWithEmitter = new Kernel({ services, events, hooks }, emitter);
-      // Don't seal, so start fails
 
+      // Don't seal, so start fails
       kernelWithEmitter.start();
 
-      expect(emitter.kernelStarted).not.toHaveBeenCalled();
+      expect(emitter.onKernelStarted).not.toHaveBeenCalled();
     });
   });
 
@@ -250,9 +253,9 @@ describe("Kernel", () => {
 
     it("should call kernelStopped event when emitter is provided", () => {
       const emitter = {
-        kernelSealed: vi.fn(),
-        kernelStarted: vi.fn(),
-        kernelStopped: vi.fn(),
+        onKernelSealed: vi.fn(),
+        onKernelStarted: vi.fn(),
+        onKernelStopped: vi.fn(),
       };
 
       const kernelWithEmitter = new Kernel({ services, events, hooks }, emitter);
@@ -260,14 +263,14 @@ describe("Kernel", () => {
       kernelWithEmitter.start();
       kernelWithEmitter.stop();
 
-      expect(emitter.kernelStopped).toHaveBeenCalledTimes(1);
+      expect(emitter.onKernelStopped).toHaveBeenCalledTimes(1);
     });
 
     it("should not call kernelStopped event on failure", () => {
       const emitter = {
-        kernelSealed: vi.fn(),
-        kernelStarted: vi.fn(),
-        kernelStopped: vi.fn(),
+        onKernelSealed: vi.fn(),
+        onKernelStarted: vi.fn(),
+        onKernelStopped: vi.fn(),
       };
 
       const kernelWithEmitter = new Kernel({ services, events, hooks }, emitter);
@@ -275,22 +278,37 @@ describe("Kernel", () => {
 
       kernelWithEmitter.stop();
 
-      expect(emitter.kernelStopped).not.toHaveBeenCalled();
+      expect(emitter.onKernelStopped).not.toHaveBeenCalled();
     });
   });
 
   describe("seal with emitter", () => {
     it("should call kernelSealed event when emitter is provided", () => {
       const emitter = {
-        kernelSealed: vi.fn(),
-        kernelStarted: vi.fn(),
-        kernelStopped: vi.fn(),
+        onKernelSealed: vi.fn(),
+        onKernelStarted: vi.fn(),
+        onKernelStopped: vi.fn(),
       };
 
       const kernelWithEmitter = new Kernel({ services, events, hooks }, emitter);
       kernelWithEmitter.seal();
 
-      expect(emitter.kernelSealed).toHaveBeenCalledTimes(1);
+      expect(emitter.onKernelSealed).toHaveBeenCalledTimes(1);
+    });
+
+    it("should call onStateTransition when state changes", () => {
+      const emitter = {
+        onKernelSealed: vi.fn(),
+        onKernelStarted: vi.fn(),
+        onKernelStopped: vi.fn(),
+        onStateTransition: vi.fn(),
+        onError: vi.fn(),
+      };
+
+      const kernelWithEmitter = new Kernel({ services, events, hooks }, emitter);
+      kernelWithEmitter.seal();
+
+      expect(emitter.onStateTransition).toHaveBeenCalledWith("open", "sealed");
     });
 
     it("should work without emitter", () => {

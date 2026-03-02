@@ -21,13 +21,13 @@ export function failure<E extends BaseError = BaseError>(error: E): ResultFailur
 }
 
 /**
- * Type guard for failure results
+ * Type guard for failure results.
  *
- * @typeParam Error - Type of the failure error (extends BaseError)
+ * @typeParam Error - Type of the failure error (extends BaseError).
  *
- * @param result Result to check
+ * @param result - Result to check.
  *
- * @returns True if the result is a failure, false otherwise
+ * @returns True if the result is a failure, false otherwise.
  *
  * @example
  * ```typescript
