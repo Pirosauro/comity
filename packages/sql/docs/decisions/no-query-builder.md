@@ -1,15 +1,10 @@
 # Decision: No query builder
 
-## Context
+@comity/sql does not provide a query builder.
 
-Query builders add non-SQL abstractions and complexity, coupling the core to specific patterns and limiting adapter flexibility.
+Queries are:
 
-## Decision
+- raw SQL (text + values)
+- or opaque adapter-specific objects
 
-Do not include a query builder. Queries are either raw SQL (`text` + `params`) or opaque adapter-specific objects.
-
-## Consequences
-
-- Core remains stable and minimal
-- Adapters can innovate independently
-- Applications can choose their preferred builder externally if needed
+This keeps the core stable and allows adapters to innovate independently.

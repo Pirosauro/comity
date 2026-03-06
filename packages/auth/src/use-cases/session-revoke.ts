@@ -1,6 +1,6 @@
 import type { AuthSessionRepository } from "../contracts/session-repository.js";
 import type { AuthSessionId } from "../contracts/session.js";
-import type { AuthSessionEmitter } from "../events/session.js";
+import type { AuthSessionEmitter } from "../lifecycle/session.js";
 
 /**
  * Input used to revoke a session.
@@ -46,20 +46,21 @@ export class RevokeSession {
    *
    * @param input - Revocation input
    * @param now - Current timestamp in milliseconds
-   * @throws No errors thrown (revocation is always successful)
    */
   async execute(input: RevokeSessionInput, now: number): Promise<void> {
-    // 1. Load session (throws if not found)
-    const session = await this.#repository.get(input.id);
+    try {
+      // 1. Load session (throws if not found)
+      const session = await this.#repository.get(input.id);
 
-    // 2. Persist revocation
-    await this.#repository.revoke(session.id, input.reason, now, input.actor);
+      // 2. Persist revocation
+      await this.#repository.revoke(session.id, input.reason, now, input.actor);
 
-    // 3. Emit lifecycle event
-    this.#emitter.sessionRevoked({
-      sessionId: session.id,
-      reason: input.reason,
-      revokedAt: now,
-    });
+      // 3. Emit lifecycle event
+      this.#emitter.onSessionRevoked({
+        sessionId: session.id,
+        reason: input.reason,
+        revokedAt: now,
+      });
+    } catch (error) {}
   }
 }

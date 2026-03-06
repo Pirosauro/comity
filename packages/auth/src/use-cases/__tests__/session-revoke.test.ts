@@ -9,7 +9,9 @@ describe("RevokeSession", () => {
     revoke: ReturnType<typeof vi.fn>;
   };
   let emitter: {
-    sessionRevoked: ReturnType<typeof vi.fn>;
+    onSessionCreated: ReturnType<typeof vi.fn>;
+    onSessionRevoked: ReturnType<typeof vi.fn>;
+    onSessionRefreshed: ReturnType<typeof vi.fn>;
   };
   let useCase: RevokeSession;
 
@@ -19,7 +21,9 @@ describe("RevokeSession", () => {
       revoke: vi.fn(),
     };
     emitter = {
-      sessionRevoked: vi.fn(),
+      onSessionCreated: vi.fn(),
+      onSessionRevoked: vi.fn(),
+      onSessionRefreshed: vi.fn(),
     };
     // @ts-expect-error
     useCase = new RevokeSession(repository, emitter);
@@ -49,7 +53,7 @@ describe("RevokeSession", () => {
 
     expect(repository.get).toHaveBeenCalledWith("session-1");
     expect(repository.revoke).toHaveBeenCalledWith("session-1", "user_logout", 2000, undefined);
-    expect(emitter.sessionRevoked).toHaveBeenCalledWith({
+    expect(emitter.onSessionRevoked).toHaveBeenCalledWith({
       sessionId: "session-1",
       reason: "user_logout",
       revokedAt: 2000,
@@ -98,7 +102,7 @@ describe("RevokeSession", () => {
 
     await expect(useCase.execute(input, 2000)).rejects.toThrow("Session not found");
     expect(repository.revoke).not.toHaveBeenCalled();
-    expect(emitter.sessionRevoked).not.toHaveBeenCalled();
+    expect(emitter.onSessionRevoked).not.toHaveBeenCalled();
   });
 
   it("should throw if repository revoke fails", async () => {
@@ -123,6 +127,6 @@ describe("RevokeSession", () => {
     };
 
     await expect(useCase.execute(input, 2000)).rejects.toThrow("Database error");
-    expect(emitter.sessionRevoked).not.toHaveBeenCalled();
+    expect(emitter.onSessionRevoked).not.toHaveBeenCalled();
   });
 });

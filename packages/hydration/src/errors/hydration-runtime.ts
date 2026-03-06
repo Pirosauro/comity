@@ -34,9 +34,9 @@ export type HydrationRuntimeErrorMeta =
 /**
  * Runtime hydration error
  */
-export class HydrationRuntimeErrorError extends BaseError {
+export class HydrationRuntimeError extends BaseError {
   /** Error code */
-  readonly code = "hydration:runtime-error";
+  readonly code = "hydration:runtime_error";
 
   /**
    * @param message - Error message

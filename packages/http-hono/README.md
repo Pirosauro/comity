@@ -13,11 +13,13 @@ Bridges Hono’s runtime with @comity/http’s pipeline. Maps Hono Context to Ht
 ## Scope
 
 This package:
+
 - ✅ maps Hono Context to HttpContext
 - ✅ executes HttpFacade.handle(ctx)
 - ✅ maps HttpResult to Web Standard Response
 
 This package does NOT:
+
 - ❌ implement business logic or middleware
 - ❌ provide routing
 - ❌ define error handling strategies

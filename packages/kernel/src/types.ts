@@ -13,9 +13,9 @@ export type Token<T extends string> = symbol & {
  * Kernel context.
  */
 export type KernelContext<
-  Services extends { [K in keyof Services]: unknown },
-  Events extends { [K in keyof Events]: unknown },
-  Hooks extends { [K in keyof Hooks]: unknown },
+  Services extends Record<keyof Services, unknown>,
+  Events extends Record<keyof Events, unknown>,
+  Hooks extends Record<keyof Hooks, unknown>,
 > = {
   /** Service container */
   services: DiContainer<Services>;

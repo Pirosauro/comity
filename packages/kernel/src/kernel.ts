@@ -1,37 +1,20 @@
 import type { DiContainer } from "@comity/primitives/di";
 import type { EventBus, HookBus } from "@comity/primitives/lifecycle";
-import type { KernelLifecycleEvents } from "./lifecycle/events.js";
+import type { KernelLifecycleEmitter } from "./lifecycle/emitter.js";
 import type { KernelLifecycleState } from "./lifecycle/types.js";
+import type { KernelContext } from "./types.js";
 
 import { isSuccess } from "@comity/primitives/result";
 import { KernelError } from "./error/kernel.js";
 import { Lifecycle } from "./internal/lifecycle.js";
 
 /**
- * Kernel context.
- */
-export type KernelContext<
-  Services extends { [K in keyof Services]: unknown },
-  Events extends { [K in keyof Events]: unknown },
-  Hooks extends { [K in keyof Hooks]: unknown },
-> = {
-  /** Service container */
-  services: DiContainer<Services>;
-
-  /** Event bus */
-  events: EventBus<Events>;
-
-  /** Hook bus */
-  hooks: HookBus<Hooks>;
-};
-
-/**
  * Kernel class.
  */
 export class Kernel<
-  Services extends { [K in keyof Services]: unknown },
-  Events extends { [K in keyof Events]: unknown },
-  Hooks extends { [K in keyof Hooks]: unknown },
+  Services extends Record<keyof Services, unknown> = {},
+  Events extends Record<keyof Events, unknown> = {},
+  Hooks extends Record<keyof Hooks, unknown> = {},
 > {
   /** Service container */
   #services: {
@@ -70,13 +53,13 @@ export class Kernel<
   #lifecycle = new Lifecycle();
 
   /** Kernel lifecycle events */
-  #emitter: KernelLifecycleEvents | undefined;
+  #emitter: KernelLifecycleEmitter | undefined;
 
   /**
    * @param context Kernel context
    * @param emitter Kernel lifecycle events emitter
    */
-  constructor(context: KernelContext<Services, Events, Hooks>, emitter?: KernelLifecycleEvents) {
+  constructor(context: KernelContext<Services, Events, Hooks>, emitter?: KernelLifecycleEmitter) {
     // Services
     this.#services = {
       /**

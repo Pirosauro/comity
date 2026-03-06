@@ -100,14 +100,14 @@ import type { HttpMiddleware } from "@comity/http";
 // Logger middleware
 const logger: HttpMiddleware = async (ctx, next) => {
   const start = performance.now();
-  
+
   await next();
-  
+
   const duration = performance.now() - start;
   console.log(
     `${ctx.request.method} ${ctx.request.url.pathname} - ` +
-    `${ctx.response?.ok ? ctx.response.response.status : "failed"} ` +
-    `(${duration.toFixed(2)}ms)`
+      `${ctx.response?.ok ? ctx.response.response.status : "failed"} ` +
+      `(${duration.toFixed(2)}ms)`
   );
 };
 
@@ -130,7 +130,7 @@ const errorHandler: HttpMiddleware = async (ctx, next) => {
 // JSON response middleware
 const jsonResponse: HttpMiddleware = async (ctx, next) => {
   await next();
-  
+
   if (!ctx.response) {
     ctx.setResponse({
       ok: true,
@@ -157,12 +157,12 @@ import type { HttpMiddleware } from "@comity/http";
 
 const jsonBodyParser: HttpMiddleware = async (ctx, next) => {
   const contentType = ctx.request.headers["content-type"];
-  
+
   if (contentType?.includes("application/json")) {
     try {
       const raw = ctx.request.rawBody as Request;
       const body = await raw.json();
-      
+
       // Store parsed body in state
       ctx.state.set("body", body);
     } catch (error) {
@@ -177,7 +177,7 @@ const jsonBodyParser: HttpMiddleware = async (ctx, next) => {
       return;
     }
   }
-  
+
   await next();
 };
 
@@ -191,7 +191,7 @@ import type { HttpMiddleware } from "@comity/http";
 
 const authMiddleware: HttpMiddleware = async (ctx, next) => {
   const authHeader = ctx.request.headers["authorization"];
-  
+
   if (!authHeader) {
     ctx.setResponse({
       ok: false,
@@ -203,11 +203,11 @@ const authMiddleware: HttpMiddleware = async (ctx, next) => {
     });
     return;
   }
-  
+
   // Verify token (simplified)
   const token = authHeader.replace("Bearer ", "");
   const user = await verifyToken(token);
-  
+
   if (!user) {
     ctx.setResponse({
       ok: false,
@@ -219,10 +219,10 @@ const authMiddleware: HttpMiddleware = async (ctx, next) => {
     });
     return;
   }
-  
+
   // Store user in state
   ctx.state.set("user", user);
-  
+
   await next();
 };
 
@@ -240,11 +240,11 @@ describe("Hono Handler", () => {
   it("should handle requests", async () => {
     const facade = createTestFacade();
     const app = new Hono();
-    
+
     app.all("*", createHonoHandler({ facade }));
-    
+
     const res = await app.request("/test");
-    
+
     expect(res.status).toBe(200);
   });
 });

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { HookBus } from "../bus.js";
+import { DefaultHookBus } from "../bus.js";
 
 interface TestHooks extends Record<string, unknown> {
   beforeSave: string;
@@ -7,11 +7,11 @@ interface TestHooks extends Record<string, unknown> {
   onError: boolean;
 }
 
-describe("HookBus", () => {
-  let bus: HookBus<TestHooks>;
+describe("DefaultHookBus", () => {
+  let bus: DefaultHookBus<TestHooks>;
 
   beforeEach(() => {
-    bus = new HookBus<TestHooks>();
+    bus = new DefaultHookBus<TestHooks>();
   });
 
   describe("define", () => {

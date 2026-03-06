@@ -25,7 +25,7 @@ describe("KyselySqlError", () => {
       operation: "query",
     });
 
-    expect(error.code).toBe("sql:kysely-adapter");
+    expect(error.code).toBe("sql:kysely_adapter");
   });
 
   it("should preserve message and meta", () => {

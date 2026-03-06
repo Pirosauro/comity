@@ -49,7 +49,7 @@ const REASON_HTTP_STATUS: Record<CompositionErrorReason, number> = {
 /**
  * Composition Error.
  */
-export class CompositionError extends BaseError {
+export class CompositionError extends BaseError<CompositionErrorMeta> {
   /** Error code */
   readonly code: `composition:${CompositionErrorReason}`;
 
@@ -57,7 +57,7 @@ export class CompositionError extends BaseError {
    * @param reason - The reason for the composition error.
    * @param meta - Additional metadata for the error.
    */
-  constructor(reason: CompositionErrorReason, meta?: CompositionErrorMeta) {
+  constructor(reason: CompositionErrorReason, meta?: Omit<CompositionErrorMeta, "reason">) {
     super(REASON_MESSAGES[reason], {
       ...meta,
       httpStatus: REASON_HTTP_STATUS[reason],

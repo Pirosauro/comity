@@ -9,6 +9,7 @@ export interface AuthSessionAssurancePolicy {
    *
    * @param session - The authenticated session
    * @param now - Current timestamp in milliseconds
+   *
    * @throws {AssuranceRequiredError} - When the session does not meet the policy
    */
   assert(session: AuthSession, now: number): void;

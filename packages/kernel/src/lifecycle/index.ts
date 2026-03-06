@@ -1,2 +1,2 @@
-export { KernelLifecycleEvents } from "./events.js";
+export { KernelLifecycleEmitter } from "./emitter.js";
 export { KernelLifecycleState } from "./types.js";

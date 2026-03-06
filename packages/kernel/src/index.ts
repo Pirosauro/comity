@@ -1,3 +1,3 @@
 export { createToken } from "./create-token.js";
-export { Kernel, KernelContext } from "./kernel.js";
-export { Token } from "./types.js";
+export { Kernel } from "./kernel.js";
+export { KernelContext, Token } from "./types.js";

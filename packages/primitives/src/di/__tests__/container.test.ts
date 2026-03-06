@@ -1,6 +1,8 @@
+import type { DiContainer } from "../types.js";
+
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { DiContainer } from "../container.js";
-import { ContainerError } from "../error.js";
+import { DefaultDiContainer } from "../container.js";
+import { DiContainerError } from "../error.js";
 
 interface TestServices extends Record<string | symbol, unknown> {
   logger: { log: (message: string) => void };
@@ -12,7 +14,7 @@ describe("DiContainer", () => {
   let container: DiContainer<TestServices>;
 
   beforeEach(() => {
-    container = new DiContainer<TestServices>();
+    container = new DefaultDiContainer<TestServices>();
   });
 
   describe("define", () => {
@@ -24,13 +26,13 @@ describe("DiContainer", () => {
       expect(factory).not.toHaveBeenCalled();
     });
 
-    it("should throw ContainerError when registering duplicate service", () => {
+    it("should throw DiContainerError when registering duplicate service", () => {
       const factory1 = vi.fn(() => ({ log: vi.fn() }));
       const factory2 = vi.fn(() => ({ log: vi.fn() }));
 
       container.define("logger", factory1);
 
-      expect(() => container.define("logger", factory2)).toThrow(ContainerError);
+      expect(() => container.define("logger", factory2)).toThrow(DiContainerError);
       expect(() => container.define("logger", factory2)).toThrow("Service already registered");
     });
 
@@ -47,8 +49,8 @@ describe("DiContainer", () => {
   });
 
   describe("resolve", () => {
-    it("should throw ContainerError for unregistered service", () => {
-      expect(() => container.resolve("logger")).toThrow(ContainerError);
+    it("should throw DiContainerError for unregistered service", () => {
+      expect(() => container.resolve("logger")).toThrow(DiContainerError);
       expect(() => container.resolve("logger")).toThrow("Service not registered");
     });
 
@@ -118,7 +120,7 @@ describe("DiContainer", () => {
 
     it("should handle symbol keys", () => {
       const symbolKey = Symbol("testService");
-      const container = new DiContainer<Record<symbol, unknown>>();
+      const container = new DefaultDiContainer<Record<symbol, unknown>>();
       const factory = vi.fn(() => "symbol value");
 
       container.define(symbolKey, factory);

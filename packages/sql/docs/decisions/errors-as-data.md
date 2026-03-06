@@ -1,16 +1,13 @@
 # Decision: Errors as data
 
-## Context
+SQL failures are represented as typed data structures, not thrown exceptions.
 
-SQL operations can fail routinely (constraint violations, network issues). Throwing exceptions couples control flow and leaks implementation details.
+Rationale:
 
-## Decision
+- predictable control flow
+- easier testing
+- explicit error handling
+- safer logging (no accidental leakage)
 
-Represent failures as structured data (`SqlError`) inside `SqlOperationResult`, rather than throwing exceptions.
-
-## Consequences
-
-- Enables explicit, predictable control flow
-- Simplifies testing and error handling
-- Reduces accidental leakage in logs and events
-- Adapters may still throw for truly exceptional conditions (misconfiguration, invariant violations)
+Adapters MAY throw in truly exceptional situations (misconfiguration, invariant violations),
+but normal SQL failures MUST be returned as structured errors.

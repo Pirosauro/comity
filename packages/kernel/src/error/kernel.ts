@@ -31,7 +31,7 @@ const REASON_HTTP_STATUS: Record<KernelErrorReason, number> = {
 /**
  * Kernel Error.
  */
-export class KernelError extends BaseError {
+export class KernelError extends BaseError<KernelErrorMeta> {
   /** Error code */
   readonly code: `kernel:${KernelErrorReason}`;
 
@@ -39,7 +39,7 @@ export class KernelError extends BaseError {
    * @param reason - The reason for the kernel error.
    * @param meta - Additional metadata for the error.
    */
-  constructor(reason: KernelErrorReason, meta?: ErrorMeta) {
+  constructor(reason: KernelErrorReason, meta: Omit<KernelErrorMeta, "reason">) {
     super(REASON_MESSAGES[reason], {
       ...meta,
       httpStatus: REASON_HTTP_STATUS[reason],

@@ -69,7 +69,7 @@ describe("HtmlRendererPipeline", () => {
 
     expect(result.ok).toBe(false);
     if (!result.ok) {
-      expect(result.error.code).toBe("html:render-failure");
+      expect(result.error.code).toBe("html:render_failure");
       expect(result.error.meta.reason).toBe("mock-failure"); // Returns last failure
     }
   });

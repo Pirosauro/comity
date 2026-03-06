@@ -41,7 +41,9 @@ describe("load", () => {
 
   it("should handle module resolution failure", async () => {
     // Mock resolveModuleOrder to return failure
-    const mockResolver = vi.fn(() => failure(new CompositionError("cycle_detected")));
+    const mockResolver = vi.fn(() =>
+      failure(new CompositionError("cycle_detected", { cycle: ["moduleA"] }))
+    );
 
     vi.doMock("../resolver.js", () => ({ resolveModuleOrder: mockResolver }));
 
@@ -50,7 +52,7 @@ describe("load", () => {
         name: "moduleA",
         version: "1.0.0",
         setup: vi.fn(async () => success(async () => success(undefined))),
-        dependsOn: ["moduleA"], // cycle
+        dependsOn: { moduleA: {} }, // cycle
       },
     ];
 

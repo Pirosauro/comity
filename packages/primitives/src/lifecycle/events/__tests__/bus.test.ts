@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { EventBus } from "../bus.js";
+import { DefaultEventBus } from "../bus.js";
 import { EventBusError } from "../error.js";
 
 interface TestEvents extends Record<string, unknown> {
@@ -9,24 +9,24 @@ interface TestEvents extends Record<string, unknown> {
 }
 
 describe("EventBus", () => {
-  let bus: EventBus<TestEvents>;
+  let bus: DefaultEventBus<TestEvents>;
 
   beforeEach(() => {
-    bus = new EventBus<TestEvents>();
+    bus = new DefaultEventBus<TestEvents>();
   });
 
   describe("constructor", () => {
     it("should create bus without options", () => {
-      const bus = new EventBus<TestEvents>();
+      const bus = new DefaultEventBus<TestEvents>();
 
-      expect(bus).toBeInstanceOf(EventBus);
+      expect(bus).toBeInstanceOf(DefaultEventBus);
     });
 
     it("should create bus with error handler", () => {
       const errorHandler = vi.fn();
-      const bus = new EventBus<TestEvents>({ errorHandler });
+      const bus = new DefaultEventBus<TestEvents>({ errorHandler });
 
-      expect(bus).toBeInstanceOf(EventBus);
+      expect(bus).toBeInstanceOf(DefaultEventBus);
     });
   });
 
@@ -124,7 +124,7 @@ describe("EventBus", () => {
 
     it("should call error handler when handler throws", async () => {
       const errorHandler = vi.fn();
-      const bus = new EventBus<TestEvents>({ errorHandler });
+      const bus = new DefaultEventBus<TestEvents>({ errorHandler });
 
       const failingHandler = vi.fn(() => {
         throw new Error("Handler failed");
@@ -147,7 +147,7 @@ describe("EventBus", () => {
 
     it("should continue executing other handlers when one fails", async () => {
       const errorHandler = vi.fn();
-      const bus = new EventBus<TestEvents>({ errorHandler });
+      const bus = new DefaultEventBus<TestEvents>({ errorHandler });
 
       const failingHandler = vi.fn(() => {
         throw new Error("Fail");
@@ -165,7 +165,7 @@ describe("EventBus", () => {
 
     it("should not call error handler when no error occurs", async () => {
       const errorHandler = vi.fn();
-      const bus = new EventBus<TestEvents>({ errorHandler });
+      const bus = new DefaultEventBus<TestEvents>({ errorHandler });
 
       const handler = vi.fn();
 

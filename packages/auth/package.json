@@ -49,24 +49,24 @@
         "default": "./dist/cjs/index.js"
       }
     },
-    "./errors": {
+    "./error": {
       "import": {
-        "types": "./dist/types/errors/index.d.ts",
-        "default": "./dist/esm/errors/index.js"
+        "types": "./dist/types/error/index.d.ts",
+        "default": "./dist/esm/error/index.js"
       },
       "require": {
-        "types": "./dist/types/errors/index.d.ts",
-        "default": "./dist/cjs/errors/index.js"
+        "types": "./dist/types/error/index.d.ts",
+        "default": "./dist/cjs/error/index.js"
       }
     },
-    "./events": {
+    "./lifecycle": {
       "import": {
-        "types": "./dist/types/events/index.d.ts",
-        "default": "./dist/esm/events/index.js"
+        "types": "./dist/types/lifecycle/index.d.ts",
+        "default": "./dist/esm/lifecycle/index.js"
       },
       "require": {
-        "types": "./dist/types/events/index.d.ts",
-        "default": "./dist/cjs/events/index.js"
+        "types": "./dist/types/lifecycle/index.d.ts",
+        "default": "./dist/cjs/lifecycle/index.js"
       }
     },
     "./setup": {
@@ -93,11 +93,11 @@
   },
   "typesVersions": {
     "*": {
-      "errors": [
-        "./dist/types/errors/index.d.ts"
+      "error": [
+        "./dist/types/error/index.d.ts"
       ],
-      "events": [
-        "./dist/types/events/index.d.ts"
+      "lifecycle": [
+        "./dist/types/lifecycle/index.d.ts"
       ],
       "setup": [
         "./dist/types/setup.d.ts"
@@ -113,11 +113,12 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@comity/primitives": "workspace:*",
-    "@comity/kernel": "workspace:*"
+    "@comity/composition": "workspace:*",
+    "@comity/kernel": "workspace:*",
+    "@comity/primitives": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^24.10.9",
+    "@types/node": "^24.11.0",
     "typescript": "^5.9.3"
   }
 }

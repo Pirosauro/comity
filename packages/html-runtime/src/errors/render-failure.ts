@@ -16,7 +16,7 @@ export interface HtmlRenderFailureErrorMeta extends ErrorMeta {
  *
  */
 export class HtmlRenderFailureError extends BaseError {
-  readonly code = "html:render-failure";
+  readonly code = "html:render_failure";
 
   constructor(meta: HtmlRenderFailureErrorMeta) {
     super("Failed to render HTML view", { httpStatus: 500, ...meta });

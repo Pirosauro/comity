@@ -1,6 +1,6 @@
-import type { DiContainerLike } from "@comity/primitives/di";
+import type { DiContainer } from "@comity/primitives/di";
 import type { BaseError } from "@comity/primitives/error";
-import type { EventBusLike, HookBusLike } from "@comity/primitives/lifecycle";
+import type { EventBus, HookBus } from "@comity/primitives/lifecycle";
 import type { Result } from "@comity/primitives/result";
 
 /**
@@ -9,27 +9,33 @@ import type { Result } from "@comity/primitives/result";
  * @remarks
  * This is the context object passed to Module setup functions. It can be extended in the future to include additional properties or services as needed.
  */
-export type ModuleSetupContext = {
+export interface ModuleSetupContext<
+  Services extends Record<PropertyKey, unknown> = {},
+  Events extends Record<string, unknown> = {},
+  Hooks extends Record<string, unknown> = {},
+> {
   /** Service container */
-  readonly services: DiContainerLike;
+  readonly services: DiContainer<Services>;
 
   /** Event bus */
-  readonly events: EventBusLike;
+  readonly events: EventBus<Events>;
 
   /** Hook bus */
-  readonly hooks: HookBusLike;
-};
+  readonly hooks: HookBus<Hooks>;
+}
 
 /**
  * Module setup function.
  */
-export type ModuleSetupFn = (ctx: ModuleSetupContext) => Promise<Result<void, BaseError>>;
+export type ModuleSetupFn<Context extends ModuleSetupContext> = (
+  ctx: Context
+) => Promise<Result<void, BaseError>>;
 
 /**
  * Module metadata.
  */
 export interface ModuleMeta<
-  Options extends { [K in keyof Options]: unknown } = Record<string, unknown>,
+  Options extends Record<string, unknown> = Record<string, unknown>,
   Context extends ModuleSetupContext = ModuleSetupContext,
 > {
   /** Unique Module identifier */
@@ -62,5 +68,5 @@ export interface ModuleMeta<
    * @remarks
    * Called during Module loading. Must be pure and side-effect free.
    */
-  readonly setup: (options?: Options) => Promise<Result<ModuleSetupFn, BaseError>>;
+  readonly setup: (options?: Options) => Promise<Result<ModuleSetupFn<Context>, BaseError>>;
 }

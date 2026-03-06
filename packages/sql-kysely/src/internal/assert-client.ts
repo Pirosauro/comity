@@ -18,7 +18,7 @@ type MaybeKyselyDatabase = {
  *
  * @param client - Value to validate as KyselyDatabase
  *
- * @throws KyselySqlError with reason "sql:connection-failed" if invalid
+ * @throws KyselySqlError with reason "sql:connection_failed" if invalid
  */
 export function assertKyselyClient(client: unknown): asserts client is KyselyDatabase {
   if (

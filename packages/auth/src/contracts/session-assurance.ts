@@ -24,6 +24,9 @@ export interface AuthSessionAssuranceContext {
   /** Optional device identifier */
   readonly deviceId?: string;
 
+  /** Optional location information */
+  readonly location?: string;
+
   /** Optional channel ("web", "mobile", "cli", "api", ...) */
   readonly channel?: string;
 }

@@ -1,23 +1,23 @@
-import type { ModuleMeta } from "@comity/kernel/modules";
+import type { ModuleMeta } from "@comity/composition";
 import type { AuthFacade } from "../contracts/auth-facade.js";
-import type { AuthEvaluationEmitter } from "../events/evaluation.js";
-import type { AuthRefreshEvaluationEmitter } from "../events/refresh.js";
-import type { AuthSessionEmitter } from "../events/session.js";
-import type { AuthModuleOptions } from "./types.js";
+import type { AuthEvaluationEmitter } from "../lifecycle/evaluation.js";
+import type { AuthRefreshEvaluationEmitter } from "../lifecycle/refresh.js";
+import type { AuthSessionEmitter } from "../lifecycle/session.js";
+import type { AuthModuleContext, AuthModuleOptions } from "./types.js";
 
-import { createToken } from "@comity/kernel";
 import { success } from "@comity/primitives/result";
-import { AuthGuard } from "../services/guard.js";
+import { AuthGuard } from "../guard.js";
 import { CreateSession } from "../use-cases/session-create.js";
 import { RefreshSession } from "../use-cases/session-refresh.js";
 import { RevokeSession } from "../use-cases/session-revoke.js";
 import { StepUpSession } from "../use-cases/session-step-up.js";
+import { AUTH_TOKEN } from "./constants.js";
 
-export const module: ModuleMeta<AuthModuleOptions> = {
+export const module: ModuleMeta<AuthModuleOptions, AuthModuleContext> = {
   name: "@comity/auth",
   version: "1.0.0",
 
-  dependsOn: ["@comity/primitives", "@comity/kernel"],
+  dependsOn: {},
   incompatibleWith: [],
 
   /**
@@ -27,12 +27,12 @@ export const module: ModuleMeta<AuthModuleOptions> = {
    * Registers the auth facade in the kernel services.
    *
    * @param options - Module configuration object with repository and evaluator
+   *
    * @returns Success result containing the auth context
+   *
    * @throws {Error} - If required options (repository or evaluator) are not provided
    */
   setup: async (options) => {
-    const AUTH_TOKEN = createToken("auth");
-
     //
     if (typeof options?.repository === "undefined") {
       throw new Error("Auth module requires a session repository");
@@ -53,33 +53,33 @@ export const module: ModuleMeta<AuthModuleOptions> = {
       } = {
         evaluation: {
           /** @inheritdoc */
-          sessionValidated: (p) => ctx.events.emit("@comity/auth:session_validated", p),
+          onSessionValidated: (p) => ctx.events.emit("@comity/auth:session_validated", p),
 
           /** @inheritdoc */
-          assuranceRejected: (p) => ctx.events.emit("@comity/auth:assurance_rejected", p),
+          onAssuranceRejected: (p) => ctx.events.emit("@comity/auth:assurance_rejected", p),
 
           /** @inheritdoc */
-          sessionInvalid: (p) => ctx.events.emit("@comity/auth:session_invalid", p),
+          onSessionInvalid: (p) => ctx.events.emit("@comity/auth:session_invalid", p),
 
           /** @inheritdoc */
-          refreshValidated: (p) => ctx.events.emit("@comity/auth:refresh_validated", p),
+          onRefreshValidated: (p) => ctx.events.emit("@comity/auth:refresh_validated", p),
 
           /** @inheritdoc */
-          refreshRejected: (p) => ctx.events.emit("@comity/auth:refresh_rejected", p),
+          onRefreshRejected: (p) => ctx.events.emit("@comity/auth:refresh_rejected", p),
         },
 
         session: {
           /** @inheritdoc */
-          sessionCreated: (p) => ctx.events.emit("@comity/auth:session_created", p),
+          onSessionCreated: (p) => ctx.events.emit("@comity/auth:session_created", p),
 
           /** @inheritdoc */
-          sessionRefreshed: (p) => ctx.events.emit("@comity/auth:session_refreshed", p),
+          onSessionRefreshed: (p) => ctx.events.emit("@comity/auth:session_refreshed", p),
 
           /** @inheritdoc */
-          sessionRevoked: (p) => ctx.events.emit("@comity/auth:session_revoked", p),
+          onSessionRevoked: (p) => ctx.events.emit("@comity/auth:session_revoked", p),
 
           /** @inheritdoc */
-          stepUpCompleted: (p) => ctx.events.emit("@comity/auth:stepup_completed", p),
+          onStepUpCompleted: (p) => ctx.events.emit("@comity/auth:step_up_completed", p),
         },
       };
 
@@ -118,9 +118,6 @@ export const module: ModuleMeta<AuthModuleOptions> = {
 
       // Register facade
       ctx.services.define(AUTH_TOKEN, () => auth);
-
-      // Emit module initialized hook
-      await ctx.hooks.execute("@comity/auth:initialized", { token: AUTH_TOKEN });
 
       return success(undefined);
     });

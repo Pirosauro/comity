@@ -7,7 +7,7 @@ describe("HtmlRenderFailureError", () => {
       reason: "test-reason",
     });
 
-    expect(error.code).toBe("html:render-failure");
+    expect(error.code).toBe("html:render_failure");
     expect(error.message).toBe("Failed to render HTML view");
     expect(error.meta.reason).toBe("test-reason");
     expect(error.meta.httpStatus).toBe(500);

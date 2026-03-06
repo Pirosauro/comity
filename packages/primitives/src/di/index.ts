@@ -1,4 +1,3 @@
-export { DiContainer } from "./container.js";
-export { DiContainerContract } from "./contract.js";
-export { ContainerError } from "./error.js";
-export { DiContainerLike } from "./types.js";
+export { DefaultDiContainer } from "./container.js";
+export { DiContainerError } from "./error.js";
+export { DiContainer, PropertyKey } from "./types.js";

@@ -10,7 +10,7 @@ describe("mapSqlError", () => {
       const cause = new DOMException("Aborted", "AbortError");
       const result = mapSqlError(cause, "query", adapter);
 
-      expect(result.code).toBe("sql:kysely-adapter");
+      expect(result.code).toBe("sql:kysely_adapter");
       expect(result.message).toBe("Operation cancelled");
       expect(result.meta["reason"]).toBe("cancelled");
       expect(result.meta["retriable"]).toBe(true);

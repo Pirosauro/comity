@@ -1,15 +1,10 @@
 # Decision: Transactions as capabilities
 
-## Context
+Transactions are modeled as explicit capabilities (`SqlTransaction`)
+rather than implicit connection state.
 
-Implicit connection state obscures transactional boundaries and encourages accidental nesting, making concurrency reasoning harder.
+This ensures:
 
-## Decision
-
-Model transactions as an explicit capability (`SqlTransaction`) with `query`, `commit`, and `rollback`.
-
-## Consequences
-
-- Prevents accidental nested transactions
-- Clarifies boundaries and lifecycles
-- Simplifies concurrent reasoning and error handling
+- no accidental nested transactions
+- clear transactional boundaries
+- easier reasoning in concurrent systems

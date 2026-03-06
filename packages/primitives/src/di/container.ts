@@ -1,7 +1,6 @@
-import type { DiContainerContract } from "./contract.js";
-import type { PropertyKey } from "./types.js";
+import type { DiContainer, PropertyKey } from "./types.js";
 
-import { ContainerError } from "./error.js";
+import { DiContainerError } from "./error.js";
 
 /**
  * Dependency Injection Container.
@@ -14,7 +13,7 @@ import { ContainerError } from "./error.js";
  *
  * @example
  * ```ts
- * const container = new DiContainer<{
+ * const container = new DefaultDiContainer<{
  *   logger: LoggerService;
  *   userService: UserService;
  * }>();
@@ -25,9 +24,9 @@ import { ContainerError } from "./error.js";
  * const userService = container.resolve("userService");
  * ```
  */
-export class DiContainer<
+export class DefaultDiContainer<
   Services extends Record<PropertyKey, unknown> = {},
-> implements DiContainerContract<Services> {
+> implements DiContainer<Services> {
   /** Factories map */
   #factories = new Map<keyof Services, () => Services[keyof Services]>();
 
@@ -39,8 +38,8 @@ export class DiContainer<
    */
   define<K extends keyof Services>(key: K, factory: () => Services[K]): void {
     if (this.#factories.has(key)) {
-      throw new ContainerError("already_registered", {
-        service: key,
+      throw new DiContainerError("already_registered", {
+        service: key as PropertyKey,
       });
     }
 
@@ -61,8 +60,8 @@ export class DiContainer<
 
     // Service not registered
     if (!factory) {
-      throw new ContainerError("not_registered", {
-        service: key,
+      throw new DiContainerError("not_registered", {
+        service: key as PropertyKey,
       });
     }
 

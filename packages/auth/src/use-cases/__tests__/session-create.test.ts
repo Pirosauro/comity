@@ -14,7 +14,9 @@ describe("CreateSession", () => {
     evaluate: ReturnType<typeof vi.fn>;
   };
   let emitter: {
-    sessionCreated: ReturnType<typeof vi.fn>;
+    onSessionCreated: ReturnType<typeof vi.fn>;
+    onSessionRevoked: ReturnType<typeof vi.fn>;
+    onSessionRefreshed: ReturnType<typeof vi.fn>;
   };
   let guard: {
     assert: ReturnType<typeof vi.fn>;
@@ -35,7 +37,9 @@ describe("CreateSession", () => {
       evaluate: vi.fn(),
     };
     emitter = {
-      sessionCreated: vi.fn(),
+      onSessionCreated: vi.fn(),
+      onSessionRevoked: vi.fn(),
+      onSessionRefreshed: vi.fn(),
     };
     guard = {
       assert: vi.fn(),
@@ -82,7 +86,7 @@ describe("CreateSession", () => {
       1000
     );
     expect(repository.create).toHaveBeenCalledWith(expect.objectContaining({ id: "session-1" }));
-    expect(emitter.sessionCreated).toHaveBeenCalledWith({
+    expect(emitter.onSessionCreated).toHaveBeenCalledWith({
       sessionId: "session-1",
       createdAt: 1000,
       assuranceScore: 1,
@@ -262,7 +266,7 @@ describe("CreateSession", () => {
 
     await expect(useCase.execute(input, 1000)).rejects.toThrow("Assurance failed");
     expect(repository.create).not.toHaveBeenCalled();
-    expect(emitter.sessionCreated).not.toHaveBeenCalled();
+    expect(emitter.onSessionCreated).not.toHaveBeenCalled();
   });
 
   it("should throw if repository fails", async () => {
@@ -283,6 +287,6 @@ describe("CreateSession", () => {
     repository.create.mockRejectedValue(new Error("Database error"));
 
     await expect(useCase.execute(input, 1000)).rejects.toThrow("Database error");
-    expect(emitter.sessionCreated).not.toHaveBeenCalled();
+    expect(emitter.onSessionCreated).not.toHaveBeenCalled();
   });
 });

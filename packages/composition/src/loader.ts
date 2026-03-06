@@ -37,7 +37,7 @@ import { resolveOrder } from "./resolver.js";
  * ```
  */
 export async function load(
-  kernel: Kernel<Record<string, unknown>, Record<string, unknown>, Record<string, unknown>>,
+  kernel: Kernel,
   modules: readonly ModuleMeta[],
   options: Record<string, Record<string, unknown>> = {}
 ): Promise<Result<void, CompositionError>> {
@@ -72,8 +72,7 @@ export async function load(
       );
     }
 
-    // Apply
-    // @ts-expect-error
+    // Apply module
     const result = await setup.value(ctx);
 
     // Handle application errors

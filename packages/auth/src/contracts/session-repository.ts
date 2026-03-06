@@ -9,7 +9,7 @@ export interface AuthSessionRepository {
    *
    * @returns the session
    *
-   * @throws InvalidSessionError if the session id is malformed or not found
+   * @throws {Error} - Infrastructure error (e.g., database connection failure)
    */
   get(id: AuthSessionId): Promise<AuthSession>;
 
@@ -17,11 +17,15 @@ export interface AuthSessionRepository {
    * Persist a new session.
    *
    * Must be idempotent.
+   *
+   * @throws {Error} - Infrastructure error (e.g., database connection failure)
    */
   create(session: AuthSession): Promise<void>;
 
   /**
    * Update an existing session.
+   *
+   * @throws {Error} - Infrastructure error (e.g., database connection failure)
    */
   update(session: AuthSession): Promise<void>;
 
@@ -35,7 +39,7 @@ export interface AuthSessionRepository {
    * @param actor.type - Type of actor (e.g., "system", "user", "admin")
    * @param actor.id - Identifier of the actor if applicable
    *
-   * @throws {InvalidSessionError} - If the session id is malformed or not found
+   * @throws {Error} - Infrastructure error (e.g., database connection failure)
    */
   revoke(
     id: AuthSessionId,
@@ -44,6 +48,7 @@ export interface AuthSessionRepository {
     actor?: {
       /** Type of actor triggering revocation */
       type: string;
+
       /** Identifier of the actor */
       id?: string;
     }

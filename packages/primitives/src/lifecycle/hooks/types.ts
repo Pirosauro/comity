@@ -1,27 +1,55 @@
-import type { HookHandler } from "./contract.js";
+/**
+ * Hook Bus Contract
+ *
+ * @typeParam Hooks - Record of hook names and their corresponding value types
+ *
+ * @remarks
+ * This interface defines the contract for a Hook Bus, which allows defining
+ * and executing hooks identified by names. Each hook can have multiple handlers
+ * that process a value of a specific type.
+ */
+export interface HookBus<Hooks extends Record<string, unknown>> {
+  /**
+   * Define a hook with a handler
+   *
+   * @typeParam K - Key of the hook in the Hooks record
+   *
+   * @param name Hook name
+   * @param handler Hook handler function
+   */
+  define<K extends keyof Hooks>(name: K, handler: HookHandler<Hooks[K]>): void;
+
+  /**
+   * Execute a hook by name with an initial value
+   *
+   * @typeParam K - Key of the hook in the Hooks record
+   *
+   * @param name Hook name
+   * @param initial Initial value
+   *
+   * @returns Final value after all handlers have been executed
+   *
+   * @remarks
+   * This method executes all handlers associated with the specified hook name,
+   * passing the initial value through each handler in sequence. The final value
+   * is returned after all handlers have been executed.
+   */
+  execute<K extends keyof Hooks>(name: K, initial: Hooks[K]): Promise<Hooks[K]>;
+}
 
 /**
- * Hook Bus Like interface.
+ * Hook handler function
  *
- * @typeParam T - Hook map where keys are hook names and values are the context types
- *                that flow through the hook pipeline
+ * @typeParam T - The type of value being handled
+ *
+ * @param value Current value
+ * @param initial Initial value
+ *
+ * @returns New value or a promise resolving to the new value
+ *
+ * @remarks
+ * A hook handler is a function that processes a value, potentially
+ * transforming it and returning a new value. It can be synchronous or
+ * return a promise for asynchronous processing.
  */
-export interface HookBusLike<T extends Record<string, unknown> = {}> {
-  /**
-   * Register a hook handler.
-   *
-   * @param name - The hook name to register for
-   * @param handler - Function that processes the hook context
-   */
-  define<K extends keyof T>(name: K, handler: HookHandler<T[K]>): void;
-
-  /**
-   * Execute a hook chain.
-   *
-   * @param name - The hook name to execute
-   * @param initial - The initial context to pass through the hook chain
-   *
-   * @returns A promise resolving to the final context after all handlers
-   */
-  execute<K extends keyof T>(name: K, initial: T[K]): Promise<T[K]>;
-}
+export type HookHandler<T> = (value: T, initial: Readonly<T>) => T | Promise<T>;

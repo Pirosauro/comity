@@ -10,6 +10,7 @@ export interface AssuranceScoreModifier<C = AuthSessionAssuranceContext> {
    *
    * @param input - Assurance input
    * @param now - Current timestamp in milliseconds
+   *
    * @returns Numeric modifier to apply to the score
    */
   apply(input: AuthSessionAssuranceInput<C>, now: number): number;
@@ -37,6 +38,7 @@ export interface AuthSessionAssuranceEvaluator<C = AuthSessionAssuranceContext> 
    *
    * @param input - The session creation input
    * @param now - Current timestamp in milliseconds
+   *
    * @returns The evaluated session assurance
    */
   evaluate(input: AuthSessionAssuranceInput<C>, now: number): AuthSessionAssurance;

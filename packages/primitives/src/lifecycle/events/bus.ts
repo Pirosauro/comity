@@ -1,5 +1,4 @@
-import type { EventBusContract, EventHandler } from "./contract.js";
-import type { EventBusErrorHandler, EventBusOptions } from "./types.js";
+import type { EventBus, EventBusErrorHandler, EventBusOptions, EventHandler } from "./types.js";
 
 import { EventBusError } from "./error.js";
 
@@ -28,9 +27,9 @@ import { EventBusError } from "./error.js";
  * await bus.emit("userCreated", { id: "123", name: "Alice" });
  * ```
  */
-export class EventBus<
+export class DefaultEventBus<
   Events extends Record<string, unknown> = {},
-> implements EventBusContract<Events> {
+> implements EventBus<Events> {
   /** Event handlers mapped by event name */
   #handlers = new Map<keyof Events, Set<EventHandler<Events[keyof Events]>>>();
 
@@ -85,7 +84,7 @@ export class EventBus<
         } catch (cause) {
           this.#onError?.(
             new EventBusError("handler_failed", {
-              event,
+              event: event as string,
               cause,
             })
           );

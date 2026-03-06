@@ -2,7 +2,7 @@ import type { AuthSession } from "../../contracts/session.js";
 import type { StepUpSessionInput } from "../session-step-up.js";
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { AssuranceRequiredError } from "../../errors/assurance-required.js";
+import { AuthError } from "../../error/auth.js";
 import { StepUpSession } from "../session-step-up.js";
 
 describe("StepUpSession", () => {
@@ -17,7 +17,10 @@ describe("StepUpSession", () => {
     assert: ReturnType<typeof vi.fn>;
   };
   let emitter: {
-    stepUpCompleted: ReturnType<typeof vi.fn>;
+    onSessionCreated: ReturnType<typeof vi.fn>;
+    onSessionRevoked: ReturnType<typeof vi.fn>;
+    onSessionRefreshed: ReturnType<typeof vi.fn>;
+    onStepUpCompleted: ReturnType<typeof vi.fn>;
   };
   let useCase: StepUpSession;
 
@@ -33,7 +36,10 @@ describe("StepUpSession", () => {
       assert: vi.fn(),
     };
     emitter = {
-      stepUpCompleted: vi.fn(),
+      onSessionCreated: vi.fn(),
+      onSessionRevoked: vi.fn(),
+      onSessionRefreshed: vi.fn(),
+      onStepUpCompleted: vi.fn(),
     };
     // @ts-expect-error
     useCase = new StepUpSession(repository, evaluator, guard, emitter);
@@ -94,7 +100,7 @@ describe("StepUpSession", () => {
         },
       })
     );
-    expect(emitter.stepUpCompleted).toHaveBeenCalledWith({
+    expect(emitter.onStepUpCompleted).toHaveBeenCalledWith({
       sessionId: "stepped-up-session",
       parentId: "parent-session",
       assuranceScore: 2,
@@ -303,7 +309,7 @@ describe("StepUpSession", () => {
       transport: { type: "bearer" },
     };
 
-    await expect(useCase.execute(input, 2000)).rejects.toThrow(AssuranceRequiredError);
+    await expect(useCase.execute(input, 2000)).rejects.toThrow(AuthError);
     expect(repository.create).not.toHaveBeenCalled();
   });
 
@@ -338,7 +344,7 @@ describe("StepUpSession", () => {
       transport: { type: "bearer" },
     };
 
-    await expect(useCase.execute(input, 2000)).rejects.toThrow(AssuranceRequiredError);
+    await expect(useCase.execute(input, 2000)).rejects.toThrow(AuthError);
   });
 
   it("should throw if new session fails guard validation", async () => {
@@ -416,6 +422,6 @@ describe("StepUpSession", () => {
     };
 
     await expect(useCase.execute(input, 2000)).rejects.toThrow("Database error");
-    expect(emitter.stepUpCompleted).not.toHaveBeenCalled();
+    expect(emitter.onStepUpCompleted).not.toHaveBeenCalled();
   });
 });

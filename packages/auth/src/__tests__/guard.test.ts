@@ -1,0 +1,260 @@
+import type { AuthSessionAssurancePolicy } from "../contracts/session-assurance-policy.js";
+import type { AuthSessionRefreshPolicy } from "../contracts/session-refresh-policy.js";
+import type { AuthSessionRevocationPolicy } from "../contracts/session-revocation-policy.js";
+import type { AuthSession } from "../contracts/session.js";
+import type { AuthEvaluationEmitter } from "../lifecycle/evaluation.js";
+import type { AuthRefreshEvaluationEmitter } from "../lifecycle/refresh.js";
+
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { AuthError } from "../error/auth.js";
+import { AuthGuard } from "../guard.js";
+
+interface AuthGuardEmitter extends AuthEvaluationEmitter, AuthRefreshEvaluationEmitter {}
+
+describe("AuthGuard", () => {
+  let assurancePolicy: AuthSessionAssurancePolicy;
+  let revocationPolicy: AuthSessionRevocationPolicy;
+  let refreshPolicy: AuthSessionRefreshPolicy;
+  let events: AuthGuardEmitter;
+  let guard: AuthGuard;
+
+  beforeEach(() => {
+    assurancePolicy = { assert: vi.fn() };
+    revocationPolicy = { assert: vi.fn() };
+    refreshPolicy = { assert: vi.fn() };
+    events = {
+      onSessionValidated: vi.fn(),
+      onSessionInvalid: vi.fn(),
+      onAssuranceRejected: vi.fn(),
+      onRefreshValidated: vi.fn(),
+      onRefreshRejected: vi.fn(),
+    };
+    guard = new AuthGuard({
+      assurance: assurancePolicy,
+      revocation: revocationPolicy,
+      refresh: refreshPolicy,
+      emitter: events,
+    });
+  });
+
+  describe("assert", () => {
+    const validSession: AuthSession = {
+      id: "session1",
+      createdAt: 1000,
+      assurance: {
+        methods: ["password"],
+        score: 1,
+        evaluatedAt: 1000,
+        version: 1,
+      },
+      transport: { type: "bearer" },
+      refresh: { enabled: true },
+      verifiedAt: 1000,
+    };
+
+    it("should validate a valid session", () => {
+      guard.assert(validSession, 2000);
+
+      expect(assurancePolicy.assert).toHaveBeenCalledWith(validSession, 2000);
+      expect(revocationPolicy.assert).toHaveBeenCalledWith(validSession, 2000);
+      expect(events.onSessionValidated).toHaveBeenCalledWith({
+        sessionId: "session1",
+        assuranceScore: 1,
+        createdAt: 1000,
+        verifiedAt: 1000,
+      });
+    });
+
+    it("should throw and emit for invalid session id", () => {
+      const invalidSession = { ...validSession, id: "" };
+
+      expect(() => guard.assert(invalidSession, 2000)).toThrow(AuthError);
+      expect(events.onSessionInvalid).toHaveBeenCalledWith({
+        sessionId: "",
+        at: 2000,
+        reason: "session_invalid",
+        violation: "session_id_missing",
+      });
+    });
+
+    it("should throw and emit for revoked session", () => {
+      revocationPolicy.assert.mockImplementation(() => {
+        throw new AuthError("session_revoked");
+      });
+
+      expect(() => guard.assert(validSession, 2000)).toThrow(AuthError);
+      expect(events.onSessionInvalid).toHaveBeenCalledWith({
+        sessionId: "session1",
+        at: 2000,
+        reason: "session_revoked",
+      });
+    });
+
+    it("should throw and emit for assurance required", () => {
+      assurancePolicy.assert.mockImplementation(() => {
+        throw new AuthError("assurance_required");
+      });
+
+      expect(() => guard.assert(validSession, 2000)).toThrow(AuthError);
+      expect(events.onAssuranceRejected).toHaveBeenCalledWith({
+        sessionId: "session1",
+        reason: "assurance_required",
+      });
+    });
+
+    it("should emit sessionValidated with all optional fields", () => {
+      const sessionWithOptionals = {
+        ...validSession,
+        verifiedAt: 1000,
+        expiresAt: 5000,
+        scopes: ["read", "write"],
+      };
+
+      guard.assert(sessionWithOptionals, 2000);
+
+      expect(events.onSessionValidated).toHaveBeenCalledWith({
+        sessionId: "session1",
+        assuranceScore: 1,
+        createdAt: 1000,
+        verifiedAt: 1000,
+        expiresAt: 5000,
+        scopes: ["read", "write"],
+      });
+    });
+
+    it("should emit sessionValidated without optional fields", () => {
+      const sessionMinimal: AuthSession = {
+        id: "session1",
+        createdAt: 1000,
+        assurance: {
+          methods: ["password"],
+          score: 1,
+          evaluatedAt: 1000,
+          version: 1,
+        },
+        transport: { type: "bearer" },
+        verifiedAt: 1000,
+      };
+
+      guard.assert(sessionMinimal, 2000);
+
+      expect(events.onSessionValidated).toHaveBeenCalledWith({
+        sessionId: "session1",
+        assuranceScore: 1,
+        createdAt: 1000,
+        verifiedAt: 1000,
+      });
+    });
+
+    it("should emit refreshValidated when refresh is requested", () => {
+      guard.assert(validSession, 2000, true);
+
+      expect(events.onRefreshValidated).toHaveBeenCalledWith({
+        sessionId: "session1",
+        at: 2000,
+      });
+    });
+
+    it("should emit for revocation error without SessionRevokedError", () => {
+      revocationPolicy.assert.mockImplementation(() => {
+        throw new Error("Generic error");
+      });
+
+      expect(() => guard.assert(validSession, 2000)).toThrow(Error);
+      expect(events.onSessionInvalid).toHaveBeenCalledWith({
+        sessionId: "session1",
+        at: 2000,
+      });
+    });
+
+    it("should emit for assurance error without AssuranceRequiredError", () => {
+      assurancePolicy.assert.mockImplementation(() => {
+        throw new Error("Generic error");
+      });
+
+      expect(() => guard.assert(validSession, 2000)).toThrow(Error);
+      expect(events.onAssuranceRejected).toHaveBeenCalledWith({
+        sessionId: "session1",
+      });
+    });
+  });
+
+  describe("assertRefreshable", () => {
+    const validSession: AuthSession = {
+      id: "session1",
+      createdAt: 1000,
+      assurance: {
+        methods: ["password"],
+        score: 1,
+        evaluatedAt: 1000,
+        version: 1,
+      },
+      transport: { type: "bearer" },
+      refresh: { enabled: true },
+      verifiedAt: 1000,
+    };
+
+    it("should validate refreshable session without refresh policy", () => {
+      const guardNoRefresh = new AuthGuard({
+        assurance: assurancePolicy,
+        revocation: revocationPolicy,
+        emitter: events,
+      });
+
+      guardNoRefresh.assertRefreshable(validSession, 2000);
+
+      expect(events.onRefreshValidated).not.toHaveBeenCalled();
+    });
+
+    it("should validate refreshable session with refresh policy", () => {
+      guard.assertRefreshable(validSession, 2000);
+
+      expect(refreshPolicy.assert).toHaveBeenCalledWith(validSession, 2000);
+      expect(events.onRefreshValidated).not.toHaveBeenCalled();
+    });
+
+    it("should throw for refresh expired", () => {
+      refreshPolicy.assert.mockImplementation(() => {
+        throw new AuthError("refresh_expired");
+      });
+
+      expect(() => guard.assertRefreshable(validSession, 2000)).toThrow(AuthError);
+      expect(events.onRefreshRejected).toHaveBeenCalledWith({
+        sessionId: "session1",
+        at: 2000,
+        reason: "refresh_expired",
+      });
+    });
+
+    it("should throw for refresh not allowed", () => {
+      refreshPolicy.assert.mockImplementation(() => {
+        throw new AuthError("refresh_not_allowed");
+      });
+
+      expect(() => guard.assertRefreshable(validSession, 2000)).toThrow(AuthError);
+      expect(events.onRefreshRejected).toHaveBeenCalledWith({
+        sessionId: "session1",
+        at: 2000,
+        reason: "refresh_not_allowed",
+      });
+    });
+
+    it("should rethrow non-BaseError errors without emitting event", () => {
+      refreshPolicy.assert.mockImplementation(() => {
+        throw new Error("Generic error");
+      });
+
+      expect(() => guard.assertRefreshable(validSession, 2000)).toThrow(Error);
+      expect(events.onRefreshRejected).not.toHaveBeenCalled();
+    });
+
+    it("should not call other policies before checking refresh", () => {
+      // assertRefreshable only checks refresh policy, not other policies
+      guard.assertRefreshable(validSession, 2000);
+
+      expect(refreshPolicy.assert).toHaveBeenCalledWith(validSession, 2000);
+      expect(revocationPolicy.assert).not.toHaveBeenCalled();
+      expect(assurancePolicy.assert).not.toHaveBeenCalled();
+    });
+  });
+});

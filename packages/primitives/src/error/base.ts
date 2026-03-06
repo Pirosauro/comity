@@ -46,12 +46,12 @@ import type { ErrorCode, ErrorMeta } from "./types.js";
  * }
  * ```
  */
-export abstract class BaseError extends Error {
+export abstract class BaseError<Meta extends ErrorMeta = ErrorMeta> extends Error {
   /** Stable, machine-readable error code */
   abstract readonly code: ErrorCode;
 
   /** Additional metadata associated with this error */
-  readonly meta: Omit<ErrorMeta, "cause">;
+  readonly meta: Omit<Meta, "cause">;
 
   /**
    * @param message - Human-readable, static error message
@@ -60,7 +60,7 @@ export abstract class BaseError extends Error {
    *
    * @protected
    */
-  protected constructor(message: string, { cause, ...meta }: ErrorMeta) {
+  protected constructor(message: string, { cause, ...meta }: Meta) {
     super(message, cause ? { cause } : undefined);
 
     this.name = new.target.name;

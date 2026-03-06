@@ -20,19 +20,18 @@ export type ErrorMeta = Readonly<{
   /** HTTP status code associated with this error, if applicable */
   httpStatus?: number;
 
-  /** Additional details about the error (structured data) */
-  details?: unknown;
+  /** Machine-readable reason for the error */
+  reason?: string;
 
   /** The underlying cause of the error */
   cause?: unknown;
-}> &
-  Record<string, unknown>;
+}>;
 
 /**
  * Core error reasons for common error scenarios
  *
  * @remarks
- * These reasons can be used in the `details` property of error metadata to provide
+ * These reasons can be used in the `reason` property of error metadata to provide
  * standardized machine-readable explanations for common error cases, facilitating
  * consistent error handling across the application.
  */
@@ -46,3 +45,27 @@ export type CoreErrorReason =
   | "service_unavailable"
   | "internal"
   | "domain_violation";
+
+/**
+ * Type definition for error-like objects
+ *
+ * @remarks
+ * This type represents any object that has the essential properties of an error (code, message, and optional metadata).
+ * It allows for flexibility in error handling by accepting both instances of BaseError and plain objects that conform to this structure.
+ */
+export type SafeErrorLike = Readonly<{
+  /** Error code identifying the type of error. */
+  code: ErrorCode;
+
+  /** Human-readable error message. */
+  message: string;
+
+  /** HTTP status code associated with this error, if applicable */
+  httpStatus?: number;
+
+  /** Timestamp indicating when the error occurred */
+  timestamp: string;
+
+  /** Optional metadata providing additional context about the error. */
+  meta?: Readonly<Record<string, unknown>>;
+}>;

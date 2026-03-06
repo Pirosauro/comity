@@ -1,5 +1,8 @@
-import { DiContainer } from "@comity/primitives/di";
-import { EventBus, HookBus } from "@comity/primitives/lifecycle";
+import type { DiContainer } from "@comity/primitives/di";
+import type { EventBus, HookBus } from "@comity/primitives/lifecycle";
+
+import { DefaultDiContainer } from "@comity/primitives/di";
+import { DefaultEventBus, DefaultHookBus } from "@comity/primitives/lifecycle";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { KernelError } from "../error/kernel.js";
 import { Kernel } from "../kernel.js";
@@ -23,9 +26,9 @@ describe("Kernel", () => {
   let kernel: Kernel<TestServices, TestEvents, TestHooks>;
 
   beforeEach(() => {
-    services = new DiContainer();
-    events = new EventBus<TestEvents>();
-    hooks = new HookBus<TestHooks>();
+    services = new DefaultDiContainer();
+    events = new DefaultEventBus<TestEvents>();
+    hooks = new DefaultHookBus<TestHooks>();
     kernel = new Kernel({ services, events, hooks });
   });
 

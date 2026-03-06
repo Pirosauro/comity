@@ -1,4 +1,4 @@
-import type { HookBusContract, HookHandler } from "./contract.js";
+import type { HookBus, HookHandler } from "./types.js";
 
 /**
  * Hook bus implementation
@@ -25,9 +25,9 @@ import type { HookBusContract, HookHandler } from "./contract.js";
  * console.log(result); // Outputs: "MYDATA"
  * ```
  */
-export class HookBus<
+export class DefaultHookBus<
   Hooks extends { [K in keyof Hooks]: unknown },
-> implements HookBusContract<Hooks> {
+> implements HookBus<Hooks> {
   /** Hook handlers mapped by hook name */
   #handlers: {
     [K in keyof Hooks]?: Set<HookHandler<Hooks[K]>>;

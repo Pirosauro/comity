@@ -13,7 +13,9 @@ describe("RefreshSession", () => {
     assert: ReturnType<typeof vi.fn>;
   };
   let emitter: {
-    sessionRefreshed: ReturnType<typeof vi.fn>;
+    onSessionCreated: ReturnType<typeof vi.fn>;
+    onSessionRevoked: ReturnType<typeof vi.fn>;
+    onSessionRefreshed: ReturnType<typeof vi.fn>;
   };
   let useCase: RefreshSession;
 
@@ -26,7 +28,9 @@ describe("RefreshSession", () => {
       assert: vi.fn(),
     };
     emitter = {
-      sessionRefreshed: vi.fn(),
+      onSessionCreated: vi.fn(),
+      onSessionRevoked: vi.fn(),
+      onSessionRefreshed: vi.fn(),
     };
     // @ts-expect-error
     useCase = new RefreshSession(repository, guard, emitter);
@@ -63,7 +67,7 @@ describe("RefreshSession", () => {
         createdAt: 1000, // Original creation time is preserved
       })
     );
-    expect(emitter.sessionRefreshed).toHaveBeenCalledWith({
+    expect(emitter.onSessionRefreshed).toHaveBeenCalledWith({
       sessionId: "new-session",
       originalId: "original-session",
       refreshedAt: 2000,
@@ -101,7 +105,7 @@ describe("RefreshSession", () => {
     const result = await useCase.execute(input, 2000);
 
     expect(result.expiresAt).toBe(10000);
-    expect(emitter.sessionRefreshed).toHaveBeenCalledWith({
+    expect(emitter.onSessionRefreshed).toHaveBeenCalledWith({
       sessionId: "new-session",
       originalId: "original-session",
       refreshedAt: 2000,
@@ -120,7 +124,7 @@ describe("RefreshSession", () => {
     await expect(useCase.execute(input, 2000)).rejects.toThrow("Session not found");
     expect(guard.assert).not.toHaveBeenCalled();
     expect(repository.update).not.toHaveBeenCalled();
-    expect(emitter.sessionRefreshed).not.toHaveBeenCalled();
+    expect(emitter.onSessionRefreshed).not.toHaveBeenCalled();
   });
 
   it("should throw if guard rejects refresh", async () => {
@@ -149,7 +153,7 @@ describe("RefreshSession", () => {
 
     await expect(useCase.execute(input, 2000)).rejects.toThrow("Refresh not allowed");
     expect(repository.update).not.toHaveBeenCalled();
-    expect(emitter.sessionRefreshed).not.toHaveBeenCalled();
+    expect(emitter.onSessionRefreshed).not.toHaveBeenCalled();
   });
 
   it("should throw if repository update fails", async () => {
@@ -175,6 +179,6 @@ describe("RefreshSession", () => {
     };
 
     await expect(useCase.execute(input, 2000)).rejects.toThrow("Database error");
-    expect(emitter.sessionRefreshed).not.toHaveBeenCalled();
+    expect(emitter.onSessionRefreshed).not.toHaveBeenCalled();
   });
 });

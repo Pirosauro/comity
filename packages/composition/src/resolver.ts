@@ -1,5 +1,5 @@
 import type { Result } from "@comity/primitives/result";
-import type { ModuleMeta, ModuleSetupContext } from "./types.js";
+import type { ModuleMeta } from "./types.js";
 
 import { failure, isFailure, success } from "@comity/primitives/result";
 import { CompositionError } from "./error/composition.js";
@@ -47,14 +47,11 @@ import { CompositionError } from "./error/composition.js";
  * }
  * ```
  */
-export function resolveOrder<O extends Record<string, unknown>, C extends ModuleSetupContext>(
-  input: readonly ModuleMeta<O, C>[]
-): Result<ModuleMeta<O, C>[], CompositionError> {
+export function resolveOrder(input: readonly ModuleMeta[]): Result<ModuleMeta[], CompositionError> {
   const modules = [...input];
 
   // 1. Build map + detect duplicates
-  const map = new Map<string, ModuleMeta<O, C>>();
-
+  const map = new Map<string, ModuleMeta>();
   for (const mod of modules) {
     if (map.has(mod.name)) {
       return failure(
@@ -81,7 +78,7 @@ export function resolveOrder<O extends Record<string, unknown>, C extends Module
   }
 
   // 3. Topological sort (DFS)
-  const result: ModuleMeta<O, C>[] = [];
+  const result: ModuleMeta[] = [];
   const visited = new Set<string>();
   const visiting = new Set<string>();
 
@@ -93,7 +90,7 @@ export function resolveOrder<O extends Record<string, unknown>, C extends Module
    *
    * @returns Result indicating success or failure
    */
-  const visit = (mod: ModuleMeta<O, C>): Result<void, CompositionError> => {
+  const visit = (mod: ModuleMeta): Result<void, CompositionError> => {
     // Already processed
     if (visited.has(mod.name)) {
       return success(undefined);
