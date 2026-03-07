@@ -311,7 +311,7 @@ describe("Kernel", () => {
       const kernelWithEmitter = new Kernel({ services, events, hooks }, emitter);
       kernelWithEmitter.seal();
 
-      expect(emitter.onStateTransition).toHaveBeenCalledWith("open", "sealed");
+      expect(emitter.onStateTransition).toHaveBeenCalledWith({ from: "open", to: "sealed" });
     });
 
     it("should work without emitter", () => {

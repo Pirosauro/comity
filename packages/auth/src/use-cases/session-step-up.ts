@@ -7,7 +7,7 @@ import type { AuthSessionRepository } from "../contracts/session-repository.js";
 import type { AuthSessionTransport } from "../contracts/session-transport.js";
 import type { AuthSession, AuthSessionId } from "../contracts/session.js";
 import type { AuthGuard } from "../guard.js";
-import type { AuthSessionEmitter } from "../lifecycle/session.js";
+import type { AuthSessionObserver } from "../hooks/session.js";
 
 import { AuthError } from "../error/auth.js";
 
@@ -41,24 +41,24 @@ export class StepUpSession {
   #repository: AuthSessionRepository;
   #evaluator: AuthSessionAssuranceEvaluator;
   #guard: AuthGuard;
-  #emitter: AuthSessionEmitter;
+  #observer: AuthSessionObserver;
 
   /**
    * @param repository - Session repository
    * @param evaluator - Assurance evaluator
    * @param guard - Guard used to validate sessions
-   * @param emitter - Event emitter for lifecycle events
+   * @param observer - Event observer for lifecycle events
    */
   constructor(
     repository: AuthSessionRepository,
     evaluator: AuthSessionAssuranceEvaluator,
     guard: AuthGuard,
-    emitter: AuthSessionEmitter
+    observer: AuthSessionObserver
   ) {
     this.#repository = repository;
     this.#evaluator = evaluator;
     this.#guard = guard;
-    this.#emitter = emitter;
+    this.#observer = observer;
   }
 
   /**
@@ -82,7 +82,9 @@ export class StepUpSession {
       // Defensive check: parent session must exist
       if (!parent) {
         throw new AuthError("session_not_found", {
-          subject: input.parentId,
+          details: {
+            subject: input.parentId,
+          },
         });
       }
 
@@ -103,8 +105,10 @@ export class StepUpSession {
       // 4. New assurance must be stronger
       if (assurance.score <= parent.assurance.score) {
         throw new AuthError("assurance_step_up_required", {
-          policy: "step_up",
           details: {
+            policy: "step_up",
+          },
+          context: {
             requiredScore: parent.assurance.score + 1,
             actualScore: assurance.score,
           },
@@ -134,7 +138,7 @@ export class StepUpSession {
       await this.#repository.create(session);
 
       // 8. Emit event
-      this.#emitter.onStepUpCompleted({
+      this.#observer.onStepUpCompleted({
         sessionId: session.id,
         parentId: parent.id,
         assuranceScore: assurance.score,
@@ -150,8 +154,10 @@ export class StepUpSession {
       return {
         ok: false,
         error: new AuthError("internal_error", {
-          policy: "persistence",
-          subject: input.id,
+          details: {
+            policy: "persistence",
+            subject: input.id,
+          },
           cause: error,
         }),
       };

@@ -38,18 +38,15 @@ export function mapHttpResponseToHono(c: HonoContext, response: AnyHttpResponse)
 
   // Handle streaming response
   if ("stream" in response) {
-    return new Response(
-      response.stream as ReadableStream<Uint8Array> | null,
-      {
-        status: response.status || 200,
-        headers,
-      } as ResponseInit
-    );
+    return new Response(response.stream as ReadableStream<Uint8Array> | null, {
+      status: response.status || 200,
+      headers,
+    });
   }
 
   // Handle regular response
   return new Response("body" in response ? (response.body as string | null) : null, {
     status: response.status || 200,
     headers,
-  } as ResponseInit);
+  });
 }

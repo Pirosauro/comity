@@ -54,8 +54,8 @@ describe("Lifecycle", () => {
 
       if (!result.success) {
         expect(result.error).toBeInstanceOf(KernelError);
-        expect(result.error.meta.action).toBe("seal");
-        expect(result.error.meta.state).toBe("sealed");
+        expect(result.error.meta.details.action).toBe("seal");
+        expect(result.error.meta.details.state).toBe("sealed");
       }
     });
 
@@ -68,7 +68,7 @@ describe("Lifecycle", () => {
       expect(result.success).toBe(false);
 
       if (!result.success) {
-        expect(result.error.meta.state).toBe("running");
+        expect(result.error.meta.details.state).toBe("running");
       }
     });
   });
@@ -93,8 +93,8 @@ describe("Lifecycle", () => {
 
       if (!result.success) {
         expect(result.error).toBeInstanceOf(KernelError);
-        expect(result.error.meta.action).toBe("start");
-        expect(result.error.meta.state).toBe("open");
+        expect(result.error.meta.details.action).toBe("start");
+        expect(result.error.meta.details.state).toBe("open");
       }
     });
 
@@ -105,8 +105,9 @@ describe("Lifecycle", () => {
       const result = lifecycle.start();
 
       expect(result.success).toBe(false);
+
       if (!result.success) {
-        expect(result.error.meta.state).toBe("running");
+        expect(result.error.meta.details.state).toBe("running");
       }
     });
   });
@@ -133,8 +134,8 @@ describe("Lifecycle", () => {
 
       if (!result.success) {
         expect(result.error).toBeInstanceOf(KernelError);
-        expect(result.error.meta.action).toBe("stop");
-        expect(result.error.meta.state).toBe("open");
+        expect(result.error.meta.details.action).toBe("stop");
+        expect(result.error.meta.details.state).toBe("open");
       }
     });
 
@@ -146,7 +147,7 @@ describe("Lifecycle", () => {
       expect(result.success).toBe(false);
 
       if (!result.success) {
-        expect(result.error.meta.state).toBe("sealed");
+        expect(result.error.meta.details.state).toBe("sealed");
       }
     });
   });

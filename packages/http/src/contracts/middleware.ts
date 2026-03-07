@@ -1,4 +1,5 @@
 import type { HttpContext } from "../contracts/context.js";
+import type { AnyHttpResponse } from "./response.js";
 
 /**
  * HTTP middleware function.
@@ -6,17 +7,13 @@ import type { HttpContext } from "../contracts/context.js";
  * @param ctx - Mutable HTTP context for the current request.
  * @param next - Invokes the next middleware in the chain.
  *
- * @returns A promise that resolves when the next middleware has been invoked, or void if not a promise.
+ * @returns A promise that resolves to an HTTP response.
  *
- * @throws {Error} If an error occurs during the execution of the middleware.
- *
- * @comity ai-jsdoc-skip
+ * @throws {HttpError} If an error occurs during the execution of the middleware.
  */
-export type HttpMiddleware = (ctx: HttpContext, next: HttpNext) => Promise<void> | void;
+export type HttpMiddleware = (ctx: HttpContext, next: HttpNext) => Promise<AnyHttpResponse>;
 
 /**
  * Function that invokes the next middleware in the chain.
- *
- * @comity ai-jsdoc-skip
  */
-export type HttpNext = () => Promise<void>;
+export type HttpNext = () => Promise<AnyHttpResponse>;

@@ -97,35 +97,23 @@ export type AuthErrorMetaViolation =
  * Auth Error metadata.
  */
 export interface AuthErrorMeta extends ErrorMeta {
-  /**
-   * The reason for the authentication error. This categorizes the type of failure and is used for error handling logic.
-   */
+  /** The reason for the authentication error */
   readonly reason: AuthErrorReason;
 
-  /**
-   * Optional subject identifier (user/session/etc). Must NOT contain sensitive data.
-   */
-  readonly subject?: string;
+  /** Additional details about the authentication error */
+  readonly details?: Readonly<{
+    /** Optional subject identifier (user/session/etc). Must NOT contain sensitive data */
+    subject?: string;
 
-  /**
-   * Optional retriable hint.
-   */
-  readonly retriable?: boolean;
+    /** Optional retriable hint */
+    retriable?: boolean;
 
-  /**
-   * Optional violation details.
-   */
-  readonly violation?: AuthErrorMetaViolation;
+    /** Optional violation details */
+    violation?: AuthErrorMetaViolation;
 
-  /**
-   * Optional policy identifier that triggered the error, if applicable.
-   */
-  readonly policy?: string;
-
-  /**
-   * Optional additional details relevant to the error. Must NOT contain sensitive data.
-   */
-  readonly details?: Record<string, unknown>;
+    /** Optional policy identifier that triggered the error, if applicable */
+    policy?: string;
+  }>;
 }
 
 /** Error messages for auth errors */

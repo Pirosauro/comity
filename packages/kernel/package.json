@@ -50,14 +50,14 @@
         "default": "./dist/cjs/index.js"
       }
     },
-    "./lifecycle": {
+    "./hooks": {
       "import": {
-        "types": "./dist/types/lifecycle/index.d.ts",
-        "default": "./dist/esm/lifecycle/index.js"
+        "types": "./dist/types/hooks/index.d.ts",
+        "default": "./dist/esm/hooks/index.js"
       },
       "require": {
-        "types": "./dist/types/lifecycle/index.d.ts",
-        "default": "./dist/cjs/lifecycle/index.js"
+        "types": "./dist/types/hooks/index.d.ts",
+        "default": "./dist/cjs/hooks/index.js"
       }
     },
     "./error": {
@@ -74,8 +74,8 @@
   },
   "typesVersions": {
     "*": {
-      "lifecycle": [
-        "./dist/types/lifecycle/index.d.ts"
+      "hooks": [
+        "./dist/types/hooks/index.d.ts"
       ],
       "error": [
         "./dist/types/error/index.d.ts"
@@ -91,7 +91,7 @@
     "@comity/primitives": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^24.11.0",
+    "@types/node": "^24.11.2",
     "typescript": "^5.9.3"
   }
 }

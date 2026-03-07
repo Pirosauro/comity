@@ -72,7 +72,7 @@ describe("RefreshSession", () => {
       originalId: "original-session",
       refreshedAt: 2000,
     });
-    expect(result).toMatchObject({
+    expect(result.value).toMatchObject({
       ...originalSession,
       id: "new-session",
       createdAt: 1000, // Original creation time preserved
@@ -104,7 +104,7 @@ describe("RefreshSession", () => {
 
     const result = await useCase.execute(input, 2000);
 
-    expect(result.expiresAt).toBe(10000);
+    expect(result.value.expiresAt).toBe(10000);
     expect(emitter.onSessionRefreshed).toHaveBeenCalledWith({
       sessionId: "new-session",
       originalId: "original-session",
@@ -121,7 +121,9 @@ describe("RefreshSession", () => {
       originalId: "missing-session",
     };
 
-    await expect(useCase.execute(input, 2000)).rejects.toThrow("Session not found");
+    const result = await useCase.execute(input, 2000);
+
+    expect(result.ok).toBe(false);
     expect(guard.assert).not.toHaveBeenCalled();
     expect(repository.update).not.toHaveBeenCalled();
     expect(emitter.onSessionRefreshed).not.toHaveBeenCalled();
@@ -151,7 +153,9 @@ describe("RefreshSession", () => {
       originalId: "original-session",
     };
 
-    await expect(useCase.execute(input, 2000)).rejects.toThrow("Refresh not allowed");
+    const result = await useCase.execute(input, 2000);
+
+    expect(result.ok).toBe(false);
     expect(repository.update).not.toHaveBeenCalled();
     expect(emitter.onSessionRefreshed).not.toHaveBeenCalled();
   });
@@ -178,7 +182,9 @@ describe("RefreshSession", () => {
       originalId: "original-session",
     };
 
-    await expect(useCase.execute(input, 2000)).rejects.toThrow("Database error");
+    const result = await useCase.execute(input, 2000);
+
+    expect(result.ok).toBe(false);
     expect(emitter.onSessionRefreshed).not.toHaveBeenCalled();
   });
 });

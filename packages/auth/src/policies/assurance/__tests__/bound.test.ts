@@ -79,7 +79,7 @@ describe("BoundAssurancePolicy", () => {
         expect(error).toBeInstanceOf(AuthError);
         const authError = error as AuthError;
         expect(authError.code).toBe("auth:assurance_invalid");
-        expect(authError.meta.policy).toBe("bound");
+        expect(authError.meta.details?.policy).toBe("bound");
       }
     });
 

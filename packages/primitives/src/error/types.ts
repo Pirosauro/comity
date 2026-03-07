@@ -25,6 +25,12 @@ export type ErrorMeta = Readonly<{
 
   /** The underlying cause of the error */
   cause?: unknown;
+
+  /** Structured domain metadata */
+  details?: Readonly<Record<string, unknown>>;
+
+  /** Diagnostic runtime context */
+  context?: Readonly<Record<string, unknown>>;
 }>;
 
 /**
@@ -47,15 +53,26 @@ export type CoreErrorReason =
   | "domain_violation";
 
 /**
+ * Type definition for JSON-serializable values
+ */
+export type JsonValue =
+  | string
+  | number
+  | boolean
+  | null
+  | JsonValue[]
+  | { [key: string]: JsonValue };
+
+/**
  * Type definition for error-like objects
  *
  * @remarks
  * This type represents any object that has the essential properties of an error (code, message, and optional metadata).
  * It allows for flexibility in error handling by accepting both instances of BaseError and plain objects that conform to this structure.
  */
-export type SafeErrorLike = Readonly<{
+export type SafeErrorPayload = Readonly<{
   /** Error code identifying the type of error. */
-  code: ErrorCode;
+  code: ErrorCode | "unknown";
 
   /** Human-readable error message. */
   message: string;
@@ -64,8 +81,14 @@ export type SafeErrorLike = Readonly<{
   httpStatus?: number;
 
   /** Timestamp indicating when the error occurred */
-  timestamp: string;
+  timestamp?: string;
 
-  /** Optional metadata providing additional context about the error. */
-  meta?: Readonly<Record<string, unknown>>;
+  /** Machine-readable reason for the error */
+  reason?: string;
+
+  /** Structured domain metadata */
+  details?: Readonly<Record<string, unknown>>;
+
+  /** Diagnostic runtime context */
+  context?: Readonly<Record<string, unknown>>;
 }>;

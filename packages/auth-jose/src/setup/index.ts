@@ -1,5 +1,5 @@
 import type { ModuleMeta } from "@comity/composition";
-import type { AuthJoseEventEmitter } from "../lifecycle/emitter.js";
+import type { AuthJoseEventObserver } from "../hooks/observer.js";
 import type { JoseAuthTokenServiceOptions } from "../types.js";
 import type { JoseAuthModuleContext, JoseAuthModuleOptions } from "./types.js";
 
@@ -17,7 +17,7 @@ export const module: ModuleMeta<JoseAuthModuleOptions, JoseAuthModuleContext> = 
   /** @inheritdoc */
   setup: async (options) => {
     return success(async (ctx) => {
-      const emitter: AuthJoseEventEmitter = {
+      const emitter: AuthJoseEventObserver = {
         /** @inheritdoc */
         onTokenVerified: (payload) => ctx.events.emit("@comity/auth-jose:token_verified", payload),
 

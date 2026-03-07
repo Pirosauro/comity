@@ -104,8 +104,8 @@ describe("resolveOrder", () => {
     if (!result.success) {
       expect(result.error).toBeInstanceOf(CompositionError);
       expect(result.error.meta.reason).toBe("cycle_detected");
-      expect(result.error.meta.cycle).toContain("moduleA");
-      expect(result.error.meta.cycle).toContain("moduleB");
+      expect(result.error.meta.details?.cycle).toContain("moduleA");
+      expect(result.error.meta.details?.cycle).toContain("moduleB");
     }
   });
 
@@ -124,7 +124,7 @@ describe("resolveOrder", () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.meta.reason).toBe("cycle_detected");
-      expect(result.error.meta.cycle).toEqual(["moduleA"]);
+      expect(result.error.meta.details?.cycle).toEqual(["moduleA"]);
     }
   });
 
@@ -144,8 +144,8 @@ describe("resolveOrder", () => {
     if (!result.success) {
       expect(result.error).toBeInstanceOf(CompositionError);
       expect(result.error.meta.reason).toBe("missing_dependency");
-      expect(result.error.meta.module).toBe("moduleA");
-      expect(result.error.meta.dependency).toBe("missing");
+      expect(result.error.meta.details?.module).toBe("moduleA");
+      expect(result.error.meta.details?.dependency).toBe("missing");
     }
   });
 

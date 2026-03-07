@@ -1,6 +1,7 @@
 import type { CreateSessionInput } from "../session-create.js";
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { AuthError } from "../../error/auth.js";
 import { CreateSession } from "../session-create.js";
 
 describe("CreateSession", () => {
@@ -91,7 +92,7 @@ describe("CreateSession", () => {
       createdAt: 1000,
       assuranceScore: 1,
     });
-    expect(result).toMatchObject({
+    expect(result.value).toMatchObject({
       id: "session-1",
       createdAt: 1000,
       verifiedAt: 1000,
@@ -150,7 +151,7 @@ describe("CreateSession", () => {
 
     const result = await useCase.execute(input, 1000);
 
-    expect(result.expiresAt).toBe(5000);
+    expect(result.value.expiresAt).toBe(5000);
   });
 
   it("should create session with refresh enabled", async () => {
@@ -171,7 +172,7 @@ describe("CreateSession", () => {
 
     const result = await useCase.execute(input, 1000);
 
-    expect(result.refresh).toEqual({ enabled: true, expiresAt: 10000 });
+    expect(result.value.refresh).toEqual({ enabled: true, expiresAt: 10000 });
     expect(guard.assertRefreshable).toHaveBeenCalledWith(
       expect.objectContaining({ id: "session-4" }),
       1000
@@ -196,7 +197,7 @@ describe("CreateSession", () => {
 
     const result = await useCase.execute(input, 1000);
 
-    expect(result.refresh).toEqual({ enabled: false });
+    expect(result.value.refresh).toEqual({ enabled: false });
     expect(guard.assertRefreshable).not.toHaveBeenCalled();
   });
 
@@ -218,7 +219,7 @@ describe("CreateSession", () => {
 
     const result = await useCase.execute(input, 3000);
 
-    expect(result.stepUp).toEqual({
+    expect(result.value.stepUp).toEqual({
       parent: "parent-session",
       at: 3000,
     });
@@ -242,7 +243,7 @@ describe("CreateSession", () => {
 
     const result = await useCase.execute(input, 1000);
 
-    expect(result.scopes).toEqual(["read", "write"]);
+    expect(result.value.scopes).toEqual(["read", "write"]);
   });
 
   it("should throw if guard rejects session", async () => {
@@ -261,10 +262,12 @@ describe("CreateSession", () => {
     });
 
     guard.assertAssurance.mockImplementation(() => {
-      throw new Error("Assurance failed");
+      throw new AuthError("assurance_required");
     });
 
-    await expect(useCase.execute(input, 1000)).rejects.toThrow("Assurance failed");
+    const result = await useCase.execute(input, 1000);
+
+    expect(result.ok).toBe(false);
     expect(repository.create).not.toHaveBeenCalled();
     expect(emitter.onSessionCreated).not.toHaveBeenCalled();
   });
@@ -286,7 +289,9 @@ describe("CreateSession", () => {
 
     repository.create.mockRejectedValue(new Error("Database error"));
 
-    await expect(useCase.execute(input, 1000)).rejects.toThrow("Database error");
+    const result = await useCase.execute(input, 1000);
+
+    expect(result.ok).toBe(false);
     expect(emitter.onSessionCreated).not.toHaveBeenCalled();
   });
 });

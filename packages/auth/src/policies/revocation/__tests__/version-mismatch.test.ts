@@ -52,7 +52,7 @@ describe("VersionMismatchRevocationPolicy", () => {
         const authError = error as AuthError;
 
         expect(authError.code).toBe("auth:session_revoked");
-        expect(authError.meta.policy).toBe("version_mismatch");
+        expect(authError.meta.details?.policy).toBe("version_mismatch");
       }
     });
 
@@ -66,8 +66,8 @@ describe("VersionMismatchRevocationPolicy", () => {
       } catch (error) {
         const authError = error as AuthError;
 
-        expect((authError.meta.details as any).expectedVersion).toBe(3);
-        expect((authError.meta.details as any).actualVersion).toBe(1);
+        expect((authError.meta.context as any).expectedVersion).toBe(3);
+        expect((authError.meta.context as any).actualVersion).toBe(1);
       }
     });
 

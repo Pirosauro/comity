@@ -58,7 +58,7 @@ describe("MaxRefreshAgePolicy", () => {
         expect(error).toBeInstanceOf(AuthError);
         const authError = error as AuthError;
         expect(authError.code).toBe("auth:refresh_not_allowed");
-        expect(authError.meta.policy).toBe("max_refresh_age");
+        expect(authError.meta.details?.policy).toBe("max_refresh_age");
       }
     });
 
@@ -72,8 +72,8 @@ describe("MaxRefreshAgePolicy", () => {
       } catch (error) {
         const authError = error as AuthError;
 
-        expect((authError.meta.details as any).currentAge).toBe(1000);
-        expect((authError.meta.details as any).maxAge).toBe(500);
+        expect((authError.meta.context as any).currentAge).toBe(1000);
+        expect((authError.meta.context as any).maxAge).toBe(500);
       }
     });
 

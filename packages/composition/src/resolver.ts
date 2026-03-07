@@ -56,7 +56,9 @@ export function resolveOrder(input: readonly ModuleMeta[]): Result<ModuleMeta[],
     if (map.has(mod.name)) {
       return failure(
         new CompositionError("resolution_failed", {
-          module: mod.name,
+          details: {
+            module: mod.name,
+          },
         })
       );
     }
@@ -69,8 +71,10 @@ export function resolveOrder(input: readonly ModuleMeta[]): Result<ModuleMeta[],
       if (map.has(incompatible)) {
         return failure(
           new CompositionError("incompatible", {
-            module: mod.name,
-            dependency: incompatible,
+            details: {
+              module: mod.name,
+              dependency: incompatible,
+            },
           })
         );
       }
@@ -100,8 +104,10 @@ export function resolveOrder(input: readonly ModuleMeta[]): Result<ModuleMeta[],
     if (visiting.has(mod.name)) {
       return failure(
         new CompositionError("cycle_detected", {
-          module: mod.name,
-          cycle: [...visiting, mod.name],
+          details: {
+            module: mod.name,
+            cycle: [...visiting, mod.name],
+          },
         })
       );
     }
@@ -114,8 +120,10 @@ export function resolveOrder(input: readonly ModuleMeta[]): Result<ModuleMeta[],
       if (depName === mod.name) {
         return failure(
           new CompositionError("cycle_detected", {
-            module: mod.name,
-            cycle: [mod.name],
+            details: {
+              module: mod.name,
+              cycle: [mod.name],
+            },
           })
         );
       }
@@ -126,11 +134,14 @@ export function resolveOrder(input: readonly ModuleMeta[]): Result<ModuleMeta[],
         if (!depConfig?.optional) {
           return failure(
             new CompositionError("missing_dependency", {
-              module: mod.name,
-              dependency: depName,
+              details: {
+                module: mod.name,
+                dependency: depName,
+              },
             })
           );
         }
+
         continue;
       }
 

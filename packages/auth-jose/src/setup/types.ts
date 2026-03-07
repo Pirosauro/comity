@@ -1,6 +1,6 @@
 import type { AuthTokenService } from "@comity/auth";
 import type { ModuleSetupContext } from "@comity/composition";
-import type { AuthJoseEventEmitter } from "../lifecycle/emitter.js";
+import type { AuthJoseEventObserver } from "../hooks/observer.js";
 import type { JoseAuthTokenServiceOptions } from "../types.js";
 
 import type { AUTH_JOSE_TOKEN } from "./constants.js";
@@ -16,13 +16,7 @@ export type JoseAuthModuleServices = {
 /**
  * Hooks exposed by the module.
  */
-export type JoseAuthModuleHooks = {
-  /** Emitted when the module is initialized. */
-  "@comity/auth-jose:initialized": {
-    /** The token service provided by the module. */
-    token: typeof AUTH_JOSE_TOKEN;
-  };
-};
+export type JoseAuthModuleHooks = {};
 
 /**
  * Events emitted by the module.
@@ -31,12 +25,12 @@ export type JoseAuthModuleEvents = {
   /**
    * Emitted when a token is successfully verified.
    */
-  "@comity/auth-jose:token_verified": Parameters<AuthJoseEventEmitter["onTokenVerified"]>[0];
+  "@comity/auth-jose:token_verified": Parameters<AuthJoseEventObserver["onTokenVerified"]>[0];
 
   /**
    * Emitted when a token is found to be invalid.
    */
-  "@comity/auth-jose:token_invalid": Parameters<AuthJoseEventEmitter["onTokenInvalid"]>[0];
+  "@comity/auth-jose:token_invalid": Parameters<AuthJoseEventObserver["onTokenInvalid"]>[0];
 };
 
 /**

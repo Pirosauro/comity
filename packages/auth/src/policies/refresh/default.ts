@@ -17,12 +17,12 @@ export class DefaultRefreshPolicy implements AuthSessionRefreshPolicy {
 
     // Refresh must be enabled
     if (!refresh || refresh.enabled !== true) {
-      throw new AuthError("refresh_not_allowed", { policy: "default" });
+      throw new AuthError("refresh_not_allowed", { details: { policy: "default" } });
     }
 
     // Refresh expiration (if present) must not be exceeded
     if (typeof refresh.expiresAt === "number" && refresh.expiresAt <= now) {
-      throw new AuthError("refresh_expired", { policy: "default" });
+      throw new AuthError("refresh_expired", { details: { policy: "default" } });
     }
   }
 }

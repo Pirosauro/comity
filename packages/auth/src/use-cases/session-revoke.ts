@@ -1,6 +1,6 @@
 import type { AuthSessionRepository } from "../contracts/session-repository.js";
 import type { AuthSessionId } from "../contracts/session.js";
-import type { AuthSessionEmitter } from "../lifecycle/session.js";
+import type { AuthSessionObserver } from "../hooks/session.js";
 
 /**
  * Input used to revoke a session.
@@ -29,16 +29,16 @@ export class RevokeSession {
   /** Repository for session persistence */
   #repository: AuthSessionRepository;
 
-  /** Event emitter for session lifecycle events */
-  #emitter: AuthSessionEmitter;
+  /** Event observer for session lifecycle events */
+  #observer: AuthSessionObserver;
 
   /**
    * @param repository - Session repository
-   * @param emitter - Event emitter for lifecycle events
+   * @param observer - Event observer for lifecycle events
    */
-  constructor(repository: AuthSessionRepository, emitter: AuthSessionEmitter) {
+  constructor(repository: AuthSessionRepository, observer: AuthSessionObserver) {
     this.#repository = repository;
-    this.#emitter = emitter;
+    this.#observer = observer;
   }
 
   /**
@@ -56,11 +56,13 @@ export class RevokeSession {
       await this.#repository.revoke(session.id, input.reason, now, input.actor);
 
       // 3. Emit lifecycle event
-      this.#emitter.onSessionRevoked({
+      this.#observer.onSessionRevoked({
         sessionId: session.id,
         reason: input.reason,
         revokedAt: now,
       });
-    } catch (error) {}
+    } catch (error) {
+      // Revokation is a best-effort operation: log error but do not throw
+    }
   }
 }

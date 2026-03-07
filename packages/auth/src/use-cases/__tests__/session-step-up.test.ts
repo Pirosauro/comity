@@ -2,7 +2,6 @@ import type { AuthSession } from "../../contracts/session.js";
 import type { StepUpSessionInput } from "../session-step-up.js";
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { AuthError } from "../../error/auth.js";
 import { StepUpSession } from "../session-step-up.js";
 
 describe("StepUpSession", () => {
@@ -106,7 +105,7 @@ describe("StepUpSession", () => {
       assuranceScore: 2,
       at: 2000,
     });
-    expect(result.stepUp).toEqual({
+    expect(result.value.stepUp).toEqual({
       parent: "parent-session",
       at: 2000,
     });
@@ -192,7 +191,7 @@ describe("StepUpSession", () => {
 
     const result = await useCase.execute(input, 2000);
 
-    expect(result.expiresAt).toBe(10000);
+    expect(result.value.expiresAt).toBe(10000);
   });
 
   it("should step up with scopes", async () => {
@@ -229,7 +228,7 @@ describe("StepUpSession", () => {
 
     const result = await useCase.execute(input, 2000);
 
-    expect(result.scopes).toEqual(["admin", "write"]);
+    expect(result.value.scopes).toEqual(["admin", "write"]);
   });
 
   it("should throw if parent session not found", async () => {
@@ -243,7 +242,9 @@ describe("StepUpSession", () => {
       transport: { type: "bearer" },
     };
 
-    await expect(useCase.execute(input, 2000)).rejects.toThrow("Session not found");
+    const result = await useCase.execute(input, 2000);
+
+    expect(result.ok).toBe(false);
     expect(evaluator.evaluate).not.toHaveBeenCalled();
   });
 
@@ -274,7 +275,9 @@ describe("StepUpSession", () => {
       transport: { type: "bearer" },
     };
 
-    await expect(useCase.execute(input, 2000)).rejects.toThrow("Parent session expired");
+    const result = await useCase.execute(input, 2000);
+
+    expect(result.ok).toBe(false);
     expect(evaluator.evaluate).not.toHaveBeenCalled();
   });
 
@@ -309,7 +312,9 @@ describe("StepUpSession", () => {
       transport: { type: "bearer" },
     };
 
-    await expect(useCase.execute(input, 2000)).rejects.toThrow(AuthError);
+    const result = await useCase.execute(input, 2000);
+
+    expect(result.ok).toBe(false);
     expect(repository.create).not.toHaveBeenCalled();
   });
 
@@ -344,7 +349,9 @@ describe("StepUpSession", () => {
       transport: { type: "bearer" },
     };
 
-    await expect(useCase.execute(input, 2000)).rejects.toThrow(AuthError);
+    const result = await useCase.execute(input, 2000);
+
+    expect(result.ok).toBe(false);
   });
 
   it("should throw if new session fails guard validation", async () => {
@@ -384,7 +391,9 @@ describe("StepUpSession", () => {
       transport: { type: "bearer" },
     };
 
-    await expect(useCase.execute(input, 2000)).rejects.toThrow("New session invalid");
+    const result = await useCase.execute(input, 2000);
+
+    expect(result.ok).toBe(false);
     expect(repository.create).not.toHaveBeenCalled();
   });
 
@@ -421,7 +430,9 @@ describe("StepUpSession", () => {
       transport: { type: "bearer" },
     };
 
-    await expect(useCase.execute(input, 2000)).rejects.toThrow("Database error");
+    const result = await useCase.execute(input, 2000);
+
+    expect(result.ok).toBe(false);
     expect(emitter.onStepUpCompleted).not.toHaveBeenCalled();
   });
 });

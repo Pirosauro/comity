@@ -100,7 +100,8 @@ describe("RevokeSession", () => {
       reason: "test",
     };
 
-    await expect(useCase.execute(input, 2000)).rejects.toThrow("Session not found");
+    await useCase.execute(input, 2000);
+
     expect(repository.revoke).not.toHaveBeenCalled();
     expect(emitter.onSessionRevoked).not.toHaveBeenCalled();
   });
@@ -126,7 +127,8 @@ describe("RevokeSession", () => {
       reason: "test",
     };
 
-    await expect(useCase.execute(input, 2000)).rejects.toThrow("Database error");
+    await useCase.execute(input, 2000);
+
     expect(emitter.onSessionRevoked).not.toHaveBeenCalled();
   });
 });

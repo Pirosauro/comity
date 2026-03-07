@@ -66,7 +66,9 @@ export async function load(
     if (isFailure(setup)) {
       return failure(
         new CompositionError("setup_failed", {
-          module: mod.name,
+          details: {
+            module: mod.name,
+          },
           cause: setup.error,
         })
       );
@@ -79,7 +81,9 @@ export async function load(
     if (isFailure(result)) {
       return failure(
         new CompositionError("apply_failed", {
-          module: mod.name,
+          details: {
+            module: mod.name,
+          },
           cause: result.error,
         })
       );

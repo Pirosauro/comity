@@ -68,7 +68,7 @@ describe("FreshnessAssurancePolicy", () => {
         expect.fail("Should have thrown");
       } catch (error) {
         const authError = error as AuthError;
-        expect(authError.meta.policy).toBe("freshness");
+        expect(authError.meta.details?.policy).toBe("freshness");
       }
     });
 

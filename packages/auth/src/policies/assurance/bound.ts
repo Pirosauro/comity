@@ -33,8 +33,10 @@ export class BoundAssurancePolicy implements AuthSessionAssurancePolicy {
 
       if (actual !== expected) {
         throw new AuthError("assurance_invalid", {
-          policy: "bound",
           details: {
+            policy: "bound",
+          },
+          context: {
             expected: { [key]: expected },
             actual: { [key]: actual },
           },

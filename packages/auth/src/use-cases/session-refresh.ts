@@ -1,7 +1,7 @@
 import type { AuthSessionRepository } from "../contracts/session-repository.js";
 import type { AuthSession, AuthSessionId } from "../contracts/session.js";
 import type { AuthGuard } from "../guard.js";
-import type { AuthSessionEmitter } from "../lifecycle/session.js";
+import type { AuthSessionObserver } from "../hooks/session.js";
 
 import type { Result } from "@comity/primitives/result";
 import { AuthError } from "../error/auth.js";
@@ -30,18 +30,18 @@ export class RefreshSession {
   /** Guard service for policy enforcement */
   #guard: AuthGuard;
 
-  /** Event emitter for session lifecycle events */
-  #emitter: AuthSessionEmitter;
+  /** Event observer for session lifecycle events */
+  #observer: AuthSessionObserver;
 
   /**
    * @param repository - Session repository
    * @param guard - Guard used to validate the original session
-   * @param emitter - Event emitter for lifecycle events
+   * @param observer - Event observer for lifecycle events
    */
-  constructor(repository: AuthSessionRepository, guard: AuthGuard, emitter: AuthSessionEmitter) {
+  constructor(repository: AuthSessionRepository, guard: AuthGuard, observer: AuthSessionObserver) {
     this.#repository = repository;
     this.#guard = guard;
-    this.#emitter = emitter;
+    this.#observer = observer;
   }
 
   /**
@@ -65,7 +65,9 @@ export class RefreshSession {
       // Defensive check: original session must exist
       if (!original) {
         throw new AuthError("session_not_found", {
-          subject: input.originalId,
+          details: {
+            subject: input.originalId,
+          },
         });
       }
 
@@ -85,7 +87,7 @@ export class RefreshSession {
       await this.#repository.update(session);
 
       // 5. Emit event
-      this.#emitter.onSessionRefreshed({
+      this.#observer.onSessionRefreshed({
         sessionId: session.id,
         originalId: original.id,
         refreshedAt: now,
@@ -101,8 +103,10 @@ export class RefreshSession {
       return {
         ok: false,
         error: new AuthError("internal_error", {
-          policy: "persistence",
-          subject: input.id,
+          details: {
+            policy: "persistence",
+            subject: input.id,
+          },
           cause: error,
         }),
       };

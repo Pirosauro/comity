@@ -48,15 +48,17 @@ export interface ModuleMeta<
   readonly priority?: number;
 
   /** Hard dependencies */
-  readonly dependsOn?: Record<
-    string,
-    {
-      /** Version constraint */
-      readonly version?: string;
+  readonly dependsOn?: Readonly<
+    Record<
+      string,
+      {
+        /** Version constraint */
+        version?: string;
 
-      /** Whether the dependency is optional */
-      readonly optional?: boolean;
-    }
+        /** Whether the dependency is optional */
+        optional?: boolean;
+      }
+    >
   >;
 
   /** Incompatible Modules */

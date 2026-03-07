@@ -23,8 +23,10 @@ export class VersionMismatchRevocationPolicy implements AuthSessionRevocationPol
 
     if (typeof version !== "number" || version < this.#version) {
       throw new AuthError("session_revoked", {
-        policy: "version_mismatch",
         details: {
+          policy: "version_mismatch",
+        },
+        context: {
           expectedVersion: this.#version,
           actualVersion: version,
         },

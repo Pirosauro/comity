@@ -63,7 +63,7 @@ describe("ScoreAssurancePolicy", () => {
         expect.fail("Should have thrown");
       } catch (error) {
         const authError = error as AuthError;
-        expect(authError.meta.policy).toBe("score");
+        expect(authError.meta.details?.policy).toBe("score");
       }
     });
 

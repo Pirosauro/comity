@@ -7,7 +7,7 @@ import type { AuthSessionRepository } from "../contracts/session-repository.js";
 import type { AuthSessionTransport } from "../contracts/session-transport.js";
 import type { AuthSession, AuthSessionId } from "../contracts/session.js";
 import type { AuthGuard } from "../guard.js";
-import type { AuthSessionEmitter } from "../lifecycle/session.js";
+import type { AuthSessionObserver } from "../hooks/session.js";
 
 import { AuthError } from "../error/auth.js";
 
@@ -44,8 +44,8 @@ export class CreateSession {
   /** Evaluator for session assurance */
   #evaluator: AuthSessionAssuranceEvaluator;
 
-  /** Event emitter for session lifecycle events */
-  #emitter: AuthSessionEmitter;
+  /** Event observer for session lifecycle events */
+  #observer: AuthSessionObserver;
 
   /** Guard service for policy enforcement */
   #guard: AuthGuard;
@@ -53,18 +53,18 @@ export class CreateSession {
   /**
    * @param repository - Session repository
    * @param evaluator - Assurance evaluator
-   * @param emitter - Event emitter for lifecycle events
+   * @param observer - Event observer for lifecycle events
    * @param guard - Guard used to validate created sessions
    */
   constructor(
     repository: AuthSessionRepository,
     evaluator: AuthSessionAssuranceEvaluator,
-    emitter: AuthSessionEmitter,
+    observer: AuthSessionObserver,
     guard: AuthGuard
   ) {
     this.#repository = repository;
     this.#evaluator = evaluator;
-    this.#emitter = emitter;
+    this.#observer = observer;
     this.#guard = guard;
   }
 
@@ -130,7 +130,7 @@ export class CreateSession {
       await this.#repository.create(session);
 
       // 5. Emit event
-      this.#emitter.onSessionCreated({
+      this.#observer.onSessionCreated({
         sessionId: session.id,
         createdAt: session.createdAt,
         assuranceScore: session.assurance.score,
@@ -145,7 +145,9 @@ export class CreateSession {
       return {
         ok: false,
         error: new AuthError("internal_error", {
-          policy: "persistence",
+          details: {
+            policy: "persistence",
+          },
           cause: error,
         }),
       };

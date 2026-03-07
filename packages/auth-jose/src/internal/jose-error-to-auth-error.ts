@@ -1,5 +1,7 @@
-import { AuthError } from "@comity/auth/error";
+import type { AuthErrorMeta } from "@comity/auth/error";
 import type { JOSEError } from "jose/errors";
+
+import { AuthError } from "@comity/auth/error";
 
 /**
  * Maps JOSE errors to standardized JWT reasons.
@@ -17,28 +19,31 @@ export function joseErrorToAuthError(
 ): AuthError {
   const { message, code } =
     error instanceof Error ? (error as JOSEError) : { message: "Unknown error", code: "UNKNOWN" };
-  const details = { adapter: "jose", code, message, ...(sessionId ? { sessionId } : {}) };
+  const meta: Omit<AuthErrorMeta, "reason"> = {
+    details: {
+      policy: "jwt",
+      ...(sessionId ? { subject: sessionId } : {}),
+    },
+    context: {
+      adapter: "jose",
+      error: {
+        code,
+        message,
+      },
+    },
+  };
 
   // Signing errors are always credential/config related
   if (operation === "sign") {
-    return new AuthError("invalid_credentials", {
-      policy: "jwt",
-      details,
-    });
+    return new AuthError("invalid_credentials", meta);
   }
 
   switch (code) {
     // Expiration
     case "ERR_JWT_EXPIRED":
-      return new AuthError("token_expired", {
-        policy: "jwt",
-        details,
-      });
+      return new AuthError("token_expired", meta);
 
     default:
-      return new AuthError("token_invalid", {
-        policy: "jwt",
-        details,
-      });
+      return new AuthError("token_invalid", meta);
   }
 }

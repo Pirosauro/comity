@@ -24,8 +24,10 @@ export class FreshnessAssurancePolicy implements AuthSessionAssurancePolicy {
     // Expired assurance
     if (age > this.#age) {
       throw new AuthError("assurance_expired", {
-        policy: "freshness",
         details: {
+          policy: "freshness",
+        },
+        context: {
           currentAge: age,
           maxAge: this.#age,
         },

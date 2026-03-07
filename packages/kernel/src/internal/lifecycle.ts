@@ -1,5 +1,5 @@
 import type { Result } from "@comity/primitives/result";
-import type { KernelLifecycleState } from "../lifecycle/types.js";
+import type { KernelLifecycleState } from "../hooks/types.js";
 
 import { failure, success } from "@comity/primitives/result";
 import { KernelError } from "../error/kernel.js";
@@ -63,8 +63,10 @@ export class Lifecycle {
     if (this.#state !== "open") {
       return failure(
         new KernelError("invalid_lifecycle_state", {
-          action: "seal",
-          state: this.#state,
+          details: {
+            action: "seal",
+            state: this.#state,
+          },
         })
       );
     }
@@ -89,8 +91,10 @@ export class Lifecycle {
     if (this.#state !== "sealed") {
       return failure(
         new KernelError("invalid_lifecycle_state", {
-          action: "start",
-          state: this.#state,
+          details: {
+            action: "start",
+            state: this.#state,
+          },
         })
       );
     }
@@ -115,8 +119,10 @@ export class Lifecycle {
     if (this.#state !== "running") {
       return failure(
         new KernelError("invalid_lifecycle_state", {
-          action: "stop",
-          state: this.#state,
+          details: {
+            action: "stop",
+            state: this.#state,
+          },
         })
       );
     }

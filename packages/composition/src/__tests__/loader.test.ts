@@ -77,7 +77,7 @@ describe("load", () => {
     expect(result.success).toBe(false);
     expect(result.error).toBeInstanceOf(CompositionError);
     expect(result.error.meta.reason).toBe("setup_failed");
-    expect(result.error.meta.module).toBe("moduleA");
+    expect(result.error.meta.details?.module).toBe("moduleA");
   });
 
   it("should handle apply failure", async () => {
@@ -103,7 +103,7 @@ describe("load", () => {
     expect(result.success).toBe(false);
     expect(result.error).toBeInstanceOf(CompositionError);
     expect(result.error.meta.reason).toBe("apply_failed");
-    expect(result.error.meta.module).toBe("moduleA");
+    expect(result.error.meta.details?.module).toBe("moduleA");
   });
 
   it("should pass options to setup", async () => {

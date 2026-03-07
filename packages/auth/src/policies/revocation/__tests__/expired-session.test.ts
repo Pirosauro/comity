@@ -62,7 +62,7 @@ describe("ExpiredSessionRevocationPolicy", () => {
         const authError = error as AuthError;
 
         expect(authError.code).toBe("auth:session_expired");
-        expect(authError.meta.policy).toBe("expired_session");
+        expect(authError.meta.details?.policy).toBe("expired_session");
       }
     });
 

@@ -5,9 +5,9 @@ import type { AuthSessionAssurancePolicy } from "../contracts/session-assurance-
 import type { AuthSessionRefreshPolicy } from "../contracts/session-refresh-policy.js";
 import type { AuthSessionRepository } from "../contracts/session-repository.js";
 import type { AuthSessionRevocationPolicy } from "../contracts/session-revocation-policy.js";
-import type { AuthEvaluationEmitter } from "../lifecycle/evaluation.js";
-import type { AuthRefreshEvaluationEmitter } from "../lifecycle/refresh.js";
-import type { AuthSessionEmitter } from "../lifecycle/session.js";
+import type { AuthEvaluationObserver } from "../hooks/evaluation.js";
+import type { AuthRefreshEvaluationObserver } from "../hooks/refresh.js";
+import type { AuthSessionObserver } from "../hooks/session.js";
 
 import type { AUTH_TOKEN } from "./constants.js";
 
@@ -23,33 +23,35 @@ export type AuthModuleHooks = {
 /** Events emitted by the module */
 export type AuthModuleEvents = {
   /** Emitted when a session passes all validation checks */
-  "@comity/auth:session_validated": Parameters<AuthEvaluationEmitter["onSessionValidated"]>[0];
+  "@comity/auth:session_validated": Parameters<AuthEvaluationObserver["onSessionValidated"]>[0];
 
   /** Emitted when assurance requirements are not met */
-  "@comity/auth:assurance_rejected": Parameters<AuthEvaluationEmitter["onAssuranceRejected"]>[0];
+  "@comity/auth:assurance_rejected": Parameters<AuthEvaluationObserver["onAssuranceRejected"]>[0];
 
   /** Emitted when a session fails validation */
-  "@comity/auth:session_invalid": Parameters<AuthEvaluationEmitter["onSessionInvalid"]>[0];
+  "@comity/auth:session_invalid": Parameters<AuthEvaluationObserver["onSessionInvalid"]>[0];
 
   /** Emitted when a refresh request passes validation */
   "@comity/auth:refresh_validated": Parameters<
-    AuthRefreshEvaluationEmitter["onRefreshValidated"]
+    AuthRefreshEvaluationObserver["onRefreshValidated"]
   >[0];
 
   /** Emitted when a refresh request is rejected */
-  "@comity/auth:refresh_rejected": Parameters<AuthRefreshEvaluationEmitter["onRefreshRejected"]>[0];
+  "@comity/auth:refresh_rejected": Parameters<
+    AuthRefreshEvaluationObserver["onRefreshRejected"]
+  >[0];
 
   /** Emitted after a new session is successfully created */
-  "@comity/auth:session_created": Parameters<AuthSessionEmitter["onSessionCreated"]>[0];
+  "@comity/auth:session_created": Parameters<AuthSessionObserver["onSessionCreated"]>[0];
 
   /** Emitted after a session is successfully refreshed */
-  "@comity/auth:session_refreshed": Parameters<AuthSessionEmitter["onSessionRefreshed"]>[0];
+  "@comity/auth:session_refreshed": Parameters<AuthSessionObserver["onSessionRefreshed"]>[0];
 
   /** Emitted after a session is successfully revoked */
-  "@comity/auth:session_revoked": Parameters<AuthSessionEmitter["onSessionRevoked"]>[0];
+  "@comity/auth:session_revoked": Parameters<AuthSessionObserver["onSessionRevoked"]>[0];
 
   /** Emitted after step-up authentication is successfully completed */
-  "@comity/auth:step_up_completed": Parameters<AuthSessionEmitter["onStepUpCompleted"]>[0];
+  "@comity/auth:step_up_completed": Parameters<AuthSessionObserver["onStepUpCompleted"]>[0];
 };
 
 /**

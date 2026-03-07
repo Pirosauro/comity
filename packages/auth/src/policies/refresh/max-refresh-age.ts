@@ -23,8 +23,10 @@ export class MaxRefreshAgePolicy implements AuthSessionRefreshPolicy {
 
     if (age > this.#age) {
       throw new AuthError("refresh_not_allowed", {
-        policy: "max_refresh_age",
         details: {
+          policy: "max_refresh_age",
+        },
+        context: {
           currentAge: age,
           maxAge: this.#age,
         },

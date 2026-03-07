@@ -11,7 +11,7 @@ export class StepUpRequiredPolicy implements AuthSessionAssurancePolicy {
   assert(session: AuthSession): void {
     // Step-up required
     if (!session.stepUp || typeof session.stepUp !== "object") {
-      throw new AuthError("assurance_step_up_required", { policy: "step_up" });
+      throw new AuthError("assurance_step_up_required", { details: { policy: "step_up" } });
     }
   }
 }

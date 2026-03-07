@@ -32,7 +32,7 @@ describe("checkSessionInvariants", () => {
 
       if (!result.ok) {
         expect(result.error).toBeInstanceOf(AuthError);
-        expect(result.error.meta.violation).toBe("session_id_missing");
+        expect(result.error.meta.details?.violation).toBe("session_id_missing");
       }
     });
 
@@ -42,7 +42,7 @@ describe("checkSessionInvariants", () => {
       expect(result.ok).toBe(false);
 
       if (!result.ok) {
-        expect(result.error.meta.violation).toBe("session_id_missing");
+        expect(result.error.meta.details?.violation).toBe("session_id_missing");
       }
     });
   });
@@ -60,7 +60,7 @@ describe("checkSessionInvariants", () => {
       expect(result.ok).toBe(false);
 
       if (!result.ok) {
-        expect(result.error.meta.violation).toBe("created_at_invalid");
+        expect(result.error.meta.details?.violation).toBe("created_at_invalid");
       }
     });
 
@@ -70,7 +70,7 @@ describe("checkSessionInvariants", () => {
       expect(result.ok).toBe(false);
 
       if (!result.ok) {
-        expect(result.error.meta.violation).toBe("created_at_invalid");
+        expect(result.error.meta.details?.violation).toBe("created_at_invalid");
       }
     });
 
@@ -80,7 +80,7 @@ describe("checkSessionInvariants", () => {
       expect(result.ok).toBe(false);
 
       if (!result.ok) {
-        expect(result.error.meta.violation).toBe("created_at_invalid");
+        expect(result.error.meta.details?.violation).toBe("created_at_invalid");
       }
     });
 
@@ -90,7 +90,7 @@ describe("checkSessionInvariants", () => {
       expect(result.ok).toBe(false);
 
       if (!result.ok) {
-        expect(result.error.meta.violation).toBe("created_at_invalid");
+        expect(result.error.meta.details?.violation).toBe("created_at_invalid");
       }
     });
   });
@@ -107,7 +107,7 @@ describe("checkSessionInvariants", () => {
 
       expect(result.ok).toBe(false);
       if (!result.ok) {
-        expect(result.error.meta.violation).toBe("verified_at_invalid");
+        expect(result.error.meta.details?.violation).toBe("verified_at_invalid");
       }
     });
 
@@ -135,7 +135,7 @@ describe("checkSessionInvariants", () => {
       expect(result.ok).toBe(false);
 
       if (!result.ok) {
-        expect(result.error.meta.violation).toBe("expires_at_invalid");
+        expect(result.error.meta.details?.violation).toBe("expires_at_invalid");
       }
     });
 
@@ -145,7 +145,7 @@ describe("checkSessionInvariants", () => {
       expect(result.ok).toBe(false);
 
       if (!result.ok) {
-        expect(result.error.meta.violation).toBe("expires_at_invalid");
+        expect(result.error.meta.details?.violation).toBe("expires_at_invalid");
       }
     });
 
@@ -171,7 +171,7 @@ describe("checkSessionInvariants", () => {
       expect(result.ok).toBe(false);
 
       if (!result.ok) {
-        expect(result.error.meta.violation).toBe("assurance_missing");
+        expect(result.error.meta.details?.violation).toBe("assurance_missing");
       }
     });
 
@@ -181,7 +181,7 @@ describe("checkSessionInvariants", () => {
       expect(result.ok).toBe(false);
 
       if (!result.ok) {
-        expect(result.error.meta.violation).toBe("assurance_missing");
+        expect(result.error.meta.details?.violation).toBe("assurance_missing");
       }
     });
 
@@ -198,7 +198,7 @@ describe("checkSessionInvariants", () => {
         expect(result.ok).toBe(false);
 
         if (!result.ok) {
-          expect(result.error.meta.violation).toBe("assurance_methods_invalid");
+          expect(result.error.meta.details?.violation).toBe("assurance_methods_invalid");
         }
       });
 
@@ -214,7 +214,7 @@ describe("checkSessionInvariants", () => {
         expect(result.ok).toBe(false);
 
         if (!result.ok) {
-          expect(result.error.meta.violation).toBe("assurance_methods_invalid");
+          expect(result.error.meta.details?.violation).toBe("assurance_methods_invalid");
         }
       });
 
@@ -262,7 +262,7 @@ describe("checkSessionInvariants", () => {
         expect(result.ok).toBe(false);
 
         if (!result.ok) {
-          expect(result.error.meta.violation).toBe("assurance_proof_invalid");
+          expect(result.error.meta.details?.violation).toBe("assurance_proof_invalid");
         }
       });
     });
@@ -304,7 +304,7 @@ describe("checkSessionInvariants", () => {
         expect(result.ok).toBe(false);
 
         if (!result.ok) {
-          expect(result.error.meta.violation).toBe("assurance_score_invalid");
+          expect(result.error.meta.details?.violation).toBe("assurance_score_invalid");
         }
       });
 
@@ -320,7 +320,7 @@ describe("checkSessionInvariants", () => {
         expect(result.ok).toBe(false);
 
         if (!result.ok) {
-          expect(result.error.meta.violation).toBe("assurance_score_invalid");
+          expect(result.error.meta.details?.violation).toBe("assurance_score_invalid");
         }
       });
     });
@@ -350,7 +350,7 @@ describe("checkSessionInvariants", () => {
         expect(result.ok).toBe(false);
 
         if (!result.ok) {
-          expect(result.error.meta.violation).toBe("assurance_evaluated_at_invalid");
+          expect(result.error.meta.details?.violation).toBe("assurance_evaluated_at_invalid");
         }
       });
 
@@ -366,7 +366,7 @@ describe("checkSessionInvariants", () => {
         expect(result.ok).toBe(false);
 
         if (!result.ok) {
-          expect(result.error.meta.violation).toBe("assurance_evaluated_at_invalid");
+          expect(result.error.meta.details?.violation).toBe("assurance_evaluated_at_invalid");
         }
       });
     });
@@ -408,7 +408,7 @@ describe("checkSessionInvariants", () => {
         expect(result.ok).toBe(false);
 
         if (!result.ok) {
-          expect(result.error.meta.violation).toBe("assurance_version_invalid");
+          expect(result.error.meta.details?.violation).toBe("assurance_version_invalid");
         }
       });
     });
@@ -457,7 +457,7 @@ describe("checkSessionInvariants", () => {
         expect(result.ok).toBe(false);
 
         if (!result.ok) {
-          expect(result.error.meta.violation).toBe("assurance_context_invalid");
+          expect(result.error.meta.details?.violation).toBe("assurance_context_invalid");
         }
       });
 
@@ -476,7 +476,7 @@ describe("checkSessionInvariants", () => {
         expect(result.ok).toBe(false);
 
         if (!result.ok) {
-          expect(result.error.meta.violation).toBe("assurance_context_invalid");
+          expect(result.error.meta.details?.violation).toBe("assurance_context_invalid");
         }
       });
     });
@@ -499,7 +499,7 @@ describe("checkSessionInvariants", () => {
       expect(result.ok).toBe(false);
 
       if (!result.ok) {
-        expect(result.error.meta.violation).toBe("session_transport_invalid");
+        expect(result.error.meta.details?.violation).toBe("session_transport_invalid");
       }
     });
 
@@ -509,7 +509,7 @@ describe("checkSessionInvariants", () => {
       expect(result.ok).toBe(false);
 
       if (!result.ok) {
-        expect(result.error.meta.violation).toBe("session_transport_invalid");
+        expect(result.error.meta.details?.violation).toBe("session_transport_invalid");
       }
     });
 
@@ -522,7 +522,7 @@ describe("checkSessionInvariants", () => {
       expect(result.ok).toBe(false);
 
       if (!result.ok) {
-        expect(result.error.meta.violation).toBe("session_transport_invalid");
+        expect(result.error.meta.details?.violation).toBe("session_transport_invalid");
       }
     });
   });
@@ -550,7 +550,7 @@ describe("checkSessionInvariants", () => {
       expect(result.ok).toBe(false);
 
       if (!result.ok) {
-        expect(result.error.meta.violation).toBe("refresh_enabled_invalid");
+        expect(result.error.meta.details?.violation).toBe("refresh_enabled_invalid");
       }
     });
 
@@ -572,7 +572,7 @@ describe("checkSessionInvariants", () => {
       expect(result.ok).toBe(false);
 
       if (!result.ok) {
-        expect(result.error.meta.violation).toBe("refresh_expires_at_invalid");
+        expect(result.error.meta.details?.violation).toBe("refresh_expires_at_invalid");
       }
     });
 
@@ -612,7 +612,7 @@ describe("checkSessionInvariants", () => {
       expect(result.ok).toBe(false);
 
       if (!result.ok) {
-        expect(result.error.meta.violation).toBe("step_up_parent_invalid");
+        expect(result.error.meta.details?.violation).toBe("step_up_parent_invalid");
       }
     });
 
@@ -628,7 +628,7 @@ describe("checkSessionInvariants", () => {
       expect(result.ok).toBe(false);
 
       if (!result.ok) {
-        expect(result.error.meta.violation).toBe("step_up_parent_invalid");
+        expect(result.error.meta.details?.violation).toBe("step_up_parent_invalid");
       }
     });
 
@@ -644,7 +644,7 @@ describe("checkSessionInvariants", () => {
       expect(result.ok).toBe(false);
 
       if (!result.ok) {
-        expect(result.error.meta.violation).toBe("step_up_at_invalid");
+        expect(result.error.meta.details?.violation).toBe("step_up_at_invalid");
       }
     });
 
@@ -660,7 +660,7 @@ describe("checkSessionInvariants", () => {
       expect(result.ok).toBe(false);
 
       if (!result.ok) {
-        expect(result.error.meta.violation).toBe("step_up_at_invalid");
+        expect(result.error.meta.details?.violation).toBe("step_up_at_invalid");
       }
     });
 

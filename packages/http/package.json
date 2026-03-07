@@ -85,11 +85,12 @@
   },
   "sideEffects": false,
   "dependencies": {
+    "@comity/composition": "workspace:*",
     "@comity/kernel": "workspace:*",
     "@comity/primitives": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^24.11.0",
+    "@types/node": "^24.11.2",
     "typescript": "^5.9.3"
   }
 }

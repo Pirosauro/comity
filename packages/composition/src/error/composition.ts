@@ -17,14 +17,17 @@ export type CompositionErrorReason =
  * Composition Error metadata.
  */
 export interface CompositionErrorMeta extends ErrorMeta {
-  /** Module involved (if applicable) */
-  readonly module?: string;
+  /**  */
+  details?: Readonly<{
+    /** Module involved (if applicable) */
+    module?: string;
 
-  /** Dependency involved (if applicable) */
-  readonly dependency?: string;
+    /** Dependency involved (if applicable) */
+    dependency?: string;
 
-  /** Cycle graph (if applicable) */
-  readonly cycle?: readonly string[];
+    /** Cycle graph (if applicable) */
+    cycle?: readonly string[];
+  }>;
 }
 
 /** Error messages for composition errors */

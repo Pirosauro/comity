@@ -31,7 +31,7 @@ export class ExpiredSessionRevocationPolicy implements AuthSessionRevocationPoli
         : fallbackExpiry;
 
     if (now >= expiration) {
-      throw new AuthError("session_expired", { policy: "expired_session" });
+      throw new AuthError("session_expired", { details: { policy: "expired_session" } });
     }
   }
 }

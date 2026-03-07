@@ -24,8 +24,10 @@ export class ScoreAssurancePolicy implements AuthSessionAssurancePolicy {
     // Insufficient level
     if (assurance.score < this.#score) {
       throw new AuthError("assurance_too_low", {
-        policy: "score",
         details: {
+          policy: "score",
+        },
+        context: {
           currentScore: assurance.score,
           requiredScore: this.#score,
         },

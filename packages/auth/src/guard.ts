@@ -2,14 +2,15 @@ import type { AuthSessionAssurancePolicy } from "./contracts/session-assurance-p
 import type { AuthSessionRefreshPolicy } from "./contracts/session-refresh-policy.js";
 import type { AuthSessionRevocationPolicy } from "./contracts/session-revocation-policy.js";
 import type { AuthSession } from "./contracts/session.js";
-import type { AuthEvaluationEmitter } from "./lifecycle/evaluation.js";
-import type { AuthRefreshEvaluationEmitter } from "./lifecycle/refresh.js";
+import type { AuthEvaluationObserver } from "./hooks/evaluation.js";
+import type { AuthRefreshEvaluationObserver } from "./hooks/refresh.js";
 
+import { toSafePayload } from "@comity/primitives/error";
 import { AuthError } from "./error/auth.js";
 import { checkSessionInvariants } from "./internal/session-invariants.js";
 
-/** Event emitter combining evaluation and refresh emitters. */
-interface AuthGuardEmitter extends AuthEvaluationEmitter, AuthRefreshEvaluationEmitter {}
+/** Event observer combining evaluation and refresh observers. */
+interface AuthGuardObserver extends AuthEvaluationObserver, AuthRefreshEvaluationObserver {}
 
 /**
  * Configuration of policies used by `AuthGuard`.
@@ -24,8 +25,8 @@ export interface AuthGuardOptions {
   /** Session refresh policy */
   refresh?: AuthSessionRefreshPolicy;
 
-  /** Event emitter */
-  emitter?: AuthGuardEmitter;
+  /** Event observer */
+  observer?: AuthGuardObserver;
 }
 
 /**
@@ -44,17 +45,17 @@ export class AuthGuard {
   /** Session refresh policy */
   #refresh: AuthSessionRefreshPolicy | undefined;
 
-  /** Event emitter */
-  #emitter: AuthGuardEmitter | undefined;
+  /** Event observer */
+  #observer: AuthGuardObserver | undefined;
 
   /**
-   * @param options - Policies and emitters used by the guard
+   * @param options - Policies and observer used by the guard
    */
   constructor(options: AuthGuardOptions) {
     this.#assurance = options.assurance;
     this.#revocation = options.revocation;
     this.#refresh = options.refresh;
-    this.#emitter = options.emitter;
+    this.#observer = options.observer;
   }
 
   /**
@@ -79,13 +80,13 @@ export class AuthGuard {
     this.assertAssurance(session, now);
 
     // 4. Emit event
-    this.#emitter?.onSessionValidated({
+    this.#observer?.onSessionValidated({
       sessionId: session.id,
       assuranceScore: session.assurance.score,
       createdAt: session.createdAt,
       ...(session.verifiedAt ? { verifiedAt: session.verifiedAt } : {}),
       ...(session.expiresAt ? { expiresAt: session.expiresAt } : {}),
-      ...(session.scopes ? { scopes: session.scopes } : {}),
+      ...(session.scopes ? { scopes: [...session.scopes] } : {}),
     });
 
     // 5. Refresh (if applicable)
@@ -93,7 +94,7 @@ export class AuthGuard {
       this.assertRefreshable(session, now);
 
       // Emit event
-      this.#emitter?.onRefreshValidated({
+      this.#observer?.onRefreshValidated({
         sessionId: session.id,
         at: now,
       });
@@ -112,14 +113,15 @@ export class AuthGuard {
     const invariant = checkSessionInvariants(session, now);
 
     if (!invariant.ok) {
-      const { reason, violation, ...meta } = invariant.error.meta;
+      const { reason, details } = invariant.error.meta;
 
       // Emit event
-      this.#emitter?.onSessionInvalid({
+      this.#observer?.onSessionInvalid({
         sessionId: session.id,
         at: now,
         reason,
-        ...(violation ? { violation } : {}),
+        ...(details?.violation ? { violation: details.violation } : {}),
+        error: toSafePayload(invariant.error),
       });
 
       throw invariant.error;
@@ -138,12 +140,15 @@ export class AuthGuard {
     try {
       this.#assurance?.assert(session, now);
     } catch (error) {
+      const { meta } = error instanceof AuthError ? error : {};
+      const { reason = "unknown", details } = meta ?? {};
+
       // Emit event
-      this.#emitter?.onAssuranceRejected({
+      this.#observer?.onAssuranceRejected({
         sessionId: session.id,
-        ...(error instanceof AuthError
-          ? { reason: error.meta.reason, policy: error.meta.policy }
-          : {}),
+        reason,
+        error: toSafePayload(error),
+        ...(details?.policy ? { policy: details.policy } : {}),
       });
 
       throw error;
@@ -162,11 +167,17 @@ export class AuthGuard {
     try {
       this.#revocation?.assert(session, now);
     } catch (error) {
+      const { meta } = error instanceof AuthError ? error : {};
+      const { reason = "unknown", details } = meta ?? {};
+
       // Emit event
-      this.#emitter?.onSessionInvalid({
+      this.#observer?.onSessionInvalid({
         sessionId: session.id,
         at: now,
-        ...(error instanceof AuthError ? { reason: error.meta.reason } : {}),
+        reason,
+        error: toSafePayload(error),
+        ...(details?.violation ? { violation: details.violation } : {}),
+        ...(details?.policy ? { policy: details.policy } : {}),
       });
 
       throw error;
@@ -186,13 +197,17 @@ export class AuthGuard {
     try {
       this.#refresh?.assert(session, now);
     } catch (error) {
-      if (error instanceof AuthError) {
-        this.#emitter?.onRefreshRejected({
-          sessionId: session.id,
-          at: session.refresh?.expiresAt ?? now,
-          reason: error.meta.reason!,
-        });
-      }
+      const { meta } = error instanceof AuthError ? error : {};
+      const { reason = "unknown", details } = meta ?? {};
+
+      this.#observer?.onRefreshRejected({
+        sessionId: session.id,
+        at: session.refresh?.expiresAt ?? now,
+        reason,
+        error: toSafePayload(error),
+        ...(details?.violation ? { violation: details.violation } : {}),
+        ...(details?.policy ? { policy: details.policy } : {}),
+      });
 
       throw error;
     }

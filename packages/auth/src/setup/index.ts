@@ -1,8 +1,8 @@
 import type { ModuleMeta } from "@comity/composition";
 import type { AuthFacade } from "../contracts/auth-facade.js";
-import type { AuthEvaluationEmitter } from "../lifecycle/evaluation.js";
-import type { AuthRefreshEvaluationEmitter } from "../lifecycle/refresh.js";
-import type { AuthSessionEmitter } from "../lifecycle/session.js";
+import type { AuthEvaluationObserver } from "../hooks/evaluation.js";
+import type { AuthRefreshEvaluationObserver } from "../hooks/refresh.js";
+import type { AuthSessionObserver } from "../hooks/session.js";
 import type { AuthModuleContext, AuthModuleOptions } from "./types.js";
 
 import { success } from "@comity/primitives/result";
@@ -23,7 +23,7 @@ export const module: ModuleMeta<AuthModuleOptions, AuthModuleContext> = {
   /**
    * Initializes the auth module with provided configuration options.
    *
-   * Sets up the facade, guard, use cases, and event emitters.
+   * Sets up the facade, guard, use cases, and event observers.
    * Registers the auth facade in the kernel services.
    *
    * @param options - Module configuration object with repository and evaluator
@@ -43,13 +43,13 @@ export const module: ModuleMeta<AuthModuleOptions, AuthModuleContext> = {
     }
 
     return success(async (ctx) => {
-      // Event emitters
-      const emitters: {
-        /** Evaluation emitters */
-        evaluation: AuthEvaluationEmitter & AuthRefreshEvaluationEmitter;
+      // Events
+      const observers: {
+        /** Evaluation observers */
+        evaluation: AuthEvaluationObserver & AuthRefreshEvaluationObserver;
 
-        /** Session emitters */
-        session: AuthSessionEmitter;
+        /** Session observers */
+        session: AuthSessionObserver;
       } = {
         evaluation: {
           /** @inheritdoc */
@@ -88,23 +88,23 @@ export const module: ModuleMeta<AuthModuleOptions, AuthModuleContext> = {
         ...(options?.guard?.assurance ? { assurance: options.guard.assurance } : {}),
         ...(options?.guard?.revocation ? { revocation: options.guard.revocation } : {}),
         ...(options?.guard?.refresh ? { refresh: options.guard.refresh } : {}),
-        emitter: emitters.evaluation,
+        observer: observers.evaluation,
       });
 
       // Use cases
       const create = new CreateSession(
         options.repository,
         options.evaluator,
-        emitters.session,
+        observers.session,
         guard
       );
-      const refresh = new RefreshSession(options.repository, guard, emitters.session);
-      const revoke = new RevokeSession(options.repository, emitters.session);
+      const refresh = new RefreshSession(options.repository, guard, observers.session);
+      const revoke = new RevokeSession(options.repository, observers.session);
       const stepUp = new StepUpSession(
         options.repository,
         options.evaluator,
         guard,
-        emitters.session
+        observers.session
       );
 
       // Facade

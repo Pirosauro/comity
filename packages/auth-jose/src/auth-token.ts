@@ -1,10 +1,11 @@
 import type { AuthSession, AuthTokenService } from "@comity/auth";
 import type { Result } from "@comity/primitives/result";
 import type { CryptoKey, JWK, JWTPayload, KeyObject } from "jose";
-import type { AuthJoseEventEmitter } from "./lifecycle/emitter.js";
+import type { AuthJoseEventObserver } from "./hooks/observer.js";
 import type { JoseAuthTokenServiceOptions, JoseJwtPayload } from "./types.js";
 
 import { AuthError } from "@comity/auth/error";
+import { toSafePayload } from "@comity/primitives/error";
 import { SignJWT, jwtVerify } from "jose";
 import { joseErrorToAuthError } from "./internal/jose-error-to-auth-error.js";
 import { jwtPayloadToAuthSession } from "./internal/jwt-to-session.js";
@@ -29,15 +30,15 @@ export class JoseAuthTokenService implements AuthTokenService {
   #options: JoseAuthTokenServiceOptions;
 
   /**  */
-  #events: AuthJoseEventEmitter;
+  #observer: AuthJoseEventObserver;
 
   /**
-   * @param options Service options
-   * @param events Event emitter
+   * @param options - Service options
+   * @param observer - Event observer for token verification/signing events
    */
-  constructor(options: JoseAuthTokenServiceOptions, events: AuthJoseEventEmitter) {
+  constructor(options: JoseAuthTokenServiceOptions, observer: AuthJoseEventObserver) {
     this.#options = options;
-    this.#events = events;
+    this.#observer = observer;
   }
 
   /**
@@ -65,11 +66,11 @@ export class JoseAuthTokenService implements AuthTokenService {
     if (!session.refresh?.enabled) {
       const reason = "refresh_not_allowed";
       const error = new AuthError(reason, {
-        policy: "jwt",
-        details: { adapter: "jose", sessionId: session.id },
+        details: { policy: "jwt", subject: session.id },
+        context: { adapter: "jose" },
       });
 
-      this.#events.onTokenInvalid({ kind: "refresh", reason, message: error.message });
+      this.#observer.onTokenInvalid({ kind: "refresh", reason, error: toSafePayload(error) });
 
       throw error;
     }
@@ -110,10 +111,10 @@ export class JoseAuthTokenService implements AuthTokenService {
       const error = joseErrorToAuthError(cause, "sign", payload.sub);
 
       // Emit event
-      this.#events.onTokenInvalid({
+      this.#observer.onTokenInvalid({
         kind,
         reason: error.meta.reason,
-        message: error.message,
+        error: toSafePayload(error),
       });
 
       throw error;
@@ -164,7 +165,7 @@ export class JoseAuthTokenService implements AuthTokenService {
       const session = jwtPayloadToAuthSession(payload);
 
       // Emit event
-      this.#events.onTokenVerified({
+      this.#observer.onTokenVerified({
         kind,
         sessionId: session.id,
         assuranceScore: session.assurance.score,
@@ -177,7 +178,11 @@ export class JoseAuthTokenService implements AuthTokenService {
     } catch (cause) {
       const error = joseErrorToAuthError(cause, "verify");
 
-      this.#events.onTokenInvalid({ kind, reason: error.meta.reason });
+      this.#observer.onTokenInvalid({
+        kind,
+        reason: error.meta.reason,
+        error: toSafePayload(error),
+      });
 
       return { ok: false, error };
     }

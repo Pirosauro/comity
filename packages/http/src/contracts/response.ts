@@ -1,9 +1,7 @@
-export const HTTP_INTENTS = ["text", "html", "json", "redirect", "event-stream"] as const;
-
 /**
- * HTTP intent type
+ * HTTP intent.
  */
-export type HttpIntent = (typeof HTTP_INTENTS)[number];
+export type HttpIntent = "text" | "html" | "json" | "redirect" | "event-stream";
 
 /**
  * Base type for all HTTP responses

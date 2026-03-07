@@ -1,5 +1,5 @@
 import type { ErrorMeta } from "@comity/primitives/error";
-import type { KernelLifecycleState } from "../lifecycle/types.js";
+import type { KernelLifecycleState } from "../hooks/types.js";
 
 import { BaseError } from "@comity/primitives/error";
 
@@ -12,11 +12,14 @@ export type KernelErrorReason = "invalid_lifecycle_state";
  * Kernel error metadata.
  */
 export interface KernelErrorMeta extends ErrorMeta {
-  /** Lifecycle state */
-  readonly state: KernelLifecycleState;
+  /** Information about the kernel error */
+  details: Readonly<{
+    /** Lifecycle state */
+    state: KernelLifecycleState;
 
-  /** Action attempted */
-  readonly action: string;
+    /** Action attempted */
+    action: string;
+  }>;
 }
 
 /** Error messages for kernel errors */
@@ -41,8 +44,8 @@ export class KernelError extends BaseError<KernelErrorMeta> {
    */
   constructor(reason: KernelErrorReason, meta: Omit<KernelErrorMeta, "reason">) {
     super(REASON_MESSAGES[reason], {
-      ...meta,
       httpStatus: REASON_HTTP_STATUS[reason],
+      ...meta,
       reason,
     });
 
