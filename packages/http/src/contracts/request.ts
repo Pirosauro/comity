@@ -12,24 +12,24 @@ export interface HttpRequest {
   /** HTTP method. */
   readonly method: HttpMethod;
 
-  /** Full request URL. */
+  /** Full request URL (source of truth for path + query) */
   readonly url: URL;
 
-  /** Headers (lower-cased keys recommended). */
+  /** Headers (lowercase adapter side) */
   readonly headers: Readonly<Record<string, string>>;
 
-  /** Query parameters. */
-  readonly query: Readonly<Record<string, string | readonly string[]>>;
-
-  /** Path parameters (from router adapter). */
+  /** Router parameters */
   readonly params: Readonly<Record<string, string>>;
 
-  /** Remote address (if available). */
+  /** Cookies */
+  readonly cookies: Readonly<Record<string, string>>;
+
+  /** Remote address */
   readonly remoteAddress?: string;
 
-  /** Parsed body (if any). */
-  readonly body?: unknown;
+  /** Raw body from adapter */
+  readonly rawBody?: ReadableStream<Uint8Array> | null;
 
-  /** Raw body (optional, adapter-provided). */
-  readonly rawBody?: unknown;
+  // /** Parsed body (lazy / middleware provided) */
+  // readonly body?: unknown; // parsed JSON / form / etc
 }

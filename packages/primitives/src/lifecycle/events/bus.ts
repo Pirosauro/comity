@@ -1,5 +1,6 @@
 import type { EventBus, EventBusErrorHandler, EventBusOptions, EventHandler } from "./types.js";
 
+import type { ReadonlyDeep } from "../../types.js";
 import { EventBusError } from "./error.js";
 
 /**
@@ -39,7 +40,7 @@ export class DefaultEventBus<
   /**
    * @param options Event bus options
    */
-  constructor(private readonly options: EventBusOptions = {}) {
+  constructor(options: EventBusOptions = {}) {
     if (options.errorHandler) {
       this.#onError = options.errorHandler;
     }
@@ -80,7 +81,7 @@ export class DefaultEventBus<
     await Promise.all(
       [...handlers].map(async (h) => {
         try {
-          await h(payload as Readonly<Events[K]>);
+          await h(payload as ReadonlyDeep<Events[K]>);
         } catch (cause) {
           this.#onError?.(
             new EventBusError("handler_failed", {

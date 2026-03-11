@@ -1,5 +1,5 @@
 import type { DiContainer } from "@comity/primitives/di";
-import type { EventBus, HookBus } from "@comity/primitives/lifecycle";
+import type { EventBus, EventHandler, HookBus, HookHandler } from "@comity/primitives/lifecycle";
 import type { KernelLifecycleObserver } from "./hooks/lifecycle.js";
 import type { KernelLifecycleState } from "./hooks/types.js";
 import type { KernelContext } from "./types.js";
@@ -57,47 +57,42 @@ export class Kernel<
   #emitter: KernelLifecycleObserver | undefined;
 
   /**
-   * @param context Kernel context
-   * @param emitter Kernel lifecycle events emitter
+   * @param context - Kernel context
+   * @param emitter - Kernel lifecycle events emitter
    */
   constructor(context: KernelContext<Services, Events, Hooks>, emitter?: KernelLifecycleObserver) {
     // Services
     this.#services = {
       /**
-       * @param {...Parameters<typeof context.services.define>} args DiContainer.define parameters
+       * @param name - Service name
+       * @param factory - Service factory
        *
-       * @returns DiContainer.define return value
+       * @returns void
        */
-      define: <K extends keyof Services>(
-        ...args: Parameters<typeof context.services.define<K>>
-      ) => {
+      define: <K extends keyof Services>(name: K, factory: () => Services[K]) => {
         this.#assertLifecycle(() => this.#lifecycle.canDefineServices(), "service.define");
 
-        return context.services.define(...args);
+        return context.services.define(name, factory);
       },
 
       /**
-       * @param {...Parameters<typeof context.services.resolve>} args DiContainer.resolve parameters
+       * @param name - Service name
        *
-       * @returns DiContainer.resolve return value
+       * @returns The resolved service instance
        */
-      resolve: <K extends keyof Services>(
-        ...args: Parameters<typeof context.services.resolve<K>>
-      ) => {
+      resolve: <K extends keyof Services>(name: K) => {
         this.#assertLifecycle(() => this.#lifecycle.canResolveServices(), "service.resolve");
 
-        return context.services.resolve(...args);
+        return context.services.resolve(name) as Services[K];
       },
 
       /**
-       * @param {...Parameters<typeof context.services.clear>} args DiContainer.clear parameters
-       *
-       * @returns DiContainer.clear return value
+       * @returns void
        */
-      clear: (...args: Parameters<typeof context.services.clear>) => {
+      clear: () => {
         this.#assertLifecycle(() => this.#lifecycle.canDefineServices(), "service.clear");
 
-        return context.services.clear(...args);
+        return context.services.clear();
       },
     };
 
@@ -117,52 +112,54 @@ export class Kernel<
       },
 
       /**
-       * @param {...Parameters<typeof context.events.unsubscribe>} args EventBus.unsubscribe parameters
+       * @param event - Event name
+       * @param handler - Event handler
        *
-       * @returns EventBus.unsubscribe return value
+       * @returns void
        */
-      unsubscribe: <K extends keyof Events>(
-        ...args: Parameters<typeof context.events.unsubscribe<K>>
-      ) => {
+      unsubscribe: <K extends keyof Events>(event: K, handler: EventHandler<Events[K]>) => {
         this.#assertLifecycle(() => this.#lifecycle.canDefineServices(), "event.unsubscribe");
 
-        return context.events.unsubscribe(...args);
+        return context.events.unsubscribe(event, handler);
       },
 
       /**
-       * @param {...Parameters<typeof context.events.emit>} args EventBus.emit parameters
+       * @param event - Event name
+       * @param payload - Event payload
        *
-       * @returns EventBus.emit return value
+       * @returns void
        */
-      emit: <K extends keyof Events>(...args: Parameters<typeof context.events.emit<K>>) => {
+      emit: <K extends keyof Events>(event: K, payload: Events[K]) => {
         this.#assertLifecycle(() => this.#lifecycle.canEmitEvents(), "event.emit");
 
-        return context.events.emit(...args);
+        return context.events.emit(event, payload);
       },
     };
 
     // Hooks
     this.#hooks = {
       /**
-       * @param {...Parameters<typeof context.hooks.define>} args HookBus.define parameters
+       * @param name - Hook name
+       * @param handler - Hook handler
        *
-       * @returns HookBus.define return value
+       * @returns void
        */
-      define: <K extends keyof Hooks>(...args: Parameters<typeof context.hooks.define<K>>) => {
+      define: <K extends keyof Hooks>(name: K, handler: HookHandler<Hooks[K]>) => {
         this.#assertLifecycle(() => this.#lifecycle.canDefineServices(), "hook.define");
 
-        return context.hooks.define(...args);
+        return context.hooks.define(name, handler);
       },
 
       /**
-       * @param {...Parameters<typeof context.hooks.execute>} args HookBus.execute parameters
+       * @param name - Hook name
+       * @param initial - Initial hook payload
        *
-       * @returns HookBus.execute return value
+       * @returns The final hook payload after execution
        */
-      execute: <K extends keyof Hooks>(...args: Parameters<typeof context.hooks.execute<K>>) => {
+      execute: <K extends keyof Hooks>(name: K, initial: Hooks[K]) => {
         this.#assertLifecycle(() => this.#lifecycle.canExecuteHooks(), "hook.execute");
 
-        return context.hooks.execute(...args);
+        return context.hooks.execute(name, initial);
       },
     };
 

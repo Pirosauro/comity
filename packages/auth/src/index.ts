@@ -1,3 +1,4 @@
+export { CompositeAssuranceEvaluator } from "./composite-evaluator.js";
 export { AuthFacade } from "./contracts/auth-facade.js";
 export { Identity, IdentityId } from "./contracts/identity.js";
 export {
@@ -18,4 +19,11 @@ export { AuthSessionTransport } from "./contracts/session-transport.js";
 export { AuthSession, AuthSessionId } from "./contracts/session.js";
 export { AuthTokenService } from "./contracts/token-service.js";
 export { AuthGuard } from "./guard.js";
-export { AuthModuleOptions } from "./setup/types.js";
+export { AUTH_TOKEN } from "./setup/constants.js";
+export {
+  AuthModuleContext,
+  AuthModuleEvents,
+  AuthModuleHooks,
+  AuthModuleOptions,
+  AuthModuleServices,
+} from "./setup/types.js";

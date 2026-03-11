@@ -1,5 +1,6 @@
+import type { SafeErrorPayload } from "@comity/primitives/error";
 import type { HttpRequest } from "../contracts/request.js";
-import type { AnyHttpResponse } from "../contracts/response";
+import type { HttpResponse } from "../contracts/response";
 
 /**
  * HTTP observer interface for monitoring HTTP request lifecycle events.
@@ -22,7 +23,7 @@ export interface HttpObserver {
     request: HttpRequest;
 
     /** The HTTP response. */
-    response: AnyHttpResponse;
+    response: HttpResponse;
 
     /** Request duration in milliseconds. */
     duration: number;
@@ -38,7 +39,7 @@ export interface HttpObserver {
     request: HttpRequest;
 
     /** The error that occurred during the request. */
-    error: unknown;
+    error: SafeErrorPayload;
 
     /** Request duration in milliseconds. */
     duration: number;

@@ -1,28 +1,32 @@
-import type { HttpHandler } from "@comity/http";
+import type { HttpFacade } from "@comity/http";
 import type { Hono } from "hono";
 
 import { createHttpContext } from "../internal/context.js";
+import { mapErrorToHttpResponse } from "../internal/map-error.js";
 import { mapHttpResponseToHono } from "../internal/map-response.js";
 
 /**
  * Creates a Hono HTTP adapter.
  *
  * @param hono Hono instance
- * @param handler HttpHandler function to handle incoming requests
+ * @param facade HTTP facade to handle requests
  *
  * @throws Propagates errors thrown by the handler as HTTP errors to be handled by Hono's error handling mechanism.
  *
  * @remarks Pure adapter: maps Hono Context to HttpContext and HttpResult to Response without side effects
  */
-export function httpHonoAdapter(hono: Hono, handler: HttpHandler): void {
+export function httpHonoAdapter(hono: Hono, facade: HttpFacade): void {
   hono.use("*", async (c) => {
     const ctx = createHttpContext(c);
-    const result = await handler(ctx);
 
-    if (!result.ok) {
-      throw result.error;
+    try {
+      const response = await facade.handle(ctx);
+
+      return mapHttpResponseToHono(c, response);
+    } catch (error) {
+      const response = mapErrorToHttpResponse(ctx, error);
+
+      return mapHttpResponseToHono(c, response);
     }
-
-    return mapHttpResponseToHono(c, result.value);
   });
 }

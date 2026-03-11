@@ -12,24 +12,23 @@ describe("ReactStreamingHtmlRenderer (Node)", () => {
   describe("render", () => {
     it("should render a React element to a readable stream", async () => {
       const element = createElement("div", { "data-testid": "test" }, "Hello World");
-
       const result = await renderer.render(element);
 
       expect(result.ok).toBe(true);
+
       if (result.ok) {
-        expect(result.value.intent).toBe("html");
         expect(result.value.status).toBe(200);
-        expect(result.value.stream).toBeDefined();
+        expect(result.value.body).toBeDefined();
         expect(typeof result.value.abort).toBe("function");
       }
     });
 
     it("should use custom status code", async () => {
       const element = createElement("div", null, "Test");
-
       const result = await renderer.render(element, { status: 404 });
 
       expect(result.ok).toBe(true);
+
       if (result.ok) {
         expect(result.value.status).toBe(404);
       }
@@ -37,12 +36,12 @@ describe("ReactStreamingHtmlRenderer (Node)", () => {
 
     it("should include custom headers", async () => {
       const element = createElement("div", null, "Test");
-
       const result = await renderer.render(element, {
         headers: { "X-Custom": "value" },
       });
 
       expect(result.ok).toBe(true);
+
       if (result.ok) {
         expect(result.value.headers).toEqual({ "X-Custom": "value" });
       }

@@ -17,6 +17,15 @@ export type HttpErrorReason =
 export interface HttpErrorMeta extends ErrorMeta {
   /** The reason for the HTTP error */
   readonly reason: HttpErrorReason;
+
+  /** Additional details about the error, if applicable */
+  readonly details?: Readonly<{
+    /** The route associated with the error, if applicable */
+    route?: string;
+
+    /** The HTTP method associated with the error, if applicable. Should be uppercase (e.g., "GET", "POST"). */
+    method?: string;
+  }>;
 }
 
 /** Error messages for HTTP errors */

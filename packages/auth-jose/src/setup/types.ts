@@ -1,8 +1,7 @@
-import type { AuthTokenService } from "@comity/auth";
+import type { AuthTokenFacade } from "@comity/auth-tokens";
 import type { ModuleSetupContext } from "@comity/composition";
 import type { AuthJoseEventObserver } from "../hooks/observer.js";
 import type { JoseAuthTokenServiceOptions } from "../types.js";
-
 import type { AUTH_JOSE_TOKEN } from "./constants.js";
 
 /**
@@ -10,13 +9,19 @@ import type { AUTH_JOSE_TOKEN } from "./constants.js";
  */
 export type JoseAuthModuleServices = {
   /** Service for signing and verifying JOSE tokens. */
-  [AUTH_JOSE_TOKEN]: AuthTokenService;
+  [AUTH_JOSE_TOKEN]: AuthTokenFacade;
 };
 
 /**
  * Hooks exposed by the module.
  */
-export type JoseAuthModuleHooks = {};
+export type JoseAuthModuleHooks = {
+  /** Hook executed during module setup to allow configuration of the auth token service options. */
+  "@comity/auth-jose:configuring": JoseAuthModuleOptions;
+
+  /** Hook executed after the auth-jose module has been initialized. */
+  "@comity/auth-jose:initialized": undefined;
+};
 
 /**
  * Events emitted by the module.
@@ -45,5 +50,4 @@ export interface JoseAuthModuleContext extends ModuleSetupContext<
 /**
  * Auth module setup options.
  */
-export interface JoseAuthModuleOptions
-  extends JoseAuthTokenServiceOptions, Record<string, unknown> {}
+export type JoseAuthModuleOptions = Partial<JoseAuthTokenServiceOptions>;

@@ -1,40 +1,87 @@
+import type { AuthModuleContext } from "@comity/auth";
 import type { ModuleMeta } from "@comity/composition";
 import type { AuthJoseEventObserver } from "../hooks/observer.js";
 import type { JoseAuthTokenServiceOptions } from "../types.js";
 import type { JoseAuthModuleContext, JoseAuthModuleOptions } from "./types.js";
 
-import { success } from "@comity/primitives/result";
+import { AUTH_TOKEN } from "@comity/auth";
+import { DefaultAuthTokenFacade } from "@comity/auth-tokens";
+import { CompositionError } from "@comity/composition/error";
+import { failure, success } from "@comity/primitives/result";
 import { JoseAuthTokenService } from "../auth-token.js";
 import { AUTH_JOSE_TOKEN } from "./constants.js";
 
-export const module: ModuleMeta<JoseAuthModuleOptions, JoseAuthModuleContext> = {
-  name: "@comity/auth-jose",
-  version: "1.0.0",
+export const module: ModuleMeta<JoseAuthModuleOptions, JoseAuthModuleContext & AuthModuleContext> =
+  {
+    name: "@comity/auth-jose",
+    version: "1.0.0",
 
-  dependsOn: { "@comity/auth": { optional: false } },
-  incompatibleWith: [],
+    dependsOn: { "@comity/auth": { optional: false } },
+    incompatibleWith: [],
 
-  /** @inheritdoc */
-  setup: async (options) => {
-    return success(async (ctx) => {
-      const emitter: AuthJoseEventObserver = {
-        /** @inheritdoc */
-        onTokenVerified: (payload) => ctx.events.emit("@comity/auth-jose:token_verified", payload),
-
-        /** @inheritdoc */
-        onTokenInvalid: (payload) => ctx.events.emit("@comity/auth-jose:token_invalid", payload),
+    /** @inheritdoc */
+    setup: async (ctx, options) => {
+      const initial: JoseAuthModuleOptions = {
+        ...options,
       };
+      const cfg = (await ctx.hooks.execute("@comity/auth-jose:configuring", initial)) ?? initial;
 
-      const tokenService = new JoseAuthTokenService(
-        options as JoseAuthTokenServiceOptions,
-        emitter
-      );
+      // validate required configuration
+      if (!cfg.issuer) {
+        return failure(
+          new CompositionError("setup_failed", {
+            details: {
+              module: "@comity/auth-jose",
+              violation: "missing_issuer",
+            },
+          })
+        );
+      }
 
-      ctx.services.define(AUTH_JOSE_TOKEN, () => tokenService);
+      if (!cfg.accessKey) {
+        return failure(
+          new CompositionError("setup_failed", {
+            details: {
+              module: "@comity/auth-jose",
+              violation: "missing_access_key",
+            },
+          })
+        );
+      }
 
-      return success(undefined);
-    });
-  },
-};
+      if (!cfg.refreshKey) {
+        return failure(
+          new CompositionError("setup_failed", {
+            details: {
+              module: "@comity/auth-jose",
+              violation: "missing_refresh_key",
+            },
+          })
+        );
+      }
+
+      // Init
+      return success(async () => {
+        const observer: AuthJoseEventObserver = {
+          /** @inheritdoc */
+          onTokenVerified: (payload) =>
+            ctx.events.emit("@comity/auth-jose:token_verified", payload),
+
+          /** @inheritdoc */
+          onTokenInvalid: (payload) => ctx.events.emit("@comity/auth-jose:token_invalid", payload),
+        };
+
+        const auth = ctx.services.resolve(AUTH_TOKEN);
+        const tokenService = new JoseAuthTokenService(cfg as JoseAuthTokenServiceOptions, observer);
+        const facade = new DefaultAuthTokenFacade(auth, tokenService);
+
+        ctx.services.define(AUTH_JOSE_TOKEN, () => facade);
+
+        await ctx.hooks.execute("@comity/auth-jose:initialized", undefined);
+
+        return success(undefined);
+      });
+    },
+  };
 
 export default module;

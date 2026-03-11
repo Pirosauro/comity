@@ -1,7 +1,5 @@
 /**
  * HTTP status codes.
- *
- * @comity ai-jsdoc-skip
  */
 export type HttpStatus =
   | 100 // Informational response, continuation or request received

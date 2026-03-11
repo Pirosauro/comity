@@ -1,27 +1,21 @@
-import type { HtmlRenderer, HtmlRendererOptions } from "@comity/html-runtime";
-import type { HttpHtmlResponse } from "@comity/http";
-import type { Result } from "@comity/primitives/result";
+import type { HtmlRenderer, HtmlRendererOptions, HtmlRenderResult } from "@comity/html";
 import type { ReactElement } from "react";
 
-import { HtmlRenderFailureError } from "@comity/html-runtime/errors";
+import { HtmlError } from "@comity/html/error";
 import { renderToString } from "react-dom/server";
 
 /**
- *
+ * React static HTML renderer
  */
 export class ReactStaticHtmlRenderer implements HtmlRenderer<ReactElement> {
   /** @inheritdoc */
-  async render(
-    view: ReactElement,
-    options?: HtmlRendererOptions
-  ): Promise<Result<HttpHtmlResponse, HtmlRenderFailureError, "ok">> {
+  async render(view: ReactElement, options?: HtmlRendererOptions): Promise<HtmlRenderResult> {
     try {
       const html = renderToString(view);
 
       return {
         ok: true,
         value: {
-          intent: "html",
           status: options?.status ?? 200,
           headers: {
             "Content-Type": "text/html; charset=utf-8",
@@ -33,9 +27,13 @@ export class ReactStaticHtmlRenderer implements HtmlRenderer<ReactElement> {
     } catch (error) {
       return {
         ok: false,
-        error: new HtmlRenderFailureError({
-          reason: "rendering-error",
-          cause: error as Error,
+        error: new HtmlError("render_error", {
+          cause: error,
+          context: {
+            renderer: "react",
+            mode: "static",
+            layout: String(view.type || "unknown"),
+          },
         }),
       };
     }

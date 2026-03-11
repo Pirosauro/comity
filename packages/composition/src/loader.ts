@@ -1,6 +1,6 @@
 import type { Kernel } from "@comity/kernel";
 import type { Result } from "@comity/primitives/result";
-import type { ModuleMeta } from "./types.js";
+import type { ModuleMeta, ModuleSetupFn } from "./types.js";
 
 import { failure, isFailure, success } from "@comity/primitives/result";
 import { CompositionError } from "./error/composition.js";
@@ -52,15 +52,23 @@ export async function load(
     );
   }
 
+  const initializers: {
+    /** Module name */
+    module: string;
+
+    /** Module setup function */
+    init: ModuleSetupFn;
+  }[] = [];
   const ctx = {
     services: kernel.services,
     events: kernel.events,
     hooks: kernel.hooks,
   };
 
-  for (const mod of ordered.value) {
+  // Setup phase (reverse)
+  for (const mod of ordered.value.slice().reverse()) {
     // Setup
-    const setup = await mod.setup(options[mod.name]);
+    const setup = await mod.setup(ctx, options[mod.name]);
 
     // Handle setup function retrieval errors
     if (isFailure(setup)) {
@@ -74,15 +82,20 @@ export async function load(
       );
     }
 
-    // Apply module
-    const result = await setup.value(ctx);
+    initializers.push({ module: mod.name, init: setup.value });
+  }
 
-    // Handle application errors
+  // Init phase (forward)
+  for (const { module, init } of initializers.reverse()) {
+    // Initialize module
+    const result = await init();
+
+    // Handle initialization errors
     if (isFailure(result)) {
       return failure(
-        new CompositionError("apply_failed", {
+        new CompositionError("initialization_failed", {
           details: {
-            module: mod.name,
+            module,
           },
           cause: result.error,
         })

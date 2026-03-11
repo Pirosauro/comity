@@ -1,55 +1,51 @@
-import type { HydrationStrategy } from "../contracts/strategy";
+import type { HydrationStrategy } from "../contracts/strategy.js";
 
 /**
- *
+ * Events emitted by the hydration runtime
  */
-export interface HydrationRuntimeEvents {
+export interface HydrationRuntimeObserver {
   /** Discovery */
-  islandDiscovered(payload: {
-    /**  */
+  onIslandDiscovered(payload: {
+    /** The unique identifier of the island */
     id: string;
 
-    /**  */
+    /** The hydration strategy for the island */
     strategy?: HydrationStrategy;
   }): void;
 
   /** Scheduling */
-  islandScheduled(payload: {
-    /**  */
+  onIslandScheduled(payload: {
+    /** The unique identifier of the island */
     id: string;
 
-    /**  */
+    /** The hydration strategy for the island */
     strategy: HydrationStrategy;
   }): void;
 
   /** Execution */
-  islandHydrationStarted(payload: {
-    /**  */
+  onIslandHydrationStarted(payload: {
+    /** The unique identifier of the island */
     id: string;
   }): void;
 
-  /**
-   *
-   */
-  islandHydrationCompleted(payload: {
-    /**  */
+  /** Completion */
+  onIslandHydrationCompleted(payload: {
+    /** The unique identifier of the island */
     id: string;
 
-    /**  */
+    /** The duration of the hydration process */
     duration: number;
   }): void;
 
-  /**
-   *
-   */
-  islandHydrationFailed(payload: {
-    /**  */
+  /** Failure */
+  onIslandHydrationFailed(payload: {
+    /** The unique identifier of the island */
     id?: string;
 
     /** Failure category */
-    reason: "invalid-contract" | "not-registered" | "hydrate-failed";
+    reason: "invalid_contract" | "not_registered" | "hydrate_failed";
 
-    /**  */
+    /** The duration of the hydration process */
     duration: number;
   }): void;
 }

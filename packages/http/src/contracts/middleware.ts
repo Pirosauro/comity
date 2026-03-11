@@ -1,5 +1,5 @@
 import type { HttpContext } from "../contracts/context.js";
-import type { AnyHttpResponse } from "./response.js";
+import type { HttpResponse } from "./response.js";
 
 /**
  * HTTP middleware function.
@@ -11,9 +11,9 @@ import type { AnyHttpResponse } from "./response.js";
  *
  * @throws {HttpError} If an error occurs during the execution of the middleware.
  */
-export type HttpMiddleware = (ctx: HttpContext, next: HttpNext) => Promise<AnyHttpResponse>;
+export type HttpMiddleware = (ctx: HttpContext, next: HttpNext) => Promise<HttpResponse>;
 
 /**
  * Function that invokes the next middleware in the chain.
  */
-export type HttpNext = () => Promise<AnyHttpResponse>;
+export type HttpNext = () => Promise<HttpResponse>;

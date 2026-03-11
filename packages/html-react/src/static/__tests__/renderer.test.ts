@@ -16,17 +16,16 @@ describe("ReactStaticHtmlRenderer", () => {
       const result = await renderer.render(element);
 
       expect(result.ok).toBe(true);
+
       if (result.ok) {
-        expect(result.value.intent).toBe("html");
         expect(result.value.status).toBe(200);
-        expect(result.value.headers["Content-Type"]).toBe("text/html; charset=utf-8");
+        expect(result.value.headers?.["Content-Type"]).toBe("text/html; charset=utf-8");
         expect(result.value.body).toContain('<div data-testid="test">Hello World</div>');
       }
     });
 
     it("should use custom status code", async () => {
       const element = createElement("div", null, "Test");
-
       const result = await renderer.render(element, { status: 404 });
 
       expect(result.ok).toBe(true);
@@ -37,22 +36,20 @@ describe("ReactStaticHtmlRenderer", () => {
 
     it("should merge custom headers", async () => {
       const element = createElement("div", null, "Test");
-
       const result = await renderer.render(element, {
         headers: { "X-Custom": "value" },
       });
 
       expect(result.ok).toBe(true);
       if (result.ok) {
-        expect(result.value.headers["Content-Type"]).toBe("text/html; charset=utf-8");
-        expect(result.value.headers["X-Custom"]).toBe("value");
+        expect(result.value.headers?.["Content-Type"]).toBe("text/html; charset=utf-8");
+        expect(result.value.headers?.["X-Custom"]).toBe("value");
       }
     });
 
     it("should handle rendering errors", async () => {
       // Create an element that might cause rendering issues
       const element = createElement("div", null, "Test");
-
       // Mock renderToString to throw
       const originalRenderToString = await import("react-dom/server");
       const mockRenderToString = vi.fn().mockImplementation(() => {

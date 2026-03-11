@@ -1,7 +1,7 @@
 import type { HttpContext } from "./contracts/context.js";
 import type { HttpHandler } from "./contracts/handler.js";
 import type { HttpMiddleware } from "./contracts/middleware.js";
-import type { AnyHttpResponse } from "./contracts/response.js";
+import type { HttpResponse } from "./contracts/response.js";
 
 import { HttpError } from "./error/http.js";
 
@@ -28,7 +28,7 @@ export function createHttpHandler(middleware: HttpMiddleware[], handler: HttpHan
      *
      * @throws Propagates errors thrown by middleware or the main handler; does not alter error semantics.
      */
-    async function dispatch(i: number): Promise<AnyHttpResponse> {
+    async function dispatch(i: number): Promise<HttpResponse> {
       if (i <= index) {
         throw new HttpError("pipeline_contract_violation", {
           context: {

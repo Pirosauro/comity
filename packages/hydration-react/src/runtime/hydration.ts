@@ -1,4 +1,4 @@
-import type { HydrationRuntimeEvents } from "@comity/hydration/lifecycle";
+import type { HydrationRuntimeObserver } from "@comity/hydration/lifecycle";
 import type { IslandComponentRegistry } from "../contracts/registry.js";
 
 import { HydrationController } from "@comity/hydration";
@@ -16,7 +16,7 @@ export type HydrationRuntimeOptions = {
   islands: IslandComponentRegistry;
 
   /** */
-  emitter?: HydrationRuntimeEvents;
+  observer?: HydrationRuntimeObserver;
 };
 
 /**
@@ -30,7 +30,7 @@ export function createHydrationRuntime(options: HydrationRuntimeOptions) {
   // 2. Controller (pure orchestration)
   const controller = new HydrationController({
     hydrator,
-    ...(options.emitter ? { emitter: options.emitter } : {}),
+    ...(options.observer ? { observer: options.observer } : {}),
   });
 
   // 3. Discovery adapter (DOM)

@@ -5,7 +5,8 @@ import type { AuthRefreshEvaluationObserver } from "../hooks/refresh.js";
 import type { AuthSessionObserver } from "../hooks/session.js";
 import type { AuthModuleContext, AuthModuleOptions } from "./types.js";
 
-import { success } from "@comity/primitives/result";
+import { CompositionError } from "@comity/composition/error";
+import { failure, success } from "@comity/primitives/result";
 import { AuthGuard } from "../guard.js";
 import { CreateSession } from "../use-cases/session-create.js";
 import { RefreshSession } from "../use-cases/session-refresh.js";
@@ -20,29 +21,38 @@ export const module: ModuleMeta<AuthModuleOptions, AuthModuleContext> = {
   dependsOn: {},
   incompatibleWith: [],
 
-  /**
-   * Initializes the auth module with provided configuration options.
-   *
-   * Sets up the facade, guard, use cases, and event observers.
-   * Registers the auth facade in the kernel services.
-   *
-   * @param options - Module configuration object with repository and evaluator
-   *
-   * @returns Success result containing the auth context
-   *
-   * @throws {Error} - If required options (repository or evaluator) are not provided
-   */
-  setup: async (options) => {
-    //
-    if (typeof options?.repository === "undefined") {
-      throw new Error("Auth module requires a session repository");
+  /** @inheritdoc */
+  setup: async (ctx, options) => {
+    const initial: AuthModuleOptions = {
+      ...options,
+    };
+    const cfg = (await ctx.hooks.execute("@comity/auth:configuring", initial)) ?? initial;
+
+    // Validate required configuration
+    if (!cfg.repository) {
+      return failure(
+        new CompositionError("setup_failed", {
+          details: {
+            module: "@comity/auth",
+            violation: "missing_repository",
+          },
+        })
+      );
     }
 
-    if (typeof options?.evaluator === "undefined") {
-      throw new Error("Auth module requires a session assurance evaluator");
+    if (!cfg.evaluator) {
+      return failure(
+        new CompositionError("setup_failed", {
+          details: {
+            module: "@comity/auth",
+            violation: "missing_evaluator",
+          },
+        })
+      );
     }
 
-    return success(async (ctx) => {
+    // Init
+    return success(async () => {
       // Events
       const observers: {
         /** Evaluation observers */
@@ -85,27 +95,17 @@ export const module: ModuleMeta<AuthModuleOptions, AuthModuleContext> = {
 
       // Guard
       const guard = new AuthGuard({
-        ...(options?.guard?.assurance ? { assurance: options.guard.assurance } : {}),
-        ...(options?.guard?.revocation ? { revocation: options.guard.revocation } : {}),
-        ...(options?.guard?.refresh ? { refresh: options.guard.refresh } : {}),
+        ...(cfg.guard?.assurance ? { assurance: cfg.guard.assurance } : {}),
+        ...(cfg.guard?.revocation ? { revocation: cfg.guard.revocation } : {}),
+        ...(cfg.guard?.refresh ? { refresh: cfg.guard.refresh } : {}),
         observer: observers.evaluation,
       });
 
       // Use cases
-      const create = new CreateSession(
-        options.repository,
-        options.evaluator,
-        observers.session,
-        guard
-      );
-      const refresh = new RefreshSession(options.repository, guard, observers.session);
-      const revoke = new RevokeSession(options.repository, observers.session);
-      const stepUp = new StepUpSession(
-        options.repository,
-        options.evaluator,
-        guard,
-        observers.session
-      );
+      const create = new CreateSession(cfg.repository!, cfg.evaluator!, observers.session, guard);
+      const refresh = new RefreshSession(cfg.repository!, guard, observers.session);
+      const revoke = new RevokeSession(cfg.repository!, observers.session);
+      const stepUp = new StepUpSession(cfg.repository!, cfg.evaluator!, guard, observers.session);
 
       // Facade
       const auth: AuthFacade = {
@@ -116,8 +116,10 @@ export const module: ModuleMeta<AuthModuleOptions, AuthModuleContext> = {
         stepUpSession: stepUp.execute.bind(stepUp),
       };
 
-      // Register facade
+      // Register service
       ctx.services.define(AUTH_TOKEN, () => auth);
+
+      await ctx.hooks.execute("@comity/auth:initialized", undefined);
 
       return success(undefined);
     });

@@ -1,7 +1,12 @@
-import type { ModuleMeta } from "@comity/kernel/modules";
-import type { HttpHonoModuleOptions } from "./types.js";
+import type { ModuleMeta } from "@comity/composition";
+import type { HttpModuleContext } from "@comity/http";
+import type { HttpHonoModuleContext, HttpHonoModuleOptions } from "./types.js";
 
+import { HTTP_TOKEN } from "@comity/http";
 import { success } from "@comity/primitives/result";
+import { Hono } from "hono/quick";
+import { httpHonoAdapter } from "../adapter/http.js";
+import { HTTP_HONO_TOKEN } from "./constants.js";
 
 /**
  * Hono HTTP adapter kernel module.
@@ -14,20 +19,38 @@ import { success } from "@comity/primitives/result";
  * The adapter works independently of the kernel and can be used directly
  * via `createHonoHandler`.
  */
-export const module: ModuleMeta<HttpHonoModuleOptions> = {
-  name: "@comity/http-hono",
-  version: "1.0.0",
+export const module: ModuleMeta<HttpHonoModuleOptions, HttpHonoModuleContext & HttpModuleContext> =
+  {
+    name: "@comity/http-hono",
+    version: "1.0.0",
 
-  dependsOn: ["@comity/http"],
-  incompatibleWith: [],
+    dependsOn: { "@comity/http": { optional: false } },
+    incompatibleWith: [],
 
-  /** @inheritdoc */
-  setup: async (options) => {
-    return success(async (ctx) => {
-      // No services to register by default
-      return success(undefined);
-    });
-  },
-};
+    /** @inheritdoc */
+    setup: async (ctx, options) => {
+      const initial: HttpHonoModuleOptions = { ...options };
+      const cfg = (await ctx.hooks.execute("@comity/http-hono:configuring", initial)) ?? initial;
+
+      return success(async () => {
+        const hono = new Hono(cfg);
+
+        // 1. Resolve HTTP facade from the kernel
+        const facade = ctx.services.resolve(HTTP_TOKEN);
+
+        // 2. Initialize the adapter with the resolved facade and the Hono instance
+        httpHonoAdapter(hono, facade);
+
+        // 3. Register the Hono instance as a service in the kernel
+        ctx.services.define(HTTP_HONO_TOKEN, () => hono);
+
+        // 4. Emit module initialized hook
+        await ctx.hooks.execute("@comity/http-hono:initialized", undefined);
+
+        // 5. Return success with no additional data
+        return success(undefined);
+      });
+    },
+  };
 
 export default module;

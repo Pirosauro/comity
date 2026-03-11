@@ -8,7 +8,7 @@ import { BaseError } from "@comity/primitives/error";
 export type CompositionErrorReason =
   | "resolution_failed"
   | "setup_failed"
-  | "apply_failed"
+  | "initialization_failed"
   | "cycle_detected"
   | "missing_dependency"
   | "incompatible";
@@ -27,6 +27,9 @@ export interface CompositionErrorMeta extends ErrorMeta {
 
     /** Cycle graph (if applicable) */
     cycle?: readonly string[];
+
+    /** Violation involved (if applicable) */
+    violation?: string;
   }>;
 }
 
@@ -34,7 +37,7 @@ export interface CompositionErrorMeta extends ErrorMeta {
 const REASON_MESSAGES: Record<CompositionErrorReason, string> = {
   resolution_failed: "Resolution failed",
   setup_failed: "Setup failed",
-  apply_failed: "Application failed",
+  initialization_failed: "Initialization failed",
   cycle_detected: "Dependency cycle detected",
   missing_dependency: "Required dependency missing",
   incompatible: "Incompatible modules",
@@ -43,7 +46,7 @@ const REASON_MESSAGES: Record<CompositionErrorReason, string> = {
 const REASON_HTTP_STATUS: Record<CompositionErrorReason, number> = {
   resolution_failed: 500,
   setup_failed: 500,
-  apply_failed: 500,
+  initialization_failed: 500,
   cycle_detected: 400,
   missing_dependency: 400,
   incompatible: 400,

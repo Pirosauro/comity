@@ -1,4 +1,5 @@
 import type { BaseError } from "../../error/base.js";
+import type { ReadonlyDeep } from "../../types.js";
 
 /**
  * Event Bus Contract.
@@ -50,7 +51,7 @@ export interface EventBus<Events extends Record<string, unknown>> {
  * An event handler is a function that processes an event payload. It can be
  * synchronous or return a promise for asynchronous processing.
  */
-export type EventHandler<T> = (payload: Readonly<T>) => void | Promise<void>;
+export type EventHandler<T> = (payload: ReadonlyDeep<T>) => void | Promise<void>;
 
 /**
  * Event Bus Error Handler.

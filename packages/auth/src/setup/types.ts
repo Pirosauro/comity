@@ -8,16 +8,15 @@ import type { AuthSessionRevocationPolicy } from "../contracts/session-revocatio
 import type { AuthEvaluationObserver } from "../hooks/evaluation.js";
 import type { AuthRefreshEvaluationObserver } from "../hooks/refresh.js";
 import type { AuthSessionObserver } from "../hooks/session.js";
-
 import type { AUTH_TOKEN } from "./constants.js";
 
 /** Hooks exposed by the module */
 export type AuthModuleHooks = {
+  /** Executed during module setup, allows modifying initial configuration */
+  "@comity/auth:configuring": Partial<AuthModuleOptions>;
+
   /** Executed when the auth module is initialized. */
-  "@comity/auth:initialized": {
-    /** Token of the initialized auth facade */
-    token: typeof AUTH_TOKEN;
-  };
+  "@comity/auth:initialized": undefined;
 };
 
 /** Events emitted by the module */
@@ -74,10 +73,10 @@ export interface AuthModuleContext extends ModuleSetupContext<
 /** Auth module setup options */
 export type AuthModuleOptions = {
   /** Session repository */
-  repository: AuthSessionRepository;
+  repository?: AuthSessionRepository;
 
   /** Assurance evaluator */
-  evaluator: AuthSessionAssuranceEvaluator;
+  evaluator?: AuthSessionAssuranceEvaluator;
 
   /** Guard policies */
   guard?: {

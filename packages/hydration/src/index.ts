@@ -8,11 +8,11 @@ export {
   HydrationOtherStrategy,
   HydrationStrategy,
 } from "./contracts/strategy.js";
-export { HydrationController, HydrationControllerOptions } from "./core/controller.js";
-export { IslandSerializer, JsonIslandSerializer } from "./core/serializer.js";
-export {
-  HydrationModuleContext,
-  HydrationModuleEvents,
-  HydrationModuleHooks,
-  HydrationModuleOptions,
-} from "./setup/types.js";
+export { HydrationController, HydrationControllerOptions } from "./controller.js";
+export { IslandSerializer, JsonIslandSerializer } from "./serializer.js";
+// export {
+//   HydrationModuleContext,
+//   HydrationModuleEvents,
+//   HydrationModuleHooks,
+//   HydrationModuleOptions,
+// } from "./setup/types.js";

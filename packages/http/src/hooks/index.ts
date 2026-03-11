@@ -1,1 +1,1 @@
-export { HttpEmitter } from "./observer.js";
+export { HttpObserver } from "./observer.js";

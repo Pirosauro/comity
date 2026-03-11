@@ -1,80 +1,66 @@
-import { httpHonoAdapter } from "@comity/http-hono";
+import { CompositeAssuranceEvaluator } from "@comity/auth";
+import authJose from "@comity/auth-jose/setup";
+import auth from "@comity/auth/setup";
+import { load, ModuleMeta } from "@comity/composition";
+import { HTTP_HONO_TOKEN } from "@comity/http-hono";
+import httpHono from "@comity/http-hono/setup";
 import http from "@comity/http/setup";
 import { Kernel } from "@comity/kernel";
-import { loadModules } from "@comity/kernel/modules";
-import { DiContainer } from "@comity/primitives/di";
-import { EventBus, HookBus } from "@comity/primitives/lifecycle";
+import { DefaultDiContainer } from "@comity/primitives/di";
+import { DefaultEventBus, DefaultHookBus } from "@comity/primitives/lifecycle";
+import router from "@comity/router/setup";
 import { Hono } from "hono";
-import { presentHello } from "./presenters/hello.js";
-import { renderHtml } from "./renderers/html.js";
-import { helloUseCase } from "./use-cases/hello.js";
-import { HelloView } from "./views/hello.js";
-
-const app = new Hono();
+import apiHelloRoute from "./routes/api.get.js";
+import homeRoute from "./routes/index.get.js";
+import { InMemoryAuthSessionRepository } from "./temporary/auth-session-repository";
+import { MemoryRouter } from "./temporary/memory-router.js";
+import { slugRewriter } from "./temporary/slug-rewriter.js";
 
 /* ───────────────── Kernel setup ───────────────── */
 
 const kernel = new Kernel({
-  services: new DiContainer(),
-  events: new EventBus(),
-  hooks: new HookBus(),
+  services: new DefaultDiContainer(),
+  events: new DefaultEventBus(),
+  hooks: new DefaultHookBus(),
 });
+
+/* ───────────────── Routing ───────────────── */
+
+const memoryRouter = new MemoryRouter([homeRoute, apiHelloRoute]);
 
 /* ───────────────── Module loading ───────────────── */
 
-/* ───────────────── HTTP runtime ───────────────── */
+const modules = [auth, authJose, http, httpHono, router] as ModuleMeta[];
 
-const adapter = httpHonoAdapter(app);
-const modules = [http];
+try {
+  await load(kernel, modules, {
+    "@comity/http": {},
 
-await loadModules(kernel, modules, {
-  http: {
-    adapter,
-  },
-});
+    "@comity/http-hono": {},
 
-/* ───────────────── Routes (app-level) ───────────────── */
+    "@comity/auth": {
+      repository: new InMemoryAuthSessionRepository(),
+      evaluator: new CompositeAssuranceEvaluator([]),
+    },
 
-app.get("/", async (c) => {
-  const result = helloUseCase();
+    "@comity/auth-jose": {
+      secret: "dev-secret",
+      issuer: "comity-example",
+      accessKey: "supersecret",
+      refreshKey: "supersecret",
+    },
 
-  if (result.success) {
-    const contract = presentHello(result);
-    const response = await renderHtml(<HelloView {...contract.data} />, {
-      status: 200,
-    });
+    "@comity/router": {
+      routers: [memoryRouter],
+      rewriters: [slugRewriter],
+      policies: {},
+    },
+  });
+} catch (error) {
+  console.error(error);
+  process.exit(1);
+}
 
-    if (response.ok) {
-      const headers = new Headers(response.value.headers);
-
-      // Content-Type se non presente
-      if (!headers.has("content-type")) {
-        headers.set("content-type", "text/html; charset=utf-8");
-      }
-
-      return new Response(response.value.stream, {
-        status: response.value.status,
-        headers,
-      });
-    }
-  }
-
-  // const contract = result.success ? presentHello(result) : presentError(result.error);
-  // const response = await renderHtml(<HelloView {...contract.value} />, {
-  //   status: response.ok ? 200 : 500,
-  // });
-
-  return c.text("Internal Server Error", 500);
-});
-
-// app.get("/api/hello", (c) => {
-//   const result = helloUseCase();
-
-//   if (!result.success) {
-//     return c.json({ error: result.error.code }, 500);
-//   }
-
-//   return c.json(result.value);
-// });
+const app = kernel.services.resolve(HTTP_HONO_TOKEN) as Hono;
 
 export default app;

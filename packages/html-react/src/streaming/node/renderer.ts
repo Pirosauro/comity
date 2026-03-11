@@ -1,9 +1,8 @@
-import type { HtmlRenderer, HtmlRendererOptions } from "@comity/html-runtime";
-import type { HttpHtmlResponse } from "@comity/http";
-import type { Result } from "@comity/primitives/result";
+import type { HtmlRenderer, HtmlRendererOptions, HtmlRenderResult } from "@comity/html";
+import type { HttpStatus } from "@comity/http";
 import type { ReactElement } from "react";
 
-import { HtmlRenderFailureError } from "@comity/html-runtime/errors";
+import { HtmlError } from "@comity/html/error";
 import { PassThrough, Readable } from "node:stream";
 import { renderToPipeableStream } from "react-dom/server";
 
@@ -12,11 +11,8 @@ import { renderToPipeableStream } from "react-dom/server";
  */
 export class ReactStreamingHtmlRenderer implements HtmlRenderer<ReactElement> {
   /** @inheritdoc */
-  async render(
-    view: ReactElement,
-    options?: HtmlRendererOptions
-  ): Promise<Result<HttpHtmlResponse, HtmlRenderFailureError, "ok">> {
-    const status = options?.status ?? 200;
+  async render(view: ReactElement, options?: HtmlRendererOptions): Promise<HtmlRenderResult> {
+    const status: HttpStatus = options?.status ?? 200;
     const stream = new PassThrough({ highWaterMark: 16_384 });
 
     let abort!: () => void;
@@ -49,9 +45,8 @@ export class ReactStreamingHtmlRenderer implements HtmlRenderer<ReactElement> {
       return {
         ok: true,
         value: {
-          intent: "html",
           status: status,
-          stream: Readable.toWeb(stream) as ReadableStream<Uint8Array>,
+          body: Readable.toWeb(stream) as ReadableStream<Uint8Array>,
           abort,
           ...(options?.headers && { headers: options.headers }),
         },
@@ -62,9 +57,13 @@ export class ReactStreamingHtmlRenderer implements HtmlRenderer<ReactElement> {
 
       return {
         ok: false,
-        error: new HtmlRenderFailureError({
-          reason: "streaming-error",
+        error: new HtmlError("render_error", {
           cause,
+          context: {
+            renderer: "react",
+            mode: "node-streaming",
+            layout: String(view.type || "unknown"),
+          },
         }),
       };
     }

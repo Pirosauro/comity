@@ -1,3 +1,5 @@
+import type { ReadonlyDeep } from "../../types.js";
+
 /**
  * Hook Bus Contract
  *
@@ -42,8 +44,8 @@ export interface HookBus<Hooks extends Record<string, unknown>> {
  *
  * @typeParam T - The type of value being handled
  *
- * @param value Current value
- * @param initial Initial value
+ * @param value - Current value
+ * @param initial - Initial value as reference
  *
  * @returns New value or a promise resolving to the new value
  *
@@ -52,4 +54,7 @@ export interface HookBus<Hooks extends Record<string, unknown>> {
  * transforming it and returning a new value. It can be synchronous or
  * return a promise for asynchronous processing.
  */
-export type HookHandler<T> = (value: T, initial: Readonly<T>) => T | Promise<T>;
+export type HookHandler<T> = (
+  value: ReadonlyDeep<T>,
+  initial: ReadonlyDeep<T>
+) => T | ReadonlyDeep<T> | Promise<T> | Promise<ReadonlyDeep<T>>;

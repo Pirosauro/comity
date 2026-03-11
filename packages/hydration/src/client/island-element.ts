@@ -1,7 +1,7 @@
 import type { IslandHydrationState } from "../contracts/island.js";
-import type { MaybeIslandContract } from "../core/serializer.js";
+import type { MaybeIslandContract } from "../serializer.js";
 
-import { JsonIslandSerializer } from "../core/serializer.js";
+import { JsonIslandSerializer } from "../serializer.js";
 
 /**
  * Custom element representing a Comity hydration island.

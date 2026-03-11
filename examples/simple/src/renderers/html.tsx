@@ -1,8 +1,8 @@
 import type { ReactElement } from "react";
 
+import { HtmlRendererOptions, HtmlRendererPipeline } from "@comity/html";
 import { ReactStaticHtmlRenderer } from "@comity/html-react";
 import { ReactStreamingHtmlRenderer } from "@comity/html-react/streaming";
-import { HtmlRendererOptions, HtmlRendererPipeline } from "@comity/html-runtime";
 // import { DefaultLayout } from "../themes/default/layout.js";
 // import { ErrorView } from "../views/error.js";
 // import { HelloView } from "../views/hello.js";

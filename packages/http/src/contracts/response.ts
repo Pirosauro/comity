@@ -1,102 +1,30 @@
-/**
- * HTTP intent.
- */
-export type HttpIntent = "text" | "html" | "json" | "redirect" | "event-stream";
+import type { HttpCookie } from "./cookie.js";
+import type { HttpStatus } from "./status.js";
 
 /**
- * Base type for all HTTP responses
+ * HTTP body type.
  */
-export type HttpResponse =
-  | HttpTextResponse
-  | HttpJsonResponse
-  | HttpHtmlResponse
-  | HttpRedirectResponse;
-
-/**
- * Any HTTP Response
- */
-export type AnyHttpResponse = HttpBaseResponse | HttpResponse;
+export type HttpBody = string | Uint8Array | ReadableStream | object | null | undefined;
 
 /**
  * Represents an HTTP response.
  *
- * @comity ai-jsdoc-skip
+ * @reamrks
+ * Not readonly to allow middleware to modify the response object before it's finalized.
  */
-export interface HttpBaseResponse {
+export interface HttpResponse {
   /** HTTP status code. */
-  status: number;
+  status?: HttpStatus;
 
   /** HTTP headers. */
   headers?: Record<string, string>;
-}
 
-/**
- * Base HTTP Response
- */
-export interface HttpIntentResponse<K extends string> extends HttpBaseResponse {
-  /** Intent  */
-  readonly intent: K;
+  /** HTTP cookies. */
+  cookies?: Record<string, HttpCookie>;
 
-  /** HTTP cookies */
-  readonly cookies?: Record<string, string>;
-}
+  /** HTTP body. */
+  body?: HttpBody;
 
-/**
- * HTTP streaming response
- */
-export interface HttpStreamingResponse {
-  /** Stream */
-  readonly stream: ReadableStream<Uint8Array>;
-
-  /** Abort function */
-  readonly abort?: () => void;
-
-  /** No Body */
-  readonly body?: never;
-}
-
-/**
- * Static HTTP response
- */
-export interface HttpStaticResponse<T> {
-  /** Body */
-  readonly body: T;
-
-  /** No streaming */
-  readonly streaming?: never;
-
-  /** No streaming abort */
-  readonly abort?: never;
-}
-
-/**
- * HTTP text response
- */
-export type HttpTextResponse = HttpIntentResponse<"text"> &
-  (HttpStaticResponse<string> | HttpStreamingResponse);
-
-/**
- * HTTP JSON response
- */
-export type HttpJsonResponse = HttpIntentResponse<"json"> &
-  (HttpStaticResponse<unknown> | HttpStreamingResponse);
-
-/**
- * HTTP HTML response
- */
-export type HttpHtmlResponse = HttpIntentResponse<"html"> &
-  (HttpStaticResponse<string> | HttpStreamingResponse);
-
-/**
- * HTTP redirect response
- */
-export interface HttpRedirectResponse {
-  /** Response intent */
-  readonly intent: "redirect";
-
-  /** HTTP status code */
-  readonly status: 301 | 302 | 303 | 307 | 308;
-
-  /** Redirection location */
-  readonly location: string;
+  /** Abort function. */
+  abort?: () => void;
 }

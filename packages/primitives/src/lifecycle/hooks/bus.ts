@@ -1,3 +1,4 @@
+import type { ReadonlyDeep } from "../../types.js";
 import type { HookBus, HookHandler } from "./types.js";
 
 /**
@@ -52,7 +53,10 @@ export class DefaultHookBus<
 
     // Execute all handlers in sequence
     for (const handler of handlers) {
-      value = (await handler(value, initial)) as Hooks[K];
+      value = (await handler(
+        value as ReadonlyDeep<Hooks[K]>,
+        initial as ReadonlyDeep<Hooks[K]>
+      )) as Hooks[K];
     }
 
     return value;

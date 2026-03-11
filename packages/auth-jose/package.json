@@ -50,34 +50,24 @@
         "default": "./dist/cjs/index.js"
       }
     },
-    "./errors": {
+    "./hooks": {
       "import": {
-        "types": "./dist/types/errors/index.d.ts",
-        "default": "./dist/esm/errors/index.js"
+        "types": "./dist/types/hooks/index.d.ts",
+        "default": "./dist/esm/hooks/index.js"
       },
       "require": {
-        "types": "./dist/types/errors/index.d.ts",
-        "default": "./dist/cjs/errors/index.js"
+        "types": "./dist/types/hooks/index.d.ts",
+        "default": "./dist/cjs/hooks/index.js"
       }
     },
     "./setup": {
       "import": {
-        "types": "./dist/types/setup.d.ts",
-        "default": "./dist/esm/setup.js"
+        "types": "./dist/types/setup/index.d.ts",
+        "default": "./dist/esm/setup/index.js"
       },
       "require": {
-        "types": "./dist/types/setup.d.ts",
-        "default": "./dist/cjs/setup.js"
-      }
-    },
-    "./use-cases": {
-      "import": {
-        "types": "./dist/types/use-cases/index.d.ts",
-        "default": "./dist/esm/use-cases/index.js"
-      },
-      "require": {
-        "types": "./dist/types/use-cases/index.d.ts",
-        "default": "./dist/cjs/use-cases/index.js"
+        "types": "./dist/types/setup/index.d.ts",
+        "default": "./dist/cjs/setup/index.js"
       }
     },
     "./package.json": "./package.json"
@@ -88,7 +78,7 @@
         "./dist/types/errors/index.d.ts"
       ],
       "setup": [
-        "./dist/types/setup.d.ts"
+        "./dist/types/setup/index.d.ts"
       ],
       "use-cases": [
         "./dist/types/use-cases/index.d.ts"
@@ -106,10 +96,10 @@
     "@comity/composition": "workspace:*",
     "@comity/kernel": "workspace:*",
     "@comity/primitives": "workspace:*",
-    "jose": "^6.2.0"
+    "jose": "^6.2.1"
   },
   "devDependencies": {
-    "@types/node": "^24.11.2",
+    "@types/node": "^24.12.0",
     "typescript": "^5.9.3"
   }
 }

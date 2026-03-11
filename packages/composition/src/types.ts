@@ -27,9 +27,7 @@ export interface ModuleSetupContext<
 /**
  * Module setup function.
  */
-export type ModuleSetupFn<Context extends ModuleSetupContext> = (
-  ctx: Context
-) => Promise<Result<void, BaseError>>;
+export type ModuleSetupFn = () => Promise<Result<void, BaseError>>;
 
 /**
  * Module metadata.
@@ -70,5 +68,5 @@ export interface ModuleMeta<
    * @remarks
    * Called during Module loading. Must be pure and side-effect free.
    */
-  readonly setup: (options?: Options) => Promise<Result<ModuleSetupFn<Context>, BaseError>>;
+  readonly setup: (ctx: Context, options?: Options) => Promise<Result<ModuleSetupFn, BaseError>>;
 }

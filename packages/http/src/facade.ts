@@ -1,7 +1,9 @@
 import type { HttpContext } from "./contracts/context.js";
 import type { HttpHandler } from "./contracts/handler.js";
-import type { AnyHttpResponse } from "./contracts/response.js";
+import type { HttpResponse } from "./contracts/response.js";
 import type { HttpObserver } from "./hooks/observer.js";
+
+import { toSafePayload } from "@comity/primitives/error";
 
 /**
  * HTTP Facade that provides a simplified interface for handling HTTP requests.
@@ -31,7 +33,7 @@ export class HttpFacade {
    *
    * @throws {Error} If an unexpected error occurs during the execution of the handler.
    */
-  async handle(ctx: HttpContext): Promise<AnyHttpResponse> {
+  async handle(ctx: HttpContext): Promise<HttpResponse> {
     const start = performance.now();
 
     // 1. Emit request started event
@@ -53,7 +55,7 @@ export class HttpFacade {
       // 4. Emit request failed event with error and duration
       this.#observer?.onRequestFailed?.({
         request: ctx.request,
-        error,
+        error: toSafePayload(error),
         duration: performance.now() - start,
       });
 

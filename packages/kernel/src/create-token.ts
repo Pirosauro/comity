@@ -4,6 +4,7 @@ import type { Token } from "./types.js";
  * Create a new token
  *
  * @typeParam T - Token type string
+ * @typeParam R - Token return type
  *
  * @param description Token description
  *
@@ -11,9 +12,9 @@ import type { Token } from "./types.js";
  *
  * @example
  * ```typescript
- * const MyServiceToken = createToken<"MyService">("MyService");
+ * const MyServiceToken = createToken<"MyService", MyService>("MyService");
  * ```
  */
-export function createToken<T extends string>(description: string): Token<T> {
-  return Symbol(description) as Token<T>;
+export function createToken<T extends string, R = unknown>(description: string): Token<T, R> {
+  return Symbol(description) as Token<T, R>;
 }

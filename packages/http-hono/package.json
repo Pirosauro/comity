@@ -63,6 +63,9 @@
     },
     "./package.json": "./package.json"
   },
+  "typesVersions": {
+    "setup": []
+  },
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public"
@@ -70,13 +73,14 @@
   "sideEffects": false,
   "private": false,
   "dependencies": {
+    "@comity/composition": "workspace:*",
     "@comity/http": "workspace:*",
     "@comity/kernel": "workspace:*",
     "@comity/primitives": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^24.11.2",
-    "hono": "^4.12.5",
+    "@types/node": "^24.12.0",
+    "hono": "^4.12.7",
     "typescript": "^5.9.3"
   },
   "peerDependencies": {

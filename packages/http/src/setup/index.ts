@@ -1,14 +1,19 @@
 import type { ModuleMeta } from "@comity/composition";
-import type { HttpModuleOptions } from "./types.js";
+import type { HttpObserver } from "../hooks/observer.js";
+import type { HttpModuleContext, HttpModuleOptions } from "./types.js";
 
-import { success } from "@comity/primitives/result";
+import { CompositionError } from "@comity/composition/error";
+import { failure, success } from "@comity/primitives/result";
+import { HttpFacade } from "../facade.js";
+import { createHttpHandler } from "../handler.js";
+import { HTTP_TOKEN } from "./constants.js";
 
 /**
  * Metadata for the HTTP module.
  *
  * @comity ai-jsdoc-skip
  */
-export const module: ModuleMeta<HttpModuleOptions> = {
+export const module: ModuleMeta<HttpModuleOptions, HttpModuleContext> = {
   name: "@comity/http",
   version: "1.0.0",
 
@@ -16,36 +21,53 @@ export const module: ModuleMeta<HttpModuleOptions> = {
   incompatibleWith: [],
 
   /** @inheritdoc */
-  setup: async (options) => {
-    // if (!options?.adapter) {
-    //   return failure(new DomainViolationError("HTTP adapter is required"));
-    // }
+  setup: async (ctx, options) => {
+    const initial: HttpModuleOptions = { ...options };
+    const cfg = (await ctx.hooks.execute("@comity/http:configuring", initial)) ?? initial;
 
-    return success(async (ctx) => {
-      //   const facade = new DefaultHttpFacade({
-      //     /** @inheritdoc */
-      //     requestStarted: (p) => {
-      //       ctx.events.emit("@comity/http:request-started", p);
-      //     },
+    // Validate configuration
+    if (!cfg.handler) {
+      return failure(
+        new CompositionError("setup_failed", {
+          details: {
+            module: "@comity/http",
+          },
+          context: {
+            message: "No HTTP handler provided in module configuration.",
+          },
+        })
+      );
+    }
 
-      //     /** @inheritdoc */
-      //     requestCompleted: (p) => {
-      //       ctx.events.emit("@comity/http:request-completed", p);
-      //     },
+    // Init
+    return success(async () => {
+      const observer: HttpObserver = {
+        /** @inheritdoc */
+        onRequestStarted: (p) => {
+          ctx.events.emit("@comity/http:request-started", p);
+        },
 
-      //     /** @inheritdoc */
-      //     requestFailed: (p) => {
-      //       ctx.events.emit("@comity/http:request-failed", p);
-      //     },
-      //   });
+        /** @inheritdoc */
+        onRequestCompleted: (p) => {
+          ctx.events.emit("@comity/http:request-completed", p);
+        },
 
-      //   // Apply middlewares
-      //   options?.middlewares?.forEach((middleware) => {
-      //     facade.use(middleware);
-      //   });
+        /** @inheritdoc */
+        onRequestFailed: (p) => {
+          ctx.events.emit("@comity/http:request-failed", p);
+        },
+      };
 
-      //   // Attach adapter to the facade
-      //   options.adapter.attach(facade);
+      // 1. build pipeline
+      const httpHandler = createHttpHandler(cfg.middleware ?? [], cfg.handler!);
+      // 2. build facade
+      const facade = new HttpFacade(httpHandler, observer);
+
+      // 3. register service
+      ctx.services.define(HTTP_TOKEN, () => facade);
+
+      // 4. lifecycle hook
+      await ctx.hooks.execute("@comity/http:initialized", undefined);
 
       return success(undefined);
     });

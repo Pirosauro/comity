@@ -49,9 +49,9 @@ import { CompositionError } from "./error/composition.js";
  */
 export function resolveOrder(input: readonly ModuleMeta[]): Result<ModuleMeta[], CompositionError> {
   const modules = [...input];
-
   // 1. Build map + detect duplicates
   const map = new Map<string, ModuleMeta>();
+
   for (const mod of modules) {
     if (map.has(mod.name)) {
       return failure(
@@ -146,6 +146,7 @@ export function resolveOrder(input: readonly ModuleMeta[]): Result<ModuleMeta[],
       }
 
       const depResult = visit(dependency);
+
       if (isFailure(depResult)) {
         return depResult;
       }
@@ -163,6 +164,7 @@ export function resolveOrder(input: readonly ModuleMeta[]): Result<ModuleMeta[],
 
   for (const mod of sortedByPriority) {
     const r = visit(mod);
+
     if (isFailure(r)) {
       return r;
     }

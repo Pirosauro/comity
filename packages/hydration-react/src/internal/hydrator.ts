@@ -3,7 +3,7 @@ import type { IslandElement } from "@comity/hydration/client";
 import type { Attributes } from "react";
 import type { IslandComponentRegistry } from "../contracts/registry.js";
 
-import { HydrationRuntimeErrorError } from "@comity/hydration/errors";
+import { HydrationError } from "@comity/hydration/error";
 import { createElement } from "react";
 import { createRoot, hydrateRoot } from "react-dom/client";
 
@@ -15,16 +15,14 @@ export class ReactIslandHydrationAdapter implements IslandHydrationAdapter {
   #registry: IslandComponentRegistry;
 
   /**
-   *
-   * @param registry
+   * @param registry - The registry of island components
    */
   constructor(registry: IslandComponentRegistry) {
     this.#registry = registry;
   }
 
   /**
-   *
-   * @param contract -
+   * @inheritDoc
    */
   supports(contract: IslandContract): boolean {
     if (!contract.component) return false;
@@ -34,26 +32,26 @@ export class ReactIslandHydrationAdapter implements IslandHydrationAdapter {
   }
 
   /**
-   *
-   * @param island -
-   * @param contract
+   * @inheritdoc
    */
   async hydrate(island: IslandElement, contract: IslandContract): Promise<void> {
     const loader = this.#registry[contract.component];
 
     if (!loader) {
-      throw new HydrationRuntimeErrorError("Unknown island component", {
-        reason: "not_registered",
-        component: contract.component,
+      throw new HydrationError("not_registered", {
+        details: {
+          component: contract.component,
+        },
       });
     }
 
     const { default: component } = await loader();
 
     if (!component) {
-      throw new HydrationRuntimeErrorError("Invalid island component", {
-        reason: "invalid_component",
-        component: contract.component,
+      throw new HydrationError("invalid_component", {
+        details: {
+          component: contract.component,
+        },
       });
     }
 
