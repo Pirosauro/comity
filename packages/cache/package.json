@@ -54,16 +54,6 @@
         "default": "./dist/cjs/error/index.js"
       }
     },
-    "./hooks": {
-      "import": {
-        "types": "./dist/types/hooks/index.d.ts",
-        "default": "./dist/esm/hooks/index.js"
-      },
-      "require": {
-        "types": "./dist/types/hooks/index.d.ts",
-        "default": "./dist/cjs/hooks/index.js"
-      }
-    },
     "./setup": {
       "import": {
         "types": "./dist/types/setup/index.d.ts",
@@ -90,9 +80,6 @@
     "*": {
       "error": [
         "./dist/types/error/index.d.ts"
-      ],
-      "hooks": [
-        "./dist/types/hooks/index.d.ts"
       ],
       "setup": [
         "./dist/types/setup/index.d.ts"

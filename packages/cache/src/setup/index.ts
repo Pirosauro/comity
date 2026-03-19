@@ -1,10 +1,9 @@
 import type { ModuleMeta } from "@comity/composition";
-import type { CacheObserver } from "../hooks/cache.js";
 import type { CacheModuleContext, CacheModuleOptions } from "./types.js";
 
-import { success } from "@comity/primitives/result";
+import { CompositionError } from "@comity/composition/error";
+import { failure, success } from "@comity/primitives/result";
 import { DefaultCache } from "../facade.js";
-import { MemoryCacheStore } from "../stores/memory.js";
 import { CACHE_TOKEN } from "./constants.js";
 
 export const module: ModuleMeta<CacheModuleOptions, CacheModuleContext> = {
@@ -21,30 +20,19 @@ export const module: ModuleMeta<CacheModuleOptions, CacheModuleContext> = {
     };
     const cfg = (await ctx.hooks.execute("@comity/cache:configuring", initial)) ?? initial;
 
-    // If no store is provided, use the default in-memory implementation
     if (!cfg.store) {
-      cfg.store = new MemoryCacheStore();
+      return failure(
+        new CompositionError("setup_failed", {
+          details: {
+            module: "@comity/storage",
+            violation: "missing_store",
+          },
+        })
+      );
     }
 
     return success(async () => {
-      const observer: CacheObserver = {
-        /** @inheritdoc */
-        onCacheSet: (entry) => ctx.events.emit("@comity/cache:set", entry),
-
-        /** @inheritdoc */
-        onCacheDelete: (key) => ctx.events.emit("@comity/cache:delete", key),
-
-        /** @inheritdoc */
-        onCacheClear: () => ctx.events.emit("@comity/cache:clear", undefined),
-
-        /** @inheritdoc */
-        onCacheHit: (key) => ctx.events.emit("@comity/cache:hit", key),
-
-        /** @inheritdoc */
-        onCacheMiss: (key) => ctx.events.emit("@comity/cache:miss", key),
-      };
-
-      const facade = new DefaultCache(cfg.store!, observer);
+      const facade = new DefaultCache(cfg.store!);
 
       ctx.services.define(CACHE_TOKEN, () => facade);
 
@@ -54,3 +42,5 @@ export const module: ModuleMeta<CacheModuleOptions, CacheModuleContext> = {
     });
   },
 };
+
+export default module;

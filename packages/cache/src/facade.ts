@@ -1,7 +1,6 @@
 import type { Cache } from "./contracts/cache.js";
 import type { CacheDeleteOptions, CacheGetOptions, CacheSetOptions } from "./contracts/options.js";
 import type { CacheStore } from "./contracts/store.js";
-import type { CacheObserver } from "./hooks/cache.js";
 
 /**
  * DefaultCache is the default implementation of the Cache interface.
@@ -10,16 +9,11 @@ export class DefaultCache implements Cache {
   /**  */
   #store: CacheStore;
 
-  /**  */
-  #observer: CacheObserver | undefined;
-
   /**
    * @param store - The cache store to use.
-   * @param observer - Optional cache observer to emit events to.
    */
-  constructor(store: CacheStore, observer?: CacheObserver) {
+  constructor(store: CacheStore) {
     this.#store = store;
-    this.#observer = observer;
   }
 
   /**
@@ -42,18 +36,6 @@ export class DefaultCache implements Cache {
 
     const value = await this.#store.get(k);
 
-    if (value === undefined) {
-      this.#observer?.onCacheMiss({
-        key,
-        ...(options?.namespace !== undefined ? { namespace: options.namespace } : {}),
-      });
-    } else {
-      this.#observer?.onCacheHit({
-        key,
-        ...(options?.namespace !== undefined ? { namespace: options.namespace } : {}),
-      });
-    }
-
     return value;
   }
 
@@ -66,11 +48,6 @@ export class DefaultCache implements Cache {
     await this.#store.set(k, value, {
       ...(options?.ttl !== undefined ? { ttl: options.ttl } : {}),
     });
-
-    this.#observer?.onCacheSet({
-      key,
-      ...(options?.namespace !== undefined ? { namespace: options.namespace } : {}),
-    });
   }
 
   /**
@@ -80,11 +57,6 @@ export class DefaultCache implements Cache {
     const k = this.#key(key, options?.namespace);
 
     await this.#store.delete(k);
-
-    this.#observer?.onCacheDelete({
-      key,
-      ...(options?.namespace !== undefined ? { namespace: options.namespace } : {}),
-    });
   }
 
   /**

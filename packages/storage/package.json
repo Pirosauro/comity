@@ -1,0 +1,118 @@
+{
+  "name": "@comity/storage",
+  "version": "1.0.0",
+  "description": "Storage module for Comity framework",
+  "type": "module",
+  "author": "Filippo Bovo <hello@filippobovo.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/comityjs/framework#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/comityjs/framework.git"
+  },
+  "bugs": {
+    "url": "https://github.com/comityjs/framework/issues"
+  },
+  "keywords": [
+    "comity",
+    "comityjs",
+    "storage",
+    "typescript"
+  ],
+  "scripts": {
+    "build": "node ../../scripts/build.mjs",
+    "prepublish": "node ../../scripts/build.mjs",
+    "dev": "node ../../scripts/build.mjs --watch",
+    "test": "vitest run --coverage"
+  },
+  "files": [
+    "./dist",
+    "!./dist/**/*.map"
+  ],
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    },
+    "./error": {
+      "import": {
+        "types": "./dist/types/error/index.d.ts",
+        "default": "./dist/esm/error/index.js"
+      },
+      "require": {
+        "types": "./dist/types/error/index.d.ts",
+        "default": "./dist/cjs/error/index.js"
+      }
+    },
+    "./hooks": {
+      "import": {
+        "types": "./dist/types/hooks/index.d.ts",
+        "default": "./dist/esm/hooks/index.js"
+      },
+      "require": {
+        "types": "./dist/types/hooks/index.d.ts",
+        "default": "./dist/cjs/hooks/index.js"
+      }
+    },
+    "./setup": {
+      "import": {
+        "types": "./dist/types/setup/index.d.ts",
+        "default": "./dist/esm/setup/index.js"
+      },
+      "require": {
+        "types": "./dist/types/setup/index.d.ts",
+        "default": "./dist/cjs/setup/index.js"
+      }
+    },
+    "./stores": {
+      "import": {
+        "types": "./dist/types/stores/index.d.ts",
+        "default": "./dist/esm/stores/index.js"
+      },
+      "require": {
+        "types": "./dist/types/stores/index.d.ts",
+        "default": "./dist/cjs/stores/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "error": [
+        "./dist/types/error/index.d.ts"
+      ],
+      "hooks": [
+        "./dist/types/hooks/index.d.ts"
+      ],
+      "setup": [
+        "./dist/types/setup/index.d.ts"
+      ],
+      "stores": [
+        "./dist/types/stores/index.d.ts"
+      ]
+    }
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "@comity/composition": "workspace:*",
+    "@comity/kernel": "workspace:*",
+    "@comity/primitives": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^24.12.0",
+    "typescript": "^5.9.3"
+  }
+}

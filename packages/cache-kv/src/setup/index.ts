@@ -28,3 +28,5 @@ export const module: ModuleMeta<KvCacheModuleOptions, KvCacheModuleContext & Cac
     return success(async () => success(undefined));
   },
 };
+
+export default module;

@@ -1,5 +1,6 @@
-import type { HttpContext, HttpMethod, HttpRequest } from "@comity/http";
+import type { HttpContext, HttpMethod, HttpRequest, HttpRuntimeContext } from "@comity/http";
 import type { Context as HonoContext } from "hono";
+import type { HttpHonoModuleContext } from "../setup/types.js";
 
 import { getCookie } from "hono/cookie";
 
@@ -24,10 +25,13 @@ export function headersToRecord(headers: Headers): Record<string, string> {
  * Creates an HTTP context from a Hono context.
  *
  * @param c - Hono context.
+ * @param runtime - HTTP runtime context providing access to kernel services and events.
+ *
+ * @param runtime
  *
  * @returns HTTP context.
  */
-export function createHttpContext(c: HonoContext): HttpContext {
+export function createHttpContext(c: HonoContext, runtime: HttpRuntimeContext): HttpContext {
   const state: Record<string, unknown> = {};
   const headers = headersToRecord(c.req.raw.headers);
   const params = {
@@ -60,6 +64,16 @@ export function createHttpContext(c: HonoContext): HttpContext {
     /** @inheritdoc */
     get state() {
       return state;
+    },
+
+    /** @inheritdoc */
+    get services() {
+      return runtime.services;
+    },
+
+    /** @inheritdoc */
+    get events() {
+      return runtime.events;
     },
   };
 }

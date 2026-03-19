@@ -1,0 +1,48 @@
+{
+  "type": "module",
+  "scripts": {
+    "dev": "vite -c src/config/vite.ts",
+    "build": "vite build -c src/config/vite.ts",
+    "preview": "wrangler pages dev dist",
+    "deploy": "$npm_execpath run build && wrangler pages deploy dist --branch production",
+    "db:generate": "drizzle-kit generate --config=./src/config/drizzle.ts",
+    "db:push": "drizzle-kit push --config=./src/config/drizzle.ts"
+  },
+  "dependencies": {
+    "@comity/auth": "workspace:*",
+    "@comity/auth-jose": "workspace:*",
+    "@comity/auth-tokens": "workspace:*",
+    "@comity/cache": "workspace:*",
+    "@comity/composition": "workspace:*",
+    "@comity/graphql-builder": "workspace:*",
+    "@comity/graphql-client": "workspace:*",
+    "@comity/graphql-client-ws": "workspace:*",
+    "@comity/html": "workspace:*",
+    "@comity/html-react": "workspace:*",
+    "@comity/http": "workspace:*",
+    "@comity/http-hono": "workspace:*",
+    "@comity/hydration": "workspace:*",
+    "@comity/hydration-react": "workspace:*",
+    "@comity/kernel": "workspace:*",
+    "@comity/primitives": "workspace:*",
+    "@comity/router": "workspace:*",
+    "@schema-hub/zod-graphql-query-builder": "^0.0.13",
+    "gqlb": "^0.1.5",
+    "graphql": "^16.13.1",
+    "graphql-ws": "^6.0.7",
+    "hono": "^4.12.8",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "vite": "^7.3.1",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@hono/vite-build": "^1.10.0",
+    "@hono/vite-dev-server": "^0.23.0",
+    "@types/node": "^24.12.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "^5.9.3",
+    "wrangler": "^4.75.0"
+  }
+}

@@ -2,7 +2,7 @@ import type { ModuleMeta } from "@comity/composition";
 import type { HttpModuleContext } from "@comity/http";
 import type { HttpHonoModuleContext, HttpHonoModuleOptions } from "./types.js";
 
-import { HTTP_TOKEN } from "@comity/http";
+import { createHttpContext, HTTP_TOKEN } from "@comity/http";
 import { success } from "@comity/primitives/result";
 import { Hono } from "hono/quick";
 import { httpHonoAdapter } from "../adapter/http.js";
@@ -37,9 +37,10 @@ export const module: ModuleMeta<HttpHonoModuleOptions, HttpHonoModuleContext & H
 
         // 1. Resolve HTTP facade from the kernel
         const facade = ctx.services.resolve(HTTP_TOKEN);
+        const runtime = createHttpContext(ctx);
 
         // 2. Initialize the adapter with the resolved facade and the Hono instance
-        httpHonoAdapter(hono, facade);
+        httpHonoAdapter(hono, facade, runtime);
 
         // 3. Register the Hono instance as a service in the kernel
         ctx.services.define(HTTP_HONO_TOKEN, () => hono);

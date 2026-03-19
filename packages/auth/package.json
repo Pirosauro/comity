@@ -69,6 +69,26 @@
         "default": "./dist/cjs/hooks/index.js"
       }
     },
+    "./policies": {
+      "import": {
+        "types": "./dist/types/policies/index.d.ts",
+        "default": "./dist/esm/policies/index.js"
+      },
+      "require": {
+        "types": "./dist/types/policies/index.d.ts",
+        "default": "./dist/cjs/policies/index.js"
+      }
+    },
+    "./repositories": {
+      "import": {
+        "types": "./dist/types/repositories/index.d.ts",
+        "default": "./dist/esm/repositories/index.js"
+      },
+      "require": {
+        "types": "./dist/types/repositories/index.d.ts",
+        "default": "./dist/cjs/repositories/index.js"
+      }
+    },
     "./setup": {
       "import": {
         "types": "./dist/types/setup/index.d.ts",
@@ -98,6 +118,12 @@
       ],
       "hooks": [
         "./dist/types/hooks/index.d.ts"
+      ],
+      "policies": [
+        "./dist/types/policies/index.d.ts"
+      ],
+      "repositories": [
+        "./dist/types/repositories/index.d.ts"
       ],
       "setup": [
         "./dist/types/setup/index.d.ts"

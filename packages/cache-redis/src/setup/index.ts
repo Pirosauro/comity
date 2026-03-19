@@ -31,3 +31,5 @@ export const module: ModuleMeta<
     return success(async () => success(undefined));
   },
 };
+
+export default module;

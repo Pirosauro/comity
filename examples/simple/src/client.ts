@@ -13,6 +13,10 @@ const registry: IslandComponentRegistry = {
    */
   // @ts-expect-error
   counter: () => import("./components/counter.js"),
+  /**
+   *
+   */
+  user: () => import("./components/user.island.js"),
 };
 
 // Create the hydration runtime

@@ -1,8 +1,12 @@
-import type { DiContainer } from "@comity/primitives/di";
-import type { EventBus, EventHandler, HookBus, HookHandler } from "@comity/primitives/lifecycle";
+import type { EventHandler, HookHandler } from "@comity/primitives/lifecycle";
 import type { KernelLifecycleObserver } from "./hooks/lifecycle.js";
 import type { KernelLifecycleState } from "./hooks/types.js";
-import type { KernelContext } from "./types.js";
+import type {
+  KernelContext,
+  KernelEventBus,
+  KernelHookBus,
+  KernelServiceResolver,
+} from "./types.js";
 
 import { toSafePayload } from "@comity/primitives/error";
 import { isSuccess } from "@comity/primitives/result";
@@ -18,37 +22,13 @@ export class Kernel<
   Hooks extends Record<keyof Hooks, unknown> = {},
 > {
   /** Service container */
-  #services: {
-    /** Define a service */
-    define: DiContainer<Services>["define"];
-
-    /** Resolve a service */
-    resolve: DiContainer<Services>["resolve"];
-
-    /** Clear cached instances */
-    clear: DiContainer<Services>["clear"];
-  };
+  #services: KernelServiceResolver<Services>;
 
   /** Event bus */
-  #events: {
-    /** Subscribe to an event */
-    subscribe: EventBus<Events>["subscribe"];
-
-    /** Unsubscribe from an event */
-    unsubscribe: EventBus<Events>["unsubscribe"];
-
-    /** Emit an event */
-    emit: EventBus<Events>["emit"];
-  };
+  #events: KernelEventBus<Events>;
 
   /** Hook bus */
-  #hooks: {
-    /** Define a hook */
-    define: HookBus<Hooks>["define"];
-
-    /** Execute a hook */
-    execute: HookBus<Hooks>["execute"];
-  };
+  #hooks: KernelHookBus<Hooks>;
 
   /** Lifecycle manager */
   #lifecycle = new Lifecycle();

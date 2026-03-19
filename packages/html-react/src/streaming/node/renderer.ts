@@ -27,7 +27,6 @@ export class ReactStreamingHtmlRenderer implements HtmlRenderer<ReactElement> {
         /** @inheritdoc */
         onShellReady() {
           clearTimeout(timer);
-          stream.write("<!DOCTYPE html>");
           result.pipe(stream);
         },
 
