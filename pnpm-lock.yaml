@@ -42,14 +42,14 @@ importers:
         specifier: ^3.8.1
         version: 3.8.1
       turbo:
-        specifier: ^2.8.19
-        version: 2.8.19
+        specifier: ^2.8.20
+        version: 2.8.20
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
       undici:
-        specifier: ^7.24.4
-        version: 7.24.4
+        specifier: ^7.24.5
+        version: 7.24.5
       vitest:
         specifier: ^4.1.0
         version: 4.1.0(@types/node@25.0.9)(jsdom@27.4.0)(vite@7.3.1(@types/node@25.0.9)(tsx@4.21.0))
@@ -112,11 +112,11 @@ importers:
         version: 4.3.6
     devDependencies:
       '@hono/vite-build':
-        specifier: ^1.10.0
-        version: 1.10.0(hono@4.12.8)
+        specifier: ^1.10.1
+        version: 1.10.1(hono@4.12.8)
       '@hono/vite-dev-server':
         specifier: ^0.23.0
-        version: 0.23.0(hono@4.12.8)(miniflare@4.20260317.0)(wrangler@4.75.0)
+        version: 0.23.0(hono@4.12.8)(miniflare@4.20260317.1)(wrangler@4.76.0)
       '@types/node':
         specifier: ^24.12.0
         version: 24.12.0
@@ -133,8 +133,8 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
       wrangler:
-        specifier: ^4.75.0
-        version: 4.75.0
+        specifier: ^4.76.0
+        version: 4.76.0
 
   examples/xxx:
     dependencies:
@@ -210,6 +210,9 @@ importers:
       react-dom:
         specifier: ^19.2.4
         version: 19.2.4(react@19.2.4)
+      typed-magento-graphql:
+        specifier: ^0.248.1
+        version: 0.248.1
       vite:
         specifier: ^7.3.1
         version: 7.3.1(@types/node@24.12.0)(tsx@4.21.0)
@@ -218,11 +221,11 @@ importers:
         version: 4.3.6
     devDependencies:
       '@hono/vite-build':
-        specifier: ^1.10.0
-        version: 1.10.0(hono@4.12.8)
+        specifier: ^1.10.1
+        version: 1.10.1(hono@4.12.8)
       '@hono/vite-dev-server':
         specifier: ^0.23.0
-        version: 0.23.0(hono@4.12.8)(miniflare@4.20260317.0)(wrangler@4.75.0)
+        version: 0.23.0(hono@4.12.8)(miniflare@4.20260317.1)(wrangler@4.76.0)
       '@types/node':
         specifier: ^24.12.0
         version: 24.12.0
@@ -236,8 +239,8 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
       wrangler:
-        specifier: ^4.75.0
-        version: 4.75.0
+        specifier: ^4.76.0
+        version: 4.76.0
 
   packages/auth:
     dependencies:
@@ -359,7 +362,7 @@ importers:
         version: link:../primitives
       ioredis:
         specifier: ^5.0.0
-        version: 5.10.0
+        version: 5.10.1
       redis:
         specifier: ^5.0.0
         version: 5.11.0
@@ -801,8 +804,8 @@ packages:
     resolution: {integrity: sha512-SIOD2DxrRRwQ+jgzlXCqoEFiKOFqaPjhnNTGKXSRLvp1HiOvapLaFG2kEr9dYQTYe8rKrd9uvDUzmAITeNyaHQ==}
     engines: {node: '>=18.0.0'}
 
-  '@cloudflare/unenv-preset@2.15.0':
-    resolution: {integrity: sha512-EGYmJaGZKWl+X8tXxcnx4v2bOZSjQeNI5dWFeXivgX9+YCT69AkzHHwlNbVpqtEUTbew8eQurpyOpeN8fg00nw==}
+  '@cloudflare/unenv-preset@2.16.0':
+    resolution: {integrity: sha512-8ovsRpwzPoEqPUzoErAYVv8l3FMZNeBVQfJTvtzP4AgLSRGZISRfuChFxHWUQd3n6cnrwkuTGxT+2cGo8EsyYg==}
     peerDependencies:
       unenv: 2.0.0-rc.24
       workerd: 1.20260301.1 || ~1.20260302.1 || ~1.20260303.1 || ~1.20260304.1 || >1.20260305.0 <2.0.0-0
@@ -883,8 +886,8 @@ packages:
   '@drizzle-team/brocli@0.10.2':
     resolution: {integrity: sha512-z33Il7l5dKjUgGULTqBsQBQwckHh5AbIuxhdsIxDDiZAzBOrZO6q9ogcWC65kU382AfynTfgNumVcNIjuIua6w==}
 
-  '@emnapi/runtime@1.9.0':
-    resolution: {integrity: sha512-QN75eB0IH2ywSpRpNddCRfQIhmJYBCJ1x5Lb3IscKAL8bMnVAKnRg8dCoXbHzVLLH7P38N2Z3mtulB7W0J0FKw==}
+  '@emnapi/runtime@1.9.1':
+    resolution: {integrity: sha512-VYi5+ZVLhpgK4hQ0TAjiQiZ6ol0oe4mBx7mVv7IflsiEp0OWoVsp/+f9Vc1hOhE0TtkORVrI1GvzyreqpgWtkA==}
 
   '@es-joy/jsdoccomment@0.84.0':
     resolution: {integrity: sha512-0xew1CxOam0gV5OMjh2KjFQZsKL2bByX1+q4j3E73MpYIdyUxcZb/xQct9ccUb+ve5KGUYbCUxyPnYB7RbuP+w==}
@@ -1560,8 +1563,8 @@ packages:
     peerDependencies:
       hono: ^4
 
-  '@hono/vite-build@1.10.0':
-    resolution: {integrity: sha512-pA6QgWAdFR2D+8ql1c7VB/ZKP++u3Al9SCdvhEB1gnTtKs7vY1poirVR3i/do/a6tWl9mfmRR5TK32oXMLHkZg==}
+  '@hono/vite-build@1.10.1':
+    resolution: {integrity: sha512-1HRZj0pTDAvlFpZAyiiplOAhzd9P8NLDATOTu4ic+LdYAImLxWMMWV6LAB19gg7c2C+dQlE7sMKcpylJ+buRug==}
     engines: {node: '>=18.14.1'}
     peerDependencies:
       hono: '*'
@@ -1965,33 +1968,33 @@ packages:
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
 
-  '@turbo/darwin-64@2.8.19':
-    resolution: {integrity: sha512-WNzpqJV7rO/oKmsxjtSFXuV87fZb/qxzeGWXJng4oHFz7iPOFSWrPb2gTazJgoTvXUfe1kOH2o0F+zFrerwzRw==}
+  '@turbo/darwin-64@2.8.20':
+    resolution: {integrity: sha512-FQ9EX1xMU5nbwjxXxM3yU88AQQ6Sqc6S44exPRroMcx9XZHqqppl5ymJF0Ig/z3nvQNwDmz1Gsnvxubo+nXWjQ==}
     cpu: [x64]
     os: [darwin]
 
-  '@turbo/darwin-arm64@2.8.19':
-    resolution: {integrity: sha512-KTq8/PH0/ml9bNFomZ2VjmOqW6RYPRqBqV5CfNeD5ekJMuNwJUdeQz0qXguxCzW4OkHCnTdPeKIehR0cdQObPg==}
+  '@turbo/darwin-arm64@2.8.20':
+    resolution: {integrity: sha512-Gpyh9ATFGThD6/s9L95YWY54cizg/VRWl2B67h0yofG8BpHf67DFAh9nuJVKG7bY0+SBJDAo5cMur+wOl9YOYw==}
     cpu: [arm64]
     os: [darwin]
 
-  '@turbo/linux-64@2.8.19':
-    resolution: {integrity: sha512-d0xcXiGUt1Q/HzMfgkqai5KyXrassLRuUZhxmUs4ZX99tQFbqRL2/CkSKCnMqyDv7c0K5eugLerVUY+DYr1DQg==}
+  '@turbo/linux-64@2.8.20':
+    resolution: {integrity: sha512-p2QxWUYyYUgUFG0b0kR+pPi8t7c9uaVlRtjTTI1AbCvVqkpjUfCcReBn6DgG/Hu8xrWdKLuyQFaLYFzQskZbcA==}
     cpu: [x64]
     os: [linux]
 
-  '@turbo/linux-arm64@2.8.19':
-    resolution: {integrity: sha512-UX3r1iwqsOK8dMgKFtZpDqZk7feqHXZJ/EQAknh0SVQrnc4vkm6mZqjX4j2j3DVoSo4Ho8xGITYlor9Xxsyomw==}
+  '@turbo/linux-arm64@2.8.20':
+    resolution: {integrity: sha512-Gn5yjlZGLRZWarLWqdQzv0wMqyBNIdq1QLi48F1oY5Lo9kiohuf7BPQWtWxeNVS2NgJ1+nb/DzK1JduYC4AWOA==}
     cpu: [arm64]
     os: [linux]
 
-  '@turbo/windows-64@2.8.19':
-    resolution: {integrity: sha512-3MrvD/gMYWfQKZVZOeilKm1629zPG0+KlErZbI0n9Nr3L32+5qrZOF/cgWErukLnOSR38whgf8t2WaPJQALqxg==}
+  '@turbo/windows-64@2.8.20':
+    resolution: {integrity: sha512-vyaDpYk/8T6Qz5V/X+ihKvKFEZFUoC0oxYpC1sZanK6gaESJlmV3cMRT3Qhcg4D2VxvtC2Jjs9IRkrZGL+exLw==}
     cpu: [x64]
     os: [win32]
 
-  '@turbo/windows-arm64@2.8.19':
-    resolution: {integrity: sha512-j+8mi7kyEgT7cUTPOtPJS8KbTWxu4+OQBiDIo+zklz/RKV4hoN+k4+J8iCM9Nj+o+SVnzc01xSI+s3eBG0MDSA==}
+  '@turbo/windows-arm64@2.8.20':
+    resolution: {integrity: sha512-voicVULvUV5yaGXo0Iue13BcHGYW3u0VgqSbfQwBaHbpj1zLjYV4KIe+7fYIo6DO8FVUJzxFps3ODCQG/Wy2Qw==}
     cpu: [arm64]
     os: [win32]
 
@@ -2797,8 +2800,8 @@ packages:
     resolution: {integrity: sha512-4gd7VpWNQNB4UKKCFFVcp1AVv+FMOgs9NKzjHKusc8jTMhd5eL1NqQqOpE0KzMds804/yHlglp3uxgluOqAPLw==}
     engines: {node: '>= 0.4'}
 
-  ioredis@5.10.0:
-    resolution: {integrity: sha512-HVBe9OFuqs+Z6n64q09PQvP1/R4Bm+30PAyyD4wIEqssh3v9L21QjCVk4kRLucMBcDokJTcLjsGeVRlq/nH6DA==}
+  ioredis@5.10.1:
+    resolution: {integrity: sha512-HuEDBTI70aYdx1v6U97SbNx9F1+svQKBDo30o0b9fw055LMepzpOOd0Ccg9Q6tbqmBSJaMuY0fB7yw9/vjBYCA==}
     engines: {node: '>=12.22.0'}
 
   is-array-buffer@3.0.5:
@@ -3037,8 +3040,8 @@ packages:
     resolution: {integrity: sha512-PXwfBhYu0hBCPw8Dn0E+WDYb7af3dSLVWKi3HGv84IdF4TyFoC0ysxFd0Goxw7nSv4T/PzEJQxsYsEiFCKo2BA==}
     engines: {node: '>=8.6'}
 
-  miniflare@4.20260317.0:
-    resolution: {integrity: sha512-xuwk5Kjv+shi5iUBAdCrRl9IaWSGnTU8WuTQzsUS2GlSDIMCJuu8DiF/d9ExjMXYiQG5ml+k9SVKnMj8cRkq0w==}
+  miniflare@4.20260317.1:
+    resolution: {integrity: sha512-A3csI1HXEIfqe3oscgpoRMHdYlkReQKPH/g5JE53vFSjoM6YIAOGAzyDNeYffwd9oQkPWDj9xER8+vpxei8klA==}
     engines: {node: '>=18.0.0'}
     hasBin: true
 
@@ -3518,8 +3521,8 @@ packages:
     engines: {node: '>=18.0.0'}
     hasBin: true
 
-  turbo@2.8.19:
-    resolution: {integrity: sha512-9NTKvQZ/02XnJCSU4mF5gvAPK+nuLbvCtft/NE8dJeOwaup0bJ14rYx7TxmSXp8JJuAN8nAjqfXWFsWwoQSFHg==}
+  turbo@2.8.20:
+    resolution: {integrity: sha512-Rb4qk5YT8RUwwdXtkLpkVhNEe/lor6+WV7S5tTlLpxSz6MjV5Qi8jGNn4gS6NAvrYGA/rNrE6YUQM85sCZUDbQ==}
     hasBin: true
 
   type-check@0.4.0:
@@ -3542,6 +3545,10 @@ packages:
     resolution: {integrity: sha512-3KS2b+kL7fsuk/eJZ7EQdnEmQoaho/r6KUef7hxvltNA5DR8NAUM+8wJMbJyZ4G9/7i3v5zPBIMN5aybAh2/Jg==}
     engines: {node: '>= 0.4'}
 
+  typed-magento-graphql@0.248.1:
+    resolution: {integrity: sha512-t3hM4QRCN46E61ziAahPDvEDYEqE3PN7xtpivbFBW1ap/g1Qb2O5JY6BA13Rs17lXnSKv/ijowOURmyrN8g3ww==}
+    engines: {node: '>=20.0.0'}
+
   typescript@5.9.3:
     resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
     engines: {node: '>=14.17'}
@@ -3561,6 +3568,10 @@ packages:
 
   undici@7.24.4:
     resolution: {integrity: sha512-BM/JzwwaRXxrLdElV2Uo6cTLEjhSb3WXboncJamZ15NgUURmvlXvxa6xkwIOILIjPNo9i8ku136ZvWV0Uly8+w==}
+    engines: {node: '>=20.18.1'}
+
+  undici@7.24.5:
+    resolution: {integrity: sha512-3IWdCpjgxp15CbJnsi/Y9TCDE7HWVN19j1hmzVhoAkY/+CJx449tVxT5wZc1Gwg8J+P0LWvzlBzxYRnHJ+1i7Q==}
     engines: {node: '>=20.18.1'}
 
   unenv@2.0.0-rc.24:
@@ -3706,8 +3717,8 @@ packages:
     engines: {node: '>=16'}
     hasBin: true
 
-  wrangler@4.75.0:
-    resolution: {integrity: sha512-Efk1tcnm4eduBYpH1sSjMYydXMnIFPns/qABI3+fsbDrUk5GksNYX8nYGVP4sFygvGPO7kJc36YJKB5ooA7JAg==}
+  wrangler@4.76.0:
+    resolution: {integrity: sha512-Wan+CU5a0tu4HIxGOrzjNbkmxCT27HUmzrMj6kc7aoAnjSLv50Ggcn2Ant7wNQrD6xW3g31phKupZJgTZ8wZfQ==}
     engines: {node: '>=20.0.0'}
     hasBin: true
     peerDependencies:
@@ -3958,7 +3969,7 @@ snapshots:
 
   '@cloudflare/kv-asset-handler@0.4.2': {}
 
-  '@cloudflare/unenv-preset@2.15.0(unenv@2.0.0-rc.24)(workerd@1.20260317.1)':
+  '@cloudflare/unenv-preset@2.16.0(unenv@2.0.0-rc.24)(workerd@1.20260317.1)':
     dependencies:
       unenv: 2.0.0-rc.24
     optionalDependencies:
@@ -4009,7 +4020,7 @@ snapshots:
 
   '@drizzle-team/brocli@0.10.2': {}
 
-  '@emnapi/runtime@1.9.0':
+  '@emnapi/runtime@1.9.1':
     dependencies:
       tslib: 2.8.1
     optional: true
@@ -4390,18 +4401,18 @@ snapshots:
     dependencies:
       hono: 4.12.8
 
-  '@hono/vite-build@1.10.0(hono@4.12.8)':
+  '@hono/vite-build@1.10.1(hono@4.12.8)':
     dependencies:
       hono: 4.12.8
 
-  '@hono/vite-dev-server@0.23.0(hono@4.12.8)(miniflare@4.20260317.0)(wrangler@4.75.0)':
+  '@hono/vite-dev-server@0.23.0(hono@4.12.8)(miniflare@4.20260317.1)(wrangler@4.76.0)':
     dependencies:
       '@hono/node-server': 1.19.11(hono@4.12.8)
       hono: 4.12.8
       minimatch: 9.0.9
     optionalDependencies:
-      miniflare: 4.20260317.0
-      wrangler: 4.75.0
+      miniflare: 4.20260317.1
+      wrangler: 4.76.0
 
   '@humanfs/core@0.19.1': {}
 
@@ -4498,7 +4509,7 @@ snapshots:
 
   '@img/sharp-wasm32@0.34.5':
     dependencies:
-      '@emnapi/runtime': 1.9.0
+      '@emnapi/runtime': 1.9.1
     optional: true
 
   '@img/sharp-win32-arm64@0.34.5':
@@ -4683,22 +4694,22 @@ snapshots:
 
   '@standard-schema/spec@1.1.0': {}
 
-  '@turbo/darwin-64@2.8.19':
+  '@turbo/darwin-64@2.8.20':
     optional: true
 
-  '@turbo/darwin-arm64@2.8.19':
+  '@turbo/darwin-arm64@2.8.20':
     optional: true
 
-  '@turbo/linux-64@2.8.19':
+  '@turbo/linux-64@2.8.20':
     optional: true
 
-  '@turbo/linux-arm64@2.8.19':
+  '@turbo/linux-arm64@2.8.20':
     optional: true
 
-  '@turbo/windows-64@2.8.19':
+  '@turbo/windows-64@2.8.20':
     optional: true
 
-  '@turbo/windows-arm64@2.8.19':
+  '@turbo/windows-arm64@2.8.20':
     optional: true
 
   '@types/chai@5.2.3':
@@ -5755,7 +5766,7 @@ snapshots:
       hasown: 2.0.2
       side-channel: 1.1.0
 
-  ioredis@5.10.0:
+  ioredis@5.10.1:
     dependencies:
       '@ioredis/commands': 1.5.1
       cluster-key-slot: 1.1.2
@@ -6015,7 +6026,7 @@ snapshots:
       braces: 3.0.3
       picomatch: 2.3.1
 
-  miniflare@4.20260317.0:
+  miniflare@4.20260317.1:
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       sharp: 0.34.5
@@ -6550,14 +6561,14 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.3
 
-  turbo@2.8.19:
+  turbo@2.8.20:
     optionalDependencies:
-      '@turbo/darwin-64': 2.8.19
-      '@turbo/darwin-arm64': 2.8.19
-      '@turbo/linux-64': 2.8.19
-      '@turbo/linux-arm64': 2.8.19
-      '@turbo/windows-64': 2.8.19
-      '@turbo/windows-arm64': 2.8.19
+      '@turbo/darwin-64': 2.8.20
+      '@turbo/darwin-arm64': 2.8.20
+      '@turbo/linux-64': 2.8.20
+      '@turbo/linux-arm64': 2.8.20
+      '@turbo/windows-64': 2.8.20
+      '@turbo/windows-arm64': 2.8.20
 
   type-check@0.4.0:
     dependencies:
@@ -6596,6 +6607,10 @@ snapshots:
       possible-typed-array-names: 1.1.0
       reflect.getprototypeof: 1.0.10
 
+  typed-magento-graphql@0.248.1:
+    dependencies:
+      zod: 4.3.6
+
   typescript@5.9.3: {}
 
   uglify-js@3.19.3:
@@ -6611,6 +6626,8 @@ snapshots:
   undici-types@7.16.0: {}
 
   undici@7.24.4: {}
+
+  undici@7.24.5: {}
 
   unenv@2.0.0-rc.24:
     dependencies:
@@ -6753,13 +6770,13 @@ snapshots:
       '@cloudflare/workerd-linux-arm64': 1.20260317.1
       '@cloudflare/workerd-windows-64': 1.20260317.1
 
-  wrangler@4.75.0:
+  wrangler@4.76.0:
     dependencies:
       '@cloudflare/kv-asset-handler': 0.4.2
-      '@cloudflare/unenv-preset': 2.15.0(unenv@2.0.0-rc.24)(workerd@1.20260317.1)
+      '@cloudflare/unenv-preset': 2.16.0(unenv@2.0.0-rc.24)(workerd@1.20260317.1)
       blake3-wasm: 2.1.5
       esbuild: 0.27.3
-      miniflare: 4.20260317.0
+      miniflare: 4.20260317.1
       path-to-regexp: 6.3.0
       unenv: 2.0.0-rc.24
       workerd: 1.20260317.1

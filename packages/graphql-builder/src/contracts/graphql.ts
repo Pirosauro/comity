@@ -40,21 +40,21 @@ type ElementType<T> = T extends (infer U)[] ? U : T;
 /**
  * Recursive utility type to define a type-safe GraphQL selection set for a given type T.
  */
-export type GraphqlNode<T> = {
-  [P in GraphqlFieldKeys<ElementType<T>>]?: ElementType<T>[P] extends object
-    ? GraphqlNode<ElementType<T>[P]> | boolean
-    : boolean;
-} & {
-  /**
-   * Optional arguments for the GraphQL selection, allowing you to specify variables or literal values for the fields.
-   */
-  $args?: Record<string, GraphqlValue>;
-};
+export type GraphqlNode<T> = T extends (infer U)[]
+  ? GraphqlNode<U>
+  : {
+      [P in GraphqlFieldKeys<T>]?: T[P] extends object | undefined
+        ? GraphqlNode<NonNullable<T[P]>> | boolean
+        : boolean;
+    } & {
+      /** Optional arguments for the GraphQL selection. */
+      $args?: Record<string, GraphqlValue>;
+    };
 
 /**
- *
+ * GraphQL operation definition
  */
-export type GraphqlRoot<T> = {
+export interface GraphqlOperation {
   /**  */
   $type?: GraphqlOperationType;
 
@@ -63,4 +63,9 @@ export type GraphqlRoot<T> = {
 
   /**  */
   $vars?: Record<string, string>;
-} & GraphqlNode<T>;
+}
+
+/**
+ * Complete GraphQL query definition
+ */
+export type GraphqlRoot<T> = GraphqlOperation & GraphqlNode<T>;

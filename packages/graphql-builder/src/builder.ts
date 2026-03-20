@@ -106,7 +106,7 @@ export function buildQuery<T = unknown>(root: GraphqlRoot<T>, options?: BuildQue
           .map(([k, v]) => `${k}: ${v}`)
           .join(", ")})`
       : "";
-  const body = parseNode(root, 1);
+  const body = parseNode(root as Record<string, unknown>, 1);
 
   return `${type}${name}${vars} {${nl}${body}${nl}}`.trim();
 }

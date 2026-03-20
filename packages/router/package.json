@@ -73,16 +73,6 @@
     },
     "./package.json": "./package.json"
   },
-  "typesVersions": {
-    "*": {
-      "routers": [
-        "./dist/types/routers/index.d.ts"
-      ],
-      "setup": [
-        "./dist/types/setup/index.d.ts"
-      ]
-    }
-  },
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public"
