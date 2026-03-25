@@ -3,7 +3,10 @@ import type { HttpContext, HttpHandler, HttpMethod } from "@comity/http";
 /**
  * HTTP handler type.
  */
-export interface Route {
+export interface Route<
+  State = Record<string, unknown>,
+  Services extends Record<keyof Services, unknown> = Record<string, unknown>,
+> {
   /** HTTP method */
   readonly method?: HttpMethod;
 
@@ -11,7 +14,7 @@ export interface Route {
   readonly path?: string;
 
   /** HTTP handler function */
-  readonly handler: HttpHandler;
+  readonly handler: HttpHandler<State, Services>;
 
   /** Policies associated with the route */
   readonly policies?: Readonly<Record<string, unknown>>;

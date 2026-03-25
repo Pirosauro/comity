@@ -1,17 +1,34 @@
-import type { HtmlRenderer, HtmlRendererOptions, HtmlRenderResult } from "@comity/html";
+import type { HtmlLayoutCollector, HtmlRenderer, HtmlRenderResult } from "@comity/html";
 import type { ReactElement } from "react";
+import type { HtmlReactRendererOptions } from "../types.js";
 
+import { createDefaultHtmlDocumentWriter } from "@comity/html";
 import { HtmlError } from "@comity/html/error";
 import { renderToString } from "react-dom/server";
+import { LayoutProvider } from "../layout.js";
 
 /**
  * React static HTML renderer
  */
 export class ReactStaticHtmlRenderer implements HtmlRenderer<ReactElement> {
   /** @inheritdoc */
-  async render(view: ReactElement, options?: HtmlRendererOptions): Promise<HtmlRenderResult> {
+  async render(
+    view: ReactElement,
+    collector: HtmlLayoutCollector,
+    options?: HtmlReactRendererOptions
+  ): Promise<HtmlRenderResult> {
     try {
-      const html = renderToString(view);
+      const tree = <LayoutProvider collector={collector}>{view}</LayoutProvider>;
+      const writer = createDefaultHtmlDocumentWriter(
+        {
+          headTags: collector.headTags,
+          htmlAttrs: collector.htmlAttrs,
+          bodyAttrs: collector.bodyAttrs,
+        },
+        options
+      );
+      const body = renderToString(tree);
+      const html = writer.writeLayoutOpen() + body + writer.writeLayoutClose();
 
       return {
         ok: true,

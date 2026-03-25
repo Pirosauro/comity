@@ -1,0 +1,16 @@
+# Ignore files and directories that should not be included in the npm package when publishing.
+src/
+coverage/
+.vscode/
+.git/
+.github/
+
+# Dependencies
+eslint.config.js
+prettier.config.js
+tsconfig.json
+
+# Personal configuration (security)
+.npmrc
+.env*
+.DS_Store

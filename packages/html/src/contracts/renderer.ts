@@ -1,4 +1,5 @@
 import type { HttpStatus } from "@comity/http";
+import type { HtmlLayoutCollector } from "./layout.js";
 import type { HtmlRenderResult } from "./render-result.js";
 
 /**
@@ -23,11 +24,16 @@ export interface HtmlRenderer<T> {
    * Attempts to render the given view.
    *
    * @param view - HTML view to render
+   * @param collector - HTML layout collector
    * @param options - Render options
    *
    * @returns Render result
    *
    * @typeparam T - Type of HTML view
    */
-  render(view: T, options?: HtmlRendererOptions): Promise<HtmlRenderResult>;
+  render(
+    view: T,
+    collector: HtmlLayoutCollector,
+    options?: HtmlRendererOptions
+  ): Promise<HtmlRenderResult>;
 }

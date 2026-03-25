@@ -44,12 +44,16 @@ export class FetchGraphqlTransport implements GraphqlTransport {
    * @inheritdoc
    */
   async execute<T>(request: GraphqlRequest): Promise<GraphqlResponse<T>> {
-    const response = await this.#fetchFn(this.#url, {
+    const headers = this.#headers;
+    const fetchFn = this.#fetchFn;
+    const url = this.#url;
+
+    const response = await fetchFn(url, {
       method: "POST",
 
       headers: {
         "content-type": "application/json",
-        ...this.#headers,
+        ...headers,
         ...(request.headers ?? {}),
       },
 

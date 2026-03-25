@@ -10,4 +10,7 @@ import type { HttpResponse } from "./response.js";
  *
  * @throws {Error} If an unexpected error occurs during the execution of the handler.
  */
-export type HttpHandler = (ctx: HttpContext) => Promise<HttpResponse>;
+export type HttpHandler<
+  State = Record<string, unknown>,
+  Services extends Record<keyof Services, unknown> = Record<string, unknown>,
+> = (ctx: HttpContext<State, Services>) => Promise<HttpResponse>;

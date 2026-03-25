@@ -12,11 +12,16 @@ export class MockRenderer implements HtmlRenderer<unknown> {
 
   /**
    * @param view - The view to render
+   * @param collector - The layout collector (ignored in this mock)
    * @param options - Render options (ignored in this mock)
    *
    * @returns A successful response if `shouldSucceed` is true, otherwise an error
    */
-  async render(view: unknown, options?: undefined): Promise<Result<HttpResponse, HtmlError, "ok">> {
+  async render(
+    view: unknown,
+    collector: unknown,
+    options?: undefined
+  ): Promise<Result<HttpResponse, HtmlError, "ok">> {
     if (this.shouldSucceed) {
       return {
         ok: true,

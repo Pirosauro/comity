@@ -1,3 +1,4 @@
+import type { HtmlLayoutCollector } from "./contracts/layout.js";
 import type { HtmlRenderResult } from "./contracts/render-result.js";
 import type { HtmlRenderer, HtmlRendererOptions } from "./contracts/renderer.js";
 import type { HtmlRendererObserver } from "./hooks/html-renderer.js";
@@ -29,7 +30,11 @@ export class HtmlRendererPipeline<T> implements HtmlRenderer<T> {
   }
 
   /** @inheritdoc */
-  async render(view: T, options?: HtmlRendererOptions): Promise<HtmlRenderResult> {
+  async render(
+    view: T,
+    collector: HtmlLayoutCollector,
+    options?: HtmlRendererOptions
+  ): Promise<HtmlRenderResult> {
     let failure: HtmlRenderResult = {
       ok: false,
       error: new HtmlError("no_renderer"),
@@ -42,7 +47,7 @@ export class HtmlRendererPipeline<T> implements HtmlRenderer<T> {
       this.#observer?.onRenderStarted?.({ renderer: name });
 
       // Attempt to render with the current renderer
-      const outcome = await renderer.render(view, options);
+      const outcome = await renderer.render(view, collector, options);
 
       // Return on first success
       if (outcome.ok) {
