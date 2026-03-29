@@ -20,7 +20,7 @@ export function createTypesafeFactory(
       /**
        * @inheritdoc
        */
-      locale() {
+      get locale() {
         return locale;
       },
 

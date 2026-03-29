@@ -36,22 +36,28 @@ export class ReactStreamingHtmlRenderer implements HtmlRenderer<ReactElement> {
     }, options?.timeout ?? 5000);
 
     try {
-      const writer = createDefaultHtmlDocumentWriter(
-        {
-          headTags: collector.headTags,
-          htmlAttrs: collector.htmlAttrs,
-          bodyAttrs: collector.bodyAttrs,
-        },
-        options
-      );
       const result = renderToPipeableStream(tree, {
         /** @inheritdoc */
         onShellReady() {
           clearTimeout(timer);
 
+          const writer = createDefaultHtmlDocumentWriter(
+            {
+              headTags: collector.headTags,
+              htmlAttrs: collector.htmlAttrs,
+              bodyAttrs: collector.bodyAttrs,
+            },
+            options
+          );
+
           outer.write(writer.writeLayoutOpen());
           inner.pipe(outer, { end: false });
           result.pipe(inner);
+
+          inner.on("end", () => {
+            outer.write(writer.writeLayoutClose());
+            outer.end();
+          });
         },
 
         /** @inheritdoc */
@@ -69,11 +75,6 @@ export class ReactStreamingHtmlRenderer implements HtmlRenderer<ReactElement> {
       });
 
       abort = result.abort;
-
-      inner.on("end", () => {
-        outer.write(writer.writeLayoutClose());
-        outer.end();
-      });
 
       return {
         ok: true,

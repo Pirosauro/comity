@@ -5,23 +5,19 @@ import type { I18nLoader } from "@comity/i18n";
  */
 export class TypesafeI18nLoader<T = unknown> implements I18nLoader<T> {
   /**  */
-  #load: (locale: string) => Promise<T>;
+  #load: (locale: string, namespaces?: string[]) => Promise<T>;
 
   /**
-   * @param load - A function that takes a locale string and returns a promise that resolves to the messages for that locale.
+   * @param load - A function that takes a locale string and an optional array of namespaces, and returns a promise that resolves to the messages for that locale.
    */
-  constructor(load: (locale: string) => Promise<T>) {
+  constructor(load: (locale: string, namespaces?: string[]) => Promise<T>) {
     this.#load = load;
   }
 
   /**
-   * Loads the messages for a given locale by invoking the provided load function.
-   *
-   * @param locale - The locale for which to load the messages.
-   *
-   * @returns A promise that resolves to the messages for the specified locale, or null if loading fails.
+   * @inheritdoc
    */
-  load(locale: string): Promise<T | null> {
-    return this.#load(locale);
+  load(locale: string, namespaces?: string[]): Promise<T | null> {
+    return this.#load(locale, namespaces);
   }
 }

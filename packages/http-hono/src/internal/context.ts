@@ -1,6 +1,5 @@
 import type { HttpContext, HttpMethod, HttpRequest, HttpRuntimeContext } from "@comity/http";
 import type { Context as HonoContext } from "hono";
-import type { HttpHonoModuleContext } from "../setup/types.js";
 
 import { getCookie } from "hono/cookie";
 

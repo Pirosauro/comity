@@ -54,3 +54,5 @@ export const module: ModuleMeta<I18nModuleOptions, I18nModuleContext> = {
     });
   },
 };
+
+export default module;

@@ -1,7 +1,9 @@
 export { buildQuery, BuildQueryOptions } from "./builder.js";
 export {
   GraphqlFieldKeys,
+  GraphqlFieldsSelector,
   GraphqlNode,
+  GraphqlOperation,
   GraphqlOperationType,
   GraphqlPrimitive,
   GraphqlRoot,

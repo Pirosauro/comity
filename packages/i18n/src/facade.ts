@@ -1,4 +1,4 @@
-import type { I18nFacade } from "./contracts/facade.js";
+import type { I18nFacade, TranslatorOptions } from "./contracts/facade.js";
 import type { I18nLoader } from "./contracts/loader.js";
 import type { Locale } from "./contracts/locale.js";
 import type { I18nLocaleResolver } from "./contracts/resolver.js";
@@ -43,7 +43,7 @@ export class DefaultI18n implements I18nFacade {
   constructor(options: I18nOptions) {
     this.#loader = options.loader;
     this.#factory = options.factory;
-    this.#defaultLocale = options.defaultLocale ?? { locale: "en", direction: "ltr" };
+    this.#defaultLocale = options.defaultLocale ?? { code: "en", direction: "ltr" };
     this.#resolvers = options.resolvers ?? [];
   }
 
@@ -67,15 +67,15 @@ export class DefaultI18n implements I18nFacade {
   /**
    * @inheritdoc
    */
-  async getTranslator(locale: string): Promise<Translator> {
+  async getTranslator(locale: string, options?: TranslatorOptions): Promise<Translator> {
     try {
-      const messages = await this.#loader.load(locale);
+      const messages = await this.#loader.load(locale, options?.namespaces);
 
       return this.#factory(locale, messages);
     } catch {}
 
-    const fallback = this.#defaultLocale.locale;
-    const messages = await this.#loader.load(fallback);
+    const fallback = this.#defaultLocale.code;
+    const messages = await this.#loader.load(fallback, options?.namespaces);
 
     return this.#factory(fallback, messages);
   }

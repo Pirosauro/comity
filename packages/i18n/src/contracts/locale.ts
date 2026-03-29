@@ -3,7 +3,7 @@
  */
 export interface Locale {
   /** locale code */
-  readonly locale: string;
+  readonly code: string;
 
   /** text direction */
   readonly direction: "ltr" | "rtl";

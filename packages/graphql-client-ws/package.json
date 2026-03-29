@@ -54,13 +54,13 @@
   "sideEffects": false,
   "dependencies": {
     "@comity/composition": "workspace:*",
-    "@comity/kernel": "workspace:*",
     "@comity/graphql-client": "workspace:*",
+    "@comity/kernel": "workspace:*",
     "@comity/primitives": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^24.12.0",
-    "graphql-ws": "^6.0.7",
+    "graphql-ws": "^6.0.8",
     "typescript": "^5.9.3"
   },
   "peerDependencies": {

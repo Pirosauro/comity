@@ -23,7 +23,7 @@ export interface I18nTypesafeModuleContext extends ModuleSetupContext<
 /** i18n module setup options */
 export type I18nTypesafeModuleOptions = {
   /** Async loader for locale messages */
-  loadLocaleAsync(locale: string): Promise<unknown>;
+  loadLocaleAsync(locale: string, namespaces?: string[]): Promise<unknown>;
 
   /** Factory that creates the typesafe-i18n instance */
   createI18n(

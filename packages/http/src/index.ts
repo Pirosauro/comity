@@ -1,3 +1,4 @@
+export { client, HttpOptions } from "./client.js";
 export { HttpContext, HttpRuntimeContext } from "./contracts/context.js";
 export { HttpCookie } from "./contracts/cookie.js";
 export { HttpHandler } from "./contracts/handler.js";

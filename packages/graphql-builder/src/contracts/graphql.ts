@@ -1,15 +1,15 @@
 /**
- *
+ * GraphQL operation definition
  */
 export type GraphqlOperationType = "query" | "mutation" | "subscription";
 
 /**
- *
+ * GraphQL primitive types
  */
 export type GraphqlPrimitive = string | number | boolean | null | undefined;
 
 /**
- *
+ * GraphQL value types, including primitives, arrays, objects, and variable references
  */
 export type GraphqlValue =
   | GraphqlPrimitive
@@ -33,23 +33,25 @@ export type GraphqlFieldKeys<T> = {
 }[keyof T];
 
 /**
- * Utility type to extract the element type from an array type T, returning the element type if T is an array, or T itself if it is not an array.
+ * Represents a selector for fields of a type, allowing for nested selection of fields in complex objects.
  */
-type ElementType<T> = T extends (infer U)[] ? U : T;
+export type GraphqlFieldsSelector<T> = {
+  [K in keyof T]?: T[K] extends Array<infer U>
+    ? boolean | GraphqlNode<NonNullable<U>>
+    : T[K] extends object | undefined
+      ? boolean | GraphqlNode<NonNullable<T[K]>>
+      : boolean;
+};
 
 /**
  * Recursive utility type to define a type-safe GraphQL selection set for a given type T.
  */
-export type GraphqlNode<T> = T extends (infer U)[]
-  ? GraphqlNode<U>
-  : {
-      [P in GraphqlFieldKeys<T>]?: T[P] extends object | undefined
-        ? GraphqlNode<NonNullable<T[P]>> | boolean
-        : boolean;
-    } & {
-      /** Optional arguments for the GraphQL selection. */
-      $args?: Record<string, GraphqlValue>;
-    };
+export type GraphqlNode<T> = (T extends Array<infer U>
+  ? GraphqlFieldsSelector<NonNullable<U>>
+  : GraphqlFieldsSelector<T>) & {
+  /** Permette gli argomenti a ogni livello del nodo */
+  $args?: Record<string, GraphqlValue>;
+};
 
 /**
  * GraphQL operation definition
