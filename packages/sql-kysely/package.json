@@ -1,6 +1,6 @@
 {
   "name": "@comity/sql-kysely",
-  "version": "1.0.0",
+  "version": "0.9.0",
   "description": "Kysely ORM adapter for @comity/sql contracts",
   "type": "module",
   "author": "Filippo Bovo <hello@filippobovo.com>",
@@ -63,10 +63,10 @@
   "dependencies": {
     "@comity/kernel": "workspace:*",
     "@comity/sql": "workspace:*",
-    "kysely": "^0.28.14"
+    "kysely": "^0.28.17"
   },
   "devDependencies": {
-    "@types/node": "^24.12.0",
+    "@types/node": "^24.12.4",
     "typescript": "^5.9.3"
   }
 }

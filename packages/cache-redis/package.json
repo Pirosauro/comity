@@ -1,6 +1,6 @@
 {
   "name": "@comity/cache-redis",
-  "version": "1.0.0",
+  "version": "0.9.0",
   "description": "Redis cache module for Comity framework",
   "type": "module",
   "author": "Filippo Bovo <hello@filippobovo.com>",
@@ -76,12 +76,12 @@
     "@comity/primitives": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^24.12.0",
+    "@types/node": "^24.12.4",
     "typescript": "^5.9.3"
   },
   "peerDependencies": {
-    "redis": "^5.0.0",
-    "ioredis": "^5.0.0"
+    "ioredis": "^5.0.0",
+    "redis": "^5.0.0"
   },
   "peerDependenciesMeta": {
     "redis": {

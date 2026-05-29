@@ -1,6 +1,6 @@
 {
   "name": "@comity/http-hono",
-  "version": "1.0.0",
+  "version": "0.9.0",
   "description": "Hono HTTP adapter for Comity framework applications",
   "type": "module",
   "author": "Filippo Bovo <hello@filippobovo.com>",
@@ -79,8 +79,8 @@
     "@comity/primitives": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^24.12.0",
-    "hono": "^4.12.9",
+    "@types/node": "^24.12.4",
+    "hono": "^4.12.23",
     "typescript": "^5.9.3"
   },
   "peerDependencies": {

@@ -1,6 +1,6 @@
 {
   "name": "@comity/cache",
-  "version": "1.0.0",
+  "version": "0.9.0",
   "description": "Cache module for Comity framework",
   "type": "module",
   "author": "Filippo Bovo <hello@filippobovo.com>",
@@ -100,7 +100,7 @@
     "@comity/primitives": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^24.12.0",
+    "@types/node": "^24.12.4",
     "typescript": "^5.9.3"
   }
 }
