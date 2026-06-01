@@ -9,7 +9,7 @@ import { TypesafeI18nLoader } from "../loader.js";
 
 export const module: ModuleMeta<I18nTypesafeModuleOptions, I18nModuleContext> = {
   name: "@comity/i18n-typesafe",
-  version: "1.0.0",
+  version: "0.9.0",
 
   dependsOn: { "@comity/i18n": {} },
   incompatibleWith: [],

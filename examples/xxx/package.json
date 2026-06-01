@@ -2,13 +2,14 @@
   "type": "module",
   "scripts": {
     "dev": "vite -c src/config/vite.ts",
-    "build": "vite build -c src/config/vite.ts",
+    "build": "vite build -c src/config/vite.ts --mode client && vite build -c src/config/vite.ts",
     "preview": "wrangler pages dev dist",
     "deploy": "$npm_execpath run build && wrangler pages deploy dist --branch production",
     "db:generate": "drizzle-kit generate --config=./src/config/drizzle.ts",
     "db:push": "drizzle-kit push --config=./src/config/drizzle.ts"
   },
   "dependencies": {
+    "@comity/application": "workspace:*",
     "@comity/auth": "workspace:*",
     "@comity/auth-jose": "workspace:*",
     "@comity/auth-tokens": "workspace:*",
@@ -23,27 +24,30 @@
     "@comity/http-hono": "workspace:*",
     "@comity/hydration": "workspace:*",
     "@comity/hydration-react": "workspace:*",
+    "@comity/i18n": "workspace:*",
+    "@comity/i18n-typesafe": "workspace:*",
     "@comity/kernel": "workspace:*",
     "@comity/primitives": "workspace:*",
     "@comity/router": "workspace:*",
-    "@schema-hub/zod-graphql-query-builder": "^0.0.13",
-    "gqlb": "^0.1.5",
-    "graphql": "^16.13.1",
-    "graphql-ws": "^6.0.7",
-    "hono": "^4.12.8",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4",
-    "typed-magento-graphql": "^0.248.1",
-    "vite": "^7.3.1",
-    "zod": "^4.3.6"
+    "@hobiri/ui": "^0.3.0",
+    "graphql": "^16.14.0",
+    "graphql-ws": "^6.0.8",
+    "hono": "^4.12.23",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "typed-magento-graphql": "^0.248.2",
+    "typesafe-i18n": "^5.27.1",
+    "vite": "^7.3.3",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@hono/vite-build": "^1.10.1",
+    "@hono/vite-build": "^1.11.1",
     "@hono/vite-dev-server": "^0.23.0",
-    "@types/node": "^24.12.0",
-    "@types/react": "^19.2.14",
+    "@types/node": "^24.12.4",
+    "@types/react": "^19.2.15",
     "@types/react-dom": "^19.2.3",
     "typescript": "^5.9.3",
-    "wrangler": "^4.76.0"
+    "wrangler": "^4.95.0",
+    "zhead": "^2.2.4"
   }
 }

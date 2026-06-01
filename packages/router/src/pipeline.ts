@@ -42,7 +42,7 @@ export class RouterPipeline implements Router {
    */
   async match(ctx: RouteResolutionContext): Promise<RouteMatch | null> {
     for (const r of this.#rewriters) {
-      const rewritten = r.rewrite(ctx.url, ctx.http);
+      const rewritten = await r.rewrite(ctx.url, ctx.http);
 
       if (rewritten) {
         ctx.url = rewritten;

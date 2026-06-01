@@ -14,7 +14,7 @@ import { AUTH_JOSE_TOKEN } from "./constants.js";
 export const module: ModuleMeta<JoseAuthModuleOptions, JoseAuthModuleContext & AuthModuleContext> =
   {
     name: "@comity/auth-jose",
-    version: "1.0.0",
+    version: "0.9.0",
 
     dependsOn: { "@comity/auth": { optional: false } },
     incompatibleWith: [],

@@ -9,7 +9,7 @@ import { GRAPHQL_CLIENT_TOKEN } from "./constants.js";
 
 export const module: ModuleMeta<GraphqlClientModuleOptions, GraphqlClientModuleContext> = {
   name: "@comity/graphql-client",
-  version: "1.0.0",
+  version: "0.9.0",
 
   dependsOn: {},
   incompatibleWith: [],

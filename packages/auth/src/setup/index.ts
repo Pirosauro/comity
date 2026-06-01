@@ -16,7 +16,7 @@ import { AUTH_TOKEN } from "./constants.js";
 
 export const module: ModuleMeta<AuthModuleOptions, AuthModuleContext> = {
   name: "@comity/auth",
-  version: "1.0.0",
+  version: "0.9.0",
 
   dependsOn: {},
   incompatibleWith: [],

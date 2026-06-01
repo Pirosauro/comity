@@ -1,7 +1,7 @@
 {
-  "name": "@comity/router-path",
+  "name": "@comity/router-path-to-regexp",
   "version": "0.9.0",
-  "description": "route-to-path adapter for Comity applications.",
+  "description": "path-to-regexp adapter for Comity applications.",
   "type": "module",
   "author": "Filippo Bovo <hello@filippobovo.com>",
   "license": "MIT",

@@ -2,14 +2,14 @@ import { WsGraphqlTransport } from "@comity/graphql-client-ws";
 import { CombinedGraphqlTransport, FetchGraphqlTransport } from "@comity/graphql-client/transports";
 
 const fetchTransport = new FetchGraphqlTransport({
-  url: "https://magento2-demo.scandiweb.com/graphql",
+  url: "https://mage-os.extension.jajuma.de/graphql",
   // headers: {
   //   Authorization
   // }
 });
 
 const wsTransport = new WsGraphqlTransport({
-  url: "wss://magento2-demo.scandiweb.com/graphql",
+  url: "wss://mage-os.extension.jajuma.de/graphql",
   // connectionParams: {
   //   headers: {
   //     Authorization

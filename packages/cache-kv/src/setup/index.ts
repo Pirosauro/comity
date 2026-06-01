@@ -7,7 +7,7 @@ import { KvCacheStore } from "../store.js";
 
 export const module: ModuleMeta<KvCacheModuleOptions, KvCacheModuleContext & CacheModuleContext> = {
   name: "@comity/cache-kv",
-  version: "1.0.0",
+  version: "0.9.0",
 
   dependsOn: {},
   incompatibleWith: [],

@@ -15,7 +15,7 @@ import { HTTP_TOKEN } from "./constants.js";
  */
 export const module: ModuleMeta<HttpModuleOptions, HttpModuleContext> = {
   name: "@comity/http",
-  version: "1.0.0",
+  version: "0.9.0",
 
   dependsOn: {},
   incompatibleWith: [],

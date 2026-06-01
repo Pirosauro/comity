@@ -9,7 +9,7 @@ import { I18N_TOKEN } from "./constants.js";
 
 export const module: ModuleMeta<I18nModuleOptions, I18nModuleContext> = {
   name: "@comity/i18n",
-  version: "1.0.0",
+  version: "0.9.0",
 
   dependsOn: {},
   incompatibleWith: [],

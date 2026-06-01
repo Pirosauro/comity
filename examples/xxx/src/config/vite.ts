@@ -8,7 +8,10 @@ export default defineConfig(({ mode }) => {
     return {
       build: {
         rollupOptions: {
-          input: ["./src/client.ts"],
+          input: {
+            main: "./src/client.ts",
+            style: "./src/style.css",
+          },
           output: {
             entryFileNames: "static/client.js",
             chunkFileNames: "static/assets/[name]-[hash].js",

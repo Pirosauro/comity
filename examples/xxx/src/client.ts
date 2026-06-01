@@ -7,7 +7,7 @@ registerIslandElement();
 
 // Create the island registry
 const registry: IslandComponentRegistry = {
-  /** counter */
+  /** @ts-expect-error */
   counter: () => import("./components/counter.js"),
 };
 

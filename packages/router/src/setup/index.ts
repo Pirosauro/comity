@@ -11,7 +11,7 @@ import { RouterPipeline } from "../pipeline.js";
  */
 export const module: ModuleMeta<RouterModuleOptions, RouterModuleContext & HttpModuleContext> = {
   name: "@comity/router",
-  version: "1.0.0",
+  version: "0.9.0",
 
   dependsOn: { "@comity/http": { optional: false } },
   incompatibleWith: [],

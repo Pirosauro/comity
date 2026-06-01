@@ -18,5 +18,5 @@ export interface UrlRewriter {
    * - Rewriters should be designed to be composable, allowing multiple rewriters to be applied in sequence if needed.
    * - Care should be taken to avoid infinite rewriting loops, where a rewriter continuously modifies the URL in a way that triggers itself repeatedly.
    */
-  rewrite(url: URL, http: HttpContext): URL | null;
+  rewrite(url: URL, http: HttpContext): URL | null | Promise<URL | null>;
 }

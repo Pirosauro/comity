@@ -8,7 +8,7 @@ import { STORAGE_TOKEN } from "./constants.js";
 
 export const module: ModuleMeta<StorageModuleOptions, StorageModuleContext> = {
   name: "@comity/storage",
-  version: "1.0.0",
+  version: "0.9.0",
 
   dependsOn: {},
   incompatibleWith: [],

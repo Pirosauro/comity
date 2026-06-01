@@ -8,7 +8,7 @@ import { CACHE_TOKEN } from "./constants.js";
 
 export const module: ModuleMeta<CacheModuleOptions, CacheModuleContext> = {
   name: "@comity/cache",
-  version: "1.0.0",
+  version: "0.9.0",
 
   dependsOn: {},
   incompatibleWith: [],

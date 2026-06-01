@@ -10,7 +10,7 @@ export const module: ModuleMeta<
   RedisCacheModuleContext & CacheModuleContext
 > = {
   name: "@comity/cache-redis",
-  version: "1.0.0",
+  version: "0.9.0",
 
   dependsOn: {},
   incompatibleWith: [],

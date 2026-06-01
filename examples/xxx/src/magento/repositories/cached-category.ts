@@ -1,16 +1,16 @@
 import type { CacheStore } from "@comity/cache";
 import type { GraphqlClientError } from "@comity/graphql-client/error";
 import type { Result } from "@comity/primitives/result";
-import type { CategoryListViewModel } from "../../view-models/category-list.js";
-import type { CategoryViewModel } from "../../view-models/category.js";
-import type { CategoriesQueryInput } from "../graphql/category.js";
 import type {
+  CategoryListModel,
+  CategoryModel,
   CategoryRepository,
-  CategoryRepositoryGetOptions,
-  CategoryRepositoryListOptions,
-  GraphqlCategoryRepository,
-} from "./category.js";
+  CategoryRepositoryFilter,
+  CategoryRepositoryOptions,
+} from "../../features/catalog/repositories/category.js";
+import type { GraphqlCategoryRepository } from "./category.js";
 
+import { serializeCacheKey } from "@comity/cache";
 import { success } from "@comity/primitives/result";
 
 /**
@@ -35,45 +35,117 @@ export class CachedCategoryRepository implements CategoryRepository {
   /**
    * @inheritdoc
    */
-  async list(
-    input: CategoriesQueryInput,
-    options?: CategoryRepositoryListOptions
-  ): Promise<Result<CategoryListViewModel, GraphqlClientError>> {
-    // Todo
-    return this.#repository.list(input, options);
+  async getList(
+    input: CategoryRepositoryFilter,
+    options: CategoryRepositoryOptions
+  ): Promise<Result<CategoryListModel, GraphqlClientError>> {
+    const repository = this.#repository;
+    const cache = this.#cache;
+    const store = repository.store ?? "default";
+    const key = serializeCacheKey({ category: { store, scope: options.scope, filter: input } });
+    const cached = await cache.get(key);
+
+    // If cached data is available, return it immediately
+    if (cached) {
+      try {
+        const parsed = JSON.parse(cached) as CategoryListModel;
+
+        return success(parsed, { cached: true });
+      } catch (cause) {
+        // Invalidate the cache if the data is corrupted
+        await cache.delete(key);
+      }
+    }
+
+    // If no cached data is available, fetch from the repository
+    const result = await this.#repository.getList(input, options);
+
+    // Cache the result if the fetch was successful
+    if (result.success) {
+      const value = result.value;
+
+      try {
+        await cache.set(key, JSON.stringify(result.value), {
+          ttl: 60 * 5, // Cache for 5 minutes
+        });
+      } catch (cause) {}
+    }
+
+    return result;
   }
 
   /**
    * @inheritdoc
    */
-  async getByUid(
-    uid: string,
-    options?: CategoryRepositoryGetOptions
-  ): Promise<Result<CategoryViewModel | null, GraphqlClientError>> {
+  async getById(
+    id: string,
+    options: CategoryRepositoryOptions
+  ): Promise<Result<CategoryModel | null, GraphqlClientError>> {
     const repository = this.#repository;
     const cache = this.#cache;
-    const store = options?.store ?? "default";
-    const cached = await cache.get(`category:${store}:${uid}`);
+    const store = repository.store ?? "default";
+    const key = serializeCacheKey({ category: { store, scope: options.scope, id } });
+    const cached = await cache.get(key);
 
     // If cached data is available, return it immediately
     if (cached) {
       try {
-        const parsed = JSON.parse(cached) as CategoryViewModel;
+        const parsed = JSON.parse(cached) as CategoryModel;
 
-        return success(parsed);
+        return success(parsed, { cached: true });
       } catch (cause) {
         // Invalidate the cache if the data is corrupted
-        await cache.delete(`category:${store}:${uid}`);
+        await cache.delete(key);
       }
     }
 
     // If no cached data is available, fetch from the repository
-    const result = await repository.getByUid(uid, options);
+    const result = await repository.getById(id, options);
 
     // Cache the result if the fetch was successful
     if (result.success && result.value) {
       try {
-        await cache.set(`category:${store}:${uid}`, JSON.stringify(result.value), {
+        await cache.set(key, JSON.stringify(result.value), {
+          ttl: 60 * 5, // Cache for 5 minutes
+        });
+      } catch (cause) {}
+    }
+
+    return result;
+  }
+
+  /**
+   * @inheritdoc
+   */
+  async getBySlug(
+    slug: string,
+    options: CategoryRepositoryOptions
+  ): Promise<Result<CategoryModel | null, GraphqlClientError>> {
+    const repository = this.#repository;
+    const cache = this.#cache;
+    const store = repository.store ?? "default";
+    const key = serializeCacheKey({ category: { store, scope: options.scope, slug } });
+    const cached = await cache.get(key);
+
+    // If cached data is available, return it immediately
+    if (cached) {
+      try {
+        const parsed = JSON.parse(cached) as CategoryModel;
+
+        return success(parsed, { cached: true });
+      } catch (cause) {
+        // Invalidate the cache if the data is corrupted
+        await cache.delete(key);
+      }
+    }
+
+    // If no cached data is available, fetch from the repository
+    const result = await repository.getBySlug(slug, options);
+
+    // Cache the result if the fetch was successful
+    if (result.success && result.value) {
+      try {
+        await cache.set(key, JSON.stringify(result.value), {
           ttl: 60 * 5, // Cache for 5 minutes
         });
       } catch (cause) {}

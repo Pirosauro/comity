@@ -22,7 +22,7 @@ import { HTTP_HONO_TOKEN } from "./constants.js";
 export const module: ModuleMeta<HttpHonoModuleOptions, HttpHonoModuleContext & HttpModuleContext> =
   {
     name: "@comity/http-hono",
-    version: "1.0.0",
+    version: "0.9.0",
 
     dependsOn: { "@comity/http": { optional: false } },
     incompatibleWith: [],
