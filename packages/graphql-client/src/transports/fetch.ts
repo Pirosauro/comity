@@ -1,3 +1,4 @@
+import type { GraphqlError } from "../contracts/error.js";
 import type { GraphqlRequest } from "../contracts/request.js";
 import type { GraphqlResponse } from "../contracts/response.js";
 import type { GraphqlTransport } from "../contracts/transport.js";
@@ -73,8 +74,19 @@ export class FetchGraphqlTransport implements GraphqlTransport {
       });
     }
 
-    const json = await response.json();
+    const json = (await response.json()) as Record<string, unknown>;
+    const result: GraphqlResponse<T> = {
+      ...(json["data"] ? { data: json["data"] as T } : {}),
+      ...(json["errors"] ? { errors: json["errors"] as GraphqlError[] } : {}),
+      meta: {
+        headers: response.headers,
+        httpStatus: response.status,
+        ...(json["extensions"]
+          ? { extensions: json["extensions"] as Record<string, unknown> }
+          : {}),
+      },
+    };
 
-    return json as GraphqlResponse<T>;
+    return result;
   }
 }

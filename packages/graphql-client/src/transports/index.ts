@@ -1,2 +1,2 @@
-export { CombinedGraphqlTransport } from "./combined.js";
-export { FetchGraphqlTransport } from "./fetch.js";
+export { CombinedGraphqlTransport, CombinedGraphqlTransportOptions } from "./combined.js";
+export { FetchGraphqlTransport, FetchTransportOptions } from "./fetch.js";

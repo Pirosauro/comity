@@ -5,11 +5,20 @@ import type { GraphqlError } from "./error.js";
  */
 export interface GraphqlResponse<T = unknown> {
   /** GraphQL response data */
-  data?: T;
+  readonly data?: T;
 
   /** GraphQL errors */
-  errors?: GraphqlError[];
+  readonly errors?: GraphqlError[];
 
-  /** GraphQL response extensions */
-  extensions?: Record<string, unknown>;
+  /** GraphQL metadata */
+  readonly meta?: Readonly<{
+    /** Response headers */
+    headers?: Headers;
+
+    /** HTTP status code (if available) */
+    httpStatus?: number;
+
+    /** GraphQL response extensions */
+    extensions?: Record<string, unknown>;
+  }>;
 }

@@ -1,0 +1,79 @@
+{
+  "name": "@comity/cart",
+  "version": "0.1.0",
+  "description": "Shopping cart abstractions for Comity domain modules.",
+  "type": "module",
+  "author": "Filippo Bovo <hello@filippobovo.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/comityjs/framework#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/comityjs/framework.git"
+  },
+  "bugs": {
+    "url": "https://github.com/comityjs/framework/issues"
+  },
+  "keywords": [
+    "comity",
+    "comityjs",
+    "cart",
+    "shopping",
+    "typescript"
+  ],
+  "scripts": {
+    "build": "node ../../scripts/build.mjs",
+    "prepublish": "node ../../scripts/build.mjs",
+    "dev": "node ../../scripts/build.mjs --watch",
+    "test": "vitest run --coverage"
+  },
+  "files": [
+    "./dist",
+    "!./dist/**/*.map"
+  ],
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    },
+    "./error": {
+      "import": {
+        "types": "./dist/types/error/index.d.ts",
+        "default": "./dist/esm/error/index.js"
+      },
+      "require": {
+        "types": "./dist/types/error/index.d.ts",
+        "default": "./dist/cjs/error/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "error": [
+        "./dist/types/error/index.d.ts"
+      ]
+    }
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "@comity/catalog": "workspace:*",
+    "@comity/primitives": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.0",
+    "typescript": "^5.9.3"
+  }
+}

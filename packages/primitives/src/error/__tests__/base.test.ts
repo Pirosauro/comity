@@ -26,6 +26,7 @@ describe("BaseError", () => {
     const error = new TestError("test message", { cause });
 
     expect(error.cause).toBe(cause);
+    // @ts-expect-error
     expect(error.meta.cause).toBeUndefined(); // cause should be removed from meta
   });
 

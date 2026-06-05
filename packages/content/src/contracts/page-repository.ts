@@ -1,0 +1,62 @@
+import type { RepositoryError } from "@comity/primitives/error";
+import type { Result } from "@comity/primitives/result";
+import type { SearchCriteriaModel, SearchResultModel } from "@comity/search";
+import type { PageModel } from "./page.js";
+import type { ContentRepositoryContext } from "./repository-context.js";
+
+/**
+ * Page repository contract.
+ */
+export interface PageRepository {
+  /**
+   * Retrieve a page by identifier.
+   *
+   * @param id - Page ID.
+   * @param ctx - Context for the repository request, including fields selection, locale, currency, and tenant information.
+   *
+   * @returns Page model or null if not found.
+   */
+  get(
+    id: string,
+    ctx?: ContentRepositoryContext
+  ): Promise<Result<PageModel | null, RepositoryError>>;
+
+  /**
+   * Retrieve a page by URL slug.
+   *
+   * @param slug - URL-friendly slug.
+   * @param ctx - Context for the repository request, including fields selection, locale, currency, and tenant information.
+   *
+   * @returns Page model or null if not found.
+   */
+  getBySlug(
+    slug: string,
+    ctx?: ContentRepositoryContext
+  ): Promise<Result<PageModel | null, RepositoryError>>;
+
+  /**
+   * List pages with optional filtering.
+   *
+   * @param input - Filter criteria.
+   * @param ctx - Context for the repository request, including fields selection, locale, currency, and tenant information.
+   *
+   * @returns Paginated list of pages.
+   */
+  list(
+    input: Omit<SearchCriteriaModel, "query">,
+    ctx?: ContentRepositoryContext
+  ): Promise<Result<SearchResultModel<PageModel>, RepositoryError>>;
+
+  /**
+   * Search pages with query text and optional filtering.
+   *
+   * @param input - Search criteria including query text and filters.
+   * @param ctx - Context for the repository request, including fields selection, locale, currency, and tenant information.
+   *
+   * @returns Paginated search results of pages.
+   */
+  search(
+    input: SearchCriteriaModel,
+    ctx?: ContentRepositoryContext
+  ): Promise<Result<SearchResultModel<PageModel>, RepositoryError>>;
+}
