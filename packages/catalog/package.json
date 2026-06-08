@@ -43,24 +43,7 @@
         "default": "./dist/cjs/index.js"
       }
     },
-    "./error": {
-      "import": {
-        "types": "./dist/types/error/index.d.ts",
-        "default": "./dist/esm/error/index.js"
-      },
-      "require": {
-        "types": "./dist/types/error/index.d.ts",
-        "default": "./dist/cjs/error/index.js"
-      }
-    },
     "./package.json": "./package.json"
-  },
-  "typesVersions": {
-    "*": {
-      "error": [
-        "./dist/types/error/index.d.ts"
-      ]
-    }
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
@@ -68,12 +51,13 @@
   },
   "sideEffects": false,
   "dependencies": {
+    "@comity/composition": "workspace:*",
     "@comity/media": "workspace:*",
     "@comity/primitives": "workspace:*",
     "@comity/search": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^24.13.0",
+    "@types/node": "^24.13.1",
     "typescript": "^5.9.3"
   }
 }

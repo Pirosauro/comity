@@ -1,6 +1,6 @@
+import type { RepositoryError } from "@comity/primitives/error";
 import type { Result } from "@comity/primitives/result";
 import type { SearchCriteriaModel, SearchResultModel } from "@comity/search";
-import type { ProductError } from "../error/product.js";
 import type { ProductModel } from "./product.js";
 import type { CatalogRepositoryContext } from "./repository-context.js";
 
@@ -19,7 +19,7 @@ export interface ProductRepository {
   get(
     id: string,
     ctx?: CatalogRepositoryContext
-  ): Promise<Result<ProductModel | null, ProductError>>;
+  ): Promise<Result<ProductModel | null, RepositoryError>>;
 
   /**
    * Retrieve a product by URL slug.
@@ -32,7 +32,7 @@ export interface ProductRepository {
   getBySlug(
     slug: string,
     ctx?: CatalogRepositoryContext
-  ): Promise<Result<ProductModel | null, ProductError>>;
+  ): Promise<Result<ProductModel | null, RepositoryError>>;
 
   /**
    * List products with optional filtering and pagination.
@@ -45,7 +45,7 @@ export interface ProductRepository {
   list(
     input: Omit<SearchCriteriaModel, "query">,
     ctx?: CatalogRepositoryContext
-  ): Promise<Result<SearchResultModel<ProductModel>, ProductError>>;
+  ): Promise<Result<SearchResultModel<ProductModel>, RepositoryError>>;
 
   /**
    * Search products with query text and optional filtering and pagination.
@@ -58,5 +58,5 @@ export interface ProductRepository {
   search(
     input: SearchCriteriaModel,
     ctx?: CatalogRepositoryContext
-  ): Promise<Result<SearchResultModel<ProductModel>, ProductError>>;
+  ): Promise<Result<SearchResultModel<ProductModel>, RepositoryError>>;
 }

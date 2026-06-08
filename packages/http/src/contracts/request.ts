@@ -2,8 +2,6 @@ import type { HttpMethod } from "../contracts/method.js";
 
 /**
  * Framework-agnostic HTTP request snapshot.
- *
- * @comity ai-jsdoc-skip
  */
 export interface HttpRequest {
   /** Request identifier. */

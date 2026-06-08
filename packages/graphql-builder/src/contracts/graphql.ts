@@ -36,7 +36,7 @@ export type GraphqlFieldKeys<T> = {
  * Represents a selector for fields of a type, allowing for nested selection of fields in complex objects.
  */
 export type GraphqlFieldsSelector<T> = {
-  [K in keyof T]?: T[K] extends Array<infer U>
+  [K in keyof T]?: T[K] extends ReadonlyArray<infer U>
     ? boolean | GraphqlNode<NonNullable<U>>
     : T[K] extends object | undefined
       ? boolean | GraphqlNode<NonNullable<T[K]>>
@@ -46,10 +46,10 @@ export type GraphqlFieldsSelector<T> = {
 /**
  * Recursive utility type to define a type-safe GraphQL selection set for a given type T.
  */
-export type GraphqlNode<T> = (T extends Array<infer U>
+export type GraphqlNode<T> = (T extends ReadonlyArray<infer U>
   ? GraphqlFieldsSelector<NonNullable<U>>
   : GraphqlFieldsSelector<T>) & {
-  /** Permette gli argomenti a ogni livello del nodo */
+  /** Arguments for every GraphQL node */
   $args?: Record<string, GraphqlValue>;
 };
 
@@ -57,7 +57,7 @@ export type GraphqlNode<T> = (T extends Array<infer U>
  * GraphQL operation definition
  */
 export interface GraphqlOperation {
-  /**  */
+  /** Type of the GraphQL operation (query, mutation, subscription) */
   $type?: GraphqlOperationType;
 
   /**  */

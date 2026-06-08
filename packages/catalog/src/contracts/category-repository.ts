@@ -1,6 +1,6 @@
+import type { RepositoryError } from "@comity/primitives/error";
 import type { Result } from "@comity/primitives/result";
 import type { SearchCriteriaModel, SearchResultModel } from "@comity/search";
-import type { CategoryError } from "../error/category.js";
 import type { CategoryModel } from "./category.js";
 import type { CatalogRepositoryContext } from "./repository-context.js";
 
@@ -19,7 +19,7 @@ export interface CategoryRepository {
   get(
     id: string,
     ctx?: CatalogRepositoryContext
-  ): Promise<Result<CategoryModel | null, CategoryError>>;
+  ): Promise<Result<CategoryModel | null, RepositoryError>>;
 
   /**
    * Retrieve a category by URL slug.
@@ -32,7 +32,7 @@ export interface CategoryRepository {
   getBySlug(
     slug: string,
     ctx?: CatalogRepositoryContext
-  ): Promise<Result<CategoryModel | null, CategoryError>>;
+  ): Promise<Result<CategoryModel | null, RepositoryError>>;
 
   /**
    * List categories with optional filtering.
@@ -45,7 +45,7 @@ export interface CategoryRepository {
   list(
     input: Omit<SearchCriteriaModel, "query">,
     ctx?: CatalogRepositoryContext
-  ): Promise<Result<SearchResultModel<CategoryModel>, CategoryError>>;
+  ): Promise<Result<SearchResultModel<CategoryModel>, RepositoryError>>;
 
   /**
    * Search categories with query text and optional filtering.
@@ -58,5 +58,5 @@ export interface CategoryRepository {
   search(
     input: SearchCriteriaModel,
     ctx?: CatalogRepositoryContext
-  ): Promise<Result<SearchResultModel<CategoryModel>, CategoryError>>;
+  ): Promise<Result<SearchResultModel<CategoryModel>, RepositoryError>>;
 }
