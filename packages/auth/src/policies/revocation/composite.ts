@@ -8,13 +8,13 @@ import type { AuthSession } from "../../contracts/session.js";
  */
 export class CompositeRevocationPolicy implements AuthSessionRevocationPolicy {
   /** Collection of revocation policies to combine */
-  #policies: AuthSessionRevocationPolicy[];
+  #policies: readonly AuthSessionRevocationPolicy[];
 
   /**
    * @param policies - Session revocation policies to combine
    */
-  constructor(readonly policies: AuthSessionRevocationPolicy[]) {
-    this.#policies = policies;
+  constructor(policies: readonly AuthSessionRevocationPolicy[]) {
+    this.#policies = [...policies];
   }
 
   /** @inheritdoc */

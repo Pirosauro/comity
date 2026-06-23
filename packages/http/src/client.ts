@@ -26,6 +26,92 @@ export interface HttpOptions extends Omit<RequestInit, "method" | "headers"> {
  */
 const wait = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
 
+/** Cleanup function for abort listeners. */
+type AbortCleanup = () => void;
+
+/**
+ * Reads the abort reason from a signal when available.
+ *
+ * @param signal - Abort signal to inspect.
+ *
+ * @returns Abort reason propagated by the caller or runtime.
+ */
+function getAbortReason(signal: AbortSignal): unknown {
+  return "reason" in signal ? signal.reason : undefined;
+}
+
+/**
+ * Combines multiple abort signals into a single signal.
+ *
+ * @param signals - Signals that should abort the same request.
+ *
+ * @returns Combined signal plus a cleanup function for listeners.
+ */
+function combineAbortSignals(signals: readonly AbortSignal[]): {
+  /** Combined abort signal. */
+  signal: AbortSignal;
+  /** Cleanup for listeners attached during the fallback path. */
+  cleanup: AbortCleanup;
+} {
+  if (typeof AbortSignal.any === "function") {
+    return {
+      signal: AbortSignal.any(Array.from(signals)),
+      /**
+       *
+       */
+      cleanup: () => undefined,
+    };
+  }
+
+  const controller = new AbortController();
+  const cleanups: AbortCleanup[] = [];
+
+  /**
+   * Aborts the combined controller using the originating signal reason.
+   *
+   * @param signal - Signal that triggered the abort.
+   *
+   * @returns void
+   */
+  const abortFrom = (signal: AbortSignal) => {
+    controller.abort(getAbortReason(signal));
+  };
+
+  for (const signal of signals) {
+    if (signal.aborted) {
+      abortFrom(signal);
+
+      return {
+        signal: controller.signal,
+        /**
+         *
+         */
+        cleanup: () => undefined,
+      };
+    }
+
+    /**
+     *
+     */
+    const handler = () => abortFrom(signal);
+
+    signal.addEventListener("abort", handler, { once: true });
+    cleanups.push(() => signal.removeEventListener("abort", handler));
+  }
+
+  return {
+    signal: controller.signal,
+    /**
+     *
+     */
+    cleanup: () => {
+      for (const cleanup of cleanups) {
+        cleanup();
+      }
+    },
+  };
+}
+
 /**
  * Enhanced HTTP client with timeout, delay, and Next.js support
  * @param url - URL or RequestInfo for the HTTP request
@@ -58,46 +144,33 @@ export const client = async (url: Request | URL, options: HttpOptions = {}): Pro
   // Apply delay if specified
   if (delay > 0) await wait(delay);
 
-  let abortController: AbortController | undefined;
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+  let cleanupAbortSignals: AbortCleanup | undefined;
 
   // Handle timeout
   if (timeout > 0) {
-    abortController = new AbortController();
-    const timeoutId = setTimeout(() => abortController?.abort(), timeout);
+    const timeoutController = new AbortController();
+
+    timeoutId = setTimeout(() => timeoutController.abort(), timeout);
 
     // Combine with existing signal if present
     if (fetchOptions.signal) {
-      // Fallback implementation for AbortSignal.any
-      const combinedController = new AbortController();
+      const combined = combineAbortSignals([fetchOptions.signal, timeoutController.signal]);
 
-      /**
-       * Abort handler that triggers when either the fetch signal or the timeout signal is aborted.
-       *
-       * @returns void
-       */
-      const abortHandler = () => combinedController.abort();
-
-      fetchOptions.signal.addEventListener("abort", abortHandler);
-      abortController.signal.addEventListener("abort", abortHandler);
-
-      fetchOptions.signal = combinedController.signal;
+      fetchOptions.signal = combined.signal;
+      cleanupAbortSignals = combined.cleanup;
     } else {
-      fetchOptions.signal = abortController.signal;
-    }
-
-    try {
-      const response = await fetch(url, fetchOptions as RequestInit);
-
-      clearTimeout(timeoutId);
-
-      return response;
-    } catch (error) {
-      clearTimeout(timeoutId);
-
-      throw error;
+      fetchOptions.signal = timeoutController.signal;
     }
   }
 
-  // Request without timeout
-  return fetch(url, fetchOptions as RequestInit);
+  try {
+    return await fetch(url, fetchOptions as RequestInit);
+  } finally {
+    if (timeoutId !== undefined) {
+      clearTimeout(timeoutId);
+    }
+
+    cleanupAbortSignals?.();
+  }
 };

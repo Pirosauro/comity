@@ -18,6 +18,21 @@ export class MemoryCacheStore implements CacheStore {
   #map = new Map<string, Entry>();
 
   /**
+   * Normalizes TTL input to an absolute expiration timestamp.
+   *
+   * @param ttl - Time-to-live in seconds.
+   *
+   * @returns Expiration timestamp, `null` to skip persistence, or `undefined` for no expiration.
+   */
+  #resolveExpires(ttl?: number): number | null | undefined {
+    if (ttl === undefined) return undefined;
+
+    if (ttl <= 0) return null;
+
+    return Date.now() + ttl * 1000;
+  }
+
+  /**
    * Retrieves a value from the cache by its key. If the entry has expired, it will be removed and undefined will be returned.
    *
    * @param key - The key of the cache entry to retrieve.
@@ -31,7 +46,7 @@ export class MemoryCacheStore implements CacheStore {
     if (!e) return undefined;
 
     // If the entry has an expiration time and it has expired, delete it and return undefined
-    if (e.expires && e.expires < Date.now()) {
+    if (e.expires !== undefined && e.expires <= Date.now()) {
       this.#map.delete(key);
 
       return undefined;
@@ -56,9 +71,17 @@ export class MemoryCacheStore implements CacheStore {
       ttl?: number;
     }
   ): Promise<void> {
+    const expires = this.#resolveExpires(options?.ttl);
+
+    if (expires === null) {
+      this.#map.delete(key);
+
+      return;
+    }
+
     const entry: Entry = {
       value,
-      ...(options?.ttl ? { expires: Date.now() + options.ttl * 1000 } : {}),
+      ...(expires !== undefined ? { expires } : {}),
     };
 
     this.#map.set(key, entry);

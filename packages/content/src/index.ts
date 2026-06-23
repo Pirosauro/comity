@@ -1,4 +1,5 @@
 export { BlockRepository } from "./contracts/block-repository.js";
+export { BlockResolver } from "./contracts/block-resolver.js";
 export { BannerBlockModel, BlockModel, RichTextBlockModel } from "./contracts/block.js";
 export { BreadcrumbModel } from "./contracts/breadcrumb.js";
 export { NavigationItemModel, NavigationModel } from "./contracts/navigation.js";

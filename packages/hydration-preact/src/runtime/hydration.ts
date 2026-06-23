@@ -1,0 +1,43 @@
+import type { HydrationRuntimeObserver } from "@comity/hydration/lifecycle";
+import type { IslandComponentRegistry } from "../contracts/registry.js";
+
+import { HydrationController } from "@comity/hydration";
+import { DomIslandDiscoveryAdapter } from "../internal/discoverer.js";
+import { PreactIslandHydrationAdapter } from "../internal/hydrator.js";
+
+/**
+ *
+ */
+export type HydrationRuntimeOptions = {
+  /** Root DOM node to scan */
+  root: ParentNode;
+
+  /** Island component loaders */
+  islands: IslandComponentRegistry;
+
+  /** */
+  observer?: HydrationRuntimeObserver;
+};
+
+/**
+ *
+ * @param options - The hydration runtime options
+ */
+export function createHydrationRuntime(options: HydrationRuntimeOptions) {
+  // 1. Executor (framework-specific)
+  const hydrator = new PreactIslandHydrationAdapter(options.islands);
+
+  // 2. Controller (pure orchestration)
+  const controller = new HydrationController({
+    hydrator,
+    ...(options.observer ? { observer: options.observer } : {}),
+  });
+
+  // 3. Discovery adapter (DOM)
+  const discovery = new DomIslandDiscoveryAdapter(options.root, (island) => {
+    controller.onDiscovered(island);
+  });
+
+  // 4. Attach discovery
+  discovery.attach();
+}

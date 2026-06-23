@@ -37,8 +37,16 @@ export class KvCacheStore implements CacheStore {
       ttl?: number;
     }
   ): Promise<void> {
+    const ttl = options?.ttl;
+
+    if (ttl !== undefined && ttl <= 0) {
+      await this.#ns.delete(key);
+
+      return;
+    }
+
     await this.#ns.put(key, value, {
-      ...(options?.ttl ? { expirationTtl: options.ttl } : {}),
+      ...(ttl !== undefined ? { expirationTtl: ttl } : {}),
     });
   }
 

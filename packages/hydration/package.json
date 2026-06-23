@@ -115,7 +115,7 @@
     "@comity/primitives": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^24.13.1",
+    "@types/node": "^24.13.2",
     "jsdom": "^27.4.0",
     "typescript": "^5.9.3"
   }

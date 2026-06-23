@@ -18,6 +18,9 @@ export interface PageModel {
   /** Display title. */
   readonly title: string;
 
+  /** Layout identifier. */
+  readonly layout?: string;
+
   /** Content blocks. */
   readonly blocks?: readonly BlockModel[];
 

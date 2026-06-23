@@ -1,0 +1,103 @@
+{
+  "name": "@comity/html-preact",
+  "version": "0.9.0",
+  "description": "Preact module for server-rendered applications with Comity framework",
+  "type": "module",
+  "author": "Filippo Bovo <hello@filippobovo.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/comityjs/framework#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/comityjs/framework.git"
+  },
+  "bugs": {
+    "url": "https://github.com/comityjs/framework/issues"
+  },
+  "keywords": [
+    "comity",
+    "comityjs",
+    "http",
+    "rendering",
+    "preact",
+    "framework",
+    "typescript",
+    "javascript"
+  ],
+  "scripts": {
+    "build": "node ../../scripts/build.mjs",
+    "prepublish": "node ../../scripts/build.mjs",
+    "dev": "node ../../scripts/build.mjs --watch",
+    "test": "vitest run --coverage"
+  },
+  "files": [
+    "./dist",
+    "!./dist/**/*.map"
+  ],
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    },
+    "./setup": {
+      "import": {
+        "types": "./dist/types/setup/index.d.ts",
+        "default": "./dist/esm/setup/index.js"
+      },
+      "require": {
+        "types": "./dist/types/setup/index.d.ts",
+        "default": "./dist/cjs/setup/index.js"
+      }
+    },
+    "./streaming": {
+      "import": {
+        "types": "./dist/types/streaming/index.d.ts",
+        "node": "./dist/esm/streaming/node/index.js",
+        "default": "./dist/esm/streaming/index.js"
+      },
+      "require": {
+        "types": "./dist/types/streaming/index.d.ts",
+        "node": "./dist/cjs/streaming/node/index.js",
+        "default": "./dist/cjs/streaming/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "setup": [
+        "./dist/types/setup/index.d.ts"
+      ],
+      "streaming": [
+        "./dist/types/streaming/index.d.ts"
+      ]
+    }
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "@comity/html": "workspace:*",
+    "@comity/http": "workspace:*",
+    "@comity/primitives": "workspace:*",
+    "preact-render-to-string": "^6.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.2",
+    "preact": "^10.29.2",
+    "typescript": "^5.9.3"
+  },
+  "peerDependencies": {
+    "preact": "^10.0.0"
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "name": "@comity/storefront-magento",
+  "version": "0.1.0",
+  "description": "Magento GraphQL adapter for Comity storefront module.",
+  "type": "module",
+  "author": "Filippo Bovo <hello@filippobovo.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/comityjs/framework#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/comityjs/framework.git"
+  },
+  "bugs": {
+    "url": "https://github.com/comityjs/framework/issues"
+  },
+  "keywords": [
+    "comity",
+    "comityjs",
+    "storefront",
+    "e-commerce",
+    "ecommerce",
+    "magento",
+    "mage-os",
+    "adobe commerce",
+    "typescript"
+  ],
+  "scripts": {
+    "build": "node ../../scripts/build.mjs",
+    "prepublish": "node ../../scripts/build.mjs",
+    "dev": "node ../../scripts/build.mjs --watch",
+    "test": "vitest run --coverage"
+  },
+  "files": [
+    "./dist",
+    "!./dist/**/*.map"
+  ],
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    },
+    "./setup": {
+      "import": {
+        "types": "./dist/types/setup/index.d.ts",
+        "default": "./dist/esm/setup/index.js"
+      },
+      "require": {
+        "types": "./dist/types/setup/index.d.ts",
+        "default": "./dist/cjs/setup/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "setup": [
+        "./dist/types/setup/index.d.ts"
+      ]
+    }
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "@comity/cache": "workspace:*",
+    "@comity/catalog": "workspace:*",
+    "@comity/composition": "workspace:*",
+    "@comity/content": "workspace:*",
+    "@comity/graphql-builder": "workspace:*",
+    "@comity/graphql-client": "workspace:*",
+    "@comity/http": "workspace:*",
+    "@comity/media": "workspace:*",
+    "@comity/primitives": "workspace:*",
+    "@comity/router": "workspace:*",
+    "@comity/search": "workspace:*",
+    "@comity/seo": "workspace:*",
+    "@comity/storefront": "workspace:*",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.2",
+    "typescript": "^5.9.3"
+  }
+}

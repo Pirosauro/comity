@@ -1,6 +1,6 @@
 import type { ModuleSetupContext } from "@comity/composition";
 import type { GraphqlClient } from "../client.js";
-import type { GraphqlTransport } from "../index.js";
+import type { DefaultGraphqlRegistry } from "../registry.js";
 import type { GRAPHQL_CLIENT_TOKEN } from "./constants.js";
 
 /** Hooks exposed by the module */
@@ -19,8 +19,8 @@ export type GraphqlClientModuleEvents = {};
  * Services exposed by the module
  */
 export type GraphqlClientModuleServices = {
-  /** GraphQL client facade token */
-  [GRAPHQL_CLIENT_TOKEN]: GraphqlClient;
+  /** GraphQL registry token */
+  [GRAPHQL_CLIENT_TOKEN]: DefaultGraphqlRegistry;
 };
 
 /**
@@ -32,8 +32,7 @@ export interface GraphqlClientModuleContext extends ModuleSetupContext<
   GraphqlClientModuleHooks
 > {}
 
-/** GraphQL client module setup options */
-export type GraphqlClientModuleOptions = {
-  /** GraphQL client implementation */
-  transport?: GraphqlTransport;
-};
+/**
+ * GraphQL client module setup options
+ */
+export type GraphqlClientModuleOptions = Record<string, GraphqlClient>;

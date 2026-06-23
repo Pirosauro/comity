@@ -39,7 +39,13 @@ export class RedisCacheStore implements CacheStore {
   ): Promise<void> {
     const ttl = options?.ttl;
 
-    if (ttl) {
+    if (ttl !== undefined && ttl <= 0) {
+      await this.#client.del(key);
+
+      return;
+    }
+
+    if (ttl !== undefined) {
       await this.#client.set(key, value, "EX", ttl);
     } else {
       await this.#client.set(key, value);

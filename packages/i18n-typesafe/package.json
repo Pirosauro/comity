@@ -81,7 +81,7 @@
     "@comity/primitives": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^24.13.1",
+    "@types/node": "^24.13.2",
     "typesafe-i18n": "^5.27.1",
     "typescript": "^5.9.3"
   },

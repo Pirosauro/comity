@@ -1,4 +1,4 @@
-import type { HttpHandler } from "@comity/http";
+import type { HttpContext, HttpHandler } from "@comity/http";
 import type { Router, RouteResolutionContext } from "./contracts/router.js";
 
 /**
@@ -23,6 +23,17 @@ export function createRouterHttpHandler(router: Router): HttpHandler {
       };
     }
 
-    return match.route.handler(ctx);
+    const routerCtx: HttpContext = {
+      ...ctx,
+      request: {
+        ...ctx.request,
+        params: {
+          ...ctx.request.params,
+          ...(match.params ?? {}),
+        },
+      },
+    };
+
+    return match.route.handler(routerCtx);
   };
 }

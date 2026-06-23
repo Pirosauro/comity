@@ -148,5 +148,18 @@ describe("CompositeRevocationPolicy", () => {
       const composite = new CompositeRevocationPolicy(policies);
       expect(composite).toBeInstanceOf(CompositeRevocationPolicy);
     });
+
+    it("should snapshot the provided policy list", () => {
+      const policy1 = createMockPolicy(false);
+      const policy2 = createMockPolicy(false);
+      const policies = [policy1];
+      const composite = new CompositeRevocationPolicy(policies);
+
+      policies.push(policy2);
+      composite.assert(createSession(), 2000);
+
+      expect(policy1.assert).toHaveBeenCalled();
+      expect(policy2.assert).not.toHaveBeenCalled();
+    });
   });
 });

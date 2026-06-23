@@ -99,7 +99,7 @@
     "jose": "^6.2.3"
   },
   "devDependencies": {
-    "@types/node": "^24.13.1",
+    "@types/node": "^24.13.2",
     "typescript": "^5.9.3"
   }
 }

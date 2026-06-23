@@ -80,7 +80,7 @@ describe("load", () => {
     expect(result.error.meta.details?.module).toBe("moduleA");
   });
 
-  it("should handle apply failure", async () => {
+  it("should handle initialization failure", async () => {
     const modules = [
       {
         name: "moduleA",
@@ -89,7 +89,7 @@ describe("load", () => {
           success(async () =>
             failure(
               new TestError({
-                reason: "apply failed",
+                reason: "initialization_failed",
                 module: "moduleA",
               })
             )
@@ -102,7 +102,7 @@ describe("load", () => {
 
     expect(result.success).toBe(false);
     expect(result.error).toBeInstanceOf(CompositionError);
-    expect(result.error.meta.reason).toBe("apply_failed");
+    expect(result.error.meta.reason).toBe("initialization_failed");
     expect(result.error.meta.details?.module).toBe("moduleA");
   });
 

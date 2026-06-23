@@ -103,6 +103,49 @@ describe("createRouterHttpHandler", () => {
     });
   });
 
+  it("should propagate route params to matched route handler", async () => {
+    const mockRouteHandler = vi.fn().mockResolvedValue({
+      status: 200,
+      body: "OK",
+    } as HttpResponse);
+    const mockParams = { id: "123" };
+    const mockRouter = {
+      match: vi.fn().mockResolvedValue({
+        route: {
+          handler: mockRouteHandler,
+        },
+        params: mockParams,
+      }),
+    };
+    const handler = createRouterHttpHandler(mockRouter);
+    const mockContext = {
+      request: {
+        id: "test-id",
+        method: "GET",
+        url: new URL("http://example.com/test"),
+        headers: {},
+        params: { existing: "value" } as any,
+        cookies: {},
+        rawBody: null,
+      },
+      signal: {},
+      state: {},
+    } as HttpContext;
+
+    await handler(mockContext);
+
+    expect(mockRouteHandler).toHaveBeenCalledWith(
+      expect.objectContaining({
+        request: expect.objectContaining({
+          params: {
+            existing: "value",
+            id: "123",
+          },
+        }),
+      })
+    );
+  });
+
   it("should handle different HTTP methods", async () => {
     const mockRouteHandler = vi.fn().mockResolvedValue({
       status: 200,

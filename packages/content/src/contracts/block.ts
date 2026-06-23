@@ -9,6 +9,9 @@ export interface BlockModel {
 
   /** Block type. */
   readonly type: string;
+
+  /** Optional region identifier for grouping blocks within a page. */
+  readonly region?: string;
 }
 
 /**

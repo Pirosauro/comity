@@ -1,10 +1,9 @@
 import type { ModuleMeta } from "@comity/composition";
-import type { GraphqlClientOptions } from "../client.js";
 import type { GraphqlClientModuleContext, GraphqlClientModuleOptions } from "./types.js";
 
 import { CompositionError } from "@comity/composition/error";
 import { failure, success } from "@comity/primitives/result";
-import { GraphqlClient } from "../client.js";
+import { DefaultGraphqlRegistry } from "../registry.js";
 import { GRAPHQL_CLIENT_TOKEN } from "./constants.js";
 
 export const module: ModuleMeta<GraphqlClientModuleOptions, GraphqlClientModuleContext> = {
@@ -21,7 +20,7 @@ export const module: ModuleMeta<GraphqlClientModuleOptions, GraphqlClientModuleC
     };
     const cfg = (await ctx.hooks.execute("@comity/graphql-client:configuring", initial)) ?? initial;
 
-    if (!cfg.transport) {
+    if (typeof cfg !== "object" || Object.keys(cfg).length === 0) {
       return failure(
         new CompositionError("setup_failed", {
           details: {
@@ -33,9 +32,9 @@ export const module: ModuleMeta<GraphqlClientModuleOptions, GraphqlClientModuleC
     }
 
     return success(async () => {
-      const client = new GraphqlClient(cfg as GraphqlClientOptions);
+      const registry = new DefaultGraphqlRegistry(cfg as GraphqlClientModuleOptions);
 
-      ctx.services.define(GRAPHQL_CLIENT_TOKEN, () => client);
+      ctx.services.define(GRAPHQL_CLIENT_TOKEN, () => registry);
 
       await ctx.hooks.execute("@comity/graphql-client:initialized", undefined);
 

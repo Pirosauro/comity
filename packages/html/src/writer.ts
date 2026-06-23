@@ -49,6 +49,18 @@ function defaultEscapeValue(str: string): string {
 }
 
 /**
+ * Escapes a closing script tag inside inline script content to avoid breaking out
+ * of the surrounding `<script>` element.
+ *
+ * @param content - Inline JavaScript content.
+ *
+ * @returns Script content safe to embed inside a `<script>` element.
+ */
+function escapeScriptContent(content: string): string {
+  return content.replace(/<\/script/gi, "<\\/script");
+}
+
+/**
  * Creates a default HTML document writer with optional customization.
  *
  * @param state - The current state of the HTML document, including attributes, title, and other elements.
@@ -111,7 +123,7 @@ export function createDefaultHtmlDocumentWriter(
       case "script": {
         const { content, ...attrs } = tag.value;
 
-        return `<script ${serializeAttrs(attrs)}>${content ?? ""}</script>`;
+        return `<script ${serializeAttrs(attrs)}>${escapeScriptContent(content ?? "")}</script>`;
       }
 
       case "style": {
