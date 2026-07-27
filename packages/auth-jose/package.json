@@ -96,10 +96,10 @@
     "@comity/composition": "workspace:*",
     "@comity/kernel": "workspace:*",
     "@comity/primitives": "workspace:*",
-    "jose": "^6.2.3"
+    "jose": "^6.2.4"
   },
   "devDependencies": {
-    "@types/node": "^24.13.2",
+    "@types/node": "^24.13.3",
     "typescript": "^5.9.3"
   }
 }

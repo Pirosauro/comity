@@ -92,9 +92,9 @@
     "@comity/primitives": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^24.13.2",
-    "react": "^19.2.7",
-    "react-dom": "^19.2.7",
+    "@types/node": "^24.13.3",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
     "typescript": "^5.9.3"
   },
   "peerDependencies": {
