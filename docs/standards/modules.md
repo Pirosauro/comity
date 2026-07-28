@@ -118,7 +118,7 @@ Example:
 import type { ModuleMeta } from "@comity/kernel/modules";
 
 export const module: ModuleMeta = {
-  name: "@comity/example",
+  name: "@comity/http",
   version: "1.0.0",
 
   dependsOn: ["@comity/kernel"],

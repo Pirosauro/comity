@@ -120,19 +120,17 @@ Examples:
 - @comity/storefront
 - @comity/catalog
 
-Purpose:
+Core Modules own business abstractions.
 
-Expose reusable abstractions.
+They:
 
-Rules:
+- MAY depend on @comity/primitives.
+- MAY depend on @comity/kernel when runtime capabilities are required.
+- MUST NOT depend on Adapters.
+- MUST NOT depend on Applications.
+- SHOULD avoid dependencies on other Core Modules unless they represent stable architectural building blocks and the dependency is explicitly justified.
 
-- Depend only on Kernel.
-- Never depend on Adapters.
-- Never depend on frameworks.
-- Define contracts.
-- Own business abstractions.
-
-Core Modules SHOULD depend only on @comity/primitives. They MAY depend on @comity/kernel only when runtime integration (hooks, services, lifecycle, events, or module composition) is required.
+Core Modules define contracts, not implementations.
 
 ---
 

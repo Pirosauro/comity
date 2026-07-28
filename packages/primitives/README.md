@@ -51,7 +51,7 @@ No exhaustive reference; see docs for constraints.
 
 - @comity/kernel
 - @comity/http
-- @comity/html-runtime
+- @comity/html
 - @comity/auth
 
 ---

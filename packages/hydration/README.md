@@ -1,35 +1,53 @@
 # @comity/hydration
 
-Hydration module for server-rendered applications with the Comity framework.
+Island hydration contracts and runtime primitives for Comity.
 
 ---
 
 ## Purpose
 
-Enables interactive islands in server-rendered applications by handling the hydration process based on user interactions, media queries, or other conditions.
+Defines the core contracts, controller, serializer, and lifecycle hooks used to discover and hydrate islands in a structured way.
 
 ---
 
-## Responsibilities
+## Scope
 
-- ✅ Manages island hydration triggered by user interactions
-- ✅ Supports hydration based on media queries
-- ✅ Provides strategies for immediate, idle, and visible hydration
-- ❌ Does not handle server-side rendering
-- ❌ Does not manage application state
+This package:
+
+- ✅ defines island contracts and hydration strategies
+- ✅ provides hydration controller and serializer primitives
+- ✅ exposes lifecycle-aware hydration support
+
+This package does NOT:
+
+- ❌ render HTML documents
+- ❌ load application data
+- ❌ implement framework-specific hydration adapters
 
 ---
 
-## Architecture
+## Public API
 
-Based on a strategy pattern to determine when and how islands should be hydrated.
+- Hydration contracts
+- Hydration controller
+- Island serializer
+- Lifecycle support
 
 ---
 
 ## Documentation
 
-- `docs/overview.md`
-- `docs/conventions.md`
+- docs/overview.md
+- docs/conventions.md
+- docs/architecture.md
+
+---
+
+## Related Packages
+
+- @comity/html
+- @comity/hydration-preact
+- @comity/hydration-react
 
 ---
 

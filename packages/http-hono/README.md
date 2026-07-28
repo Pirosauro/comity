@@ -28,8 +28,10 @@ This package does NOT:
 
 ## Public API
 
-- Adapter — factory to attach Comity HTTP to Hono
-- Setup — kernel module metadata (optional)
+- `httpHonoAdapter`
+- `module`
+- `HTTP_HONO_TOKEN`
+- adapter setup types
 
 ---
 
@@ -37,6 +39,7 @@ This package does NOT:
 
 - docs/overview.md
 - docs/wiring.md
+- docs/conventions.md
 
 ---
 

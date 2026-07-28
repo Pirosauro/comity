@@ -13,7 +13,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@comity/html-runtime": resolve(__dirname, "./src"),
+      "@comity/html": resolve(__dirname, "./src"),
     },
   },
 });

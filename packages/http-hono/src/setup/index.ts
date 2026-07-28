@@ -17,7 +17,7 @@ import { HTTP_HONO_TOKEN } from "./constants.js";
  * with kernel services.
  *
  * The adapter works independently of the kernel and can be used directly
- * via `createHonoHandler`.
+ * via `httpHonoAdapter`.
  */
 export const module: ModuleMeta<HttpHonoModuleOptions, HttpHonoModuleContext & HttpModuleContext> =
   {

@@ -158,8 +158,8 @@ Adapters SHOULD:
 Examples:
 
 - `@comity/http-hono`
-- `@comity/http-fetch`
-- `@comity/runtime-node`
+- `@comity/graphql-client-ws`
+- `@comity/router-path-to-regexp`
 
 Adapters MUST NOT:
 

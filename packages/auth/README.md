@@ -37,9 +37,15 @@ This package does NOT:
 The public API includes:
 
 - `AuthFacade`
-- Session-related contracts
-- Assurance, refresh, and revocation policy interfaces
-- Domain event interfaces
+- session-related contracts
+- assurance, refresh, and revocation policy interfaces
+- domain event interfaces
+- `error` subpath
+- `hooks` subpath
+- `policies` subpath
+- `repositories` subpath
+- `setup` subpath
+- `use-cases` subpath
 
 Adapters and infrastructure modules are expected to orchestrate the domain
 through the facade.
