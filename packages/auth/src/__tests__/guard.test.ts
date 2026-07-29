@@ -6,7 +6,7 @@ import type { AuthEvaluationEmitter } from "../hooks/evaluation.js";
 import type { AuthRefreshEvaluationEmitter } from "../hooks/refresh.js";
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { AuthError } from "../error/auth.js";
+import { AuthError } from "../errors/auth.js";
 import { AuthGuard } from "../guard.js";
 
 interface AuthGuardEmitter extends AuthEvaluationEmitter, AuthRefreshEvaluationEmitter {}

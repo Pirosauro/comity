@@ -1,6 +1,6 @@
 import type { KyselyDatabase } from "../client/types.js";
 
-import { SqlError } from "@comity/sql/error";
+import { SqlError } from "@comity/sql/errors";
 
 /**
  * Assert the provided client is a Kysely-like database with required methods.

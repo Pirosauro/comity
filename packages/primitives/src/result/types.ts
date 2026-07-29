@@ -1,4 +1,4 @@
-import type { BaseError } from "../error/base.js";
+import type { BaseError } from "../errors/base.js";
 
 /**
  * Success result contract

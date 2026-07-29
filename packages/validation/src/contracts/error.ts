@@ -1,4 +1,4 @@
-import type { BaseError } from "@comity/primitives/error";
+import type { BaseError } from "@comity/primitives/errors";
 
 /**
  * Single validation issue discovered while validating an input.

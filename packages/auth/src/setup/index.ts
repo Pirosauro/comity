@@ -5,7 +5,7 @@ import type { AuthRefreshEvaluationObserver } from "../hooks/refresh.js";
 import type { AuthSessionObserver } from "../hooks/session.js";
 import type { AuthModuleContext, AuthModuleOptions } from "./types.js";
 
-import { CompositionError } from "@comity/composition/error";
+import { CompositionError } from "@comity/composition/errors";
 import { failure, success } from "@comity/primitives/result";
 import { AuthGuard } from "../guard.js";
 import { CreateSession } from "../use-cases/session-create.js";

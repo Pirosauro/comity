@@ -1,7 +1,7 @@
 import type { AuthSessionRefreshPolicy } from "../../contracts/session-refresh-policy.js";
 import type { AuthSession } from "../../contracts/session.js";
 
-import { AuthError } from "../../error/auth.js";
+import { AuthError } from "../../errors/auth.js";
 
 /**
  * Default refresh policy with standard validation rules.

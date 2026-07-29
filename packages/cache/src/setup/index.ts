@@ -1,7 +1,7 @@
 import type { ModuleMeta } from "@comity/composition";
 import type { CacheModuleContext, CacheModuleOptions } from "./types.js";
 
-import { CompositionError } from "@comity/composition/error";
+import { CompositionError } from "@comity/composition/errors";
 import { failure, success } from "@comity/primitives/result";
 import { DefaultCache } from "../facade.js";
 import { CACHE_TOKEN } from "./constants.js";

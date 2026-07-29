@@ -1,11 +1,11 @@
 import type { ProductRepository } from "@comity/catalog";
-import type { RepositoryError } from "@comity/primitives/error";
+import type { RepositoryError } from "@comity/primitives/errors";
 import { isSuccess, success, type Result } from "@comity/primitives/result";
 import type { StorefrontContext } from "../contracts/context.js";
 import type {
-  SearchPageComposer,
-  SearchPageEnricher,
-  SearchPageModel,
+    SearchPageComposer,
+    SearchPageEnricher,
+    SearchPageModel,
 } from "../contracts/search-page.js";
 
 /**

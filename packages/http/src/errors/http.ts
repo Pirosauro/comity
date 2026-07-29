@@ -1,6 +1,6 @@
-import type { ErrorMeta } from "@comity/primitives/error";
+import type { ErrorMeta } from "@comity/primitives/errors";
 
-import { BaseError } from "@comity/primitives/error";
+import { BaseError } from "@comity/primitives/errors";
 
 /**
  * HTTP error reasons.

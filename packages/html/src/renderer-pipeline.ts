@@ -3,8 +3,8 @@ import type { HtmlRenderResult } from "./contracts/render-result.js";
 import type { HtmlRenderer, HtmlRendererOptions } from "./contracts/renderer.js";
 import type { HtmlRendererObserver } from "./hooks/html-renderer.js";
 
-import { toSafePayload } from "@comity/primitives/error";
-import { HtmlError } from "./error/html.js";
+import { toSafePayload } from "@comity/primitives/errors";
+import { HtmlError } from "./errors/html.js";
 
 /**
  * HTML renderer pipeline that attempts to render a view using multiple renderers in order.

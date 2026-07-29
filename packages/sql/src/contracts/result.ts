@@ -1,5 +1,5 @@
 import type { ResultFailure, ResultSuccess } from "@comity/primitives/result";
-import type { SqlError } from "../error/sql.js";
+import type { SqlError } from "../errors/sql.js";
 
 /**
  * Result set for a SQL query.

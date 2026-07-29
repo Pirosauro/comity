@@ -1,7 +1,7 @@
 import type { ModuleMeta } from "@comity/composition";
 import type { GraphqlClientModuleContext, GraphqlClientModuleOptions } from "./types.js";
 
-import { CompositionError } from "@comity/composition/error";
+import { CompositionError } from "@comity/composition/errors";
 import { failure, success } from "@comity/primitives/result";
 import { DefaultGraphqlRegistry } from "../registry.js";
 import { GRAPHQL_CLIENT_TOKEN } from "./constants.js";

@@ -1,5 +1,5 @@
 import type { ProductModel } from "@comity/catalog";
-import type { RepositoryError } from "@comity/primitives/error";
+import type { RepositoryError } from "@comity/primitives/errors";
 import type { Result } from "@comity/primitives/result";
 import type { SearchResultModel } from "@comity/search";
 import type { StorefrontContext } from "./context.js";

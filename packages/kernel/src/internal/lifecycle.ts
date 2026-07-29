@@ -2,7 +2,7 @@ import type { Result } from "@comity/primitives/result";
 import type { KernelLifecycleState } from "../hooks/types.js";
 
 import { failure, success } from "@comity/primitives/result";
-import { KernelError } from "../error/kernel.js";
+import { KernelError } from "../errors/kernel.js";
 
 /**
  * Lifecycle manager for the kernel.

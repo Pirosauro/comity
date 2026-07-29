@@ -2,7 +2,7 @@ import type { ModuleMeta } from "@comity/composition";
 import type { I18nModuleContext } from "@comity/i18n";
 import type { I18nTypesafeModuleOptions } from "./types.js";
 
-import { CompositionError } from "@comity/composition/error";
+import { CompositionError } from "@comity/composition/errors";
 import { failure, success } from "@comity/primitives/result";
 import { createTypesafeFactory } from "../factory.js";
 import { TypesafeI18nLoader } from "../loader.js";

@@ -1,7 +1,7 @@
 import type { GraphqlRequest } from "../contracts/request.js";
 import type { GraphqlTransport } from "../contracts/transport.js";
 
-import { GraphqlClientError } from "../error/graphql.js";
+import { GraphqlClientError } from "../errors/graphql.js";
 
 /**
  * Options for the CombinedGraphqlTransport class.

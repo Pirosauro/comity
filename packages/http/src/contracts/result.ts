@@ -1,5 +1,5 @@
 import type { Result } from "@comity/primitives/result";
-import type { HttpError } from "../error/http.js";
+import type { HttpError } from "../errors/http.js";
 import type { HttpResponse } from "./response.js";
 
 /**

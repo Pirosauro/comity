@@ -1,5 +1,5 @@
 import type { Result } from "@comity/primitives/result";
-import type { CartError } from "../error/cart.js";
+import type { CartError } from "../errors/cart.js";
 import type { CartModel } from "./cart.js";
 import type { CartItemOptionModel } from "./item.js";
 

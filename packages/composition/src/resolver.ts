@@ -2,7 +2,7 @@ import type { Result } from "@comity/primitives/result";
 import type { ModuleMeta } from "./types.js";
 
 import { failure, isFailure, success } from "@comity/primitives/result";
-import { CompositionError } from "./error/composition.js";
+import { CompositionError } from "./errors/composition.js";
 
 /**
  * Resolves and reorders compositions based on their dependency relationships.

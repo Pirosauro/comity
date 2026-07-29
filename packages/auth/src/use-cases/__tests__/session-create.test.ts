@@ -1,7 +1,7 @@
 import type { CreateSessionInput } from "../session-create.js";
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { AuthError } from "../../error/auth.js";
+import { AuthError } from "../../errors/auth.js";
 import { CreateSession } from "../session-create.js";
 
 describe("CreateSession", () => {

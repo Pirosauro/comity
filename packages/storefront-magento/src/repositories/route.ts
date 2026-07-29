@@ -1,11 +1,11 @@
 import type { GraphqlClient } from "@comity/graphql-client";
-import type { RepositoryError } from "@comity/primitives/error";
+import type { RepositoryError } from "@comity/primitives/errors";
 import type { Result } from "@comity/primitives/result";
 import type { StorefrontContext } from "@comity/storefront";
 import type { MagentoRouteQuery } from "../internal/graphql/route.js";
 import type { RouteQueryInput } from "../internal/schema/queries/route.js";
 
-import { RepositoryError as RepositoryErrorClass } from "@comity/primitives/error";
+import { RepositoryError as RepositoryErrorClass } from "@comity/primitives/errors";
 import { failure, success } from "@comity/primitives/result";
 import { buildRouteQuery } from "../internal/graphql/route.js";
 

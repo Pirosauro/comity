@@ -1,5 +1,5 @@
 import type { DiContainer } from "@comity/primitives/di";
-import type { BaseError } from "@comity/primitives/error";
+import type { BaseError } from "@comity/primitives/errors";
 import type { EventBus, HookBus } from "@comity/primitives/lifecycle";
 import type { Result } from "@comity/primitives/result";
 

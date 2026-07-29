@@ -3,7 +3,7 @@ import type { IslandElement } from "@comity/hydration/client";
 import type { Attributes } from "react";
 import type { IslandComponentRegistry } from "../contracts/registry.js";
 
-import { HydrationError } from "@comity/hydration/error";
+import { HydrationError } from "@comity/hydration/errors";
 import { createElement } from "react";
 import { createRoot, hydrateRoot } from "react-dom/client";
 

@@ -3,7 +3,7 @@ import type { IslandElement } from "@comity/hydration/client";
 import type { ComponentType } from "preact";
 import type { IslandComponentRegistry } from "../contracts/registry.js";
 
-import { HydrationError } from "@comity/hydration/error";
+import { HydrationError } from "@comity/hydration/errors";
 import { createElement, hydrate, render } from "preact";
 
 /**

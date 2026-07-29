@@ -2,7 +2,7 @@ import type { HttpResponse } from "@comity/http";
 import type { Result } from "@comity/primitives/result";
 import type { HtmlRenderer } from "../contracts/renderer.js";
 
-import { HtmlError } from "../error/html.js";
+import { HtmlError } from "../errors/html.js";
 
 /**
  * Mock HTML renderer for testing purposes

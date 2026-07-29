@@ -1,6 +1,6 @@
-import type { SqlErrorReason } from "@comity/sql/error";
+import type { SqlErrorReason } from "@comity/sql/errors";
 
-import { SqlError } from "@comity/sql/error";
+import { SqlError } from "@comity/sql/errors";
 
 /**
  * Internal type for driver-specific error code mappings.

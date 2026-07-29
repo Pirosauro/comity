@@ -4,8 +4,8 @@ import type { CryptoKey, JWK, JWTPayload, KeyObject } from "jose";
 import type { AuthJoseEventObserver } from "./hooks/observer.js";
 import type { JoseAuthTokenServiceOptions, JoseJwtPayload } from "./types.js";
 
-import { AuthError } from "@comity/auth/error";
-import { toSafePayload } from "@comity/primitives/error";
+import { AuthError } from "@comity/auth/errors";
+import { toSafePayload } from "@comity/primitives/errors";
 import { SignJWT, jwtVerify } from "jose";
 import { joseErrorToAuthError } from "./internal/jose-error-to-auth-error.js";
 import { jwtPayloadToAuthSession } from "./internal/jwt-to-session.js";

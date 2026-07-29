@@ -3,7 +3,7 @@ import type { Result } from "@comity/primitives/result";
 import type { AuthTokenEnvelope } from "../contracts/envelope";
 import type { AuthTokenFacade, IssueTokensInput } from "../contracts/facade";
 
-import { AuthError } from "@comity/auth/error";
+import { AuthError } from "@comity/auth/errors";
 
 /**
  * Default implementation of the AuthTokenFacade.

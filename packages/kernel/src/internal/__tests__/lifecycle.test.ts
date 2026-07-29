@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { KernelError } from "../../error/kernel.js";
+import { KernelError } from "../../errors/kernel.js";
 import { Lifecycle } from "../lifecycle.js";
 
 describe("Lifecycle", () => {

@@ -1,4 +1,4 @@
-import type { RepositoryError } from "@comity/primitives/error";
+import type { RepositoryError } from "@comity/primitives/errors";
 import type { Result } from "@comity/primitives/result";
 import type { SearchCriteriaModel, SearchResultModel } from "@comity/search";
 import type { PageModel } from "./page.js";

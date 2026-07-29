@@ -5,8 +5,8 @@ import type { AuthSession } from "./contracts/session.js";
 import type { AuthEvaluationObserver } from "./hooks/evaluation.js";
 import type { AuthRefreshEvaluationObserver } from "./hooks/refresh.js";
 
-import { toSafePayload } from "@comity/primitives/error";
-import { AuthError } from "./error/auth.js";
+import { toSafePayload } from "@comity/primitives/errors";
+import { AuthError } from "./errors/auth.js";
 import { checkSessionInvariants } from "./internal/session-invariants.js";
 
 /** Event observer combining evaluation and refresh observers. */

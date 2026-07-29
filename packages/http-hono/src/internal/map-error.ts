@@ -1,6 +1,6 @@
 import type { HttpContext, HttpRequest, HttpResponse } from "@comity/http";
 
-import { BaseError } from "@comity/primitives/error";
+import { BaseError } from "@comity/primitives/errors";
 
 /**
  * Determines the preferred response type based on the Accept header of the request.

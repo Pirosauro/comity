@@ -1,7 +1,7 @@
 import type { AuthSessionRefreshPolicy } from "../../contracts/session-refresh-policy.js";
 import type { AuthSession } from "../../contracts/session.js";
 
-import { AuthError } from "../../error/auth.js";
+import { AuthError } from "../../errors/auth.js";
 
 /**
  * Refresh policy that restricts refresh based on session age.

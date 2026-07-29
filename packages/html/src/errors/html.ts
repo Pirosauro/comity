@@ -1,7 +1,7 @@
 import type { HttpStatus } from "@comity/http";
-import type { ErrorMeta } from "@comity/primitives/error";
+import type { ErrorMeta } from "@comity/primitives/errors";
 
-import { BaseError } from "@comity/primitives/error";
+import { BaseError } from "@comity/primitives/errors";
 
 /**
  * Reasons for HTML rendering errors.

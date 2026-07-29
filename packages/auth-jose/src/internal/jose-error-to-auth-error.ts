@@ -1,7 +1,7 @@
-import type { AuthErrorMeta } from "@comity/auth/error";
+import type { AuthErrorMeta } from "@comity/auth/errors";
 import type { JOSEError } from "jose/errors";
 
-import { AuthError } from "@comity/auth/error";
+import { AuthError } from "@comity/auth/errors";
 
 /**
  * Maps JOSE errors to standardized JWT reasons.

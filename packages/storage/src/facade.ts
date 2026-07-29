@@ -8,7 +8,7 @@ import type {
 import type { Storage, StorageInput, StorageObject } from "./contracts/storage.js";
 import type { StorageStore } from "./contracts/store.js";
 
-import { StorageError } from "./error/storage.js";
+import { StorageError } from "./errors/storage.js";
 
 /**
  * DefaultStorage is the default implementation of the Storage interface.

@@ -3,7 +3,7 @@ import type { HttpHandler } from "./contracts/handler.js";
 import type { HttpMiddleware } from "./contracts/middleware.js";
 import type { HttpResponse } from "./contracts/response.js";
 
-import { HttpError } from "./error/http.js";
+import { HttpError } from "./errors/http.js";
 
 /**
  * Creates an HTTP handler function that executes the provided middleware in order before invoking the main handler.

@@ -1,6 +1,6 @@
 import type { HttpContext } from "@comity/http";
 
-import { BaseError } from "@comity/primitives/error";
+import { BaseError } from "@comity/primitives/errors";
 import { describe, expect, it } from "vitest";
 import { mapErrorToHttpResponse } from "../map-error.js";
 

@@ -1,8 +1,8 @@
 import type { Result, ResultFailure } from "@comity/primitives/result";
 import type { AuthSession } from "../contracts/session.js";
-import type { AuthErrorMeta, AuthErrorReason } from "../error/auth.js";
+import type { AuthErrorMeta, AuthErrorReason } from "../errors/auth.js";
 
-import { AuthError } from "../error/auth.js";
+import { AuthError } from "../errors/auth.js";
 
 /**
  * Creates a failure `Result` representing an invalid session.

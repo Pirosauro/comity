@@ -6,7 +6,7 @@ import type { JoseAuthModuleContext, JoseAuthModuleOptions } from "./types.js";
 
 import { AUTH_TOKEN } from "@comity/auth";
 import { DefaultAuthTokenFacade } from "@comity/auth-tokens";
-import { CompositionError } from "@comity/composition/error";
+import { CompositionError } from "@comity/composition/errors";
 import { failure, success } from "@comity/primitives/result";
 import { JoseAuthTokenService } from "../auth-token.js";
 import { AUTH_JOSE_TOKEN } from "./constants.js";

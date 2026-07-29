@@ -1,7 +1,7 @@
 import type { ModuleMeta } from "@comity/composition";
 import type { StorageModuleContext, StorageModuleOptions } from "./types.js";
 
-import { CompositionError } from "@comity/composition/error";
+import { CompositionError } from "@comity/composition/errors";
 import { failure, success } from "@comity/primitives/result";
 import { DefaultStorage } from "../facade.js";
 import { STORAGE_TOKEN } from "./constants.js";

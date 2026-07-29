@@ -6,7 +6,7 @@ import type { MagentoProduct } from "../internal/graphql/product.js";
 import type { UrlRewrite } from "../internal/mappers/product.js";
 import type { ProductsQueryInput } from "../internal/schema/queries/product.js";
 
-import { RepositoryError } from "@comity/primitives/error";
+import { RepositoryError } from "@comity/primitives/errors";
 import { failure, success } from "@comity/primitives/result";
 import { toMagentoFilter } from "../internal/filters/magento.js";
 import { buildProductQuery } from "../internal/graphql/product.js";

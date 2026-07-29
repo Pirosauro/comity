@@ -4,7 +4,7 @@ import type { EventBus, HookBus } from "@comity/primitives/lifecycle";
 import { DefaultDiContainer } from "@comity/primitives/di";
 import { DefaultEventBus, DefaultHookBus } from "@comity/primitives/lifecycle";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { KernelError } from "../error/kernel.js";
+import { KernelError } from "../errors/kernel.js";
 import { Kernel } from "../kernel.js";
 
 interface TestServices extends Record<string | symbol, unknown> {

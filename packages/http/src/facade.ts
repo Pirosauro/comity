@@ -3,7 +3,7 @@ import type { HttpHandler } from "./contracts/handler.js";
 import type { HttpResponse } from "./contracts/response.js";
 import type { HttpObserver } from "./hooks/observer.js";
 
-import { toSafePayload } from "@comity/primitives/error";
+import { toSafePayload } from "@comity/primitives/errors";
 
 /**
  * HTTP Facade that provides a simplified interface for handling HTTP requests.

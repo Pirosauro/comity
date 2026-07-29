@@ -1,10 +1,10 @@
 import type {
-  AuthSession,
-  AuthSessionAssuranceInput,
-  AuthSessionId,
-  AuthSessionTransport,
+    AuthSession,
+    AuthSessionAssuranceInput,
+    AuthSessionId,
+    AuthSessionTransport,
 } from "@comity/auth";
-import type { AuthError } from "@comity/auth/error";
+import type { AuthError } from "@comity/auth/errors";
 import type { Result } from "@comity/primitives/result";
 import type { AuthTokenEnvelope } from "./envelope.js";
 

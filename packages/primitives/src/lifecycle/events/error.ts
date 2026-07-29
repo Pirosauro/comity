@@ -1,6 +1,6 @@
-import type { ErrorMeta } from "../../error/types.js";
+import type { ErrorMeta } from "../../errors/types.js";
 
-import { BaseError } from "../../error/base.js";
+import { BaseError } from "../../errors/base.js";
 
 /**
  * Metadata for EventBus errors.

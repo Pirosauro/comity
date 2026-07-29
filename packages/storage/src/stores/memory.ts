@@ -1,7 +1,7 @@
 import type { StorageInput, StorageObject } from "../contracts/storage.js";
 import type { StorageStore } from "../contracts/store.js";
 
-import { StorageError } from "../error/storage.js";
+import { StorageError } from "../errors/storage.js";
 
 /**
  * Internal representation of a stored entity in the memory storage store.

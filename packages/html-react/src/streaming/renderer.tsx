@@ -4,7 +4,7 @@ import type { ReactElement } from "react";
 import type { HtmlReactRendererOptions } from "../types.js";
 
 import { createDefaultHtmlDocumentWriter } from "@comity/html";
-import { HtmlError } from "@comity/html/error";
+import { HtmlError } from "@comity/html/errors";
 import { renderToReadableStream } from "react-dom/server";
 import { LayoutProvider } from "../layout.js";
 

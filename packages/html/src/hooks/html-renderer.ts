@@ -1,4 +1,4 @@
-import type { SafeErrorPayload } from "@comity/primitives/error";
+import type { SafeErrorPayload } from "@comity/primitives/errors";
 
 /**
  * Events emitted by the HTML runtime during the rendering process.

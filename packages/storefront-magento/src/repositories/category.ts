@@ -5,7 +5,7 @@ import type { SearchCriteriaModel, SearchResultModel } from "@comity/search";
 import type { MagentoCategory } from "../internal/graphql/category.js";
 import type { MagentoGraphqlCategoryQueryInput } from "../internal/schema/queries/category.js";
 
-import { RepositoryError } from "@comity/primitives/error";
+import { RepositoryError } from "@comity/primitives/errors";
 import { failure, success } from "@comity/primitives/result";
 import { toMagentoFilter } from "../internal/filters/magento.js";
 import { buildCategoryQuery } from "../internal/graphql/category.js";

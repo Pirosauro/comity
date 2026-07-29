@@ -1,4 +1,4 @@
-import type { SafeErrorPayload } from "@comity/primitives/error";
+import type { SafeErrorPayload } from "@comity/primitives/errors";
 
 /**
  * Event observer interface for authentication evaluation lifecycle.

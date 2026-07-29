@@ -1,9 +1,9 @@
 import type { ResultFailure } from "@comity/primitives/result";
 
-import { BaseError } from "@comity/primitives/error";
+import { BaseError } from "@comity/primitives/errors";
 import { failure, success } from "@comity/primitives/result";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { CompositionError } from "../error/composition.js";
+import { CompositionError } from "../errors/composition.js";
 import { load } from "../loader.js";
 
 class TestError extends BaseError {

@@ -3,7 +3,7 @@ import type { VNode } from "preact";
 import type { HtmlPreactRendererOptions } from "../types.js";
 
 import { createDefaultHtmlDocumentWriter } from "@comity/html";
-import { HtmlError } from "@comity/html/error";
+import { HtmlError } from "@comity/html/errors";
 import { render } from "preact-render-to-string";
 import { LayoutProvider } from "../layout.js";
 

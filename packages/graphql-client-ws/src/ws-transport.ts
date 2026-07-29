@@ -1,7 +1,7 @@
 import type { GraphqlRequest, GraphqlResponse, GraphqlTransport } from "@comity/graphql-client";
 import type { Client } from "graphql-ws";
 
-import { GraphqlClientError } from "@comity/graphql-client/error";
+import { GraphqlClientError } from "@comity/graphql-client/errors";
 import { createClient } from "graphql-ws";
 
 /**

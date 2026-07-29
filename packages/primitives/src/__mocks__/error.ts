@@ -1,4 +1,4 @@
-import { BaseError } from "../error/base.js";
+import { BaseError } from "../errors/base.js";
 
 /**
  * A simple error class used for testing purposes.

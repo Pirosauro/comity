@@ -1,5 +1,5 @@
 import type { Result } from "@comity/primitives/result";
-import type { AuthError } from "../error/auth.js";
+import type { AuthError } from "../errors/auth.js";
 import type { CreateSessionInput } from "../use-cases/session-create.js";
 import type { RefreshSessionInput } from "../use-cases/session-refresh.js";
 import type { RevokeSessionInput } from "../use-cases/session-revoke.js";

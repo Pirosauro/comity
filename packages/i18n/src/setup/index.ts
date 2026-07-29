@@ -2,7 +2,7 @@ import type { ModuleMeta } from "@comity/composition";
 import type { I18nOptions } from "../facade.js";
 import type { I18nModuleContext, I18nModuleOptions } from "./types.js";
 
-import { CompositionError } from "@comity/composition/error";
+import { CompositionError } from "@comity/composition/errors";
 import { failure, success } from "@comity/primitives/result";
 import { DefaultI18n } from "../facade.js";
 import { I18N_TOKEN } from "./constants.js";

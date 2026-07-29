@@ -1,7 +1,7 @@
 import type { AuthSession, AuthSessionId } from "../contracts/session";
 import type { AuthSessionRepository } from "../contracts/session-repository";
 
-import { AuthError } from "../error";
+import { AuthError } from "../errors";
 
 /**
  * In-memory implementation of `AuthSessionRepository` for testing and development purposes.

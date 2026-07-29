@@ -1,7 +1,7 @@
 import type { SqlOperationResult, SqlQuery, SqlResult } from "@comity/sql";
 import type { Kysely } from "kysely";
 
-import { SqlError } from "@comity/sql/error";
+import { SqlError } from "@comity/sql/errors";
 import { CompiledQuery } from "kysely";
 import { mapSqlError } from "../internal/map-sql-error.js";
 

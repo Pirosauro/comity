@@ -1,4 +1,4 @@
-import type { SafeErrorPayload } from "@comity/primitives/error";
+import type { SafeErrorPayload } from "@comity/primitives/errors";
 import type { HttpRequest } from "../contracts/request.js";
 import type { HttpResponse } from "../contracts/response";
 

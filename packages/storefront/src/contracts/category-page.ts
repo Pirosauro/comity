@@ -1,6 +1,6 @@
 import type { CategoryModel, ProductModel } from "@comity/catalog";
 import type { BreadcrumbModel } from "@comity/content";
-import type { RepositoryError } from "@comity/primitives/error";
+import type { RepositoryError } from "@comity/primitives/errors";
 import type { Result } from "@comity/primitives/result";
 import type { StorefrontContext } from "./context.js";
 import type { StorefrontPageModel } from "./page.js";

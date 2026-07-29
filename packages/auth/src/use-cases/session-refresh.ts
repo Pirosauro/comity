@@ -4,7 +4,7 @@ import type { AuthGuard } from "../guard.js";
 import type { AuthSessionObserver } from "../hooks/session.js";
 
 import type { Result } from "@comity/primitives/result";
-import { AuthError } from "../error/auth.js";
+import { AuthError } from "../errors/auth.js";
 
 /**
  * Input used to refresh an authenticated session.

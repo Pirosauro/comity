@@ -1,6 +1,6 @@
 import { success } from "@comity/primitives/result";
 import { describe, expect, it, vi } from "vitest";
-import { CompositionError } from "../error/composition.js";
+import { CompositionError } from "../errors/composition.js";
 import { resolveOrder } from "../resolver.js";
 
 describe("resolveOrder", () => {

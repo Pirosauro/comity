@@ -9,7 +9,7 @@ import type { AuthSession, AuthSessionId } from "../contracts/session.js";
 import type { AuthGuard } from "../guard.js";
 import type { AuthSessionObserver } from "../hooks/session.js";
 
-import { AuthError } from "../error/auth.js";
+import { AuthError } from "../errors/auth.js";
 
 /**
  * Input used to create a new authenticated session.

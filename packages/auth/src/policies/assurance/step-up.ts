@@ -1,7 +1,7 @@
 import type { AuthSessionAssurancePolicy } from "../../contracts/session-assurance-policy.js";
 import type { AuthSession } from "../../contracts/session.js";
 
-import { AuthError } from "../../error/auth.js";
+import { AuthError } from "../../errors/auth.js";
 
 /**
  * Assurance policy that requires step-up authentication.

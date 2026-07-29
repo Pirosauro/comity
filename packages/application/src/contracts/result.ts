@@ -1,4 +1,4 @@
-import type { BaseError } from "@comity/primitives/error";
+import type { BaseError } from "@comity/primitives/errors";
 import type { Result } from "@comity/primitives/result";
 
 /**

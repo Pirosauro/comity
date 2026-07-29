@@ -1,7 +1,7 @@
 import type { AuthSessionRevocationPolicy } from "../../contracts/session-revocation-policy.js";
 import type { AuthSession } from "../../contracts/session.js";
 
-import { AuthError } from "../../error/auth.js";
+import { AuthError } from "../../errors/auth.js";
 
 /**
  * Revocation policy that revokes sessions with outdated version numbers.

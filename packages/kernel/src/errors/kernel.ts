@@ -1,7 +1,7 @@
-import type { ErrorMeta } from "@comity/primitives/error";
+import type { ErrorMeta } from "@comity/primitives/errors";
 import type { KernelLifecycleState } from "../hooks/types.js";
 
-import { BaseError } from "@comity/primitives/error";
+import { BaseError } from "@comity/primitives/errors";
 
 /**
  * Reasons for kernel errors.

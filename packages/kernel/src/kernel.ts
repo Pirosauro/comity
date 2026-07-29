@@ -2,15 +2,15 @@ import type { EventHandler, HookHandler } from "@comity/primitives/lifecycle";
 import type { KernelLifecycleObserver } from "./hooks/lifecycle.js";
 import type { KernelLifecycleState } from "./hooks/types.js";
 import type {
-  KernelContext,
-  KernelEventBus,
-  KernelHookBus,
-  KernelServiceResolver,
+    KernelContext,
+    KernelEventBus,
+    KernelHookBus,
+    KernelServiceResolver,
 } from "./types.js";
 
-import { toSafePayload } from "@comity/primitives/error";
+import { toSafePayload } from "@comity/primitives/errors";
 import { isSuccess } from "@comity/primitives/result";
-import { KernelError } from "./error/kernel.js";
+import { KernelError } from "./errors/kernel.js";
 import { Lifecycle } from "./internal/lifecycle.js";
 
 /**

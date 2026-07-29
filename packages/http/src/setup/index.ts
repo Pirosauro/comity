@@ -2,7 +2,7 @@ import type { ModuleMeta } from "@comity/composition";
 import type { HttpObserver } from "../hooks/observer.js";
 import type { HttpModuleContext, HttpModuleOptions } from "./types.js";
 
-import { CompositionError } from "@comity/composition/error";
+import { CompositionError } from "@comity/composition/errors";
 import { failure, success } from "@comity/primitives/result";
 import { HttpFacade } from "../facade.js";
 import { createHttpHandler } from "../handler.js";

@@ -43,14 +43,14 @@
         "default": "./dist/cjs/index.js"
       }
     },
-    "./error": {
+    "./errors": {
       "import": {
-        "types": "./dist/types/error/index.d.ts",
-        "default": "./dist/esm/error/index.js"
+        "types": "./dist/types/errors/index.d.ts",
+        "default": "./dist/esm/errors/index.js"
       },
       "require": {
-        "types": "./dist/types/error/index.d.ts",
-        "default": "./dist/cjs/error/index.js"
+        "types": "./dist/types/errors/index.d.ts",
+        "default": "./dist/cjs/errors/index.js"
       }
     },
     "./setup": {
@@ -77,8 +77,8 @@
   },
   "typesVersions": {
     "*": {
-      "error": [
-        "./dist/types/error/index.d.ts"
+      "errors": [
+        "./dist/types/errors/index.d.ts"
       ],
       "setup": [
         "./dist/types/setup/index.d.ts"

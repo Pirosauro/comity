@@ -2,7 +2,7 @@ import type { AuthFacade, AuthSession, AuthTokenService } from "@comity/auth";
 import type { AuthTokenEnvelope } from "../../contracts/envelope";
 import type { IssueTokensInput } from "../../contracts/facade";
 
-import { AuthError } from "@comity/auth/error";
+import { AuthError } from "@comity/auth/errors";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { DefaultAuthTokenFacade } from "../default";
 

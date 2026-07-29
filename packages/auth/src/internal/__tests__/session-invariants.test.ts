@@ -1,7 +1,7 @@
 import type { AuthSession } from "../../contracts/session.js";
 
 import { describe, expect, it } from "vitest";
-import { AuthError } from "../../error/auth.js";
+import { AuthError } from "../../errors/auth.js";
 import { checkSessionInvariants } from "../session-invariants.js";
 
 describe("checkSessionInvariants", () => {

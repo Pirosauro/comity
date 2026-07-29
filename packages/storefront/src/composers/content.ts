@@ -1,10 +1,10 @@
 import type { PageRepository } from "@comity/content";
-import type { RepositoryError } from "@comity/primitives/error";
+import type { RepositoryError } from "@comity/primitives/errors";
 import { isSuccess, success, type Result } from "@comity/primitives/result";
 import type {
-  ContentPageComposer,
-  ContentPageEnricher,
-  ContentPageModel,
+    ContentPageComposer,
+    ContentPageEnricher,
+    ContentPageModel,
 } from "../contracts/content-page.js";
 import type { StorefrontContext } from "../contracts/context.js";
 

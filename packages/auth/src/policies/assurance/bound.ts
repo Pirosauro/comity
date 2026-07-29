@@ -2,7 +2,7 @@ import type { AuthSessionAssurancePolicy } from "../../contracts/session-assuran
 import type { AuthSessionAssuranceContext } from "../../contracts/session-assurance.js";
 import type { AuthSession } from "../../contracts/session.js";
 
-import { AuthError } from "../../error/auth.js";
+import { AuthError } from "../../errors/auth.js";
 
 /**
  * Assurance policy that enforces context bounds.
