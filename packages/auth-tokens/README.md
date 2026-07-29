@@ -1,21 +1,60 @@
 # @comity/auth-tokens
 
-Token envelope and facade helpers for Comity authentication flows.
+Token envelope and facade primitives for Comity.
+
+---
 
 ## Purpose
 
-`@comity/auth-tokens` provides token-facing contracts and a default facade used
-by auth-related packages.
+Defines token-facing contracts used to structure and issue authentication tokens. Provides a default facade that transports and authentication adapters consume without coupling to a specific token implementation.
+
+---
+
+## Scope
+
+This package:
+
+- ✅ defines token envelope contracts for issued tokens
+- ✅ provides a token facade contract and a default implementation
+- ✅ exposes typed input structure for token issuance
+
+This package does NOT:
+
+- ❌ verify or sign tokens
+- ❌ manage authentication sessions or assurance
+- ❌ implement transport-level concerns
+
+---
 
 ## Public API
 
-- `AuthTokenEnvelope`
-- `AuthTokenFacade`
-- `IssueTokensInput`
-- `DefaultAuthTokenFacade`
+- `AuthTokenEnvelope` — structured wrapper for issued token pairs
+- `AuthTokenFacade` — domain-level contract for token operations
+- `IssueTokensInput` — typed input for token issuance
+- `DefaultAuthTokenFacade` — default encapsulation of token issuance
 
-## Docs
+No exhaustive reference; see docs for constraints.
 
-- `docs/overview.md`
-- `docs/conventions.md`
+---
 
+## Documentation
+
+- docs/overview.md
+- docs/conventions.md
+
+---
+
+## Related Packages
+
+- @comity/auth — authentication domain contracts
+- @comity/auth-jose — JOSE token adapter
+
+---
+
+## Status
+
+Stable
+
+_Review Completed: July 25, 2026_
+_Reviewer: Hobiri MAGI (DeepSeek v4 Pro)_
+_Compliance Score: 99.5% (Green)_

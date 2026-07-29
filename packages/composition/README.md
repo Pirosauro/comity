@@ -1,12 +1,12 @@
-# @comity/kernel
+# @comity/composition
 
-Runtime orchestrator for Comity applications.
+Module composition primitive for Comity.
 
 ---
 
 ## Purpose
 
-Provides a minimal orchestration layer that coordinates module lifecycle, service registration, and event/hook signaling without imposing a framework or runtime model. The kernel is optional.
+Defines the contracts and runtime utilities used to load, resolve, and compose Comity modules. Provides module metadata, setup context, and dependency resolution without owning kernel lifecycle or event orchestration.
 
 ---
 
@@ -14,38 +14,40 @@ Provides a minimal orchestration layer that coordinates module lifecycle, servic
 
 This package:
 
-- ✅ manages application lifecycle and initialization
-- ✅ coordinates module setup and shared context
-- ✅ exposes lifecycle events (observable) and hook execution (participatory)
+- ✅ defines module metadata and setup context contracts
+- ✅ provides module loading and dependency resolution
+- ✅ exposes composition primitives for lower layers
 
 This package does NOT:
 
-- ❌ perform UI rendering or transport concerns
-- ❌ manage HTTP or external protocols
-- ❌ encode application or domain policies
+- ❌ manage runtime lifecycle or initialization
+- ❌ emit or observe events
+- ❌ own service registration or shared contexts
 
 ---
 
 ## Public API
 
-- Kernel — orchestrator with lifecycle control and context
-- Module — metadata, resolver, and loader contracts
+- Module contracts — metadata and setup function types
+- Loader — module loading primitive
+- Resolver — dependency resolution
+
+No exhaustive reference; see docs for constraints.
 
 ---
 
 ## Documentation
 
-- [`docs/overview.md`](./docs/overview.md)
-- [`docs/conventions.md`](./docs/conventions.md)
-- [`docs/lifecycle.md`](./docs/lifecycle.md)
-- [`docs/events.md`](./docs/events.md)
+- docs/overview.md
+- docs/conventions.md
 
 ---
 
 ## Related Packages
 
-- @comity/primitives
-- @comity/http
+- @comity/kernel — application runtime lifecycle container
+- @comity/primitives — foundational building blocks
+- @comity/cache — cache contracts and stores
 
 ---
 
@@ -53,6 +55,6 @@ This package does NOT:
 
 Stable
 
-_Review Completed: January 25, 2026_
-_Reviewer: Hobiri MAGI (Qwen 2.5)_
-_Compliance Score: 99.6%_
+_Review Completed: July 25, 2026_
+_Reviewer: Hobiri MAGI (DeepSeek v4 Pro)_
+_Compliance Score: 99.5% (Green)_

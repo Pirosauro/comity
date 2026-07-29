@@ -1,28 +1,61 @@
 # @comity/auth-jose
 
-JOSE integration for `@comity/auth`.
+JOSE token service and setup for Comity authentication.
+
+---
 
 ## Purpose
 
-`@comity/auth-jose` provides a JOSE-backed auth token service and the kernel
-setup needed to wire it into Comity compositions.
+Provides a JOSE-backed token service that implements the auth token contracts defined by `@comity/auth`. Wires the token service into the Comity module system through setup types and module hooks.
+
+---
+
+## Scope
+
+This package:
+
+- ✅ provides JOSE token creation and verification
+- ✅ exposes setup types for module wiring
+- ✅ offers module-level hooks for configuring authentication
+
+This package does NOT:
+
+- ❌ define authentication domain logic
+- ❌ manage session lifecycle or assurance evaluation
+- ❌ implement transport-level token handling
+
+---
 
 ## Public API
 
-- `JoseAuthTokenService`
-- `JoseAuthTokenServiceOptions`
-- `AUTH_JOSE_TOKEN`
-- setup types
-- hooks subpath
-- setup subpath
+- `JoseAuthTokenService` — JOSE-backed token creation and verification
+- `JoseAuthTokenServiceOptions` — configuration for the token service
+- `AUTH_JOSE_TOKEN` — service token for dependency injection
+- Setup types — module context, events, hooks, and service types
 
-## Docs
+No exhaustive reference; see docs for constraints.
 
-- `docs/overview.md`
-- `docs/conventions.md`
+---
 
-## Related packages
+## Documentation
 
-- `@comity/auth`
-- `@comity/auth-tokens`
-- `@comity/kernel`
+- docs/overview.md
+- docs/conventions.md
+
+---
+
+## Related Packages
+
+- @comity/auth — authentication domain contracts
+- @comity/auth-tokens — token facade and envelope primitives
+- @comity/kernel — module lifecycle runtime
+
+---
+
+## Status
+
+Stable
+
+_Review Completed: July 25, 2026_
+_Reviewer: Hobiri MAGI (DeepSeek v4 Pro)_
+_Compliance Score: 99.5% (Green)_
