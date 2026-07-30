@@ -8,20 +8,124 @@ The primary goal is long-term maintainability through explicit contracts, replac
 
 When contributing to Comity, your primary responsibility is **preserving the architecture**, not simply implementing features.
 
-Every change should reinforce the framework's design principles:
+---
 
-- Explicit boundaries
-- Minimal abstractions
-- Infrastructure replaceability
-- Strong contracts
-- Composition over inheritance
-- Framework independence
+## Change Policy
 
-When in doubt, architectural consistency takes precedence over convenience.
+Unless explicitly requested:
+
+- do not refactor
+- do not rename public APIs
+- do not move files
+- do not redesign modules
+- do not introduce new abstractions
+- do not fix unrelated issues discovered during the task
+
+Focus only on the requested scope.
+
+If architectural issues are discovered, report them as follow-up items rather than fixing them automatically.
 
 ---
 
-# Core Principles
+## Scope Discipline
+
+Every task must respect its declared scope.
+
+| Scope         | Allowed                           | Forbidden                 |
+| ------------- | --------------------------------- | ------------------------- |
+| Documentation | Modify docs, README, conventions  | Modify source code        |
+| Refactoring   | Restructure code, extract helpers | Redesign architecture     |
+| Cleanup       | Remove dead code, fix style       | Change behavior           |
+| Analysis      | Observe, measure, report          | Modify files              |
+| Bug fix       | Fix targeted issue, add tests     | Refactor surrounding code |
+
+If a change exceeds the requested scope, stop and report it.
+
+---
+
+## Documentation Policy
+
+Documentation must describe the current implementation. Documentation must never invent future APIs.
+
+- Architecture documents describe current architectural intent
+- README files describe public usage
+- Conventions documents describe package-specific rules
+- Overview documents describe what a package provides
+
+Do not document features that do not exist.
+
+---
+
+## Architectural Review Policy
+
+When reviewing architecture:
+
+- distinguish observations from recommendations
+- distinguish architectural defects from possible improvements
+- classify findings by severity
+- avoid proposing redesigns unless requested
+
+---
+
+## Decision Classification
+
+Findings should be classified as one of:
+
+| Classification           | Definition                                                      |
+| ------------------------ | --------------------------------------------------------------- |
+| **Bug**                  | Behavior contradicts intended behavior                          |
+| **Documentation Drift**  | Documentation does not match implementation                     |
+| **Technical Cleanup**    | Dead code, naming inconsistencies, style violations             |
+| **Architectural Defect** | Violates layering, dependency direction, or contract boundaries |
+| **ADR Candidate**        | A design decision that should be formally captured              |
+| **Future Improvement**   | An enhancement that is out of current scope                     |
+
+Do not mix these categories.
+
+---
+
+## Evidence First
+
+Every architectural statement should be supported by repository evidence. Prefer consulting:
+
+- `package.json` (imports, exports, dependencies)
+- source code
+- tests
+- documentation
+
+Avoid assumptions based solely on naming.
+
+---
+
+## Planning Policy
+
+Planning documents must never assume implementation.
+
+Planning should describe:
+
+- current state
+- target state
+- required actions
+
+Implementation belongs to execution phases.
+
+Planning stays in read-only scope.
+
+---
+
+## Escalation Rules
+
+When uncertain about architecture or design:
+
+- ask for clarification
+
+Do not invent architecture. Do not introduce new concepts without explicit request.
+
+When multiple interpretations exist, prefer the one that stays within the declared scope.
+
+---
+
+## Core Principles
 
 Before writing any code, determine:
 
@@ -38,14 +142,12 @@ Always start from "who owns this responsibility?"
 
 ---
 
-# Architecture
+## Architecture
 
 Comity follows a strict layering model.
 
 ```
-Applications
-      ↓
-Extensions
+Application
       ↓
 Adapters
       ↓
@@ -54,393 +156,109 @@ Core Modules
 Kernel / Primitives
 ```
 
-Dependencies may only flow downward.
+Dependencies may only flow downward. Reverse dependencies are architectural defects.
 
-Reverse dependencies are architectural defects.
+### Layer Responsibilities
 
----
+**@comity/primitives** — Foundational building blocks.
 
-# Layer Responsibilities
+- Result, Error types, Tokens, Utility types, Value objects, Shared contracts
+- No runtime state, No infrastructure, No business logic, No policies
 
-## @comity/primitives
+**@comity/kernel** — Runtime engine.
 
-Contains the foundational building blocks of the framework.
+- Module lifecycle, dependency injection, service registration, event dispatching, hook execution, module initialization
+- No HTTP, No Router, No HTML, No Storefront, no infrastructure-specific code
+- The Kernel orchestrates modules. It never implements application behavior.
 
-Examples:
+**Core Modules** — Business abstractions (e.g. `@comity/http`, `@comity/catalog`, `@comity/sql`).
 
-- Result
-- Error types
-- Tokens
-- Utility types
-- Value objects
-- Shared contracts
+- MAY depend on `@comity/primitives`
+- MAY depend on `@comity/kernel` when runtime capabilities required
+- MUST NOT depend on Adapters
+- MUST NOT depend on Applications
+- SHOULD avoid dependencies on other Core Modules unless explicitly justified
+- Core Modules define contracts, not implementations
 
-Rules:
+**Adapters** — Integrate external technologies (e.g. `@comity/http-hono`, `@comity/sql-kysely`).
 
-- no runtime state
-- no infrastructure
-- no business logic
-- no policies
+- Depend on one Core Module
+- Depend on a third-party library (peerDependency)
+- Must remain replaceable
+- Must not introduce business logic
 
----
+**Application** — Composes the framework.
 
-## @comity/kernel
-
-Contains the runtime engine of Comity.
-
-Responsibilities:
-
-- module lifecycle
-- dependency injection
-- service registration
-- event dispatching
-- hook execution
-- module initialization
-
-Rules:
-
-- no HTTP
-- no Router
-- no HTML
-- no Storefront
-- no infrastructure-specific code
-
-The Kernel orchestrates modules.
-It never implements application behavior.
+- Owns configuration, routing, presenters, business orchestration
+- May depend on every lower layer
 
 ---
 
-## Core Modules
+## Module Philosophy
 
-Examples:
+Each package should have a single responsibility. A module should expose the minimum public API necessary.
 
-- @comity/http
-- @comity/router
-- @comity/html
-- @comity/storefront
-- @comity/catalog
-
-Core Modules own business abstractions.
-
-They:
-
-- MAY depend on @comity/primitives.
-- MAY depend on @comity/kernel when runtime capabilities are required.
-- MUST NOT depend on Adapters.
-- MUST NOT depend on Applications.
-- SHOULD avoid dependencies on other Core Modules unless they represent stable architectural building blocks and the dependency is explicitly justified.
-
-Core Modules define contracts, not implementations.
+Avoid convenience APIs that leak implementation details. Contracts should remain stable even if implementations change.
 
 ---
 
-## Adapters
+## Contracts vs Implementations
 
-Examples:
-
-- @comity/http-hono
-- @comity/html-react
-- @comity/storefront-magento
-- @comity/sql-kysely
-
-Purpose:
-
-Integrate external technologies.
-
-Rules:
-
-- May depend on one Core Module.
-- May depend on third-party libraries.
-- Must remain replaceable.
-- Must not introduce business logic.
-
-Adapters own infrastructure.
-
----
-
-## Extensions
-
-Purpose:
-
-Cross-cutting policies.
-
-Examples:
-
-- Rate limiting
-- Tracing
-- Retries
-- Timeouts
-- Circuit breakers
-
-Extensions implement policy, not abstraction.
-
----
-
-## Application
-
-Application code composes the framework.
-
-It owns:
-
-- configuration
-- routing
-- presenters/renderers
-- business orchestration
-
-Applications may depend on every lower layer.
-
----
-
-# Module Philosophy
-
-Each package should have a single responsibility.
-
-A module should expose the minimum public API necessary.
-
-Avoid convenience APIs that leak implementation details.
-
-Contracts should remain stable even if implementations change.
-
----
-
-# Contracts vs Implementations
-
-Always distinguish between contracts and implementations.
-
-Contracts belong to Core Modules.
-
-Implementations belong to Adapters or Applications.
-
-Example:
+Contracts belong to Core Modules. Implementations belong to Adapters or Applications.
 
 ```
-CategoryRepository
+Core Module:   CategoryRepository          (abstraction)
+Adapter:       MagentoGraphqlCategoryRepository  (implementation)
 ```
 
-belongs to a Core Module.
-
-```
-MagentoGraphqlCategoryRepository
-```
-
-belongs to an Adapter.
+Repositories return domain models. They never return: view models, page models, React components, HTML, framework-specific objects. Transformations belong to higher layers.
 
 ---
 
-# Repository Rules
+## Composition Model
 
-Repositories return domain models.
+Comity favors composition over inheritance. Objects should be assembled through small composable units.
 
-Repositories never return:
-
-- View models
-- Page models
-- React components
-- HTML
-- Framework-specific objects
-
-Transformations belong to higher layers.
+Prefer: Composer, Enricher, Resolver, Transformer. Avoid deep inheritance hierarchies.
 
 ---
 
-# Composition Model
+## Configuration
 
-Comity favors composition over inheritance.
+Every configurable module follows the same chain:
 
-Objects should be assembled through small composable units.
+```
+defaults → user options → configuring hook
+```
 
-Prefer:
-
-- Composer
-- Enricher
-- Resolver
-- Transformer
-
-Avoid deep inheritance hierarchies.
+Never bypass this mechanism. Configuration should never be modified after initialization.
 
 ---
 
-# Configuration
+## Code Style
 
-Every configurable module follows the same hierarchy.
+**Prefer:** immutable data, pure functions, dependency injection, small interfaces, explicit contracts.
 
-```
-Defaults
-    ↓
-User configuration
-    ↓
-Adapter overrides
-```
-
-Configuration precedence:
-
-```
-defaults
-    ↓
-user options
-    ↓
-configuring hook
-```
-
-Never bypass this mechanism.
+**Avoid:** static state, hidden globals, service locators outside composition, unnecessary inheritance, framework-specific types in Core Modules.
 
 ---
 
-# Hooks
+## Consistency Rule
 
-Standard hook names:
-
-```
-@comity/module:configuring
-```
-
-Used to modify configuration.
-
-```
-@comity/module:initialized
-```
-
-Signals initialization completion.
-
-Configuration should never be modified after initialization.
+When two valid solutions exist, choose the one that matches the existing architecture. Consistency takes precedence over optimization. A framework is maintained through coherence, not elegance.
 
 ---
 
-# Services
+## Before Opening a Pull Request
 
-Services are registered through the service container.
-
-Prefer lazy registration.
-
-```
-ctx.services.define(TOKEN, () => implementation)
-```
-
-Avoid eager construction whenever possible.
-
----
-
-# Storefront Architecture
-
-Storefront follows this flow.
-
-```
-HTTP Request
-        ↓
-URL Rewriter
-        ↓
-Router
-        ↓
-Handler
-        ↓
-Page Composer
-        ↓
-Enrichers
-        ↓
-PageModel
-        ↓
-Renderer
-        ↓
-Response
-```
-
-Responsibilities:
-
-- Rewriter resolves URLs.
-- Handler coordinates the request.
-- Composer builds the base PageModel.
-- Enrichers add optional information.
-- Renderer produces HTML, JSON, React, Vue, etc.
-
-Repositories never render.
-
-Renderers never access repositories.
-
----
-
-# Rendering
-
-Rendering is independent from business logic.
-
-A renderer receives a PageModel.
-
-It never loads data.
-
-It never queries repositories.
-
-Different renderers may exist for:
-
-- React
-- Preact
-- Vue
-- API
-- Static HTML
-
-The same PageModel should work across renderers.
-
----
-
-# Dependency Rules
-
-Never introduce dependencies that violate layering.
-
-Forbidden examples:
-
-- Kernel importing HTTP
-- Core Module importing Adapter
-- Adapter importing Application
-- Repository importing React
-- HTML renderer importing Storefront internals
-
----
-
-# Design Philosophy
-
-When multiple solutions exist, prefer the one that is:
-
-1. More explicit.
-2. More replaceable.
-3. Easier to compose.
-4. Less coupled.
-5. Smaller.
-
-Avoid "magic".
-
-Comity values explicit composition over implicit behavior.
-
----
-
-# Code Style
-
-Prefer:
-
-- immutable data
-- pure functions
-- dependency injection
-- small interfaces
-- explicit contracts
-
-Avoid:
-
-- static state
-- hidden globals
-- service locators outside composition
-- unnecessary inheritance
-- framework-specific types in Core Modules
-
----
-
-# Before Opening a Pull Request
-
-Verify:
-
-- Layering is respected.
-- Dependencies flow downward.
-- Contracts remain stable.
-- New abstractions are justified.
-- No framework types leaked into Core Modules.
-- Public APIs include documentation.
-- Tests cover new behavior.
-- Changes preserve module replaceability.
+- [ ] Layering is respected — dependencies flow downward
+- [ ] No reverse dependencies
+- [ ] No framework types leaked into Core Modules
+- [ ] Contracts are stable — no breaking changes without justification
+- [ ] New abstractions are justified — not created "just in case"
+- [ ] Public APIs include JSDoc documentation
+- [ ] `package.json` subpath exports align with physical `src/` folders
+- [ ] Tests cover new behavior
+- [ ] Changes preserve module replaceability
 
 If a feature requires violating these principles, redesign the solution before implementing it.
