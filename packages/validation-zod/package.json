@@ -1,0 +1,69 @@
+{
+  "name": "@comity/validation-zod",
+  "version": "0.1.0",
+  "description": "Zod adapter for @comity/validation contracts.",
+  "type": "module",
+  "author": "Filippo Bovo <hello@filippobovo.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/comityjs/framework#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/comityjs/framework.git"
+  },
+  "bugs": {
+    "url": "https://github.com/comityjs/framework/issues"
+  },
+  "keywords": [
+    "comity",
+    "comityjs",
+    "validation",
+    "zod",
+    "adapter",
+    "typescript"
+  ],
+  "scripts": {
+    "build": "node ../../scripts/build.mjs",
+    "prepublishOnly": "node ../../scripts/build.mjs",
+    "dev": "node ../../scripts/build.mjs --watch",
+    "test": "vitest run --coverage"
+  },
+  "files": [
+    "./dist",
+    "!./dist/**/*.map"
+  ],
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {}
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "@comity/primitives": "workspace:*",
+    "@comity/validation": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "typescript": "^5.9.3"
+  },
+  "peerDependencies": {
+    "zod": "^4"
+  }
+}

@@ -14,7 +14,7 @@
     "url": "https://github.com/comityjs/framework/issues"
   },
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=24.0.0"
   },
   "keywords": [
     "comity",
@@ -56,7 +56,7 @@
       },
       "require": {
         "types": "./dist/types/errors/index.d.ts",
-        "default": "./dist/cjs/errors/index.js" 
+        "default": "./dist/cjs/errors/index.js"
       }
     },
     "./setup": {

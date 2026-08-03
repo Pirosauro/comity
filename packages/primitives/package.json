@@ -14,7 +14,7 @@
     "url": "https://github.com/comityjs/framework/issues"
   },
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=24.0.0"
   },
   "private": false,
   "keywords": [
@@ -92,6 +92,16 @@
         "default": "./dist/cjs/result/index.js"
       }
     },
+    "./time": {
+      "import": {
+        "types": "./dist/types/time/index.d.ts",
+        "default": "./dist/esm/time/index.js"
+      },
+      "require": {
+        "types": "./dist/types/time/index.d.ts",
+        "default": "./dist/cjs/time/index.js"
+      }
+    },
     "./package.json": "./package.json"
   },
   "typesVersions": {
@@ -107,6 +117,9 @@
       ],
       "result": [
         "./dist/types/result/index.d.ts"
+      ],
+      "time": [
+        "./dist/types/time/index.d.ts"
       ]
     }
   },

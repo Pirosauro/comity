@@ -14,7 +14,7 @@
     "url": "https://github.com/comityjs/framework/issues"
   },
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=24.0.0"
   },
   "private": false,
   "keywords": [

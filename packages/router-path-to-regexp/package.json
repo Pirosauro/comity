@@ -14,7 +14,7 @@
     "url": "https://github.com/comityjs/framework/issues"
   },
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=24.0.0"
   },
   "keywords": [
     "comity",
@@ -52,6 +52,13 @@
       }
     },
     "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "setup": [
+        "./dist/types/setup/index.d.ts"
+      ]
+    }
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org",

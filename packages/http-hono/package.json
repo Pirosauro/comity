@@ -14,7 +14,7 @@
     "url": "https://github.com/comityjs/framework/issues"
   },
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=24.0.0"
   },
   "keywords": [
     "comity",
@@ -80,7 +80,7 @@
   },
   "devDependencies": {
     "@types/node": "^24.13.3",
-    "hono": "^4.12.32",
+    "hono": "^4.12.33",
     "typescript": "^5.9.3"
   },
   "peerDependencies": {

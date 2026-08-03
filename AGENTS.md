@@ -27,6 +27,93 @@ If architectural issues are discovered, report them as follow-up items rather th
 
 ---
 
+## Agent Operating Model
+
+### Before Any Change
+
+The agent MUST:
+
+1. Read the package README.md if available.
+2. Read package docs:
+   - docs/overview.md
+   - docs/conventions.md
+   - docs/architecture.md (if present)
+3. Inspect package.json exports.
+4. Inspect src/index.ts public API.
+5. Identify architectural layer.
+6. Check dependency direction.
+7. Search existing patterns before introducing new ones.
+
+Never introduce a new pattern without checking existing implementations.
+
+---
+
+### Change Classification
+
+Before modifying code, classify the request:
+
+#### Documentation only
+
+Allowed:
+
+- README
+- docs/\*
+- comments
+
+No ADR required.
+
+---
+
+#### Local implementation change
+
+Examples:
+
+- bug fix
+- missing test
+- internal refactor
+
+Requires:
+
+- preserve public API
+- preserve dependencies
+
+---
+
+#### Architectural change
+
+Examples:
+
+- new contract
+- new dependency
+- moving ownership
+- new package
+
+Requires:
+
+- ADR
+- DESIGN.md
+- explicit review
+
+---
+
+### Agent Behavior
+
+Agents should prefer:
+
+- asking clarification over guessing
+- documenting uncertainty
+- following existing patterns
+- small incremental changes
+
+Agents should avoid:
+
+- creating abstractions prematurely
+- introducing convenience APIs
+- duplicating existing concepts
+- changing architecture during implementation
+
+---
+
 ## Scope Discipline
 
 Every task must respect its declared scope.
