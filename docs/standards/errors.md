@@ -59,11 +59,7 @@ throw new AuthError("invalid_credentials");
 
 # 3. The Standard Error Model
 
-Each module MUST expose:
-
-- Exactly one public error class
-- A finite `Reason` union
-- A stable namespace
+Each module MAY define a domain error when they own domain failures. Infrastructure-contract modules SHOULD reuse shared errors.
 
 ---
 
@@ -75,8 +71,7 @@ Each module error must follow this pattern:
 /**
  * Reasons for EventBus errors.
  */
-export type EventBusErrorReason =
-  | "handler_failed";
+export type EventBusErrorReason = "handler_failed";
 
 /**
  * Stable default messages for each reason.
@@ -144,10 +139,7 @@ di:not_registered
 Example:
 
 ```ts
-export type SqlErrorReason =
-  | "connection_failed"
-  | "timeout"
-  | "invalid_query";
+export type SqlErrorReason = "connection_failed" | "timeout" | "invalid_query";
 ```
 
 ---
@@ -206,7 +198,7 @@ Example:
 
 ```ts
 meta: {
-  httpStatus: 404
+  httpStatus: 404;
 }
 ```
 
@@ -220,6 +212,7 @@ Each module MUST expose:
 
 - ONE public error class
 - ONE finite `Reason` union
+- A stable namespace
 
 Examples:
 
@@ -329,4 +322,3 @@ A Comity error must be:
 - Stable across time
 
 If an error cannot be precisely categorized into a finite semantic reason, the design is incomplete.
-

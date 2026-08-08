@@ -85,24 +85,24 @@ _Compliance Score: N% (Green)_
 
 ### Prohibited
 
-| Incorrect | Correct |
-|---|---|
-| "You can use this package to..." | "Provides..." |
-| "We expose lifecycle events..." | "Exposes lifecycle events..." |
-| "Our approach to routing..." | --- |
-| "This package provides HTTP contracts..." (the initial line form; this can be avoided) | "Provides HTTP contracts..." |
+| Incorrect                                                                              | Correct                       |
+| -------------------------------------------------------------------------------------- | ----------------------------- |
+| "You can use this package to..."                                                       | "Provides..."                 |
+| "We expose lifecycle events..."                                                        | "Exposes lifecycle events..." |
+| "Our approach to routing..."                                                           | ---                           |
+| "This package provides HTTP contracts..." (the initial line form; this can be avoided) | "Provides HTTP contracts..."  |
 
 ### Verbs Usage Matrix
 
-| Priority | Verb | Use For | Example |
-|---|---|---|---|
-| P0 | defines | Contracts, types, documentation | "Defines cache and store contracts" |
-| P0 | provides | Implementations, functionality | "Provides in-memory store implementation" |
-| P0 | exposes | Public API surface | "Exposes lifecycle events" |
-| P1 | offers | Optional/opt-in features | "Offers TTL and cache key management" |
-| P1 | encodes | Domain concepts | "Encodes concepts, not implementations" |
-| P1 | manages | State/lifecycle | "Manages request-scoped context" |
-| P1 | executes | Actions/behaviors | "Executes HTTP requests through middleware" |
+| Priority | Verb     | Use For                         | Example                                     |
+| -------- | -------- | ------------------------------- | ------------------------------------------- |
+| P0       | defines  | Contracts, types, documentation | "Defines cache and store contracts"         |
+| P0       | provides | Implementations, functionality  | "Provides in-memory store implementation"   |
+| P0       | exposes  | Public API surface              | "Exposes lifecycle events"                  |
+| P1       | offers   | Optional/opt-in features        | "Offers TTL and cache key management"       |
+| P1       | encodes  | Domain concepts                 | "Encodes concepts, not implementations"     |
+| P1       | manages  | State/lifecycle                 | "Manages request-scoped context"            |
+| P1       | executes | Actions/behaviors               | "Executes HTTP requests through middleware" |
 
 Avoid: handles, does, has, includes, supports, is, works, allows.
 

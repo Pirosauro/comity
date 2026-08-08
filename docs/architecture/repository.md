@@ -22,7 +22,7 @@
 | `@comity/auth-tokens`     | Token contracts: envelope, facade                                                             |
 | `@comity/cache`           | Caching contracts: `Cache`, `CacheStore`, in-memory store implementation                      |
 | `@comity/catalog`         | Product and category domain: repositories, inventory, price                                   |
-| `@comity/cart`            | Cart domain: `CartRepository`, `Cart`, `CartItem`                                             |
+| `@comity/order`           | Order domain: `OrderRepository`, `OrderModel`, `OrderItemModel`, status lifecycle             |
 | `@comity/content`         | CMS/Content: `BlockRepository`, `PageRepository`, `Navigation`, `Breadcrumb`                  |
 | `@comity/media`           | Media asset contracts: ` Media` interface                                                     |
 | `@comity/search`          | Search contracts: criteria, filter, sort, pagination, aggregation, result                     |

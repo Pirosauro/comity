@@ -215,9 +215,7 @@ const http = {
 
 // ❌ Wrong: mock internal details
 const http = {
-  _internalRouter: {
-    /* ... */
-  },
+  _internalRouter: {/* ... */},
   _middlewareStack: [],
 };
 ```
