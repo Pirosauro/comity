@@ -1,5 +1,5 @@
 /**
- * Price-related contracts for the shopping cart.
+ * Price-related contracts for commerce orders and products.
  */
 export interface PriceModifierModel {
   /** Modifier code */
@@ -16,7 +16,7 @@ export interface PriceModifierModel {
 }
 
 /**
- * Pricing information for a shopping cart.
+ * Pricing information for commerce orders and products.
  */
 export interface PriceModel {
   /** ISO 4217 currency code (e.g., "USD", "EUR"). */

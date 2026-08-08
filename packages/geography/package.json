@@ -1,7 +1,7 @@
 {
-  "name": "@comity/customer",
-  "version": "0.1.0",
-  "description": "Customer domain abstractions for Comity modules.",
+  "name": "@comity/geography",
+  "version": "0.0.0",
+  "description": "Geographic metadata and rules independent from address storage.",
   "type": "module",
   "author": "Filippo Bovo <hello@filippobovo.com>",
   "license": "MIT",
@@ -19,7 +19,7 @@
   "private": false,
   "keywords": [
     "comity",
-    "customer",
+    "geography",
     "domain"
   ],
   "scripts": {
@@ -56,11 +56,10 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@comity/primitives": "workspace:*",
-    "@comity/validation": "workspace:*"
+    "@comity/primitives": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^24.13.3",
+    "@types/node": "^22.20.1",
     "typescript": "^5.9.3"
   }
 }

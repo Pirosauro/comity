@@ -47,7 +47,7 @@ No exhaustive reference; see docs for constraints.
 ## Related Packages
 
 - @comity/catalog — catalog product models
-- @comity/cart — cart entity interfaces
+- @comity/order — order entity interfaces
 
 ---
 

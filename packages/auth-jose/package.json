@@ -96,7 +96,7 @@
     "@comity/composition": "workspace:*",
     "@comity/kernel": "workspace:*",
     "@comity/primitives": "workspace:*",
-    "jose": "^6.2.7"
+    "jose": "^6.2.8"
   },
   "devDependencies": {
     "@types/node": "^24.13.3",

@@ -6,11 +6,7 @@ import { BaseError } from "./base.js";
  * Stable repository error reasons.
  */
 export type RepositoryErrorReason =
-  | "validation_failed"
-  | "access_denied"
-  | "service_unavailable"
-  | "protocol_error"
-  | "unknown";
+  "invalid_data" | "access_denied" | "service_unavailable" | "protocol_error" | "unknown";
 
 /**
  * Metadata attached to repository errors.
@@ -33,7 +29,7 @@ export interface RepositoryErrorMeta extends ErrorMeta {
  * Human-friendly messages mapped by reason.
  */
 export const REPOSITORY_ERROR_MESSAGES: Record<RepositoryErrorReason, string> = {
-  validation_failed: "Validation failed",
+  invalid_data: "Invalid data",
   access_denied: "Access denied",
   service_unavailable: "Service unavailable",
   protocol_error: "Protocol error",
@@ -44,7 +40,7 @@ export const REPOSITORY_ERROR_MESSAGES: Record<RepositoryErrorReason, string> = 
  * Default HTTP status mapped by reason.
  */
 export const REPOSITORY_ERROR_HTTP_STATUS: Record<RepositoryErrorReason, number> = {
-  validation_failed: 422,
+  invalid_data: 422,
   access_denied: 403,
   service_unavailable: 503,
   protocol_error: 502,

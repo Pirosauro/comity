@@ -1,7 +1,7 @@
 {
-  "name": "@comity/customer",
+  "name": "@comity/identity",
   "version": "0.1.0",
-  "description": "Customer domain abstractions for Comity modules.",
+  "description": "Identity domain abstractions for Comity modules.",
   "type": "module",
   "author": "Filippo Bovo <hello@filippobovo.com>",
   "license": "MIT",
@@ -19,7 +19,8 @@
   "private": false,
   "keywords": [
     "comity",
-    "customer",
+    "identity",
+    "user",
     "domain"
   ],
   "scripts": {

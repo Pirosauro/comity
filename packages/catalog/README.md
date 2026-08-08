@@ -50,7 +50,7 @@ No exhaustive reference; see docs for constraints.
 ## Related Packages
 
 - @comity/storefront — page domain composes catalog
-- @comity/cart — cart domain depends on catalog
+- @comity/order — order domain depends on catalog
 - @comity/search — search criteria models
 
 ---
