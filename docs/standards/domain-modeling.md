@@ -2,7 +2,7 @@
 
 ## Status
 
-**Draft**
+**Approved**
 
 This document defines the canonical conventions for modeling domain modules inside Comity.
 
@@ -55,7 +55,7 @@ Entities are never serialized directly.
 
 # 3. Value Objects
 
-Identifiers MUST be represented by Value Objects.
+Identifiers of domain aggregates owned by the Core Module MUST be represented by Value Objects.
 
 Example:
 
@@ -73,7 +73,21 @@ Value Objects:
 - expose `toString()`
 - validate construction invariants
 
-Primitive aliases SHOULD NOT replace Value Objects for domain identifiers.
+### Read-Projection Exception
+
+Read-only projections of externally-owned entities MAY represent external identifiers using primitive types such as `string`.
+
+For example:
+
+```ts
+interface ProductModel {
+  readonly id: string;
+}
+```
+
+is valid when `ProductModel` is a read projection over an external system and the Core Module does not own the Product lifecycle.
+
+Primitive aliases SHOULD NOT replace Value Objects for identifiers of Comity-owned domain aggregates.
 
 ---
 
@@ -105,29 +119,45 @@ Contains no timestamps.
 
 ### State
 
-Represents persisted state.
+Represents the complete persisted state of an entity.
 
-```
-Data
-+ id
-+ createdAt
-+ updatedAt
-+ deletedAt?
+For entities that track lifecycle timestamps:
+
+```ts
+interface EntityState extends EntityData {
+  readonly id: EntityId;
+  readonly createdAt: Instant;
+  readonly updatedAt: Instant;
+}
 ```
 
 Persistence metadata belongs here.
+
+`deletedAt` is OPTIONAL and MUST only be present when the bounded context actually supports soft deletion. The absence of soft-delete support MUST NOT be inferred from the omission of `deletedAt`.
+
+`updatedAt` MUST NOT be made nullable merely to represent "never updated". At creation `createdAt === updatedAt`.
 
 ---
 
 ### Create
 
-Represents required input for creation.
+Represents an explicit construction contract for an entity.
 
-Normally:
+`Create` is defined according to domain creation semantics. It MUST NOT be mechanically derived from `State`.
 
+Lifecycle metadata MAY appear in `Create` as optional fields so that the same constructor can support both normal creation and hydration from persistence:
+
+```ts
+type UserCreate = UserData & {
+  readonly createdAt?: Instant;
+  readonly updatedAt?: Instant;
+  readonly status?: UserStatus;
+};
 ```
-type EntityCreate = EntityData
-```
+
+The exact fields depend on the domain. The presence and optionality of each lifecycle field reflect the bounded context's creation and hydration semantics.
+
+`Partial` MUST NOT be applied to the entire `Create` contract.
 
 ---
 
@@ -135,9 +165,13 @@ type EntityCreate = EntityData
 
 Represents partial modifications.
 
-```
+```ts
 type EntityUpdate = Partial<EntityData>
 ```
+
+`Partial` is appropriate for update contracts where partial modification is explicitly intended.
+
+Lifecycle metadata MAY be excluded from `Update` when transitions are governed by dedicated domain operations rather than free-form mutation.
 
 ---
 
@@ -152,25 +186,72 @@ State
 
 ---
 
-# 5. Entity Lifecycle Metadata
+# 5. Entity Lifecycle & Hydration
 
-Every persisted aggregate SHOULD expose lifecycle timestamps.
+### Creation vs Hydration
 
-Canonical fields:
+A clear distinction MUST be maintained between creating a new entity and restoring an existing one from persistence:
+
+- **Entity creation** initializes creation-time state.
+- **Entity hydration** restores persisted State.
+
+The implementation mechanism for hydration is left to the module. A constructor, a factory, a static `fromState()` method, or an equivalent mechanism may be used. The canonical implementation is constructor-based hydration.
+
+### Creation
+
+When a new entity is created, lifecycle timestamps that are not supplied are initialized automatically.
+
+For example:
+
+```ts
+this.#createdAt = fields.createdAt ?? Instant.now();
+this.#updatedAt = fields.updatedAt ?? this.#createdAt;
+```
+
+At creation, when the caller does not supply lifecycle timestamps:
 
 ```
-createdAt
-updatedAt
-deletedAt?
+createdAt = Instant.now()
+updatedAt = createdAt
 ```
 
-These belong to `State`.
+### Hydration
 
-They MUST NOT belong to `Data`.
+When an entity is restored from persistence, persisted lifecycle metadata MUST be restored.
 
-Entities loaded from repositories MUST receive these values from persistence.
+The entity MUST NOT silently regenerate persisted timestamps.
 
-Entities MUST NOT generate timestamps internally except when explicitly created by factory methods.
+Hydration MAY be performed through any module-appropriate mechanism as long as persisted lifecycle metadata is preserved. The same constructor used for creation typically supports hydration when `Create` accepts optional lifecycle metadata.
+
+The architectural invariant is:
+
+> Persisted lifecycle metadata MUST be preserved during hydration.
+
+`Instant.now()` is a creation-time fallback only. The entity MUST NOT overwrite supplied persistence values.
+
+### Timestamp Integrity
+
+- Every persisted aggregate SHOULD expose lifecycle timestamps (`createdAt`, `updatedAt`, `deletedAt?`) in its `State`.
+- These timestamps MUST NOT belong to `Data`.
+- Entities loaded from repositories MUST receive these values from persistence.
+- **Hydration MUST NOT regenerate or alter persisted timestamps.**
+- Entities MUST NOT generate timestamps internally except when explicitly created by factory methods.
+- `createdAt` and `updatedAt` MUST NOT be nullable merely to represent "never updated". At creation they MUST be equal.
+
+### Separation of Responsibilities
+
+```text
+Type system
+    → structural shape and required/optional fields
+
+Validator
+    → semantic validity and domain constraints
+
+Entity
+    → lifecycle and invariant-preserving behavior
+```
+
+The standard does not redefine validation architecture. The separation above exists to clarify that lifecycle invariants belong to the entity, structural optionality belongs to the type system, and domain validity belongs to the validator.
 
 ---
 
@@ -178,21 +259,20 @@ Entities MUST NOT generate timestamps internally except when explicitly created 
 
 Repository contracts are part of the Core Module.
 
-Every repository SHOULD expose the same minimal API.
+### Canonical API
+
+Every repository SHOULD expose the same minimal API. Repository operations are optional when not semantically applicable.
 
 Canonical methods:
 
 ```
 getById()
-
 search()
-
 save()
-
 remove()
 ```
 
-This naming is the preferred convention across Comity.
+This naming is the MUST convention across Comity.
 
 Modules MAY expose additional methods when required by the domain.
 
@@ -204,6 +284,18 @@ getBySlug()
 getByCode()
 ```
 
+### Read-Projection Exception
+
+Read-only projection repositories are valid Core Module contracts when the underlying aggregate is owned by another system or bounded context.
+
+Such repositories:
+
+- MAY expose only the operations they semantically own;
+- MUST NOT be forced to expose `save()` or `remove()` when the Core Module does not own persistence or lifecycle;
+- SHOULD expose stable, immutable projection models rather than mutable entities.
+
+For example, a catalog repository that exposes a read projection over an external commerce backend is valid without `save` or `remove`.
+
 ---
 
 # 7. Repository Return Types
@@ -213,8 +305,6 @@ Repository operations return:
 ```
 Result<T, RepositoryError>
 ```
-
-RepositoryError is the canonical persistence abstraction.
 
 Repository-specific result aliases are discouraged.
 
@@ -263,17 +353,22 @@ Repositories SHOULD expose:
 search(criteria)
 ```
 
-instead of:
+instead of `list()`, `find()`, or `query()`.
 
+A `search()` criteria object MAY omit a textual query. For example:
+
+```ts
+search({
+  filters: [...]
+})
 ```
-list()
-find()
-query()
-```
 
-Search criteria remain domain-specific.
+is valid and may represent filtered collection retrieval. A separate `list()` method MUST NOT be introduced merely because no textual query is present.
 
-Core Modules SHOULD NOT depend on a shared SearchCriteria abstraction unless a proven cross-domain need emerges.
+### Search Criteria
+
+- Generic search criteria from another Core Module MUST NOT replace a module-specific search criteria type when the bounded context requires domain-specific semantics.
+- A Core Module MAY use shared search primitives only when doing so does not introduce an inappropriate dependency or weaken its domain contract.
 
 ---
 
@@ -285,9 +380,7 @@ Example:
 
 ```
 CustomerValidator
-
 AddressValidator
-
 UserValidator
 ```
 
@@ -299,25 +392,77 @@ Core Modules MUST NOT import validation libraries.
 
 # 11. Cross-Module Relationships
 
-Core Modules SHOULD remain independent.
+Core Modules MUST preserve clear ownership boundaries.
 
-Business relationships are composed by the Application Layer.
+A Core Module MUST NOT depend on the **lifecycle, persistence, or mutable state management** of an entity owned by another Core Module.
 
-Example:
+This does **not** mean that Core Modules can never reference types from other Core Modules.
 
+### Allowed Cross-Module Dependencies
+
+A Core Module MAY depend on stable contracts or immutable models from another Core Module when the dependency represents a legitimate domain relationship and does not transfer ownership.
+
+Examples include:
+
+- immutable snapshots
+- point-in-time models
+- shared value models
+- stable domain contracts
+
+For example, `@comity/order` MAY use a product model from `@comity/catalog` when the model represents the product information required by an order at the time the order is created.
+
+The Order does not own the Product and MUST NOT manage its lifecycle or persistence.
+
+### Forbidden Dependencies
+
+A Core Module MUST NOT:
+
+- depend on another module's repository
+- persist or mutate another module's entity
+- manage another module's entity lifecycle
+- require another module's infrastructure
+- use another module's mutable entity as part of its own persistence lifecycle when a stable model or snapshot is sufficient
+
+For example:
+
+```text
+@comity/order
+    └── @comity/catalog
+          └── ProductRepository
 ```
-Identity
-    ↓
-Application mapping
-    ↓
-Customer
-    ↓
-Application mapping
-    ↓
-Access
+
+is an architectural violation.
+
+Whereas:
+
+```text
+@comity/order
+    └── ProductModel / ProductSnapshot
 ```
 
-Core Modules SHOULD avoid storing references to entities owned by other Core Modules unless the dependency is explicitly justified.
+may be valid when the dependency represents a point-in-time domain model rather than ownership.
+
+### Application Layer Composition
+
+Relationships that connect independent business aggregates or bounded contexts MAY be composed by the Application Layer.
+
+For example:
+
+```text
+Identity ──┐
+           ├── Application ── Customer
+Access  ───┘
+```
+
+The Application Layer is responsible for orchestration when no direct domain-model dependency is required.
+
+### Guiding Principle
+
+The architectural constraint is **ownership independence**, not zero imports.
+
+A dependency is acceptable when it expresses a stable domain contract without transferring lifecycle or persistence ownership.
+
+A dependency is not acceptable when one Core Module becomes responsible for the mutable lifecycle, persistence, or infrastructure of another Core Module.
 
 ---
 
@@ -343,9 +488,11 @@ Contacts are modeled as generic communication channels.
 
 Canonical shape:
 
-```
-type
-value
+```ts
+{
+  readonly type: string;
+  readonly value: string;
+}
 ```
 
 Examples:
@@ -357,6 +504,8 @@ Examples:
 - fax
 
 Modules SHOULD avoid introducing specialized contact subclasses unless domain behavior requires them.
+
+Modules MAY share a contact contract when there is a demonstrated architectural need. Identical structure alone is not sufficient justification for introducing a shared abstraction.
 
 ---
 
@@ -405,3 +554,21 @@ The following topics require a dedicated standard:
 - Event publication
 - Factory conventions
 - Entity creation factories
+
+---
+
+# 16. Guiding Principle
+
+Comity standards define architectural constraints and preferred conventions.
+
+They MUST NOT require structural uniformity when the underlying domain semantics are different.
+
+In particular:
+
+- domain aggregates are not the same as read projections;
+- repositories are not the same as domain services;
+- external identifiers are not necessarily domain Value Objects;
+- shared structures do not automatically require shared types;
+- similar APIs do not necessarily imply identical ownership.
+
+The purpose of this standard is to preserve architectural boundaries and predictable conventions while allowing legitimate domain-specific variation.

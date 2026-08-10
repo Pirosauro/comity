@@ -25,46 +25,53 @@ export class MagentoCachedProductRepository implements ProductRepository {
   }
 
   /**
-   * Lists products with read-through cache.
+   * Searches products with optional read-through cache for filter-only inputs.
    *
-   * @param input - Search criteria without query text.
+   * @param input - Search criteria; cached only when no textual query is present.
    * @param ctx - Optional catalog repository context.
    *
    * @returns Paginated product search result.
    */
-  async list(
-    input: Omit<SearchCriteriaModel, "query">,
+  async search(
+    input: SearchCriteriaModel,
     ctx?: CachedCatalogRepositoryContext
   ): Promise<Result<SearchResultModel<ProductModel>, RepositoryError>> {
     const repository = this.#repository;
-    const cache = this.#cache;
-    const { tenant, scope } = ctx ?? {};
-    const key = serializeCacheKey({
-      product: { tenant, scope, input },
-    });
-    const cached = await cache.get(key);
 
-    if (cached) {
-      try {
-        const parsed = JSON.parse(cached) as SearchResultModel<ProductModel>;
+    // Only cache filter-only searches. Searches that include a textual query
+    // have unbounded cardinality and are not cached.
+    if (input.query === undefined) {
+      const cache = this.#cache;
+      const { tenant, scope } = ctx ?? {};
+      const key = serializeCacheKey({
+        product: { tenant, scope, input },
+      });
+      const cached = await cache.get(key);
 
-        return success(parsed, { cached: true });
-      } catch {
-        await cache.delete(key);
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached) as SearchResultModel<ProductModel>;
+
+          return success(parsed, { cached: true });
+        } catch {
+          await cache.delete(key);
+        }
       }
+
+      const result = await repository.search(input, ctx);
+
+      if (result.success) {
+        try {
+          await cache.set(key, JSON.stringify(result.value), {
+            ttl: 60 * 5,
+          });
+        } catch {}
+      }
+
+      return result;
     }
 
-    const result = await repository.list(input, ctx);
-
-    if (result.success) {
-      try {
-        await cache.set(key, JSON.stringify(result.value), {
-          ttl: 60 * 5,
-        });
-      } catch {}
-    }
-
-    return result;
+    return repository.search(input, ctx);
   }
 
   /**
@@ -147,17 +154,5 @@ export class MagentoCachedProductRepository implements ProductRepository {
     }
 
     return result;
-  }
-
-  /**
-   * @inheritdoc
-   */
-  async search(
-    input: SearchCriteriaModel,
-    ctx?: CachedCatalogRepositoryContext
-  ): Promise<Result<SearchResultModel<ProductModel>, RepositoryError>> {
-    // Caching search results can be complex due to the variety of possible queries and filters.
-    // For simplicity, this implementation does not cache search results.
-    return this.#repository.search(input, ctx);
   }
 }

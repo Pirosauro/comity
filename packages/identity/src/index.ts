@@ -1,5 +1,9 @@
 export type { UserValidator } from "./contracts/comity-validator.js";
-export type { UserRepository } from "./contracts/user-repository.js";
+export type {
+  UserRepository,
+  UserSearchCriteria,
+  UserSearchResult,
+} from "./contracts/user-repository.js";
 export type {
   UserCreate,
   UserData,

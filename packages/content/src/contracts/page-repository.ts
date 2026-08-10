@@ -35,22 +35,10 @@ export interface PageRepository {
   ): Promise<Result<PageModel | null, RepositoryError>>;
 
   /**
-   * List pages with optional filtering.
+   * Search pages with optional query text and filtering.
    *
-   * @param input - Filter criteria.
-   * @param ctx - Context for the repository request, including fields selection, locale, currency, and tenant information.
-   *
-   * @returns Paginated list of pages.
-   */
-  list(
-    input: Omit<SearchCriteriaModel, "query">,
-    ctx?: ContentRepositoryContext
-  ): Promise<Result<SearchResultModel<PageModel>, RepositoryError>>;
-
-  /**
-   * Search pages with query text and optional filtering.
-   *
-   * @param input - Search criteria including query text and filters.
+   * @param input - Search criteria; a textual query is optional. Filter-only
+   * retrieval is expressed by omitting `query`.
    * @param ctx - Context for the repository request, including fields selection, locale, currency, and tenant information.
    *
    * @returns Paginated search results of pages.

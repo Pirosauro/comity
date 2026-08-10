@@ -49,7 +49,7 @@ export interface CustomerState extends CustomerData {
   readonly createdAt: Instant;
 
   /** The timestamp when the customer was last updated, if applicable. */
-  readonly updatedAt: Instant | null;
+  readonly updatedAt: Instant;
 
   /** The timestamp when the customer was deleted, if applicable. */
   readonly deletedAt: Instant | null;
@@ -68,7 +68,16 @@ export type CustomerSnapshot = Readonly<
 /**
  * Data required to create a new customer.
  */
-export type CustomerCreate = Omit<CustomerState, "id">;
+export type CustomerCreate = CustomerData & {
+  /** The timestamp when the customer was created. */
+  readonly createdAt?: Instant;
+
+  /** The timestamp when the customer was last updated, if applicable. */
+  readonly updatedAt?: Instant;
+
+  /** The timestamp when the customer was deleted, if applicable. */
+  readonly deletedAt?: Instant | null;
+};
 
 /**
  * Partial update data for a customer.

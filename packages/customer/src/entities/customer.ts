@@ -11,6 +11,7 @@ import { Instant } from "@comity/primitives/time";
 /**
  * Represents a customer entity in the system.
  *
+ * @remark
  * A customer is a business principal — a person or entity that has a
  * business relationship with the platform. It is not an authentication
  * identity, not an access subject, not an organization.
@@ -23,8 +24,8 @@ export class Customer {
   #contacts: CustomerContact[];
   #preferences: Record<string, unknown>;
   readonly #createdAt: Instant;
-  readonly #updatedAt: Instant | null;
-  readonly #deletedAt: Instant | null;
+  #updatedAt: Instant;
+  #deletedAt: Instant | null;
 
   /**
    * @param fields - The fields used to create the customer.
@@ -38,7 +39,7 @@ export class Customer {
     this.#contacts = [...fields.contacts];
     this.#preferences = { ...fields.preferences };
     this.#createdAt = fields.createdAt ?? Instant.now();
-    this.#updatedAt = fields.updatedAt ?? null;
+    this.#updatedAt = fields.updatedAt ?? this.#createdAt;
     this.#deletedAt = fields.deletedAt ?? null;
   }
 
@@ -94,7 +95,7 @@ export class Customer {
   /**
    * @returns The timestamp when the customer was last updated, if applicable.
    */
-  get updatedAt(): Instant | null {
+  get updatedAt(): Instant {
     return this.#updatedAt;
   }
 
@@ -130,6 +131,13 @@ export class Customer {
     if (changes.preferences !== undefined) {
       this.#preferences = { ...changes.preferences };
     }
+
+    if (changes.deletedAt !== undefined) {
+      this.#deletedAt = changes.deletedAt;
+    }
+
+    // Update the updatedAt timestamp
+    this.#updatedAt = Instant.now();
   }
 
   /**

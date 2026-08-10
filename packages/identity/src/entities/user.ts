@@ -13,9 +13,10 @@ export class User {
   #familyName: string | null;
   #status: UserStatus;
   readonly #createdAt: Instant;
+  #updatedAt: Instant;
 
   /**
-   * @param fields - The fields used to create the user.
+   * @param fields - The fields used to create or hydrate the user.
    * @param id - The unique identifier of the user, if it has been assigned.
    */
   constructor(fields: UserCreate, id?: UserId) {
@@ -23,8 +24,9 @@ export class User {
     this.#displayName = fields.displayName;
     this.#givenName = fields.givenName;
     this.#familyName = fields.familyName;
-    this.#status = "active";
-    this.#createdAt = Instant.now();
+    this.#status = fields.status ?? "inactive";
+    this.#createdAt = fields.createdAt ?? Instant.now();
+    this.#updatedAt = fields.updatedAt ?? this.#createdAt;
   }
 
   /**
@@ -70,6 +72,13 @@ export class User {
   }
 
   /**
+   * @returns The timestamp when the user was last updated.
+   */
+  get updatedAt(): Instant {
+    return this.#updatedAt;
+  }
+
+  /**
    * Updates the user with the provided changes.
    *
    * @param changes - The partial changes to apply to the user.
@@ -86,6 +95,12 @@ export class User {
     if (changes.familyName !== undefined) {
       this.#familyName = changes.familyName;
     }
+
+    if (changes.status !== undefined) {
+      this.#status = changes.status;
+    }
+
+    this.#updatedAt = Instant.now();
   }
 
   /**
@@ -101,6 +116,8 @@ export class User {
       givenName: this.#givenName,
       familyName: this.#familyName,
       status: this.#status,
+      createdAt: this.#createdAt,
+      updatedAt: this.#updatedAt,
       capturedAt: Instant.now(),
     };
   }

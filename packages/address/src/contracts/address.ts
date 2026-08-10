@@ -31,20 +31,7 @@ export interface AddressData {
 
   /** The country code of the address */
   readonly countryCode: string;
-}
 
-/**
- * AddressState represents the state of an address entity in the system.
- */
-export interface AddressState extends AddressData {
-  /** The unique identifier of the address */
-  readonly id: AddressId;
-}
-
-/**
- * Address represents a complete address entity in the system, including its state and additional metadata.
- */
-export interface AddressFields extends AddressData {
   /** The label for the address, e.g., "Home" or "Work" */
   readonly label: string | null;
 
@@ -56,13 +43,24 @@ export interface AddressFields extends AddressData {
 }
 
 /**
+ * AddressState represents the state of an address entity in the system.
+ */
+export interface AddressState extends AddressData {
+  /** The unique identifier of the address */
+  readonly id: AddressId;
+
+  /** The timestamp when the address was created */
+  readonly createdAt: Instant;
+
+  /** The timestamp when the address was last updated */
+  readonly updatedAt: Instant;
+}
+
+/**
  * AddressSnapshot is a read-only representation of the AddressState.
  */
 export type AddressSnapshot = Readonly<
-  AddressFields & {
-    /** The unique identifier of the address */
-    readonly id: AddressId | undefined;
-
+  AddressState & {
     /** The timestamp when the snapshot was captured */
     readonly capturedAt: Instant;
   }
@@ -70,10 +68,20 @@ export type AddressSnapshot = Readonly<
 
 /**
  * AddressCreate represents the data required to create a new Address entity.
+ *
+ * Persisted lifecycle metadata (`createdAt`) may be supplied when hydrating
+ * from persistence. When omitted, the entity initializes `createdAt` at
+ * construction time.
  */
-export type AddressCreate = Omit<AddressFields, "id">;
+export type AddressCreate = AddressData & {
+  /** The timestamp when the address was created */
+  readonly createdAt?: Instant;
+
+  /** The timestamp when the address was last updated */
+  readonly updatedAt?: Instant;
+};
 
 /**
  * AddressDataUpdate represents a partial update to an AddressData object.
  */
-export type AddressUpdate = Partial<AddressFields>;
+export type AddressUpdate = Partial<AddressState>;

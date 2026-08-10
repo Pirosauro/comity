@@ -31,40 +31,44 @@ export class MagentoCachedCategoryRepository implements CategoryRepository {
   /**
    * @inheritdoc
    */
-  async list(
-    input: Omit<SearchCriteriaModel, "query">,
+  async search(
+    input: SearchCriteriaModel,
     ctx?: CachedCatalogRepositoryContext
   ): Promise<Result<SearchResultModel<CategoryModel>, RepositoryError>> {
     const cache = this.#cache;
-    const { tenant, scope } = ctx ?? {};
-    const key = serializeCacheKey({ category: { tenant, scope, input } });
-    const cached = await cache.get(key);
+    const repository = this.#repository;
 
-    // If cached data is available, return it immediately
-    if (cached) {
-      try {
-        const parsed = JSON.parse(cached) as SearchResultModel<CategoryModel>;
+    // Only cache filter-only searches. Searches that include a textual query
+    // have unbounded cardinality and are not cached.
+    if (input.query === undefined) {
+      const { tenant, scope } = ctx ?? {};
+      const key = serializeCacheKey({ category: { tenant, scope, input } });
+      const cached = await cache.get(key);
 
-        return success(parsed, { cached: true });
-      } catch (cause) {
-        // Invalidate the cache if the data is corrupted
-        await cache.delete(key);
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached) as SearchResultModel<CategoryModel>;
+
+          return success(parsed, { cached: true });
+        } catch (cause) {
+          await cache.delete(key);
+        }
       }
+
+      const result = await repository.search(input, ctx);
+
+      if (result.success) {
+        try {
+          await cache.set(key, JSON.stringify(result.value), {
+            ttl: 60 * 5,
+          });
+        } catch (cause) {}
+      }
+
+      return result;
     }
 
-    // If no cached data is available, fetch from the repository
-    const result = await this.#repository.list(input, ctx);
-
-    // Cache the result if the fetch was successful
-    if (result.success) {
-      try {
-        await cache.set(key, JSON.stringify(result.value), {
-          ttl: 60 * 5, // Cache for 5 minutes
-        });
-      } catch (cause) {}
-    }
-
-    return result;
+    return repository.search(input, ctx);
   }
 
   /**
@@ -143,18 +147,5 @@ export class MagentoCachedCategoryRepository implements CategoryRepository {
     }
 
     return result;
-  }
-
-  /**
-   * @inheritdoc
-   */
-  async search(
-    input: SearchCriteriaModel,
-    ctx?: CachedCatalogRepositoryContext
-  ): Promise<Result<SearchResultModel<CategoryModel>, RepositoryError>> {
-    // For simplicity, we are not caching search results in this implementation.
-    // Caching search results can be complex due to the variability of search queries and results.
-
-    return await this.#repository.search(input, ctx);
   }
 }

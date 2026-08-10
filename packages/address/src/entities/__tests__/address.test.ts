@@ -7,6 +7,11 @@ import { AddressLine } from "../../value-objects/address-line.js";
 const id = new AddressId("addr-1");
 const line = new AddressLine("Via Roma 10");
 
+const persistedCreatedAt = Instant.fromEpochMilliseconds(1_700_000_000_000);
+const persistedUpdatedAt = Instant.fromEpochMilliseconds(1_700_000_500_000);
+const hydratedCreatedAt = Instant.fromEpochMilliseconds(1_500_000_000_000);
+const hydratedUpdatedAt = Instant.fromEpochMilliseconds(1_600_000_000_000);
+
 const fields = {
   lines: [line],
   city: "Milano",
@@ -16,6 +21,7 @@ const fields = {
   label: "home",
   metadata: { department: "sales" },
   contacts: [{ type: "phone", value: "+39 02 1234567" }],
+  createdAt: persistedCreatedAt,
 };
 
 function createAddress(overrides?: Partial<typeof fields>) {
@@ -70,6 +76,120 @@ describe("Address", () => {
       contacts.push({ type: "email", value: "x@y.com" });
 
       expect(address.contacts).toHaveLength(1);
+    });
+  });
+
+  describe("hydration", () => {
+    it("should generate createdAt at construction when not supplied", () => {
+      const withoutTimestamp = {
+        lines: [line],
+        city: "Roma",
+        administrativeArea: "RM",
+        postalCode: "00100",
+        countryCode: "IT",
+        label: null,
+        metadata: null,
+        contacts: [],
+        createdAt: undefined,
+      };
+
+      const address = new Address(withoutTimestamp as never, new AddressId("id"));
+
+      expect(address.createdAt).toBeInstanceOf(Instant);
+    });
+
+    it("should default updatedAt to createdAt when neither is supplied", () => {
+      const withoutTimestamp = {
+        lines: [line],
+        city: "Roma",
+        administrativeArea: "RM",
+        postalCode: "00100",
+        countryCode: "IT",
+        label: null,
+        metadata: null,
+        contacts: [],
+        createdAt: undefined,
+      };
+
+      const address = new Address(withoutTimestamp as never, new AddressId("id"));
+
+      expect(address.updatedAt.epochMilliseconds).toBe(address.createdAt.epochMilliseconds);
+    });
+
+    it("should default updatedAt to createdAt when only createdAt is supplied", () => {
+      const address = new Address(
+        {
+          ...fields,
+          createdAt: persistedCreatedAt,
+        },
+        new AddressId("id")
+      );
+
+      expect(address.updatedAt.epochMilliseconds).toBe(persistedCreatedAt.epochMilliseconds);
+    });
+
+    it("should preserve a supplied createdAt during hydration", () => {
+      const address = new Address(
+        {
+          ...fields,
+          createdAt: hydratedCreatedAt,
+        },
+        new AddressId("id")
+      );
+
+      expect(address.createdAt.epochMilliseconds).toBe(hydratedCreatedAt.epochMilliseconds);
+    });
+
+    it("should preserve a supplied updatedAt during hydration", () => {
+      const address = new Address(
+        {
+          ...fields,
+          createdAt: hydratedCreatedAt,
+          updatedAt: hydratedUpdatedAt,
+        },
+        new AddressId("id")
+      );
+
+      expect(address.updatedAt.epochMilliseconds).toBe(hydratedUpdatedAt.epochMilliseconds);
+    });
+
+    it("should preserve all persisted lifecycle metadata during hydration", () => {
+      const address = new Address(
+        {
+          ...fields,
+          createdAt: hydratedCreatedAt,
+          updatedAt: hydratedUpdatedAt,
+        },
+        new AddressId("hydrated-1")
+      );
+
+      expect(address.id?.toString()).toBe("hydrated-1");
+      expect(address.createdAt.epochMilliseconds).toBe(hydratedCreatedAt.epochMilliseconds);
+      expect(address.updatedAt.epochMilliseconds).toBe(hydratedUpdatedAt.epochMilliseconds);
+    });
+
+    it("should not regenerate createdAt across the lifetime of the entity", () => {
+      const address = new Address({ ...fields, createdAt: hydratedCreatedAt }, new AddressId("id"));
+      const original = address.createdAt;
+
+      address.update({ city: "Roma" });
+
+      expect(address.createdAt).toBe(original);
+    });
+
+    it("should preserve a persisted updatedAt that differs from createdAt", () => {
+      const address = new Address(
+        {
+          ...fields,
+          createdAt: hydratedCreatedAt,
+          updatedAt: hydratedUpdatedAt,
+        },
+        new AddressId("id")
+      );
+
+      expect(address.createdAt.epochMilliseconds).toBe(hydratedCreatedAt.epochMilliseconds);
+      expect(address.updatedAt.epochMilliseconds).toBe(hydratedUpdatedAt.epochMilliseconds);
+      expect(address.updatedAt.epochMilliseconds).not.toBe(address.createdAt.epochMilliseconds);
     });
   });
 
@@ -188,6 +308,24 @@ describe("Address", () => {
       expect(snapshot.label).toBe("home");
       expect(snapshot.metadata).toEqual({ department: "sales" });
       expect(snapshot.contacts).toHaveLength(1);
+    });
+
+    it("should expose the entity createdAt in the snapshot", () => {
+      const address = new Address(fields, id);
+      const snapshot = address.snapshot();
+
+      expect(snapshot.createdAt.epochMilliseconds).toBe(persistedCreatedAt.epochMilliseconds);
+      expect(snapshot.createdAt).not.toBe(snapshot.capturedAt);
+    });
+
+    it("should expose the entity updatedAt in the snapshot", () => {
+      const address = new Address(
+        { ...fields, updatedAt: persistedUpdatedAt },
+        id
+      );
+      const snapshot = address.snapshot();
+
+      expect(snapshot.updatedAt.epochMilliseconds).toBe(persistedUpdatedAt.epochMilliseconds);
     });
 
     it("should be immutable after mutation of source", () => {

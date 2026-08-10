@@ -42,7 +42,7 @@ export class MagentoGraphqlProductRepository implements ProductRepository {
   /**
    * Searches products by query text and optional filters.
    *
-   * @param input - Search criteria including query text and filters.
+   * @param input - Search criteria including optional query text and filters.
    * @param ctx - Optional catalog repository context.
    *
    * @returns Paginated search results of products.
@@ -79,54 +79,6 @@ export class MagentoGraphqlProductRepository implements ProductRepository {
           details: {
             repository: "MagentoGraphqlProductRepository",
             operation: "SearchProducts",
-          },
-          cause,
-          context: {
-            input,
-          },
-        })
-      );
-    }
-  }
-
-  /**
-   * Lists products by generic search criteria.
-   *
-   * @param input - Search criteria without query text.
-   * @param ctx - Optional catalog repository context.
-   *
-   * @returns Paginated product search result.
-   */
-  async list(
-    input: Omit<SearchCriteriaModel, "query">,
-    ctx?: CatalogRepositoryContext
-  ): Promise<Result<SearchResultModel<ProductModel>, RepositoryError>> {
-    try {
-      const filter = toMagentoFilter(input.filters);
-      const page = input.pagination?.page ?? 1;
-      const pageSize = input.pagination?.pageSize ?? 20;
-      const result = await this.buildQuery(
-        "ListProducts",
-        {
-          filter,
-          currentPage: page,
-          pageSize,
-        },
-        ctx
-      );
-
-      return success({
-        items: result.data?.products?.items?.map((node) => this.toModel(node)) ?? [],
-        total: result.data?.products?.total_count ?? 0,
-        page: result.data?.products?.page_info?.current_page ?? page,
-        pageSize: result.data?.products?.page_info?.page_size ?? pageSize,
-      });
-    } catch (cause) {
-      return failure(
-        new RepositoryError("service_unavailable", {
-          details: {
-            repository: "MagentoGraphqlProductRepository",
-            operation: "ListProducts",
           },
           cause,
           context: {

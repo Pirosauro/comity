@@ -27,6 +27,12 @@ export interface UserState extends UserData {
   /** The unique identifier of the user. */
   readonly id: UserId;
 
+  /** The timestamp when the user was created. */
+  readonly createdAt: Instant;
+
+  /** The timestamp when the user was last updated. */
+  readonly updatedAt: Instant;
+
   /** The lifecycle status of the user. */
   readonly status: UserStatus;
 }
@@ -43,10 +49,26 @@ export type UserSnapshot = Readonly<
 
 /**
  * Data required to create a new user.
+ *
+ * @remark
+ * Persisted lifecycle metadata (`createdAt`, `updatedAt`, `status`) may be
+ * supplied when hydrating from persistence. When omitted, the entity
+ * initializes them at construction time. The default `status` for newly
+ * created users is `"inactive"`; hydrating from persistence with a
+ * different `status` preserves the persisted value.
  */
-export type UserCreate = Omit<UserData, "id">;
+export type UserCreate = UserData & {
+  /** The timestamp when the user was created. */
+  readonly createdAt?: Instant;
+
+  /** The timestamp when the user was last updated. */
+  readonly updatedAt?: Instant;
+
+  /** The lifecycle status of the user. */
+  readonly status?: UserStatus;
+};
 
 /**
  * Partial update data for a user.
  */
-export type UserUpdate = Partial<UserData>;
+export type UserUpdate = Partial<UserState>;

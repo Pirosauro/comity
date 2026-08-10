@@ -4,7 +4,6 @@ export type {
   AddressContact,
   AddressCreate,
   AddressData,
-  AddressFields,
   AddressSnapshot,
   AddressState,
   AddressUpdate,

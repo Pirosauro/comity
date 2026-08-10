@@ -69,47 +69,6 @@ export class MagentoGraphqlCategoryRepository implements CategoryRepository {
   /**
    * @inheritdoc
    */
-  async list(
-    input: Omit<SearchCriteriaModel, "query">,
-    ctx?: CatalogRepositoryContext
-  ): Promise<Result<SearchResultModel<CategoryModel>, RepositoryError>> {
-    try {
-      const filters = toMagentoFilter(input.filters);
-      const result = await this.buildQuery(
-        "ListCategories",
-        {
-          filters,
-          currentPage: input.pagination?.page ?? 1,
-          pageSize: input.pagination?.pageSize ?? 20,
-        },
-        ctx
-      );
-
-      return success({
-        items: result.data?.categories?.items?.map(this.toModel) ?? [],
-        total: result.data?.categories?.total_count ?? 0,
-        page: result.data?.categories?.page_info?.current_page ?? 1,
-        pageSize: result.data?.categories?.page_info?.page_size ?? 20,
-      });
-    } catch (cause) {
-      return failure(
-        new RepositoryError("service_unavailable", {
-          details: {
-            repository: "MagentoGraphqlCategoryRepository",
-            operation: "ListCategories",
-          },
-          cause,
-          context: {
-            input,
-          },
-        })
-      );
-    }
-  }
-
-  /**
-   * @inheritdoc
-   */
   async get(
     id: string,
     ctx?: CatalogRepositoryContext

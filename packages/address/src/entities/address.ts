@@ -23,9 +23,10 @@ export class Address {
   #metadata: Record<string, string> | null;
   #contacts: AddressContact[];
   readonly #createdAt: Instant;
+  #updatedAt: Instant;
 
   /**
-   * @param fields - The fields used to create the address.
+   * @param fields - The fields used to create or hydrate the address.
    * @param id - The unique identifier of the address, if it has been assigned.
    */
   constructor(fields: AddressCreate, id?: AddressId) {
@@ -38,7 +39,8 @@ export class Address {
     this.#label = fields.label;
     this.#metadata = fields.metadata ? { ...fields.metadata } : null;
     this.#contacts = [...fields.contacts];
-    this.#createdAt = Instant.now();
+    this.#createdAt = fields.createdAt ?? Instant.now();
+    this.#updatedAt = fields.updatedAt ?? this.#createdAt;
   }
 
   /**
@@ -112,6 +114,13 @@ export class Address {
   }
 
   /**
+   * @returns The timestamp when the address was last updated.
+   */
+  get updatedAt(): Instant {
+    return this.#updatedAt;
+  }
+
+  /**
    * Updates the address with the provided changes.
    *
    * @param changes - The changes to apply to the address.
@@ -158,6 +167,9 @@ export class Address {
     if (changes.contacts !== undefined) {
       this.#contacts = [...changes.contacts];
     }
+
+    // Update the updatedAt timestamp
+    this.#updatedAt = Instant.now();
   }
 
   /**
@@ -167,7 +179,7 @@ export class Address {
    */
   snapshot(): AddressSnapshot {
     return {
-      id: this.#id,
+      id: this.#id as AddressId,
       lines: [...this.#lines],
       city: this.#city,
       administrativeArea: this.#administrativeArea,
@@ -176,6 +188,8 @@ export class Address {
       label: this.#label,
       metadata: this.#metadata ? { ...this.#metadata } : null,
       contacts: [...this.#contacts],
+      createdAt: this.#createdAt,
+      updatedAt: this.#updatedAt,
       capturedAt: Instant.now(),
     };
   }
