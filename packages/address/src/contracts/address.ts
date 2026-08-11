@@ -84,4 +84,4 @@ export type AddressCreate = AddressData & {
 /**
  * AddressDataUpdate represents a partial update to an AddressData object.
  */
-export type AddressUpdate = Partial<AddressState>;
+export type AddressUpdate = Partial<Omit<AddressState, "createdAt" | "updatedAt">>;

@@ -1,4 +1,4 @@
-export { httpHonoAdapter } from "./adapter/http.js";
+export { httpHonoAdapter } from "./adapter.js";
 export { HTTP_HONO_TOKEN } from "./setup/constants.js";
 export {
   HttpHonoModuleContext,

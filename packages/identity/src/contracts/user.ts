@@ -71,4 +71,4 @@ export type UserCreate = UserData & {
 /**
  * Partial update data for a user.
  */
-export type UserUpdate = Partial<UserState>;
+export type UserUpdate = Partial<Omit<UserState, "createdAt" | "updatedAt">>;

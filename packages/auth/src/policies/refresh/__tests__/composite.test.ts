@@ -2,7 +2,7 @@ import type { AuthSessionRefreshPolicy } from "../../../contracts/session-refres
 import type { AuthSession } from "../../../contracts/session.js";
 
 import { describe, expect, it, vi } from "vitest";
-import { AuthError } from "../../../error/auth.js";
+import { AuthError } from "../../../errors/auth.js";
 import { CompositeRefreshPolicy } from "../composite.js";
 
 describe("CompositeRefreshPolicy", () => {

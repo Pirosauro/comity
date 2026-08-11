@@ -5,9 +5,10 @@ import type {
 } from "../contracts/session-assurance-evaluator.js";
 import type { AuthSessionRepository } from "../contracts/session-repository.js";
 import type { AuthSessionTransport } from "../contracts/session-transport.js";
-import type { AuthSession, AuthSessionId } from "../contracts/session.js";
+import type { AuthSession } from "../contracts/session.js";
 import type { AuthGuard } from "../guard.js";
 import type { AuthSessionObserver } from "../hooks/session.js";
+import type { AuthSessionId } from "../value-objects/auth-session-id.js";
 
 import { AuthError } from "../errors/auth.js";
 
@@ -80,44 +81,44 @@ export class CreateSession {
     input: CreateSessionInput,
     now: number
   ): Promise<Result<AuthSession, AuthError, "ok">> {
-    try {
-      // 1. Build session
-      const assurance = this.#evaluator.evaluate(
-        {
-          methods: input.methods,
-          ...(input.proof !== undefined ? { proof: input.proof } : {}),
-          ...(input.context !== undefined ? { context: input.context } : {}),
-          version: input.version,
-        },
-        now
-      );
-      const session: AuthSession = {
-        id: input.id,
-        createdAt: now,
-        verifiedAt: now,
-        assurance,
-        transport: input.transport,
-        ...(input.expiresAt !== undefined ? { expiresAt: input.expiresAt } : {}),
-        ...(input.refresh !== undefined
-          ? {
-              refresh:
-                typeof input.refresh === "number"
-                  ? { enabled: true, expiresAt: input.refresh }
-                  : { enabled: false },
-            }
-          : {}),
-        ...(input.parent !== undefined
-          ? {
-              stepUp: {
-                parent: input.parent,
-                at: now,
-              },
-            }
-          : {}),
-        ...(input.scopes !== undefined ? { scopes: input.scopes } : {}),
-      };
+    // 1. Build session
+    const assurance = this.#evaluator.evaluate(
+      {
+        methods: input.methods,
+        ...(input.proof !== undefined ? { proof: input.proof } : {}),
+        ...(input.context !== undefined ? { context: input.context } : {}),
+        version: input.version,
+      },
+      now
+    );
+    const session: AuthSession = {
+      id: input.id,
+      createdAt: now,
+      verifiedAt: now,
+      assurance,
+      transport: input.transport,
+      ...(input.expiresAt !== undefined ? { expiresAt: input.expiresAt } : {}),
+      ...(input.refresh !== undefined
+        ? {
+            refresh:
+              typeof input.refresh === "number"
+                ? { enabled: true, expiresAt: input.refresh }
+                : { enabled: false },
+          }
+        : {}),
+      ...(input.parent !== undefined
+        ? {
+            stepUp: {
+              parent: input.parent,
+              at: now,
+            },
+          }
+        : {}),
+      ...(input.scopes !== undefined ? { scopes: input.scopes } : {}),
+    };
 
-      // 2. Enforce assurance requirements
+    // 2. Enforce assurance requirements
+    try {
       this.#guard.assertInvariants(session, now);
       this.#guard.assertAssurance(session, now);
 
@@ -125,18 +126,6 @@ export class CreateSession {
       if (session.refresh?.enabled) {
         this.#guard.assertRefreshable(session, now);
       }
-
-      // 4. Persist session
-      await this.#repository.create(session);
-
-      // 5. Emit event
-      this.#observer.onSessionCreated({
-        sessionId: session.id,
-        createdAt: session.createdAt,
-        assuranceScore: session.assurance.score,
-      });
-
-      return { ok: true, value: session };
     } catch (error) {
       if (error instanceof AuthError) {
         return { ok: false, error };
@@ -146,11 +135,40 @@ export class CreateSession {
         ok: false,
         error: new AuthError("internal_error", {
           details: {
-            policy: "persistence",
+            policy: "guard",
           },
-          cause: error,
+          cause: error instanceof Error ? error : undefined,
         }),
       };
     }
+
+    // 4. Persist session
+    const persisted = await this.#repository.save(session);
+
+    if (!persisted.success) {
+      // Map infrastructure errors to AuthError("internal_error") for the use-case contract.
+      if (persisted.error instanceof AuthError) {
+        return { ok: false, error: persisted.error };
+      }
+
+      return {
+        ok: false,
+        error: new AuthError("internal_error", {
+          details: {
+            policy: "persistence",
+          },
+          cause: persisted.error,
+        }),
+      };
+    }
+
+    // 5. Emit event
+    this.#observer.onSessionCreated({
+      sessionId: session.id,
+      createdAt: session.createdAt,
+      assuranceScore: session.assurance.score,
+    });
+
+    return { ok: true, value: session };
   }
 }

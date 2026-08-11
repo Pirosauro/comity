@@ -13,10 +13,13 @@ export {
   AuthSessionAssuranceScore,
 } from "./contracts/session-assurance.js";
 export { AuthSessionRefreshPolicy } from "./contracts/session-refresh-policy.js";
-export { AuthSessionRepository } from "./contracts/session-repository.js";
+export {
+  AuthSessionRepository,
+  AuthSessionRevocation,
+} from "./contracts/session-repository.js";
 export { AuthSessionRevocationPolicy } from "./contracts/session-revocation-policy.js";
 export { AuthSessionTransport } from "./contracts/session-transport.js";
-export { AuthSession, AuthSessionId } from "./contracts/session.js";
+export { AuthSession } from "./contracts/session.js";
 export { AuthTokenService } from "./contracts/token-service.js";
 export { AuthGuard } from "./guard.js";
 export { AUTH_TOKEN } from "./setup/constants.js";
@@ -27,3 +30,4 @@ export {
   AuthModuleOptions,
   AuthModuleServices,
 } from "./setup/types.js";
+export { AuthSessionId } from "./value-objects/auth-session-id.js";

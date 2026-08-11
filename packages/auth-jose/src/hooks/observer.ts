@@ -1,6 +1,7 @@
 import type { AuthSessionId } from "@comity/auth";
 import type { SafeErrorPayload } from "@comity/primitives/errors";
 
+
 /**
  * Auth JOSE events emitter.
  *

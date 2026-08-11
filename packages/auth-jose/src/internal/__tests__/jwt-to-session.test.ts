@@ -1,3 +1,4 @@
+import { AuthSessionId } from "@comity/auth";
 import { describe, expect, it } from "vitest";
 import { jwtPayloadToAuthSession } from "../jwt-to-session.js";
 
@@ -28,7 +29,7 @@ describe("jwtPayloadToAuthSession", () => {
     const session = jwtPayloadToAuthSession(payload);
 
     expect(session).toEqual({
-      id: "session-1",
+      id: new AuthSessionId("session-1"),
       transport: { type: "jwt" },
       createdAt: 1000 * 1000,
       verifiedAt: 1500 * 1000,
@@ -39,7 +40,7 @@ describe("jwtPayloadToAuthSession", () => {
         expiresAt: 3000 * 1000,
       },
       stepUp: {
-        parent: "session-root",
+        parent: new AuthSessionId("session-root"),
         at: 1200 * 1000,
       },
       scopes: ["a", "b"],

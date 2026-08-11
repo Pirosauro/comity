@@ -1,7 +1,13 @@
-import type { AuthSession, AuthSessionId } from "../contracts/session";
-import type { AuthSessionRepository } from "../contracts/session-repository";
+import type { RepositoryError } from "@comity/primitives/errors";
+import type { Result } from "@comity/primitives/result";
+import type {
+  AuthSessionRepository,
+  AuthSessionRevocation,
+} from "../contracts/session-repository.js";
+import type { AuthSession } from "../contracts/session.js";
+import type { AuthSessionId } from "../value-objects/auth-session-id.js";
 
-import { AuthError } from "../errors";
+import { success } from "@comity/primitives/result";
 
 /**
  * In-memory implementation of `AuthSessionRepository` for testing and development purposes.
@@ -10,75 +16,41 @@ import { AuthError } from "../errors";
  * and is not shared across multiple instances of the application.
  */
 export class MemoryAuthSessionRepository implements AuthSessionRepository {
-  #sessions = new Map<AuthSessionId, AuthSession>();
+  /** */
+  #sessions = new Map<string, AuthSession>();
 
   /**
    * @inheritdoc
    */
-  async get(id: AuthSessionId): Promise<AuthSession> {
-    const session = this.#sessions.get(id);
+  async getById(id: AuthSessionId): Promise<Result<AuthSession | null, RepositoryError>> {
+    const session = this.#sessions.get(id.toString());
 
     if (!session) {
-      throw new AuthError("session_not_found", {
-        details: {
-          subject: id,
-          retriable: false,
-        },
-        context: {
-          adapter: "memory",
-        },
-      });
+      return success(null);
     }
 
-    return session;
+    return success(session);
   }
 
   /**
    * @inheritdoc
    */
-  async create(session: AuthSession): Promise<void> {
-    // Idempotency is guaranteed by the Map's set method, which overwrites if the key exists
-    this.#sessions.set(session.id, { ...session });
+  async save(session: AuthSession): Promise<Result<void, RepositoryError>> {
+    this.#sessions.set(session.id.toString(), { ...session });
+
+    return success(undefined);
   }
 
   /**
    * @inheritdoc
    */
-  async update(session: AuthSession): Promise<void> {
-    if (!this.#sessions.has(session.id)) {
-      throw new AuthError("session_not_found", {
-        details: {
-          subject: session.id,
-          retriable: false,
-        },
-        context: {
-          adapter: "memory",
-        },
-      });
+  async revoke(revocation: AuthSessionRevocation): Promise<Result<void, RepositoryError>> {
+    // Revocation is idempotent: a missing session is not an error.
+    if (this.#sessions.has(revocation.id.toString())) {
+      this.#sessions.delete(revocation.id.toString());
     }
 
-    this.#sessions.set(session.id, { ...session });
-  }
-
-  /**
-   * @inheritdoc
-   */
-  async revoke(
-    id: AuthSessionId,
-    reason: string,
-    at: number,
-    actor?: {
-      /** Type of actor triggering revocation */
-      type: string;
-
-      /** Identifier of the actor */
-      id?: string;
-    }
-  ): Promise<void> {
-    // Revocation is always a best-effort operation
-    if (this.#sessions.has(id)) {
-      this.#sessions.delete(id);
-    }
+    return success(undefined);
   }
 
   /**

@@ -40,7 +40,7 @@ export function checkSessionInvariants(
   now: number
 ): Result<void, AuthError, "ok"> {
   // Session id
-  if (typeof session.id !== "string" || session.id.length === 0) {
+  if (!session.id || session.id.toString().length === 0) {
     return invalid("session_invalid", { violation: "session_id_missing" });
   }
 
@@ -48,7 +48,7 @@ export function checkSessionInvariants(
   if (typeof session.createdAt !== "number" || session.createdAt <= 0 || session.createdAt > now) {
     return invalid("session_invalid", {
       violation: "created_at_invalid",
-      subject: session.id,
+      subject: session.id.toString(),
     });
   }
 
@@ -56,7 +56,7 @@ export function checkSessionInvariants(
   if (typeof session.verifiedAt === "number" && session.verifiedAt < session.createdAt) {
     return invalid("session_invalid", {
       violation: "verified_at_invalid",
-      subject: session.id,
+      subject: session.id.toString(),
     });
   }
 
@@ -64,7 +64,7 @@ export function checkSessionInvariants(
   if (typeof session.expiresAt === "number" && session.expiresAt <= session.createdAt) {
     return invalid("session_invalid", {
       violation: "expires_at_invalid",
-      subject: session.id,
+      subject: session.id.toString(),
     });
   }
 
@@ -72,7 +72,7 @@ export function checkSessionInvariants(
   if (!session.assurance || typeof session.assurance !== "object") {
     return invalid("assurance_invalid", {
       violation: "assurance_missing",
-      subject: session.id,
+      subject: session.id.toString(),
     });
   }
 
@@ -80,7 +80,7 @@ export function checkSessionInvariants(
   if (!Array.isArray(session.assurance.methods) || session.assurance.methods.length === 0) {
     return invalid("assurance_invalid", {
       violation: "assurance_methods_invalid",
-      subject: session.id,
+      subject: session.id.toString(),
     });
   }
 
@@ -88,7 +88,7 @@ export function checkSessionInvariants(
   if (session.assurance.proof !== undefined && typeof session.assurance.proof !== "string") {
     return invalid("assurance_invalid", {
       violation: "assurance_proof_invalid",
-      subject: session.id,
+      subject: session.id.toString(),
     });
   }
 
@@ -96,7 +96,7 @@ export function checkSessionInvariants(
   if (typeof session.assurance.score !== "number" || session.assurance.score < 0) {
     return invalid("assurance_invalid", {
       violation: "assurance_score_invalid",
-      subject: session.id,
+      subject: session.id.toString(),
     });
   }
 
@@ -108,7 +108,7 @@ export function checkSessionInvariants(
   ) {
     return invalid("assurance_invalid", {
       violation: "assurance_evaluated_at_invalid",
-      subject: session.id,
+      subject: session.id.toString(),
     });
   }
 
@@ -116,7 +116,7 @@ export function checkSessionInvariants(
   if (typeof session.assurance.version !== "number" || session.assurance.version < 0) {
     return invalid("assurance_invalid", {
       violation: "assurance_version_invalid",
-      subject: session.id,
+      subject: session.id.toString(),
     });
   }
 
@@ -127,7 +127,7 @@ export function checkSessionInvariants(
   ) {
     return invalid("assurance_invalid", {
       violation: "assurance_context_invalid",
-      subject: session.id,
+      subject: session.id.toString(),
     });
   }
 
@@ -139,7 +139,7 @@ export function checkSessionInvariants(
   ) {
     return invalid("session_invalid", {
       violation: "session_transport_invalid",
-      subject: session.id,
+      subject: session.id.toString(),
     });
   }
 
@@ -149,7 +149,7 @@ export function checkSessionInvariants(
     if (typeof session.refresh.enabled !== "boolean") {
       return invalid("session_invalid", {
         violation: "refresh_enabled_invalid",
-        subject: session.id,
+        subject: session.id.toString(),
       });
     }
 
@@ -160,7 +160,7 @@ export function checkSessionInvariants(
     ) {
       return invalid("session_invalid", {
         violation: "refresh_expires_at_invalid",
-        subject: session.id,
+        subject: session.id.toString(),
       });
     }
   }
@@ -168,10 +168,10 @@ export function checkSessionInvariants(
   // Step-up validity
   if (session.stepUp) {
     // Step-up parent validity
-    if (typeof session.stepUp.parent !== "string" || session.stepUp.parent.length === 0) {
+    if (!session.stepUp.parent || session.stepUp.parent.toString().length === 0) {
       return invalid("session_invalid", {
         violation: "step_up_parent_invalid",
-        subject: session.id,
+        subject: session.id.toString(),
       });
     }
 
@@ -183,7 +183,7 @@ export function checkSessionInvariants(
     ) {
       return invalid("session_invalid", {
         violation: "step_up_at_invalid",
-        subject: session.id,
+        subject: session.id.toString(),
       });
     }
   }

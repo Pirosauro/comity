@@ -166,7 +166,7 @@ The exact fields depend on the domain. The presence and optionality of each life
 Represents partial modifications.
 
 ```ts
-type EntityUpdate = Partial<EntityData>
+type EntityUpdate = Partial<Omit<EntityState, "createdAt" | "updatedAt">>;
 ```
 
 `Partial` is appropriate for update contracts where partial modification is explicitly intended.

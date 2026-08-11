@@ -2,11 +2,12 @@ import type { AuthSession } from "../../contracts/session.js";
 
 import { describe, expect, it } from "vitest";
 import { AuthError } from "../../errors/auth.js";
+import { AuthSessionId } from "../../value-objects/auth-session-id.js";
 import { checkSessionInvariants } from "../session-invariants.js";
 
 describe("checkSessionInvariants", () => {
   const validSession: AuthSession = {
-    id: "session-123",
+    id: new AuthSessionId("session-123"),
     createdAt: 1000,
     verifiedAt: 1000,
     assurance: {
@@ -26,22 +27,15 @@ describe("checkSessionInvariants", () => {
     });
 
     it("should fail with empty id", () => {
-      const result = checkSessionInvariants({ ...validSession, id: "" }, 2000);
+      const result = checkSessionInvariants(
+        { ...validSession, id: new AuthSessionId("") },
+        2000
+      );
 
       expect(result.ok).toBe(false);
 
       if (!result.ok) {
         expect(result.error).toBeInstanceOf(AuthError);
-        expect(result.error.meta.details?.violation).toBe("session_id_missing");
-      }
-    });
-
-    it("should fail with non-string id", () => {
-      const result = checkSessionInvariants({ ...validSession, id: 123 as any }, 2000);
-
-      expect(result.ok).toBe(false);
-
-      if (!result.ok) {
         expect(result.error.meta.details?.violation).toBe("session_id_missing");
       }
     });
@@ -604,23 +598,7 @@ describe("checkSessionInvariants", () => {
       const result = checkSessionInvariants(
         {
           ...validSession,
-          stepUp: { parent: "", at: 1000 },
-        },
-        2000
-      );
-
-      expect(result.ok).toBe(false);
-
-      if (!result.ok) {
-        expect(result.error.meta.details?.violation).toBe("step_up_parent_invalid");
-      }
-    });
-
-    it("should fail with non-string parent", () => {
-      const result = checkSessionInvariants(
-        {
-          ...validSession,
-          stepUp: { parent: 123 as any, at: 1000 },
+          stepUp: { parent: new AuthSessionId(""), at: 1000 },
         },
         2000
       );
@@ -636,7 +614,7 @@ describe("checkSessionInvariants", () => {
       const result = checkSessionInvariants(
         {
           ...validSession,
-          stepUp: { parent: "parent-id", at: 3000 },
+          stepUp: { parent: new AuthSessionId("parent-id"), at: 3000 },
         },
         2000
       );
@@ -652,7 +630,7 @@ describe("checkSessionInvariants", () => {
       const result = checkSessionInvariants(
         {
           ...validSession,
-          stepUp: { parent: "parent-id", at: 0 },
+          stepUp: { parent: new AuthSessionId("parent-id"), at: 0 },
         },
         2000
       );
@@ -668,7 +646,7 @@ describe("checkSessionInvariants", () => {
       const result = checkSessionInvariants(
         {
           ...validSession,
-          stepUp: { parent: "parent-id", at: 1000 },
+          stepUp: { parent: new AuthSessionId("parent-id"), at: 1000 },
         },
         2000
       );
@@ -680,7 +658,7 @@ describe("checkSessionInvariants", () => {
   describe("success case", () => {
     it("should validate fully valid session", () => {
       const session: AuthSession = {
-        id: "session-123",
+        id: new AuthSessionId("session-123"),
         createdAt: 1000,
         expiresAt: 5000,
         verifiedAt: 1500,
@@ -694,7 +672,7 @@ describe("checkSessionInvariants", () => {
         },
         transport: { type: "bearer" },
         refresh: { enabled: true, expiresAt: 4000 },
-        stepUp: { parent: "parent-id", at: 1200 },
+        stepUp: { parent: new AuthSessionId("parent-id"), at: 1200 },
       };
 
       const result = checkSessionInvariants(session, 2000);

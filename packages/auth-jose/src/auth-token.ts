@@ -66,7 +66,7 @@ export class JoseAuthTokenService implements AuthTokenService {
     if (!session.refresh?.enabled) {
       const reason = "refresh_not_allowed";
       const error = new AuthError(reason, {
-        details: { policy: "jwt", subject: session.id },
+        details: { policy: "jwt", subject: session.id.toString() },
         context: { adapter: "jose" },
       });
 

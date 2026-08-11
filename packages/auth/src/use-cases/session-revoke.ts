@@ -1,5 +1,5 @@
 import type { AuthSessionRepository } from "../contracts/session-repository.js";
-import type { AuthSessionId } from "../contracts/session.js";
+import type { AuthSessionId } from "../value-objects/auth-session-id.js";
 import type { AuthSessionObserver } from "../hooks/session.js";
 
 /**
@@ -24,6 +24,13 @@ export interface RevokeSessionInput {
 
 /**
  * Use case that revokes an authenticated session.
+ *
+ * @remarks
+ * Revocation is intentionally a best-effort operation: if the underlying
+ * repository fails, this use case swallows the error and lets the caller
+ * decide whether to retry. The repository contract itself returns a
+ * `Result`, so callers that want stricter semantics can call
+ * `AuthSessionRepository.revoke()` directly.
  */
 export class RevokeSession {
   /** Repository for session persistence */
@@ -48,21 +55,24 @@ export class RevokeSession {
    * @param now - Current timestamp in milliseconds
    */
   async execute(input: RevokeSessionInput, now: number): Promise<void> {
-    try {
-      // 1. Load session (throws if not found)
-      const session = await this.#repository.get(input.id);
+    // 1. Persist revocation
+    const result = await this.#repository.revoke({
+      id: input.id,
+      reason: input.reason,
+      at: now,
+      ...(input.actor ? { actor: input.actor } : {}),
+    });
 
-      // 2. Persist revocation
-      await this.#repository.revoke(session.id, input.reason, now, input.actor);
-
-      // 3. Emit lifecycle event
-      this.#observer.onSessionRevoked({
-        sessionId: session.id,
-        reason: input.reason,
-        revokedAt: now,
-      });
-    } catch (error) {
-      // Revokation is a best-effort operation: log error but do not throw
+    // 2. Best-effort: ignore repository errors and continue with event emission
+    if (!result.success) {
+      return;
     }
+
+    // 3. Emit lifecycle event
+    this.#observer.onSessionRevoked({
+      sessionId: input.id,
+      reason: input.reason,
+      revokedAt: now,
+    });
   }
 }

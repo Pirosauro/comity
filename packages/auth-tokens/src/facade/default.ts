@@ -49,7 +49,7 @@ export class DefaultAuthTokenFacade implements AuthTokenFacade {
         error: new AuthError("internal_error", {
           details: {
             policy: "authentication",
-            subject: result.value.id,
+            subject: result.value.id.toString(),
           },
           cause: error instanceof Error ? error : undefined,
         }),

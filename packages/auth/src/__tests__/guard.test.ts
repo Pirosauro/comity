@@ -2,14 +2,17 @@ import type { AuthSessionAssurancePolicy } from "../contracts/session-assurance-
 import type { AuthSessionRefreshPolicy } from "../contracts/session-refresh-policy.js";
 import type { AuthSessionRevocationPolicy } from "../contracts/session-revocation-policy.js";
 import type { AuthSession } from "../contracts/session.js";
-import type { AuthEvaluationEmitter } from "../hooks/evaluation.js";
-import type { AuthRefreshEvaluationEmitter } from "../hooks/refresh.js";
+import type { AuthEvaluationObserver } from "../hooks/evaluation.js";
+import type { AuthRefreshEvaluationObserver } from "../hooks/refresh.js";
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AuthError } from "../errors/auth.js";
 import { AuthGuard } from "../guard.js";
+import { AuthSessionId } from "../value-objects/auth-session-id.js";
 
-interface AuthGuardEmitter extends AuthEvaluationEmitter, AuthRefreshEvaluationEmitter {}
+interface AuthGuardEmitter
+  extends AuthEvaluationObserver,
+    AuthRefreshEvaluationObserver {}
 
 describe("AuthGuard", () => {
   let assurancePolicy: AuthSessionAssurancePolicy;
@@ -39,7 +42,7 @@ describe("AuthGuard", () => {
 
   describe("assert", () => {
     const validSession: AuthSession = {
-      id: "session1",
+      id: new AuthSessionId("session1"),
       createdAt: 1000,
       assurance: {
         methods: ["password"],
@@ -58,7 +61,7 @@ describe("AuthGuard", () => {
       expect(assurancePolicy.assert).toHaveBeenCalledWith(validSession, 2000);
       expect(revocationPolicy.assert).toHaveBeenCalledWith(validSession, 2000);
       expect(events.onSessionValidated).toHaveBeenCalledWith({
-        sessionId: "session1",
+        sessionId: validSession.id,
         assuranceScore: 1,
         createdAt: 1000,
         verifiedAt: 1000,
@@ -66,12 +69,12 @@ describe("AuthGuard", () => {
     });
 
     it("should throw and emit for invalid session id", () => {
-      const invalidSession = { ...validSession, id: "" };
+      const invalidSession = { ...validSession, id: new AuthSessionId("") };
 
       expect(() => guard.assert(invalidSession, 2000)).toThrow(AuthError);
       expect(events.onSessionInvalid).toHaveBeenCalledWith(
         expect.objectContaining({
-          sessionId: "",
+          sessionId: new AuthSessionId(""),
           at: 2000,
           reason: "session_invalid",
           violation: "session_id_missing",
@@ -87,7 +90,7 @@ describe("AuthGuard", () => {
       expect(() => guard.assert(validSession, 2000)).toThrow(AuthError);
       expect(events.onSessionInvalid).toHaveBeenCalledWith(
         expect.objectContaining({
-          sessionId: "session1",
+          sessionId: validSession.id,
           at: 2000,
           reason: "session_revoked",
         })
@@ -102,7 +105,7 @@ describe("AuthGuard", () => {
       expect(() => guard.assert(validSession, 2000)).toThrow(AuthError);
       expect(events.onAssuranceRejected).toHaveBeenCalledWith(
         expect.objectContaining({
-          sessionId: "session1",
+          sessionId: validSession.id,
           reason: "assurance_required",
         })
       );
@@ -119,7 +122,7 @@ describe("AuthGuard", () => {
       guard.assert(sessionWithOptionals, 2000);
 
       expect(events.onSessionValidated).toHaveBeenCalledWith({
-        sessionId: "session1",
+        sessionId: validSession.id,
         assuranceScore: 1,
         createdAt: 1000,
         verifiedAt: 1000,
@@ -130,7 +133,7 @@ describe("AuthGuard", () => {
 
     it("should emit sessionValidated without optional fields", () => {
       const sessionMinimal: AuthSession = {
-        id: "session1",
+        id: new AuthSessionId("session1"),
         createdAt: 1000,
         assurance: {
           methods: ["password"],
@@ -145,7 +148,7 @@ describe("AuthGuard", () => {
       guard.assert(sessionMinimal, 2000);
 
       expect(events.onSessionValidated).toHaveBeenCalledWith({
-        sessionId: "session1",
+        sessionId: sessionMinimal.id,
         assuranceScore: 1,
         createdAt: 1000,
         verifiedAt: 1000,
@@ -156,7 +159,7 @@ describe("AuthGuard", () => {
       guard.assert(validSession, 2000, true);
 
       expect(events.onRefreshValidated).toHaveBeenCalledWith({
-        sessionId: "session1",
+        sessionId: validSession.id,
         at: 2000,
       });
     });
@@ -182,7 +185,7 @@ describe("AuthGuard", () => {
 
   describe("assertRefreshable", () => {
     const validSession: AuthSession = {
-      id: "session1",
+      id: new AuthSessionId("session1"),
       createdAt: 1000,
       assurance: {
         methods: ["password"],
@@ -222,7 +225,7 @@ describe("AuthGuard", () => {
       expect(() => guard.assertRefreshable(validSession, 2000)).toThrow(AuthError);
       expect(events.onRefreshRejected).toHaveBeenCalledWith(
         expect.objectContaining({
-          sessionId: "session1",
+          sessionId: validSession.id,
           reason: "refresh_expired",
         })
       );
@@ -236,7 +239,7 @@ describe("AuthGuard", () => {
       expect(() => guard.assertRefreshable(validSession, 2000)).toThrow(AuthError);
       expect(events.onRefreshRejected).toHaveBeenCalledWith(
         expect.objectContaining({
-          sessionId: "session1",
+          sessionId: validSession.id,
           reason: "refresh_not_allowed",
         })
       );
@@ -250,7 +253,7 @@ describe("AuthGuard", () => {
       expect(() => guard.assertRefreshable(validSession, 2000)).toThrow(Error);
       expect(events.onRefreshRejected).toHaveBeenCalledWith(
         expect.objectContaining({
-          sessionId: "session1",
+          sessionId: validSession.id,
           reason: "unknown",
         })
       );

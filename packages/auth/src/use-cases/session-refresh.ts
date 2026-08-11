@@ -1,9 +1,10 @@
+import type { Result } from "@comity/primitives/result";
 import type { AuthSessionRepository } from "../contracts/session-repository.js";
-import type { AuthSession, AuthSessionId } from "../contracts/session.js";
+import type { AuthSession } from "../contracts/session.js";
 import type { AuthGuard } from "../guard.js";
 import type { AuthSessionObserver } from "../hooks/session.js";
+import type { AuthSessionId } from "../value-objects/auth-session-id.js";
 
-import type { Result } from "@comity/primitives/result";
 import { AuthError } from "../errors/auth.js";
 
 /**
@@ -51,50 +52,47 @@ export class RefreshSession {
    * @param now - Current timestamp in milliseconds
    *
    * @returns Refreshed session
-   *
-   * @throws {AuthError} - If refresh cannot be completed
    */
   async execute(
     input: RefreshSessionInput,
     now: number
   ): Promise<Result<AuthSession, AuthError, "ok">> {
-    try {
-      // 1. Fetch original session
-      const original = await this.#repository.get(input.originalId);
+    // 1. Fetch original session
+    const fetched = await this.#repository.getById(input.originalId);
 
-      // Defensive check: original session must exist
-      if (!original) {
-        throw new AuthError("session_not_found", {
-          details: {
-            subject: input.originalId,
-          },
-        });
+    if (!fetched.success) {
+      if (fetched.error instanceof AuthError) {
+        return { ok: false, error: fetched.error };
       }
 
-      // 2. Guard evaluation (invariants + revocation + assurance + refresh)
-      this.#guard.assert(original, now, true);
-
-      // 3. Build refreshed session
-      const session: AuthSession = {
-        ...original,
-        // Rotate identifier while preserving original creation and verification time
-        id: input.id,
-        createdAt: original.createdAt,
-        ...(input.expiresAt !== undefined ? { expiresAt: input.expiresAt } : {}),
+      return {
+        ok: false,
+        error: new AuthError("internal_error", {
+          details: {
+            policy: "persistence",
+            subject: input.id.toString(),
+          },
+          cause: fetched.error,
+        }),
       };
+    }
 
-      // 4. Persist refreshed session
-      await this.#repository.update(session);
+    const original = fetched.value;
 
-      // 5. Emit event
-      this.#observer.onSessionRefreshed({
-        sessionId: session.id,
-        originalId: original.id,
-        refreshedAt: now,
-        ...(session.expiresAt !== undefined ? { expiresAt: session.expiresAt } : {}),
-      });
+    if (!original) {
+      return {
+        ok: false,
+        error: new AuthError("session_not_found", {
+          details: {
+            subject: input.originalId.toString(),
+          },
+        }),
+      };
+    }
 
-      return { ok: true, value: session };
+    // 2. Guard evaluation (invariants + revocation + assurance + refresh)
+    try {
+      this.#guard.assert(original, now, true);
     } catch (error) {
       if (error instanceof AuthError) {
         return { ok: false, error };
@@ -104,12 +102,50 @@ export class RefreshSession {
         ok: false,
         error: new AuthError("internal_error", {
           details: {
-            policy: "persistence",
-            subject: input.id,
+            policy: "guard",
           },
-          cause: error,
+          cause: error instanceof Error ? error : undefined,
         }),
       };
     }
+
+    // 3. Build refreshed session
+    const session: AuthSession = {
+      ...original,
+      // Rotate identifier while preserving original creation and verification time
+      id: input.id,
+      createdAt: original.createdAt,
+      ...(input.expiresAt !== undefined ? { expiresAt: input.expiresAt } : {}),
+    };
+
+    // 4. Persist refreshed session
+    const persisted = await this.#repository.save(session);
+
+    if (!persisted.success) {
+      if (persisted.error instanceof AuthError) {
+        return { ok: false, error: persisted.error };
+      }
+
+      return {
+        ok: false,
+        error: new AuthError("internal_error", {
+          details: {
+            policy: "persistence",
+            subject: input.id.toString(),
+          },
+          cause: persisted.error,
+        }),
+      };
+    }
+
+    // 5. Emit event
+    this.#observer.onSessionRefreshed({
+      sessionId: session.id,
+      originalId: original.id,
+      refreshedAt: now,
+      ...(session.expiresAt !== undefined ? { expiresAt: session.expiresAt } : {}),
+    });
+
+    return { ok: true, value: session };
   }
 }

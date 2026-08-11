@@ -1,4 +1,5 @@
 import type { AuthSession } from "@comity/auth";
+import { AuthSessionId } from "@comity/auth";
 
 import { describe, expect, it, vi } from "vitest";
 import { JoseAuthTokenService } from "../auth-token.js";
@@ -7,7 +8,7 @@ const createSession = (overrides: Partial<AuthSession> = {}): AuthSession => {
   const now = Date.now();
 
   return {
-    id: "session-1",
+    id: new AuthSessionId("session-1"),
     createdAt: now,
     verifiedAt: now,
     expiresAt: now + 60 * 60 * 1000,
@@ -23,7 +24,7 @@ const createSession = (overrides: Partial<AuthSession> = {}): AuthSession => {
       expiresAt: now + 2 * 60 * 60 * 1000,
     },
     stepUp: {
-      parent: "session-root",
+      parent: new AuthSessionId("session-root"),
       at: now + 2000,
     },
     scopes: ["read", "write"],
@@ -63,7 +64,7 @@ describe("JoseAuthTokenService", () => {
 
     if (!verified.ok) throw verified.error;
 
-    expect(verified.value.id).toBe(session.id);
+    expect(verified.value.id.equals(session.id)).toBe(true);
     expect(verified.value.assurance.score).toBe(session.assurance.score);
     expect(observer.onTokenVerified).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -101,7 +102,7 @@ describe("JoseAuthTokenService", () => {
 
     if (!verified.ok) throw verified.error;
 
-    expect(verified.value.id).toBe(session.id);
+    expect(verified.value.id.equals(session.id)).toBe(true);
     expect(observer.onTokenVerified).toHaveBeenCalledWith(
       expect.objectContaining({
         kind: "refresh",

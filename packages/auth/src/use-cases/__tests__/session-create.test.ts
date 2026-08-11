@@ -1,14 +1,15 @@
+import type { AuthSessionRepository } from "../../contracts/session-repository.js";
 import type { CreateSessionInput } from "../session-create.js";
 
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AuthError } from "../../errors/auth.js";
+import { AuthSessionId } from "../../value-objects/auth-session-id.js";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { CreateSession } from "../session-create.js";
 
 describe("CreateSession", () => {
   let repository: {
-    create: ReturnType<typeof vi.fn>;
-    get: ReturnType<typeof vi.fn>;
-    update: ReturnType<typeof vi.fn>;
+    getById: ReturnType<typeof vi.fn>;
+    save: ReturnType<typeof vi.fn>;
     revoke: ReturnType<typeof vi.fn>;
   };
   let evaluator: {
@@ -29,9 +30,8 @@ describe("CreateSession", () => {
 
   beforeEach(() => {
     repository = {
-      create: vi.fn(),
-      get: vi.fn(),
-      update: vi.fn(),
+      getById: vi.fn(),
+      save: vi.fn().mockResolvedValue({ success: true, value: undefined }),
       revoke: vi.fn(),
     };
     evaluator = {
@@ -48,13 +48,17 @@ describe("CreateSession", () => {
       assertAssurance: vi.fn(),
       assertRefreshable: vi.fn(),
     };
-    // @ts-expect-error
-    useCase = new CreateSession(repository, evaluator, emitter, guard);
+    useCase = new CreateSession(
+      repository as unknown as AuthSessionRepository,
+      evaluator,
+      emitter,
+      guard
+    );
   });
 
   it("should create a basic session", async () => {
     const input: CreateSessionInput = {
-      id: "session-1",
+      id: new AuthSessionId("session-1"),
       methods: ["password"],
       version: 1,
       transport: { type: "bearer" },
@@ -79,21 +83,21 @@ describe("CreateSession", () => {
       1000
     );
     expect(guard.assertInvariants).toHaveBeenCalledWith(
-      expect.objectContaining({ id: "session-1" }),
+      expect.objectContaining({ id: input.id }),
       1000
     );
     expect(guard.assertAssurance).toHaveBeenCalledWith(
-      expect.objectContaining({ id: "session-1" }),
+      expect.objectContaining({ id: input.id }),
       1000
     );
-    expect(repository.create).toHaveBeenCalledWith(expect.objectContaining({ id: "session-1" }));
+    expect(repository.save).toHaveBeenCalledWith(expect.objectContaining({ id: input.id }));
     expect(emitter.onSessionCreated).toHaveBeenCalledWith({
-      sessionId: "session-1",
+      sessionId: input.id,
       createdAt: 1000,
       assuranceScore: 1,
     });
     expect(result.value).toMatchObject({
-      id: "session-1",
+      id: input.id,
       createdAt: 1000,
       verifiedAt: 1000,
       assurance,
@@ -103,7 +107,7 @@ describe("CreateSession", () => {
 
   it("should create session with proof and context", async () => {
     const input: CreateSessionInput = {
-      id: "session-2",
+      id: new AuthSessionId("session-2"),
       methods: ["totp"],
       proof: "123456",
       context: { deviceId: "mobile" },
@@ -135,7 +139,7 @@ describe("CreateSession", () => {
 
   it("should create session with expiration", async () => {
     const input: CreateSessionInput = {
-      id: "session-3",
+      id: new AuthSessionId("session-3"),
       methods: ["password"],
       version: 1,
       transport: { type: "bearer" },
@@ -156,7 +160,7 @@ describe("CreateSession", () => {
 
   it("should create session with refresh enabled", async () => {
     const input: CreateSessionInput = {
-      id: "session-4",
+      id: new AuthSessionId("session-4"),
       methods: ["password"],
       version: 1,
       transport: { type: "bearer" },
@@ -174,14 +178,14 @@ describe("CreateSession", () => {
 
     expect(result.value.refresh).toEqual({ enabled: true, expiresAt: 10000 });
     expect(guard.assertRefreshable).toHaveBeenCalledWith(
-      expect.objectContaining({ id: "session-4" }),
+      expect.objectContaining({ id: input.id }),
       1000
     );
   });
 
   it("should create session with refresh disabled", async () => {
     const input: CreateSessionInput = {
-      id: "session-5",
+      id: new AuthSessionId("session-5"),
       methods: ["password"],
       version: 1,
       transport: { type: "bearer" },
@@ -203,11 +207,11 @@ describe("CreateSession", () => {
 
   it("should create session with parent for step-up", async () => {
     const input: CreateSessionInput = {
-      id: "session-6",
+      id: new AuthSessionId("session-6"),
       methods: ["totp"],
       version: 1,
       transport: { type: "bearer" },
-      parent: "parent-session",
+      parent: new AuthSessionId("parent-session"),
     };
 
     evaluator.evaluate.mockReturnValue({
@@ -220,14 +224,14 @@ describe("CreateSession", () => {
     const result = await useCase.execute(input, 3000);
 
     expect(result.value.stepUp).toEqual({
-      parent: "parent-session",
+      parent: new AuthSessionId("parent-session"),
       at: 3000,
     });
   });
 
   it("should create session with scopes", async () => {
     const input: CreateSessionInput = {
-      id: "session-7",
+      id: new AuthSessionId("session-7"),
       methods: ["password"],
       version: 1,
       transport: { type: "bearer" },
@@ -246,9 +250,9 @@ describe("CreateSession", () => {
     expect(result.value.scopes).toEqual(["read", "write"]);
   });
 
-  it("should throw if guard rejects session", async () => {
+  it("should return failure if guard rejects session", async () => {
     const input: CreateSessionInput = {
-      id: "session-8",
+      id: new AuthSessionId("session-8"),
       methods: ["password"],
       version: 1,
       transport: { type: "bearer" },
@@ -268,13 +272,13 @@ describe("CreateSession", () => {
     const result = await useCase.execute(input, 1000);
 
     expect(result.ok).toBe(false);
-    expect(repository.create).not.toHaveBeenCalled();
+    expect(repository.save).not.toHaveBeenCalled();
     expect(emitter.onSessionCreated).not.toHaveBeenCalled();
   });
 
-  it("should throw if repository fails", async () => {
+  it("should return failure if repository save fails", async () => {
     const input: CreateSessionInput = {
-      id: "session-9",
+      id: new AuthSessionId("session-9"),
       methods: ["password"],
       version: 1,
       transport: { type: "bearer" },
@@ -287,7 +291,10 @@ describe("CreateSession", () => {
       version: 1,
     });
 
-    repository.create.mockRejectedValue(new Error("Database error"));
+    repository.save.mockResolvedValue({
+      success: false,
+      error: new Error("Database error"),
+    });
 
     const result = await useCase.execute(input, 1000);
 

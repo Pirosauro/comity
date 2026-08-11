@@ -5,9 +5,10 @@ import type {
 } from "../contracts/session-assurance-evaluator.js";
 import type { AuthSessionRepository } from "../contracts/session-repository.js";
 import type { AuthSessionTransport } from "../contracts/session-transport.js";
-import type { AuthSession, AuthSessionId } from "../contracts/session.js";
+import type { AuthSession } from "../contracts/session.js";
 import type { AuthGuard } from "../guard.js";
 import type { AuthSessionObserver } from "../hooks/session.js";
+import type { AuthSessionId } from "../value-objects/auth-session-id.js";
 
 import { AuthError } from "../errors/auth.js";
 
@@ -68,84 +69,47 @@ export class StepUpSession {
    * @param now - Current timestamp in milliseconds
    *
    * @returns New stepped-up session
-   *
-   * @throws {AuthError} - If the new assurance is insufficient
    */
   async execute(
     input: StepUpSessionInput,
     now: number
   ): Promise<Result<AuthSession, AuthError, "ok">> {
-    try {
-      // 1. Load parent session
-      const parent = await this.#repository.get(input.parentId);
+    // 1. Load parent session
+    const fetched = await this.#repository.getById(input.parentId);
 
-      // Defensive check: parent session must exist
-      if (!parent) {
-        throw new AuthError("session_not_found", {
-          details: {
-            subject: input.parentId,
-          },
-        });
+    if (!fetched.success) {
+      if (fetched.error instanceof AuthError) {
+        return { ok: false, error: fetched.error };
       }
 
-      // 2. Parent must be valid
-      this.#guard.assert(parent, now);
-
-      // 3. Evaluate new assurance
-      const assurance = this.#evaluator.evaluate(
-        {
-          methods: input.methods,
-          ...(input.proof !== undefined ? { proof: input.proof } : {}),
-          ...(input.context !== undefined ? { context: input.context } : {}),
-          version: input.version,
-        },
-        now
-      );
-
-      // 4. New assurance must be stronger
-      if (assurance.score <= parent.assurance.score) {
-        throw new AuthError("assurance_step_up_required", {
+      return {
+        ok: false,
+        error: new AuthError("internal_error", {
           details: {
-            policy: "step_up",
+            policy: "persistence",
+            subject: input.id.toString(),
           },
-          context: {
-            requiredScore: parent.assurance.score + 1,
-            actualScore: assurance.score,
-          },
-        });
-      }
-
-      // 5. Build new session
-      const session: AuthSession = {
-        id: input.id,
-        createdAt: now,
-        // Step-up represents a new strong authentication at `now`
-        verifiedAt: now,
-        assurance,
-        transport: input.transport,
-        ...(input.expiresAt !== undefined ? { expiresAt: input.expiresAt } : {}),
-        stepUp: {
-          parent: parent.id,
-          at: now,
-        },
-        ...(input.scopes !== undefined ? { scopes: input.scopes } : {}),
+          cause: fetched.error,
+        }),
       };
+    }
 
-      // 6. Enforce policies on new session
-      this.#guard.assert(session, now);
+    const parent = fetched.value;
 
-      // 7. Persist new session
-      await this.#repository.create(session);
+    if (!parent) {
+      return {
+        ok: false,
+        error: new AuthError("session_not_found", {
+          details: {
+            subject: input.parentId.toString(),
+          },
+        }),
+      };
+    }
 
-      // 8. Emit event
-      this.#observer.onStepUpCompleted({
-        sessionId: session.id,
-        parentId: parent.id,
-        assuranceScore: assurance.score,
-        at: now,
-      });
-
-      return { ok: true, value: session };
+    // 2. Parent must be valid
+    try {
+      this.#guard.assert(parent, now);
     } catch (error) {
       if (error instanceof AuthError) {
         return { ok: false, error };
@@ -155,12 +119,103 @@ export class StepUpSession {
         ok: false,
         error: new AuthError("internal_error", {
           details: {
-            policy: "persistence",
-            subject: input.id,
+            policy: "guard",
           },
-          cause: error,
+          cause: error instanceof Error ? error : undefined,
         }),
       };
     }
+
+    // 3. Evaluate new assurance
+    const assurance = this.#evaluator.evaluate(
+      {
+        methods: input.methods,
+        ...(input.proof !== undefined ? { proof: input.proof } : {}),
+        ...(input.context !== undefined ? { context: input.context } : {}),
+        version: input.version,
+      },
+      now
+    );
+
+    // 4. New assurance must be stronger
+    if (assurance.score <= parent.assurance.score) {
+      return {
+        ok: false,
+        error: new AuthError("assurance_step_up_required", {
+          details: {
+            policy: "step_up",
+          },
+          context: {
+            requiredScore: parent.assurance.score + 1,
+            actualScore: assurance.score,
+          },
+        }),
+      };
+    }
+
+    // 5. Build new session
+    const session: AuthSession = {
+      id: input.id,
+      createdAt: now,
+      // Step-up represents a new strong authentication at `now`
+      verifiedAt: now,
+      assurance,
+      transport: input.transport,
+      ...(input.expiresAt !== undefined ? { expiresAt: input.expiresAt } : {}),
+      stepUp: {
+        parent: parent.id,
+        at: now,
+      },
+      ...(input.scopes !== undefined ? { scopes: input.scopes } : {}),
+    };
+
+    // 6. Enforce policies on new session
+    try {
+      this.#guard.assert(session, now);
+    } catch (error) {
+      if (error instanceof AuthError) {
+        return { ok: false, error };
+      }
+
+      return {
+        ok: false,
+        error: new AuthError("internal_error", {
+          details: {
+            policy: "guard",
+          },
+          cause: error instanceof Error ? error : undefined,
+        }),
+      };
+    }
+
+    // 7. Persist new session
+    const persisted = await this.#repository.save(session);
+
+    if (!persisted.success) {
+      if (persisted.error instanceof AuthError) {
+        return { ok: false, error: persisted.error };
+      }
+
+      return {
+        ok: false,
+        error: new AuthError("internal_error", {
+          details: {
+            policy: "persistence",
+            subject: input.id.toString(),
+          },
+          cause: persisted.error,
+        }),
+      };
+    }
+
+    // 8. Emit event
+    this.#observer.onStepUpCompleted({
+      sessionId: session.id,
+      parentId: parent.id,
+      assuranceScore: assurance.score,
+      at: now,
+    });
+
+    return { ok: true, value: session };
   }
 }

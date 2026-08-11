@@ -1,11 +1,14 @@
+import type { AuthSessionRepository } from "../../contracts/session-repository.js";
 import type { RevokeSessionInput } from "../session-revoke.js";
 
+import { AuthSessionId } from "../../value-objects/auth-session-id.js";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { RevokeSession } from "../session-revoke.js";
 
 describe("RevokeSession", () => {
   let repository: {
-    get: ReturnType<typeof vi.fn>;
+    getById: ReturnType<typeof vi.fn>;
+    save: ReturnType<typeof vi.fn>;
     revoke: ReturnType<typeof vi.fn>;
   };
   let emitter: {
@@ -17,66 +20,46 @@ describe("RevokeSession", () => {
 
   beforeEach(() => {
     repository = {
-      get: vi.fn(),
-      revoke: vi.fn(),
+      getById: vi.fn(),
+      save: vi.fn(),
+      revoke: vi.fn().mockResolvedValue({ success: true, value: undefined }),
     };
     emitter = {
       onSessionCreated: vi.fn(),
       onSessionRevoked: vi.fn(),
       onSessionRefreshed: vi.fn(),
     };
-    // @ts-expect-error
-    useCase = new RevokeSession(repository, emitter);
+    useCase = new RevokeSession(
+      repository as unknown as AuthSessionRepository,
+      emitter
+    );
   });
 
   it("should revoke a session", async () => {
-    const session = {
-      id: "session-1",
-      createdAt: 1000,
-      assurance: {
-        methods: ["password"],
-        score: 1,
-        evaluatedAt: 1000,
-        version: 1,
-      },
-      transport: { type: "bearer" },
-    };
-
-    repository.get.mockResolvedValue(session);
-
+    const sessionId = new AuthSessionId("session-1");
     const input: RevokeSessionInput = {
-      id: "session-1",
+      id: sessionId,
       reason: "user_logout",
     };
 
     await useCase.execute(input, 2000);
 
-    expect(repository.get).toHaveBeenCalledWith("session-1");
-    expect(repository.revoke).toHaveBeenCalledWith("session-1", "user_logout", 2000, undefined);
+    expect(repository.revoke).toHaveBeenCalledWith({
+      id: sessionId,
+      reason: "user_logout",
+      at: 2000,
+    });
     expect(emitter.onSessionRevoked).toHaveBeenCalledWith({
-      sessionId: "session-1",
+      sessionId,
       reason: "user_logout",
       revokedAt: 2000,
     });
   });
 
   it("should revoke session with actor", async () => {
-    const session = {
-      id: "session-2",
-      createdAt: 1000,
-      assurance: {
-        methods: ["password"],
-        score: 1,
-        evaluatedAt: 1000,
-        version: 1,
-      },
-      transport: { type: "bearer" },
-    };
-
-    repository.get.mockResolvedValue(session);
-
+    const sessionId = new AuthSessionId("session-2");
     const input: RevokeSessionInput = {
-      id: "session-2",
+      id: sessionId,
       reason: "admin_forced",
       actor: {
         type: "admin",
@@ -86,44 +69,26 @@ describe("RevokeSession", () => {
 
     await useCase.execute(input, 3000);
 
-    expect(repository.revoke).toHaveBeenCalledWith("session-2", "admin_forced", 3000, {
-      type: "admin",
-      id: "admin-123",
+    expect(repository.revoke).toHaveBeenCalledWith({
+      id: sessionId,
+      reason: "admin_forced",
+      at: 3000,
+      actor: {
+        type: "admin",
+        id: "admin-123",
+      },
     });
   });
 
-  it("should throw if session not found", async () => {
-    repository.get.mockRejectedValue(new Error("Session not found"));
+  it("should not emit event when repository revoke fails", async () => {
+    const sessionId = new AuthSessionId("session-3");
+    repository.revoke.mockResolvedValue({
+      success: false,
+      error: new Error("Database error"),
+    });
 
     const input: RevokeSessionInput = {
-      id: "missing-session",
-      reason: "test",
-    };
-
-    await useCase.execute(input, 2000);
-
-    expect(repository.revoke).not.toHaveBeenCalled();
-    expect(emitter.onSessionRevoked).not.toHaveBeenCalled();
-  });
-
-  it("should throw if repository revoke fails", async () => {
-    const session = {
-      id: "session-3",
-      createdAt: 1000,
-      assurance: {
-        methods: ["password"],
-        score: 1,
-        evaluatedAt: 1000,
-        version: 1,
-      },
-      transport: { type: "bearer" },
-    };
-
-    repository.get.mockResolvedValue(session);
-    repository.revoke.mockRejectedValue(new Error("Database error"));
-
-    const input: RevokeSessionInput = {
-      id: "session-3",
+      id: sessionId,
       reason: "test",
     };
 

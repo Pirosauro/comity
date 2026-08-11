@@ -1,13 +1,17 @@
 import type { AuthSession } from "../../contracts/session.js";
+import type { AuthSessionRepository } from "../../contracts/session-repository.js";
 import type { RefreshSessionInput } from "../session-refresh.js";
 
+import { AuthError } from "../../errors/auth.js";
+import { AuthSessionId } from "../../value-objects/auth-session-id.js";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { RefreshSession } from "../session-refresh.js";
 
 describe("RefreshSession", () => {
   let repository: {
-    get: ReturnType<typeof vi.fn>;
-    update: ReturnType<typeof vi.fn>;
+    getById: ReturnType<typeof vi.fn>;
+    save: ReturnType<typeof vi.fn>;
+    revoke: ReturnType<typeof vi.fn>;
   };
   let guard: {
     assert: ReturnType<typeof vi.fn>;
@@ -21,8 +25,9 @@ describe("RefreshSession", () => {
 
   beforeEach(() => {
     repository = {
-      get: vi.fn(),
-      update: vi.fn(),
+      getById: vi.fn(),
+      save: vi.fn().mockResolvedValue({ success: true, value: undefined }),
+      revoke: vi.fn(),
     };
     guard = {
       assert: vi.fn(),
@@ -32,13 +37,18 @@ describe("RefreshSession", () => {
       onSessionRevoked: vi.fn(),
       onSessionRefreshed: vi.fn(),
     };
-    // @ts-expect-error
-    useCase = new RefreshSession(repository, guard, emitter);
+    useCase = new RefreshSession(
+      repository as unknown as AuthSessionRepository,
+      guard,
+      emitter
+    );
   });
 
   it("should refresh a session", async () => {
+    const originalId = new AuthSessionId("original-session");
+    const newId = new AuthSessionId("new-session");
     const originalSession: AuthSession = {
-      id: "original-session",
+      id: originalId,
       createdAt: 1000,
       verifiedAt: 1000,
       assurance: {
@@ -50,38 +60,40 @@ describe("RefreshSession", () => {
       transport: { type: "bearer" },
     };
 
-    repository.get.mockResolvedValue(originalSession);
+    repository.getById.mockResolvedValue({ success: true, value: originalSession });
 
     const input: RefreshSessionInput = {
-      id: "new-session",
-      originalId: "original-session",
+      id: newId,
+      originalId,
     };
 
     const result = await useCase.execute(input, 2000);
 
-    expect(repository.get).toHaveBeenCalledWith("original-session");
+    expect(repository.getById).toHaveBeenCalledWith(originalId);
     expect(guard.assert).toHaveBeenCalledWith(originalSession, 2000, true);
-    expect(repository.update).toHaveBeenCalledWith(
+    expect(repository.save).toHaveBeenCalledWith(
       expect.objectContaining({
-        id: "new-session",
+        id: newId,
         createdAt: 1000, // Original creation time is preserved
       })
     );
     expect(emitter.onSessionRefreshed).toHaveBeenCalledWith({
-      sessionId: "new-session",
-      originalId: "original-session",
+      sessionId: newId,
+      originalId,
       refreshedAt: 2000,
     });
     expect(result.value).toMatchObject({
       ...originalSession,
-      id: "new-session",
+      id: newId,
       createdAt: 1000, // Original creation time preserved
     });
   });
 
   it("should refresh session with new expiration", async () => {
+    const originalId = new AuthSessionId("original-session");
+    const newId = new AuthSessionId("new-session");
     const originalSession: AuthSession = {
-      id: "original-session",
+      id: originalId,
       createdAt: 1000,
       verifiedAt: 1000,
       assurance: {
@@ -94,11 +106,11 @@ describe("RefreshSession", () => {
       expiresAt: 5000,
     };
 
-    repository.get.mockResolvedValue(originalSession);
+    repository.getById.mockResolvedValue({ success: true, value: originalSession });
 
     const input: RefreshSessionInput = {
-      id: "new-session",
-      originalId: "original-session",
+      id: newId,
+      originalId,
       expiresAt: 10000,
     };
 
@@ -106,32 +118,34 @@ describe("RefreshSession", () => {
 
     expect(result.value.expiresAt).toBe(10000);
     expect(emitter.onSessionRefreshed).toHaveBeenCalledWith({
-      sessionId: "new-session",
-      originalId: "original-session",
+      sessionId: newId,
+      originalId,
       refreshedAt: 2000,
       expiresAt: 10000,
     });
   });
 
-  it("should throw if original session not found", async () => {
-    repository.get.mockRejectedValue(new Error("Session not found"));
+  it("should return failure if original session not found", async () => {
+    repository.getById.mockResolvedValue({ success: true, value: null });
 
     const input: RefreshSessionInput = {
-      id: "new-session",
-      originalId: "missing-session",
+      id: new AuthSessionId("new-session"),
+      originalId: new AuthSessionId("missing-session"),
     };
 
     const result = await useCase.execute(input, 2000);
 
     expect(result.ok).toBe(false);
+    expect(result.error.meta.reason).toBe("session_not_found");
     expect(guard.assert).not.toHaveBeenCalled();
-    expect(repository.update).not.toHaveBeenCalled();
+    expect(repository.save).not.toHaveBeenCalled();
     expect(emitter.onSessionRefreshed).not.toHaveBeenCalled();
   });
 
-  it("should throw if guard rejects refresh", async () => {
+  it("should return failure if guard rejects refresh", async () => {
+    const originalId = new AuthSessionId("original-session");
     const originalSession: AuthSession = {
-      id: "original-session",
+      id: originalId,
       createdAt: 1000,
       verifiedAt: 1000,
       assurance: {
@@ -143,26 +157,27 @@ describe("RefreshSession", () => {
       transport: { type: "bearer" },
     };
 
-    repository.get.mockResolvedValue(originalSession);
+    repository.getById.mockResolvedValue({ success: true, value: originalSession });
     guard.assert.mockImplementation(() => {
-      throw new Error("Refresh not allowed");
+      throw new AuthError("refresh_not_allowed");
     });
 
     const input: RefreshSessionInput = {
-      id: "new-session",
-      originalId: "original-session",
+      id: new AuthSessionId("new-session"),
+      originalId,
     };
 
     const result = await useCase.execute(input, 2000);
 
     expect(result.ok).toBe(false);
-    expect(repository.update).not.toHaveBeenCalled();
+    expect(repository.save).not.toHaveBeenCalled();
     expect(emitter.onSessionRefreshed).not.toHaveBeenCalled();
   });
 
-  it("should throw if repository update fails", async () => {
+  it("should return failure if repository save fails", async () => {
+    const originalId = new AuthSessionId("original-session");
     const originalSession: AuthSession = {
-      id: "original-session",
+      id: originalId,
       createdAt: 1000,
       verifiedAt: 1000,
       assurance: {
@@ -174,12 +189,15 @@ describe("RefreshSession", () => {
       transport: { type: "bearer" },
     };
 
-    repository.get.mockResolvedValue(originalSession);
-    repository.update.mockRejectedValue(new Error("Database error"));
+    repository.getById.mockResolvedValue({ success: true, value: originalSession });
+    repository.save.mockResolvedValue({
+      success: false,
+      error: new Error("Database error"),
+    });
 
     const input: RefreshSessionInput = {
-      id: "new-session",
-      originalId: "original-session",
+      id: new AuthSessionId("new-session"),
+      originalId,
     };
 
     const result = await useCase.execute(input, 2000);

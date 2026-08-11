@@ -2,7 +2,7 @@ import type { AuthSessionAssurancePolicy } from "../../../contracts/session-assu
 import type { AuthSession } from "../../../contracts/session.js";
 
 import { describe, expect, it, vi } from "vitest";
-import { AuthError } from "../../../error/auth.js";
+import { AuthError } from "../../../errors/auth.js";
 import { CompositeAssurancePolicy } from "../composite.js";
 
 describe("CompositeAssurancePolicy", () => {

@@ -1,13 +1,14 @@
+import type { AuthSessionId } from "../value-objects/auth-session-id.js";
 import type { AuthSessionAssurance } from "./session-assurance.js";
 import type { AuthSessionTransport } from "./session-transport.js";
-
-/** Identifier for an authenticated session. */
-export type AuthSessionId = string;
 
 /**
  * Authenticated session domain model.
  *
  * @remarks
+ * `AuthSession` is the Comity-owned representation of an authenticated session:
+ * Comity generates the identifier, persists the session, and revokes it.
+ *
  * All nested contracts (including Assurance) represent stored state,
  * never derived or contextual evaluations.
  */

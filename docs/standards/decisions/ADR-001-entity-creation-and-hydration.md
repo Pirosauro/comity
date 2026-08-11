@@ -128,7 +128,7 @@ The exact fields and their optionality reflect the bounded context's creation an
 `Update` represents a **partial mutation contract**:
 
 ```ts
-type EntityUpdate = Partial<EntityData>;
+type EntityUpdate = Partial<Omit<EntityState, "updatedAt">>;
 ```
 
 `Partial` remains appropriate for update contracts because partial modification is explicitly intended there.

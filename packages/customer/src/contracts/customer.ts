@@ -82,4 +82,4 @@ export type CustomerCreate = CustomerData & {
 /**
  * Partial update data for a customer.
  */
-export type CustomerUpdate = Partial<CustomerState>;
+export type CustomerUpdate = Partial<Omit<CustomerState, "createdAt" | "updatedAt">>;

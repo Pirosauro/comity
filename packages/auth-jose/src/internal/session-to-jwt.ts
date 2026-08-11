@@ -23,13 +23,13 @@ export function authSessionToJwtPayload(session: AuthSession): JoseJwtPayload {
     : undefined;
   const stepUp = session.stepUp
     ? {
-        parent: session.stepUp.parent,
+        parent: session.stepUp.parent.toString(),
         at: Math.floor(session.stepUp.at / 1000),
       }
     : undefined;
 
   return {
-    sid: session.id,
+    sid: session.id.toString(),
     iat: Math.floor(session.createdAt / 1000),
     ass: session.assurance,
     ...(session.expiresAt ? { exp: Math.floor(session.expiresAt / 1000) } : {}),

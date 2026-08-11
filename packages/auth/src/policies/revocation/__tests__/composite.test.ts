@@ -2,7 +2,7 @@ import type { AuthSessionRevocationPolicy } from "../../../contracts/session-rev
 import type { AuthSession } from "../../../contracts/session.js";
 
 import { describe, expect, it, vi } from "vitest";
-import { AuthError } from "../../../error/auth.js";
+import { AuthError } from "../../../errors/auth.js";
 import { CompositeRevocationPolicy } from "../composite.js";
 
 describe("CompositeRevocationPolicy", () => {

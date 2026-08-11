@@ -1,4 +1,5 @@
 import type { AuthSession } from "@comity/auth";
+import { AuthSessionId } from "@comity/auth";
 import type { JoseJwtPayload } from "../types.js";
 
 /**
@@ -26,13 +27,13 @@ export function jwtPayloadToAuthSession(payload: JoseJwtPayload): AuthSession {
     : undefined;
   const stepUp = payload.stepUp
     ? {
-        parent: payload.stepUp.parent,
+        parent: new AuthSessionId(payload.stepUp.parent),
         at: payload.stepUp.at * 1000,
       }
     : undefined;
 
   return {
-    id: payload.sid,
+    id: new AuthSessionId(payload.sid),
     transport: { type: "jwt" },
     createdAt: payload.iat * 1000,
     assurance: payload.ass,

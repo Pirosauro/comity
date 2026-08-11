@@ -1,0 +1,44 @@
+/**
+ * AuthSessionId is a value object that represents the unique identifier of an
+ * authenticated session.
+ *
+ * @remarks
+ * Comity owns the lifecycle of an authenticated session: it generates the id,
+ * persists the session, and revokes it. The identifier is therefore a
+ * Comity-owned Value Object, consistent with `CustomerId`, `AddressId`,
+ * and `UserId`.
+ *
+ * `IdentityId`, in contrast, remains a primitive string because the principal
+ * identity it references is owned by `@comity/identity.User` and only
+ * projected into the auth context.
+ */
+export class AuthSessionId {
+  #value: string;
+
+  /**
+   * @param value - The value of the auth session ID.
+   */
+  constructor(value: string) {
+    this.#value = value;
+  }
+
+  /**
+   * Checks if this AuthSessionId is equal to another AuthSessionId.
+   *
+   * @param other - The other AuthSessionId to compare with.
+   *
+   * @returns True if the AuthSessionIds are equal, false otherwise.
+   */
+  equals(other: AuthSessionId): boolean {
+    return this.#value === other.toString();
+  }
+
+  /**
+   * Returns a string representation of the auth session ID.
+   *
+   * @returns The string representation of the auth session ID.
+   */
+  toString(): string {
+    return this.#value;
+  }
+}

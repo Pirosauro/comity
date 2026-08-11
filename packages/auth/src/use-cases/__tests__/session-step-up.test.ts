@@ -1,13 +1,17 @@
 import type { AuthSession } from "../../contracts/session.js";
+import type { AuthSessionRepository } from "../../contracts/session-repository.js";
 import type { StepUpSessionInput } from "../session-step-up.js";
 
+import { AuthError } from "../../errors/auth.js";
+import { AuthSessionId } from "../../value-objects/auth-session-id.js";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { StepUpSession } from "../session-step-up.js";
 
 describe("StepUpSession", () => {
   let repository: {
-    get: ReturnType<typeof vi.fn>;
-    create: ReturnType<typeof vi.fn>;
+    getById: ReturnType<typeof vi.fn>;
+    save: ReturnType<typeof vi.fn>;
+    revoke: ReturnType<typeof vi.fn>;
   };
   let evaluator: {
     evaluate: ReturnType<typeof vi.fn>;
@@ -25,8 +29,9 @@ describe("StepUpSession", () => {
 
   beforeEach(() => {
     repository = {
-      get: vi.fn(),
-      create: vi.fn(),
+      getById: vi.fn(),
+      save: vi.fn().mockResolvedValue({ success: true, value: undefined }),
+      revoke: vi.fn(),
     };
     evaluator = {
       evaluate: vi.fn(),
@@ -40,13 +45,19 @@ describe("StepUpSession", () => {
       onSessionRefreshed: vi.fn(),
       onStepUpCompleted: vi.fn(),
     };
-    // @ts-expect-error
-    useCase = new StepUpSession(repository, evaluator, guard, emitter);
+    useCase = new StepUpSession(
+      repository as unknown as AuthSessionRepository,
+      evaluator,
+      guard,
+      emitter
+    );
   });
 
   it("should step up a session", async () => {
+    const parentId = new AuthSessionId("parent-session");
+    const newId = new AuthSessionId("stepped-up-session");
     const parentSession: AuthSession = {
-      id: "parent-session",
+      id: parentId,
       createdAt: 1000,
       verifiedAt: 1000,
       assurance: {
@@ -58,7 +69,7 @@ describe("StepUpSession", () => {
       transport: { type: "bearer" },
     };
 
-    repository.get.mockResolvedValue(parentSession);
+    repository.getById.mockResolvedValue({ success: true, value: parentSession });
 
     const newAssurance = {
       methods: ["totp"],
@@ -70,8 +81,8 @@ describe("StepUpSession", () => {
     evaluator.evaluate.mockReturnValue(newAssurance);
 
     const input: StepUpSessionInput = {
-      parentId: "parent-session",
-      id: "stepped-up-session",
+      parentId,
+      id: newId,
       methods: ["totp"],
       version: 1,
       transport: { type: "bearer" },
@@ -79,7 +90,7 @@ describe("StepUpSession", () => {
 
     const result = await useCase.execute(input, 2000);
 
-    expect(repository.get).toHaveBeenCalledWith("parent-session");
+    expect(repository.getById).toHaveBeenCalledWith(parentId);
     expect(guard.assert).toHaveBeenCalledTimes(2); // parent and new session
     expect(guard.assert).toHaveBeenNthCalledWith(1, parentSession, 2000);
     expect(evaluator.evaluate).toHaveBeenCalledWith(
@@ -89,31 +100,31 @@ describe("StepUpSession", () => {
       },
       2000
     );
-    expect(repository.create).toHaveBeenCalledWith(
+    expect(repository.save).toHaveBeenCalledWith(
       expect.objectContaining({
-        id: "stepped-up-session",
+        id: newId,
         assurance: newAssurance,
         stepUp: {
-          parent: "parent-session",
+          parent: parentId,
           at: 2000,
         },
       })
     );
     expect(emitter.onStepUpCompleted).toHaveBeenCalledWith({
-      sessionId: "stepped-up-session",
-      parentId: "parent-session",
+      sessionId: newId,
+      parentId,
       assuranceScore: 2,
       at: 2000,
     });
     expect(result.value.stepUp).toEqual({
-      parent: "parent-session",
+      parent: parentId,
       at: 2000,
     });
   });
 
   it("should step up with proof and context", async () => {
     const parentSession: AuthSession = {
-      id: "parent-session",
+      id: new AuthSessionId("parent-session"),
       createdAt: 1000,
       verifiedAt: 1000,
       assurance: {
@@ -125,7 +136,7 @@ describe("StepUpSession", () => {
       transport: { type: "bearer" },
     };
 
-    repository.get.mockResolvedValue(parentSession);
+    repository.getById.mockResolvedValue({ success: true, value: parentSession });
 
     evaluator.evaluate.mockReturnValue({
       methods: ["totp"],
@@ -135,8 +146,8 @@ describe("StepUpSession", () => {
     });
 
     const input: StepUpSessionInput = {
-      parentId: "parent-session",
-      id: "stepped-up-session",
+      parentId: new AuthSessionId("parent-session"),
+      id: new AuthSessionId("stepped-up-session"),
       methods: ["totp"],
       proof: "123456",
       context: { deviceId: "mobile" },
@@ -159,7 +170,7 @@ describe("StepUpSession", () => {
 
   it("should step up with expiration", async () => {
     const parentSession: AuthSession = {
-      id: "parent-session",
+      id: new AuthSessionId("parent-session"),
       createdAt: 1000,
       verifiedAt: 1000,
       assurance: {
@@ -171,7 +182,7 @@ describe("StepUpSession", () => {
       transport: { type: "bearer" },
     };
 
-    repository.get.mockResolvedValue(parentSession);
+    repository.getById.mockResolvedValue({ success: true, value: parentSession });
 
     evaluator.evaluate.mockReturnValue({
       methods: ["totp"],
@@ -181,8 +192,8 @@ describe("StepUpSession", () => {
     });
 
     const input: StepUpSessionInput = {
-      parentId: "parent-session",
-      id: "stepped-up-session",
+      parentId: new AuthSessionId("parent-session"),
+      id: new AuthSessionId("stepped-up-session"),
       methods: ["totp"],
       version: 1,
       transport: { type: "bearer" },
@@ -196,7 +207,7 @@ describe("StepUpSession", () => {
 
   it("should step up with scopes", async () => {
     const parentSession: AuthSession = {
-      id: "parent-session",
+      id: new AuthSessionId("parent-session"),
       createdAt: 1000,
       verifiedAt: 1000,
       assurance: {
@@ -208,7 +219,7 @@ describe("StepUpSession", () => {
       transport: { type: "bearer" },
     };
 
-    repository.get.mockResolvedValue(parentSession);
+    repository.getById.mockResolvedValue({ success: true, value: parentSession });
 
     evaluator.evaluate.mockReturnValue({
       methods: ["totp"],
@@ -218,8 +229,8 @@ describe("StepUpSession", () => {
     });
 
     const input: StepUpSessionInput = {
-      parentId: "parent-session",
-      id: "stepped-up-session",
+      parentId: new AuthSessionId("parent-session"),
+      id: new AuthSessionId("stepped-up-session"),
       methods: ["totp"],
       version: 1,
       transport: { type: "bearer" },
@@ -231,12 +242,12 @@ describe("StepUpSession", () => {
     expect(result.value.scopes).toEqual(["admin", "write"]);
   });
 
-  it("should throw if parent session not found", async () => {
-    repository.get.mockRejectedValue(new Error("Session not found"));
+  it("should return failure if parent session not found", async () => {
+    repository.getById.mockResolvedValue({ success: true, value: null });
 
     const input: StepUpSessionInput = {
-      parentId: "missing-session",
-      id: "stepped-up-session",
+      parentId: new AuthSessionId("missing-session"),
+      id: new AuthSessionId("stepped-up-session"),
       methods: ["totp"],
       version: 1,
       transport: { type: "bearer" },
@@ -245,12 +256,13 @@ describe("StepUpSession", () => {
     const result = await useCase.execute(input, 2000);
 
     expect(result.ok).toBe(false);
+    expect(result.error.meta.reason).toBe("session_not_found");
     expect(evaluator.evaluate).not.toHaveBeenCalled();
   });
 
-  it("should throw if parent session is invalid", async () => {
+  it("should return failure if parent session is invalid", async () => {
     const parentSession: AuthSession = {
-      id: "parent-session",
+      id: new AuthSessionId("parent-session"),
       createdAt: 1000,
       verifiedAt: 1000,
       assurance: {
@@ -262,14 +274,14 @@ describe("StepUpSession", () => {
       transport: { type: "bearer" },
     };
 
-    repository.get.mockResolvedValue(parentSession);
+    repository.getById.mockResolvedValue({ success: true, value: parentSession });
     guard.assert.mockImplementationOnce(() => {
-      throw new Error("Parent session expired");
+      throw new AuthError("session_expired");
     });
 
     const input: StepUpSessionInput = {
-      parentId: "parent-session",
-      id: "stepped-up-session",
+      parentId: new AuthSessionId("parent-session"),
+      id: new AuthSessionId("stepped-up-session"),
       methods: ["totp"],
       version: 1,
       transport: { type: "bearer" },
@@ -281,9 +293,9 @@ describe("StepUpSession", () => {
     expect(evaluator.evaluate).not.toHaveBeenCalled();
   });
 
-  it("should throw if new assurance score is not higher", async () => {
+  it("should return failure if new assurance score is not higher", async () => {
     const parentSession: AuthSession = {
-      id: "parent-session",
+      id: new AuthSessionId("parent-session"),
       createdAt: 1000,
       verifiedAt: 1000,
       assurance: {
@@ -295,7 +307,7 @@ describe("StepUpSession", () => {
       transport: { type: "bearer" },
     };
 
-    repository.get.mockResolvedValue(parentSession);
+    repository.getById.mockResolvedValue({ success: true, value: parentSession });
 
     evaluator.evaluate.mockReturnValue({
       methods: ["totp"],
@@ -305,8 +317,8 @@ describe("StepUpSession", () => {
     });
 
     const input: StepUpSessionInput = {
-      parentId: "parent-session",
-      id: "stepped-up-session",
+      parentId: new AuthSessionId("parent-session"),
+      id: new AuthSessionId("stepped-up-session"),
       methods: ["totp"],
       version: 1,
       transport: { type: "bearer" },
@@ -315,12 +327,12 @@ describe("StepUpSession", () => {
     const result = await useCase.execute(input, 2000);
 
     expect(result.ok).toBe(false);
-    expect(repository.create).not.toHaveBeenCalled();
+    expect(repository.save).not.toHaveBeenCalled();
   });
 
-  it("should throw if new assurance score equals parent", async () => {
+  it("should return failure if new assurance score equals parent", async () => {
     const parentSession: AuthSession = {
-      id: "parent-session",
+      id: new AuthSessionId("parent-session"),
       createdAt: 1000,
       verifiedAt: 1000,
       assurance: {
@@ -332,7 +344,7 @@ describe("StepUpSession", () => {
       transport: { type: "bearer" },
     };
 
-    repository.get.mockResolvedValue(parentSession);
+    repository.getById.mockResolvedValue({ success: true, value: parentSession });
 
     evaluator.evaluate.mockReturnValue({
       methods: ["totp"],
@@ -342,8 +354,8 @@ describe("StepUpSession", () => {
     });
 
     const input: StepUpSessionInput = {
-      parentId: "parent-session",
-      id: "stepped-up-session",
+      parentId: new AuthSessionId("parent-session"),
+      id: new AuthSessionId("stepped-up-session"),
       methods: ["totp"],
       version: 1,
       transport: { type: "bearer" },
@@ -354,9 +366,9 @@ describe("StepUpSession", () => {
     expect(result.ok).toBe(false);
   });
 
-  it("should throw if new session fails guard validation", async () => {
+  it("should return failure if new session fails guard validation", async () => {
     const parentSession: AuthSession = {
-      id: "parent-session",
+      id: new AuthSessionId("parent-session"),
       createdAt: 1000,
       verifiedAt: 1000,
       assurance: {
@@ -368,7 +380,7 @@ describe("StepUpSession", () => {
       transport: { type: "bearer" },
     };
 
-    repository.get.mockResolvedValue(parentSession);
+    repository.getById.mockResolvedValue({ success: true, value: parentSession });
 
     evaluator.evaluate.mockReturnValue({
       methods: ["totp"],
@@ -380,12 +392,12 @@ describe("StepUpSession", () => {
     guard.assert
       .mockImplementationOnce(() => {})
       .mockImplementationOnce(() => {
-        throw new Error("New session invalid");
+        throw new AuthError("assurance_invalid");
       });
 
     const input: StepUpSessionInput = {
-      parentId: "parent-session",
-      id: "stepped-up-session",
+      parentId: new AuthSessionId("parent-session"),
+      id: new AuthSessionId("stepped-up-session"),
       methods: ["totp"],
       version: 1,
       transport: { type: "bearer" },
@@ -394,12 +406,12 @@ describe("StepUpSession", () => {
     const result = await useCase.execute(input, 2000);
 
     expect(result.ok).toBe(false);
-    expect(repository.create).not.toHaveBeenCalled();
+    expect(repository.save).not.toHaveBeenCalled();
   });
 
-  it("should throw if repository create fails", async () => {
+  it("should return failure if repository save fails", async () => {
     const parentSession: AuthSession = {
-      id: "parent-session",
+      id: new AuthSessionId("parent-session"),
       createdAt: 1000,
       verifiedAt: 1000,
       assurance: {
@@ -411,7 +423,7 @@ describe("StepUpSession", () => {
       transport: { type: "bearer" },
     };
 
-    repository.get.mockResolvedValue(parentSession);
+    repository.getById.mockResolvedValue({ success: true, value: parentSession });
 
     evaluator.evaluate.mockReturnValue({
       methods: ["totp"],
@@ -420,11 +432,14 @@ describe("StepUpSession", () => {
       version: 1,
     });
 
-    repository.create.mockRejectedValue(new Error("Database error"));
+    repository.save.mockResolvedValue({
+      success: false,
+      error: new Error("Database error"),
+    });
 
     const input: StepUpSessionInput = {
-      parentId: "parent-session",
-      id: "stepped-up-session",
+      parentId: new AuthSessionId("parent-session"),
+      id: new AuthSessionId("stepped-up-session"),
       methods: ["totp"],
       version: 1,
       transport: { type: "bearer" },
