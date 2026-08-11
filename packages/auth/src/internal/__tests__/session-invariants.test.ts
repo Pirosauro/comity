@@ -27,8 +27,9 @@ describe("checkSessionInvariants", () => {
     });
 
     it("should fail with empty id", () => {
+      const emptyId = "" as unknown as AuthSessionId;
       const result = checkSessionInvariants(
-        { ...validSession, id: new AuthSessionId("") },
+        { ...validSession, id: emptyId },
         2000
       );
 
@@ -595,10 +596,11 @@ describe("checkSessionInvariants", () => {
     });
 
     it("should fail with empty parent", () => {
+      const emptyParent = "" as unknown as AuthSessionId;
       const result = checkSessionInvariants(
         {
           ...validSession,
-          stepUp: { parent: new AuthSessionId(""), at: 1000 },
+          stepUp: { parent: emptyParent, at: 1000 },
         },
         2000
       );

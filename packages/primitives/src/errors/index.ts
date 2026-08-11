@@ -1,5 +1,10 @@
 export { BaseError } from "./base.js";
 export {
+  InvalidIdentifierError,
+  InvalidIdentifierErrorMeta,
+  InvalidIdentifierErrorReason,
+} from "./invalid-identifier.js";
+export {
   REPOSITORY_ERROR_HTTP_STATUS,
   REPOSITORY_ERROR_MESSAGES,
   RepositoryError,

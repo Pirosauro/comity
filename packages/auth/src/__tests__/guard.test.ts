@@ -69,12 +69,13 @@ describe("AuthGuard", () => {
     });
 
     it("should throw and emit for invalid session id", () => {
-      const invalidSession = { ...validSession, id: new AuthSessionId("") };
+      const emptyId = "" as unknown as AuthSessionId;
+      const invalidSession = { ...validSession, id: emptyId };
 
       expect(() => guard.assert(invalidSession, 2000)).toThrow(AuthError);
       expect(events.onSessionInvalid).toHaveBeenCalledWith(
         expect.objectContaining({
-          sessionId: new AuthSessionId(""),
+          sessionId: emptyId,
           at: 2000,
           reason: "session_invalid",
           violation: "session_id_missing",

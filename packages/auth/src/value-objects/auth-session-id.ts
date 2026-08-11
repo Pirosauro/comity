@@ -1,3 +1,5 @@
+import { InvalidIdentifierError } from "@comity/primitives/errors";
+
 /**
  * AuthSessionId is a value object that represents the unique identifier of an
  * authenticated session.
@@ -17,9 +19,26 @@ export class AuthSessionId {
 
   /**
    * @param value - The value of the auth session ID.
+   *
+   * @throws {InvalidIdentifierError} when the value is empty or whitespace-only.
    */
   constructor(value: string) {
+    if (value.trim().length === 0) {
+      throw new InvalidIdentifierError("empty", {
+        details: { kind: "AuthSessionId" },
+      });
+    }
+
     this.#value = value;
+  }
+
+  /**
+   * Returns the underlying string value of the auth session ID.
+   *
+   * @returns The underlying identifier.
+   */
+  get value(): string {
+    return this.#value;
   }
 
   /**

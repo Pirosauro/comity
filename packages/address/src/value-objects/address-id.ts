@@ -1,3 +1,5 @@
+import { InvalidIdentifierError } from "@comity/primitives/errors";
+
 /**
  * AddressId is a value object that represents the unique identifier of an address.
  */
@@ -6,9 +8,26 @@ export class AddressId {
 
   /**
    * @param value - The value of the address ID.
+   *
+   * @throws {InvalidIdentifierError} when the value is empty or whitespace-only.
    */
   constructor(value: string) {
+    if (value.trim().length === 0) {
+      throw new InvalidIdentifierError("empty", {
+        details: { kind: "AddressId" },
+      });
+    }
+
     this.#value = value;
+  }
+
+  /**
+   * Returns the underlying string value of the address ID.
+   *
+   * @returns The underlying identifier.
+   */
+  get value(): string {
+    return this.#value;
   }
 
   /**
