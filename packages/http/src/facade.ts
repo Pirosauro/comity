@@ -1,7 +1,7 @@
 import type { HttpContext } from "./contracts/context.js";
 import type { HttpHandler } from "./contracts/handler.js";
 import type { HttpResponse } from "./contracts/response.js";
-import type { HttpObserver } from "./hooks/observer.js";
+import type { HttpObserver } from "./observers/observer.js";
 
 import { toSafePayload } from "@comity/primitives/errors";
 

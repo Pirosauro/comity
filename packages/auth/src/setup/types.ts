@@ -5,9 +5,9 @@ import type { AuthSessionAssurancePolicy } from "../contracts/session-assurance-
 import type { AuthSessionRefreshPolicy } from "../contracts/session-refresh-policy.js";
 import type { AuthSessionRepository } from "../contracts/session-repository.js";
 import type { AuthSessionRevocationPolicy } from "../contracts/session-revocation-policy.js";
-import type { AuthEvaluationObserver } from "../hooks/evaluation.js";
-import type { AuthRefreshEvaluationObserver } from "../hooks/refresh.js";
-import type { AuthSessionObserver } from "../hooks/session.js";
+import type { AuthEvaluationObserver } from "../observers/evaluation.js";
+import type { AuthRefreshEvaluationObserver } from "../observers/refresh.js";
+import type { AuthSessionObserver } from "../observers/session.js";
 import type { AUTH_TOKEN } from "./constants.js";
 
 /** Hooks exposed by the module */

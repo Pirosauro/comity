@@ -59,14 +59,14 @@
         "default": "./dist/cjs/errors/index.js"
       }
     },
-    "./hooks": {
+    "./observers": {
       "import": {
-        "types": "./dist/types/hooks/index.d.ts",
-        "default": "./dist/esm/hooks/index.js"
+        "types": "./dist/types/observers/index.d.ts",
+        "default": "./dist/esm/observers/index.js"
       },
       "require": {
-        "types": "./dist/types/hooks/index.d.ts",
-        "default": "./dist/cjs/hooks/index.js"
+        "types": "./dist/types/observers/index.d.ts",
+        "default": "./dist/cjs/observers/index.js"
       }
     },
     "./policies": {
@@ -116,8 +116,8 @@
       "errors": [
         "./dist/types/errors/index.d.ts"
       ],
-      "hooks": [
-        "./dist/types/hooks/index.d.ts"
+      "observers": [
+        "./dist/types/observers/index.d.ts"
       ],
       "policies": [
         "./dist/types/policies/index.d.ts"

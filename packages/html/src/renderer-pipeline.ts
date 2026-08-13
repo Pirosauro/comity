@@ -1,7 +1,7 @@
 import type { HtmlLayoutCollector } from "./contracts/layout.js";
 import type { HtmlRenderResult } from "./contracts/render-result.js";
 import type { HtmlRenderer, HtmlRendererOptions } from "./contracts/renderer.js";
-import type { HtmlRendererObserver } from "./hooks/html-renderer.js";
+import type { HtmlRendererObserver } from "./observers/html-renderer.js";
 
 import { toSafePayload } from "@comity/primitives/errors";
 import { HtmlError } from "./errors/html.js";

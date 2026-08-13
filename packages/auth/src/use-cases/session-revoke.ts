@@ -1,6 +1,6 @@
 import type { AuthSessionRepository } from "../contracts/session-repository.js";
 import type { AuthSessionId } from "../value-objects/auth-session-id.js";
-import type { AuthSessionObserver } from "../hooks/session.js";
+import type { AuthSessionObserver } from "../observers/session.js";
 
 /**
  * Input used to revoke a session.

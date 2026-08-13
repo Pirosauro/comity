@@ -2,7 +2,7 @@ import type { ModuleSetupContext } from "@comity/composition";
 import type { HttpHandler } from "../contracts/handler.js";
 import type { HttpMiddleware } from "../contracts/middleware.js";
 import type { HttpFacade } from "../facade.js";
-import type { HttpObserver } from "../hooks/observer.js";
+import type { HttpObserver } from "../observers/observer.js";
 import type { HTTP_TOKEN } from "./constants.js";
 
 /**

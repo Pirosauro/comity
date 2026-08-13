@@ -2,7 +2,7 @@ import type { Result } from "@comity/primitives/result";
 import type { AuthSessionRepository } from "../contracts/session-repository.js";
 import type { AuthSession } from "../contracts/session.js";
 import type { AuthGuard } from "../guard.js";
-import type { AuthSessionObserver } from "../hooks/session.js";
+import type { AuthSessionObserver } from "../observers/session.js";
 import type { AuthSessionId } from "../value-objects/auth-session-id.js";
 
 import { AuthError } from "../errors/auth.js";

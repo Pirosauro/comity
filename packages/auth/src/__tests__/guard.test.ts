@@ -2,8 +2,8 @@ import type { AuthSessionAssurancePolicy } from "../contracts/session-assurance-
 import type { AuthSessionRefreshPolicy } from "../contracts/session-refresh-policy.js";
 import type { AuthSessionRevocationPolicy } from "../contracts/session-revocation-policy.js";
 import type { AuthSession } from "../contracts/session.js";
-import type { AuthEvaluationObserver } from "../hooks/evaluation.js";
-import type { AuthRefreshEvaluationObserver } from "../hooks/refresh.js";
+import type { AuthEvaluationObserver } from "../observers/evaluation.js";
+import type { AuthRefreshEvaluationObserver } from "../observers/refresh.js";
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AuthError } from "../errors/auth.js";

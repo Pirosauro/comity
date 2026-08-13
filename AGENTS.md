@@ -25,6 +25,47 @@ Focus only on the requested scope.
 
 If architectural issues are discovered, report them as follow-up items rather than fixing them automatically.
 
+### Refactoring Definition
+
+**Refactoring** means any of:
+
+- Renaming identifiers that appear in more than 3 locations
+- Extracting functions shared by more than 2 files
+- Moving code between modules or layers
+- Restructuring inheritance or composition hierarchies
+
+Refactoring requires explicit justification in the PR description, even when classified as a local implementation change.
+
+### Unrelated Issues Definition
+
+**Unrelated issues** are problems discovered in:
+
+- Different files not required for the current change
+- Different packages
+- Different responsibility boundaries, even within the same file
+
+When discovered:
+
+1. Describe the issue in the PR description as a follow-up
+2. Do not fix it in the current PR
+3. Do not block the PR on the discovery
+
+### New Abstraction Criteria
+
+**New abstractions** are not allowed for:
+
+- Convenience or syntactic sugar
+- Deduplication alone (extract a function instead)
+- Future-proofing speculative scenarios
+
+**New abstractions** are allowed when they:
+
+- Enable dependency inversion (replace direct dependency with contract)
+- Enable testability (isolating a component for unit testing)
+- Replace conditional dispatch with polymorphism (strategy pattern)
+
+When proposing a new abstraction, state which criterion applies in the PR description.
+
 ---
 
 ## Agent Operating Model
@@ -45,6 +86,8 @@ The agent MUST:
 7. Search existing patterns before introducing new ones.
 
 Never introduce a new pattern without checking existing implementations.
+
+**Hotfix exception:** For production emergencies, minimum context is sufficient (read README and identify the owning package). Full checklist is completed post-incident and documented in the PR description.
 
 ---
 
@@ -76,6 +119,10 @@ Requires:
 
 - preserve public API
 - preserve dependencies
+
+A single PR touching multiple packages for the same interface alignment, shared contract, or cross-cutting concern counts as **one** change. Apply the highest classification required by any file modified.
+
+Example: updating a shared interface signature across 5 packages = one Architectural change, not five Local changes.
 
 ---
 
@@ -118,15 +165,25 @@ Agents should avoid:
 
 Every task must respect its declared scope.
 
+> **Rule Priority applies.** If a rule conflict arises, Correctness and Architecture rules override Scope Discipline. Document the conflict and resolution in the PR description.
+
 | Scope         | Allowed                           | Forbidden                 |
 | ------------- | --------------------------------- | ------------------------- |
 | Documentation | Modify docs, README, conventions  | Modify source code        |
 | Refactoring   | Restructure code, extract helpers | Redesign architecture     |
 | Cleanup       | Remove dead code, fix style       | Change behavior           |
 | Analysis      | Observe, measure, report          | Modify files              |
-| Bug fix       | Fix targeted issue, add tests     | Refactor surrounding code |
+| Bug fix       | Fix targeted issue, update tests required for correctness | Refactor surrounding code |
 
 If a change exceeds the requested scope, stop and report it.
+
+Test updates required for fix correctness are part of the bug fix scope. This includes:
+
+- Updating assertions that no longer match corrected behavior
+- Adding regression tests for the reported scenario
+- Removing tests that validate the incorrect behavior
+
+Test refactoring beyond these three cases is out of scope.
 
 ---
 
@@ -209,6 +266,17 @@ When uncertain about architecture or design:
 Do not invent architecture. Do not introduce new concepts without explicit request.
 
 When multiple interpretations exist, prefer the one that stays within the declared scope.
+
+## Rule Priority
+
+When rules conflict, apply in this order:
+
+1. **Correctness** — bugs, security, data integrity
+2. **Architecture** — layering, contracts, dependency direction
+3. **Scope Discipline** — local vs architectural change
+4. **Style** — consistency, patterns, conventions
+
+Higher priority rules override lower priority rules.
 
 ---
 
@@ -300,6 +368,19 @@ Adapter:       MagentoGraphqlCategoryRepository  (implementation)
 
 Repositories return domain models. They never return: view models, page models, React components, HTML, framework-specific objects. Transformations belong to higher layers.
 
+## Public API Evolution
+
+Public API preservation is the default.
+
+When the public API itself is incorrect:
+
+1. Document the defect
+2. Propose the change with migration path
+3. Apply the highest rule priority (Correctness over Architecture)
+4. Never silently break existing consumers
+
+Breaking changes require explicit justification. The PR description must explain why the contract cannot be preserved.
+
 ---
 
 ## Composition Model
@@ -318,7 +399,14 @@ Every configurable module follows the same chain:
 defaults → user options → configuring hook
 ```
 
-Never bypass this mechanism. Configuration should never be modified after initialization.
+**Configuration** applies to initialization-time setup.
+
+Runtime reload, config rotation, and dynamic configuration sources are supported patterns and do not violate this rule.
+
+When in doubt, ask: does this configuration value exist before the module first serves a request?
+
+- Yes → governed by the configuration chain
+- No → runtime configuration, outside this rule's scope
 
 ---
 
@@ -328,11 +416,19 @@ Never bypass this mechanism. Configuration should never be modified after initia
 
 **Avoid:** static state, hidden globals, service locators outside composition, unnecessary inheritance, framework-specific types in Core Modules.
 
+**Comments:** Forbidden by default. Exceptions:
+
+- Public API JSDoc documentation (required)
+- Non-obvious behavior in local implementations (allowed when code cannot be self-explanatory)
+- Security-sensitive logic (required)
+
 ---
 
 ## Consistency Rule
 
 When two valid solutions exist, choose the one that matches the existing architecture. Consistency takes precedence over optimization. A framework is maintained through coherence, not elegance.
+
+**Exception:** If the existing pattern is documented as an architectural defect, do not replicate it. Apply Rule Priority: Architecture defects are resolved, not preserved.
 
 ---
 

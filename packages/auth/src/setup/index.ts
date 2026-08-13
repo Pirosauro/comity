@@ -1,8 +1,8 @@
 import type { ModuleMeta } from "@comity/composition";
 import type { AuthFacade } from "../contracts/auth-facade.js";
-import type { AuthEvaluationObserver } from "../hooks/evaluation.js";
-import type { AuthRefreshEvaluationObserver } from "../hooks/refresh.js";
-import type { AuthSessionObserver } from "../hooks/session.js";
+import type { AuthEvaluationObserver } from "../observers/evaluation.js";
+import type { AuthRefreshEvaluationObserver } from "../observers/refresh.js";
+import type { AuthSessionObserver } from "../observers/session.js";
 import type { AuthModuleContext, AuthModuleOptions } from "./types.js";
 
 import { CompositionError } from "@comity/composition/errors";

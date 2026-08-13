@@ -1,6 +1,6 @@
 import type { AuthModuleContext } from "@comity/auth";
 import type { ModuleMeta } from "@comity/composition";
-import type { AuthJoseEventObserver } from "../hooks/observer.js";
+import type { AuthJoseEventObserver } from "../observers/observer.js";
 import type { JoseAuthTokenServiceOptions } from "../types.js";
 import type { JoseAuthModuleContext, JoseAuthModuleOptions } from "./types.js";
 

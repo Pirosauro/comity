@@ -1,5 +1,5 @@
 import type { ModuleMeta } from "@comity/composition";
-import type { HttpObserver } from "../hooks/observer.js";
+import type { HttpObserver } from "../observers/observer.js";
 import type { HttpModuleContext, HttpModuleOptions } from "./types.js";
 
 import { CompositionError } from "@comity/composition/errors";

@@ -1,7 +1,7 @@
 import type { AuthSession, AuthTokenService } from "@comity/auth";
 import type { Result } from "@comity/primitives/result";
 import type { CryptoKey, JWK, JWTPayload, KeyObject } from "jose";
-import type { AuthJoseEventObserver } from "./hooks/observer.js";
+import type { AuthJoseEventObserver } from "./observers/observer.js";
 import type { JoseAuthTokenServiceOptions, JoseJwtPayload } from "./types.js";
 
 import { AuthError } from "@comity/auth/errors";

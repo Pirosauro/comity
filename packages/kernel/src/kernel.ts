@@ -1,6 +1,6 @@
 import type { EventHandler, HookHandler } from "@comity/primitives/lifecycle";
-import type { KernelLifecycleObserver } from "./hooks/lifecycle.js";
-import type { KernelLifecycleState } from "./hooks/types.js";
+import type { KernelLifecycleObserver } from "./observers/lifecycle.js";
+import type { KernelLifecycleState } from "./observers/types.js";
 import type {
     KernelContext,
     KernelEventBus,

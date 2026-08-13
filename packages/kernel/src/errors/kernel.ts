@@ -1,5 +1,5 @@
 import type { ErrorMeta } from "@comity/primitives/errors";
-import type { KernelLifecycleState } from "../hooks/types.js";
+import type { KernelLifecycleState } from "../observers/types.js";
 
 import { BaseError } from "@comity/primitives/errors";
 
