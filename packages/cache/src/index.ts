@@ -8,11 +8,3 @@ export {
 export { CacheStore } from "./contracts/store.js";
 export { DefaultCache } from "./facade.js";
 export { serializeCacheKey } from "./serialize.js";
-export { CACHE_TOKEN } from "./setup/constants.js";
-export {
-  CacheModuleContext,
-  CacheModuleEvents,
-  CacheModuleHooks,
-  CacheModuleOptions,
-  CacheModuleServices,
-} from "./setup/types.js";

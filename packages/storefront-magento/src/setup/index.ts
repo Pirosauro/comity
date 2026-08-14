@@ -1,13 +1,14 @@
-import type { CacheModuleContext } from "@comity/cache";
-import type { CatalogModuleContext } from "@comity/catalog";
-import type { ModuleMeta } from "@comity/composition";
-import { GraphqlClient, type GraphqlClientModuleContext } from "@comity/graphql-client";
-import type { HttpModuleContext } from "@comity/http";
-import type { RouterModuleContext } from "@comity/router";
+import type { CacheModuleContext } from "@comity/cache/setup";
+import type { CatalogModuleContext } from "@comity/catalog/setup";
+import type { ModuleMeta } from "@comity/composition/setup";
+import type { GraphqlClientModuleContext } from "@comity/graphql-client/setup";
+import type { HttpModuleContext } from "@comity/http/setup";
+import type { RouterModuleContext } from "@comity/router/setup";
 import type { StorefrontMagentoModuleContext, StorefrontMagentoModuleOptions } from "./types.js";
 
-import { CACHE_TOKEN } from "@comity/cache";
-import { CATEGORY_REPOSITORY_TOKEN, PRODUCT_REPOSITORY_TOKEN } from "@comity/catalog";
+import { CACHE_TOKEN } from "@comity/cache/setup";
+import { CATEGORY_REPOSITORY_TOKEN, PRODUCT_REPOSITORY_TOKEN } from "@comity/catalog/setup";
+import { GraphqlClient } from "@comity/graphql-client";
 import { success } from "@comity/primitives/result";
 import { MagentoCachedCategoryRepository } from "../repositories/cached-category.js";
 import { MagentoCachedProductRepository } from "../repositories/cached-product.js";

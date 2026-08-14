@@ -1,5 +1,5 @@
 import type { AuthTokenFacade } from "@comity/auth-tokens";
-import type { ModuleSetupContext } from "@comity/composition";
+import type { ModuleSetupContext } from "@comity/composition/setup";
 import type { AuthJoseEventObserver } from "../observers/observer.js";
 import type { JoseAuthTokenServiceOptions } from "../types.js";
 import type { AUTH_JOSE_TOKEN } from "./constants.js";

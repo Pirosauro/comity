@@ -1,4 +1,4 @@
-import type { ModuleSetupContext } from "@comity/composition";
+import type { ModuleSetupContext } from "@comity/composition/setup";
 import type { RoutePolicyHandler } from "../contracts/route.js";
 import type { Router } from "../contracts/router.js";
 import type { UrlRewriter } from "../contracts/url-rewriter.js";

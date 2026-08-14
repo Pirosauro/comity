@@ -1,4 +1,4 @@
-import type { ModuleSetupContext } from "@comity/composition";
+import type { ModuleSetupContext } from "@comity/composition/setup";
 
 /** Hooks exposed by the module */
 export type I18nTypesafeModuleHooks = {};

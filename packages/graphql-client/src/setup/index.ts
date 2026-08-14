@@ -1,10 +1,19 @@
-import type { ModuleMeta } from "@comity/composition";
+import type { ModuleMeta } from "@comity/composition/setup";
 import type { GraphqlClientModuleContext, GraphqlClientModuleOptions } from "./types.js";
 
 import { CompositionError } from "@comity/composition/errors";
 import { failure, success } from "@comity/primitives/result";
 import { DefaultGraphqlRegistry } from "../registry.js";
 import { GRAPHQL_CLIENT_TOKEN } from "./constants.js";
+
+export { GRAPHQL_CLIENT_TOKEN } from "./constants.js";
+export type {
+  GraphqlClientModuleContext,
+  GraphqlClientModuleEvents,
+  GraphqlClientModuleHooks,
+  GraphqlClientModuleOptions,
+  GraphqlClientModuleServices,
+} from "./types.js";
 
 export const module: ModuleMeta<GraphqlClientModuleOptions, GraphqlClientModuleContext> = {
   name: "@comity/graphql-client",

@@ -57,12 +57,25 @@
         "default": "./dist/cjs/errors/index.js"
       }
     },
+    "./setup": {
+      "import": {
+        "types": "./dist/types/setup/index.d.ts",
+        "default": "./dist/esm/setup/index.js"
+      },
+      "require": {
+        "types": "./dist/types/setup/index.d.ts",
+        "default": "./dist/cjs/setup/index.js"
+      }
+    },
     "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
       "errors": [
         "./dist/types/errors/index.d.ts"
+      ],
+      "setup": [
+        "./dist/types/setup/index.d.ts"
       ]
     }
   },

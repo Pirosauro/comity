@@ -1,4 +1,4 @@
-import type { ModuleSetupContext } from "@comity/composition";
+import type { ModuleSetupContext } from "@comity/composition/setup";
 import type { Storage } from "../contracts/storage.js";
 import type { StorageStore } from "../contracts/store.js";
 import type { STORAGE_TOKEN } from "./constants.js";

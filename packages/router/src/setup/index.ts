@@ -1,10 +1,19 @@
-import type { ModuleMeta } from "@comity/composition";
-import type { HttpModuleContext } from "@comity/http";
+import type { ModuleMeta } from "@comity/composition/setup";
+import type { HttpModuleContext } from "@comity/http/setup";
 import type { RouterModuleContext, RouterModuleOptions } from "./types.js";
 
 import { success } from "@comity/primitives/result";
 import { createRouterHttpHandler } from "../create-route-handler.js";
 import { RouterPipeline } from "../pipeline.js";
+
+export { ROUTER_TOKEN } from "./constants.js";
+export type {
+  RouterModuleContext,
+  RouterModuleEvents,
+  RouterModuleHooks,
+  RouterModuleOptions,
+  RouterModuleServices,
+} from "./types.js";
 
 /**
  * Router module.

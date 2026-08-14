@@ -1,4 +1,4 @@
-import type { ModuleMeta } from "@comity/composition";
+import type { ModuleMeta } from "@comity/composition/setup";
 import type { AuthFacade } from "../contracts/auth-facade.js";
 import type { AuthEvaluationObserver } from "../observers/evaluation.js";
 import type { AuthRefreshEvaluationObserver } from "../observers/refresh.js";
@@ -13,6 +13,15 @@ import { RefreshSession } from "../use-cases/session-refresh.js";
 import { RevokeSession } from "../use-cases/session-revoke.js";
 import { StepUpSession } from "../use-cases/session-step-up.js";
 import { AUTH_TOKEN } from "./constants.js";
+
+export { AUTH_TOKEN } from "./constants.js";
+export type {
+  AuthModuleContext,
+  AuthModuleEvents,
+  AuthModuleHooks,
+  AuthModuleOptions,
+  AuthModuleServices,
+} from "./types.js";
 
 export const module: ModuleMeta<AuthModuleOptions, AuthModuleContext> = {
   name: "@comity/auth",

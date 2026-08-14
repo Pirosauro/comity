@@ -1,4 +1,4 @@
-import type { ModuleSetupContext } from "@comity/composition";
+import type { ModuleSetupContext } from "@comity/composition/setup";
 import type { HttpHandler } from "../contracts/handler.js";
 import type { HttpMiddleware } from "../contracts/middleware.js";
 import type { HttpFacade } from "../facade.js";

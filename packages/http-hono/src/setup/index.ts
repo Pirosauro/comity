@@ -1,12 +1,22 @@
-import type { ModuleMeta } from "@comity/composition";
-import type { HttpModuleContext } from "@comity/http";
+import type { ModuleMeta } from "@comity/composition/setup";
+import type { HttpModuleContext } from "@comity/http/setup";
 import type { HttpHonoModuleContext, HttpHonoModuleOptions } from "./types.js";
 
-import { createHttpContext, HTTP_TOKEN } from "@comity/http";
+import { createHttpContext } from "@comity/http";
+import { HTTP_TOKEN } from "@comity/http/setup";
 import { success } from "@comity/primitives/result";
 import { Hono } from "hono/quick";
-import { httpHonoAdapter } from "../adapter/http.js";
+import { httpHonoAdapter } from "../adapter.js";
 import { HTTP_HONO_TOKEN } from "./constants.js";
+
+export { HTTP_HONO_TOKEN } from "./constants.js";
+export type {
+  HttpHonoModuleContext,
+  HttpHonoModuleEvents,
+  HttpHonoModuleHooks,
+  HttpHonoModuleOptions,
+  HttpHonoModuleServices,
+} from "./types.js";
 
 /**
  * Hono HTTP adapter kernel module.

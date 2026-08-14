@@ -1,4 +1,4 @@
-import type { ModuleSetupContext } from "@comity/composition";
+import type { ModuleSetupContext } from "@comity/composition/setup";
 import type { CategoryPageComposer, CategoryPageEnricher } from "../contracts/category-page.js";
 import type { ContentPageComposer, ContentPageEnricher } from "../contracts/content-page.js";
 import type { ProductPageComposer, ProductPageEnricher } from "../contracts/product-page.js";

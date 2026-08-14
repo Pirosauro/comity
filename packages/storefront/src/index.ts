@@ -23,16 +23,3 @@ export {
   SearchPageEnricher,
   SearchPageModel,
 } from "./contracts/search-page.js";
-export {
-  CATEGORY_PAGE_COMPOSER_TOKEN,
-  CONTENT_PAGE_COMPOSER_TOKEN,
-  PRODUCT_PAGE_COMPOSER_TOKEN,
-  SEARCH_PAGE_COMPOSER_TOKEN,
-} from "./setup/constants.js";
-export {
-  StorefrontModuleContext,
-  StorefrontModuleEvents,
-  StorefrontModuleHooks,
-  StorefrontModuleOptions,
-  StorefrontModuleServices,
-} from "./setup/types.js";

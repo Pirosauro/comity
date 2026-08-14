@@ -1,4 +1,4 @@
-import type { ModuleMeta } from "@comity/composition";
+import type { ModuleMeta } from "@comity/composition/setup";
 import type { HttpObserver } from "../observers/observer.js";
 import type { HttpModuleContext, HttpModuleOptions } from "./types.js";
 
@@ -7,6 +7,15 @@ import { failure, success } from "@comity/primitives/result";
 import { HttpFacade } from "../facade.js";
 import { createHttpHandler } from "../handler.js";
 import { HTTP_TOKEN } from "./constants.js";
+
+export { HTTP_TOKEN } from "./constants.js";
+export type {
+  HttpModuleContext,
+  HttpModuleEvents,
+  HttpModuleHooks,
+  HttpModuleOptions,
+  HttpModuleServices,
+} from "./types.js";
 
 /**
  * Metadata for the HTTP module.

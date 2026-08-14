@@ -1,7 +1,2 @@
-export {
-  I18nTypesafeModuleContext,
-  I18nTypesafeModuleEvents,
-  I18nTypesafeModuleHooks,
-  I18nTypesafeModuleOptions,
-  I18nTypesafeModuleServices,
-} from "./setup/types.js";
+export { createTypesafeFactory } from "./factory.js";
+export { TypesafeI18nLoader } from "./loader.js";

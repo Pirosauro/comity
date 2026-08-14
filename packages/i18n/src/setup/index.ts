@@ -1,4 +1,4 @@
-import type { ModuleMeta } from "@comity/composition";
+import type { ModuleMeta } from "@comity/composition/setup";
 import type { I18nOptions } from "../facade.js";
 import type { I18nModuleContext, I18nModuleOptions } from "./types.js";
 
@@ -6,6 +6,15 @@ import { CompositionError } from "@comity/composition/errors";
 import { failure, success } from "@comity/primitives/result";
 import { DefaultI18n } from "../facade.js";
 import { I18N_TOKEN } from "./constants.js";
+
+export { I18N_TOKEN } from "./constants.js";
+export type {
+  I18nModuleContext,
+  I18nModuleEvents,
+  I18nModuleHooks,
+  I18nModuleOptions,
+  I18nModuleServices,
+} from "./types.js";
 
 export const module: ModuleMeta<I18nModuleOptions, I18nModuleContext> = {
   name: "@comity/i18n",

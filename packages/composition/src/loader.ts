@@ -1,6 +1,6 @@
 import type { Kernel } from "@comity/kernel";
 import type { Result } from "@comity/primitives/result";
-import type { ModuleMeta, ModuleSetupFn } from "./types.js";
+import type { ModuleMeta, ModuleSetupFn } from "./setup/types.js";
 
 import { failure, isFailure, success } from "@comity/primitives/result";
 import { CompositionError } from "./errors/composition.js";

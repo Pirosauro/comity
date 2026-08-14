@@ -1,5 +1,5 @@
 import type { Result } from "@comity/primitives/result";
-import type { ModuleMeta } from "./types.js";
+import type { ModuleMeta } from "./setup/types.js";
 
 import { failure, isFailure, success } from "@comity/primitives/result";
 import { CompositionError } from "./errors/composition.js";

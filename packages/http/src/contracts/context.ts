@@ -1,4 +1,4 @@
-import type { KernelEventBus, KernelServiceResolver } from "@comity/kernel";
+import type { KernelEventBus, KernelServiceResolver } from "@comity/kernel/setup";
 import type { HttpRequest } from "./request.js";
 
 /**

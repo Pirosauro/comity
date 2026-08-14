@@ -1,4 +1,4 @@
-import type { ModuleSetupContext } from "@comity/composition";
+import type { ModuleSetupContext } from "@comity/composition/setup";
 import type { HonoOptions } from "hono/hono-base";
 import type { Hono } from "hono/quick";
 import type { BlankEnv, Env } from "hono/types";

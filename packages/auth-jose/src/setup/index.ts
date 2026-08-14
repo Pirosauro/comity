@@ -1,15 +1,24 @@
-import type { AuthModuleContext } from "@comity/auth";
-import type { ModuleMeta } from "@comity/composition";
+import type { AuthModuleContext } from "@comity/auth/setup";
+import type { ModuleMeta } from "@comity/composition/setup";
 import type { AuthJoseEventObserver } from "../observers/observer.js";
 import type { JoseAuthTokenServiceOptions } from "../types.js";
 import type { JoseAuthModuleContext, JoseAuthModuleOptions } from "./types.js";
 
-import { AUTH_TOKEN } from "@comity/auth";
+import { AUTH_TOKEN } from "@comity/auth/setup";
 import { DefaultAuthTokenFacade } from "@comity/auth-tokens";
 import { CompositionError } from "@comity/composition/errors";
 import { failure, success } from "@comity/primitives/result";
 import { JoseAuthTokenService } from "../auth-token.js";
 import { AUTH_JOSE_TOKEN } from "./constants.js";
+
+export { AUTH_JOSE_TOKEN } from "./constants.js";
+export type {
+  JoseAuthModuleContext,
+  JoseAuthModuleEvents,
+  JoseAuthModuleHooks,
+  JoseAuthModuleOptions,
+  JoseAuthModuleServices,
+} from "./types.js";
 
 export const module: ModuleMeta<JoseAuthModuleOptions, JoseAuthModuleContext & AuthModuleContext> =
   {

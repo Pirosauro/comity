@@ -11,11 +11,3 @@ export { HttpStatus } from "./contracts/status.js";
 export { createHttpContext } from "./create-context.js";
 export { HttpFacade } from "./facade.js";
 export { createHttpHandler } from "./handler.js";
-export { HTTP_TOKEN } from "./setup/constants.js";
-export {
-  HttpModuleContext,
-  HttpModuleEvents,
-  HttpModuleHooks,
-  HttpModuleOptions,
-  HttpModuleServices,
-} from "./setup/types.js";

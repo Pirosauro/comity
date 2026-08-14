@@ -1,4 +1,4 @@
-import type { ModuleSetupContext } from "@comity/composition";
+import type { ModuleSetupContext } from "@comity/composition/setup";
 import type { GraphqlClient } from "../client.js";
 import type { DefaultGraphqlRegistry } from "../registry.js";
 import type { GRAPHQL_CLIENT_TOKEN } from "./constants.js";

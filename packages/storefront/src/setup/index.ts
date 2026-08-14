@@ -1,16 +1,30 @@
-import type { CatalogModuleContext } from "@comity/catalog";
-import type { ModuleMeta } from "@comity/composition";
+import type { CatalogModuleContext } from "@comity/catalog/setup";
+import type { ModuleMeta } from "@comity/composition/setup";
 import type {
   StorefrontModuleContext,
   StorefrontModuleOptions,
   StorefrontOptions,
 } from "./types.js";
 
-import { CATEGORY_REPOSITORY_TOKEN, PRODUCT_REPOSITORY_TOKEN } from "@comity/catalog";
+import { CATEGORY_REPOSITORY_TOKEN, PRODUCT_REPOSITORY_TOKEN } from "@comity/catalog/setup";
 import { success } from "@comity/primitives/result";
 import { DefaultCategoryPageComposer } from "../composers/category.js";
 import { DefaultProductPageComposer } from "../composers/product.js";
 import { CATEGORY_PAGE_COMPOSER_TOKEN, PRODUCT_PAGE_COMPOSER_TOKEN } from "./constants.js";
+
+export {
+  CATEGORY_PAGE_COMPOSER_TOKEN,
+  CONTENT_PAGE_COMPOSER_TOKEN,
+  PRODUCT_PAGE_COMPOSER_TOKEN,
+  SEARCH_PAGE_COMPOSER_TOKEN,
+} from "./constants.js";
+export type {
+  StorefrontModuleContext,
+  StorefrontModuleEvents,
+  StorefrontModuleHooks,
+  StorefrontModuleOptions,
+  StorefrontModuleServices,
+} from "./types.js";
 
 export const module: ModuleMeta<
   StorefrontModuleOptions,

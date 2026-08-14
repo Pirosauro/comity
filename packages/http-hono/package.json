@@ -64,7 +64,11 @@
     "./package.json": "./package.json"
   },
   "typesVersions": {
-    "setup": []
+    "*": {
+      "setup": [
+        "./dist/types/setup/index.d.ts"
+      ]
+    }
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org",

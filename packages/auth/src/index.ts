@@ -22,12 +22,4 @@ export { AuthSessionTransport } from "./contracts/session-transport.js";
 export { AuthSession } from "./contracts/session.js";
 export { AuthTokenService } from "./contracts/token-service.js";
 export { AuthGuard } from "./guard.js";
-export { AUTH_TOKEN } from "./setup/constants.js";
-export {
-  AuthModuleContext,
-  AuthModuleEvents,
-  AuthModuleHooks,
-  AuthModuleOptions,
-  AuthModuleServices,
-} from "./setup/types.js";
 export { AuthSessionId } from "./value-objects/auth-session-id.js";

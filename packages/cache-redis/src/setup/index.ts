@@ -1,5 +1,5 @@
-import type { CacheModuleContext } from "@comity/cache";
-import type { ModuleMeta } from "@comity/composition";
+import type { CacheModuleContext } from "@comity/cache/setup";
+import type { ModuleMeta } from "@comity/composition/setup";
 import type { RedisCacheModuleContext, RedisCacheModuleOptions } from "./types.js";
 
 import { success } from "@comity/primitives/result";

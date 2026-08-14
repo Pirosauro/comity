@@ -1,4 +1,4 @@
-import type { ModuleSetupContext } from "@comity/composition";
+import type { ModuleSetupContext } from "@comity/composition/setup";
 import type { AuthFacade } from "../contracts/auth-facade.js";
 import type { AuthSessionAssuranceEvaluator } from "../contracts/session-assurance-evaluator.js";
 import type { AuthSessionAssurancePolicy } from "../contracts/session-assurance-policy.js";

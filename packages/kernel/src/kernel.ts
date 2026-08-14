@@ -6,7 +6,7 @@ import type {
     KernelEventBus,
     KernelHookBus,
     KernelServiceResolver,
-} from "./types.js";
+} from "./setup/types.js";
 
 import { toSafePayload } from "@comity/primitives/errors";
 import { isSuccess } from "@comity/primitives/result";

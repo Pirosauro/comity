@@ -1,4 +1,4 @@
-import type { ModuleSetupContext } from "@comity/composition";
+import type { ModuleSetupContext } from "@comity/composition/setup";
 import type { I18nFacade } from "../contracts/facade.js";
 import type { I18nOptions } from "../facade.js";
 import type { I18N_TOKEN } from "./constants.js";

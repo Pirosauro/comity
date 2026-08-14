@@ -1,4 +1,4 @@
-import type { ModuleSetupContext } from "@comity/composition";
+import type { ModuleSetupContext } from "@comity/composition/setup";
 import type { KvNamespace } from "../types.js";
 
 /** Hooks exposed by the module */

@@ -1,4 +1,4 @@
-import type { ModuleSetupContext } from "@comity/composition";
+import type { ModuleSetupContext } from "@comity/composition/setup";
 import type { CategoryRepository } from "../contracts/category-repository.js";
 import type { ProductRepository } from "../contracts/product-repository.js";
 import type { CATEGORY_REPOSITORY_TOKEN, PRODUCT_REPOSITORY_TOKEN } from "./constants.js";

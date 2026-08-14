@@ -1,4 +1,4 @@
-import type { ModuleSetupContext } from "@comity/composition";
+import type { ModuleSetupContext } from "@comity/composition/setup";
 import type { GraphqlClient, GraphqlTransport } from "@comity/graphql-client";
 import type { StorefrontContextResolver } from "@comity/storefront";
 import type { GRAPHQL_CLIENT_MAGENTO_TOKEN } from "./constants.js";

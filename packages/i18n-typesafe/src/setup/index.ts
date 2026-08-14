@@ -1,11 +1,19 @@
-import type { ModuleMeta } from "@comity/composition";
-import type { I18nModuleContext } from "@comity/i18n";
+import type { ModuleMeta } from "@comity/composition/setup";
+import type { I18nModuleContext } from "@comity/i18n/setup";
 import type { I18nTypesafeModuleOptions } from "./types.js";
 
 import { CompositionError } from "@comity/composition/errors";
 import { failure, success } from "@comity/primitives/result";
 import { createTypesafeFactory } from "../factory.js";
 import { TypesafeI18nLoader } from "../loader.js";
+
+export type {
+  I18nTypesafeModuleContext,
+  I18nTypesafeModuleEvents,
+  I18nTypesafeModuleHooks,
+  I18nTypesafeModuleOptions,
+  I18nTypesafeModuleServices,
+} from "./types.js";
 
 export const module: ModuleMeta<I18nTypesafeModuleOptions, I18nModuleContext> = {
   name: "@comity/i18n-typesafe",

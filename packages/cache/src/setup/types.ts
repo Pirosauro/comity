@@ -1,4 +1,4 @@
-import type { ModuleSetupContext } from "@comity/composition";
+import type { ModuleSetupContext } from "@comity/composition/setup";
 import type { Cache } from "../contracts/cache.js";
 import type { CacheStore } from "../contracts/store.js";
 import type { CACHE_TOKEN } from "./constants.js";
