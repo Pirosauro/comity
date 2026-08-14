@@ -1,1 +1,1 @@
-export { AuthJoseEventObserver } from "./observer.js";
+export type { AuthJoseEventObserver } from "./observer.js";

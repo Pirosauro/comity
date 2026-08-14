@@ -1,1 +1,1 @@
-export { SqlOperationObserver } from "./operation.js";
+export type { SqlOperationObserver } from "./operation.js";

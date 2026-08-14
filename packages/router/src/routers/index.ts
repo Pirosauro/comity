@@ -1,2 +1,4 @@
+export type { NestedRoute } from "./nested.js";
+
 export { MemoryRouter } from "./memory.js";
-export { NestedRoute, NestedRouter } from "./nested.js";
+export { NestedRouter } from "./nested.js";

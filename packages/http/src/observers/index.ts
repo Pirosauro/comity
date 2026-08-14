@@ -1,1 +1,1 @@
-export { HttpObserver } from "./observer.js";
+export type { HttpObserver } from "./observer.js";

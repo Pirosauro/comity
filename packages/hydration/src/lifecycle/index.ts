@@ -1,1 +1,1 @@
-export { HydrationRuntimeObserver } from "./runtime.js";
+export type { HydrationRuntimeObserver } from "./runtime.js";

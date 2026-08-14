@@ -1,5 +1,5 @@
-export { buildQuery, BuildQueryOptions } from "./builder.js";
-export {
+export type { BuildQueryOptions } from "./builder.js";
+export type {
   GraphqlFieldKeys,
   GraphqlFieldsSelector,
   GraphqlNode,
@@ -10,5 +10,7 @@ export {
   GraphqlValue,
   GraphqlVar,
 } from "./contracts/graphql.js";
-export { GraphqlValueSerializer } from "./contracts/serializer.js";
+export type { GraphqlValueSerializer } from "./contracts/serializer.js";
+
+export { buildQuery } from "./builder.js";
 export { graphqlVar } from "./var.js";

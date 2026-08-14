@@ -1,3 +1,3 @@
-export { AuthEvaluationObserver } from "./evaluation.js";
-export { AuthRefreshEvaluationObserver } from "./refresh.js";
-export { AuthSessionObserver } from "./session.js";
+export type { AuthEvaluationObserver } from "./evaluation.js";
+export type { AuthRefreshEvaluationObserver } from "./refresh.js";
+export type { AuthSessionObserver } from "./session.js";

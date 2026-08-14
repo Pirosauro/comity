@@ -1,1 +1,1 @@
-export { HtmlRendererObserver } from "./html-renderer.js";
+export type { HtmlRendererObserver } from "./html-renderer.js";

@@ -1,18 +1,15 @@
-export { HydrationSchedulingAdapter } from "./contracts/hydration-scheduler.js";
-export { IslandDiscoveryAdapter } from "./contracts/island-discoverer.js";
-export { IslandHydrationAdapter } from "./contracts/island-hydrator.js";
-export { IslandContract } from "./contracts/island.js";
-export {
+export type { HydrationSchedulingAdapter } from "./contracts/hydration-scheduler.js";
+export type { IslandDiscoveryAdapter } from "./contracts/island-discoverer.js";
+export type { IslandHydrationAdapter } from "./contracts/island-hydrator.js";
+export type { IslandContract } from "./contracts/island.js";
+export type {
   HydrationInteractionStrategy,
   HydrationMediaStrategy,
   HydrationOtherStrategy,
   HydrationStrategy,
 } from "./contracts/strategy.js";
-export { HydrationController, HydrationControllerOptions } from "./controller.js";
-export { IslandSerializer, JsonIslandSerializer } from "./serializer.js";
-// export {
-//   HydrationModuleContext,
-//   HydrationModuleEvents,
-//   HydrationModuleHooks,
-//   HydrationModuleOptions,
-// } from "./setup/types.js";
+export type { HydrationControllerOptions } from "./controller.js";
+export type { IslandSerializer } from "./serializer.js";
+
+export { HydrationController } from "./controller.js";
+export { JsonIslandSerializer } from "./serializer.js";

@@ -1,2 +1,2 @@
-export { KernelLifecycleObserver } from "./lifecycle.js";
-export { KernelLifecycleState } from "./types.js";
+export type { KernelLifecycleObserver } from "./lifecycle.js";
+export type { KernelLifecycleState } from "./types.js";

@@ -1,11 +1,11 @@
-export { CategoryRepository } from "./contracts/category-repository.js";
-export {
+export type { CategoryRepository } from "./contracts/category-repository.js";
+export type {
   CategoryHierarchyModel,
   CategoryModel,
   CategoryTreeNodeModel,
 } from "./contracts/category.js";
-export { InventoryModel } from "./contracts/inventory.js";
-export { PriceModel, PriceModifierModel } from "./contracts/price.js";
-export { ProductRepository } from "./contracts/product-repository.js";
-export { ProductModel } from "./contracts/product.js";
-export { CatalogRepositoryContext } from "./contracts/repository-context.js";
+export type { InventoryModel } from "./contracts/inventory.js";
+export type { PriceModel, PriceModifierModel } from "./contracts/price.js";
+export type { ProductRepository } from "./contracts/product-repository.js";
+export type { ProductModel } from "./contracts/product.js";
+export type { CatalogRepositoryContext } from "./contracts/repository-context.js";

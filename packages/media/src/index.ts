@@ -1,1 +1,1 @@
-export { MediaModel } from "./contracts/media.js";
+export type { MediaModel } from "./contracts/media.js";

@@ -1,1 +1,3 @@
-export { HydrationError, HydrationErrorMeta, HydrationErrorReason } from "./hydration.js";
+export type { HydrationErrorMeta, HydrationErrorReason } from "./hydration.js";
+
+export { HydrationError } from "./hydration.js";

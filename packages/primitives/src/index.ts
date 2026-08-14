@@ -1,1 +1,1 @@
-export { NonRecursiveObject, Primitive, ReadonlyDeep } from "./types.js";
+export type { NonRecursiveObject, Primitive, ReadonlyDeep } from "./types.js";
