@@ -27,6 +27,12 @@ draft → pending → confirmed → fulfilled
 
 Any order in `draft`, `pending`, or `confirmed` status can be cancelled.
 
-Open question: `OrderRepository` currently mirrors the legacy `CartRepository` interface.
-Future operations may include `create`, `submit` (draft → pending), `confirm`, `fulfill`,
+## Persistence vs Commands
+
+`OrderRepository` is the persistence boundary: it exposes `get(id)` and `save(order)` and returns
+`Result<T, RepositoryError>`. Domain mutations (`addItem`, `removeItem`, `updateItemQuantity`,
+`applyCoupon`, `removeCoupon`, `clear`) live on the `OrderCommands` port, which returns
+`Result<T, OrderError>`.
+
+Open question: future operations may include `create`, `submit` (draft → pending), `confirm`, `fulfill`,
 `updateStatus`, and `list` for order history.

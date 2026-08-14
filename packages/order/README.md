@@ -28,7 +28,8 @@ This package does NOT:
 
 ## Public API
 
-- `OrderRepository` — repository contract for order operations
+- `OrderRepository` — persistence-boundary contract (`get`, `save`)
+- `OrderCommands` — domain command port for order mutations (`addItem`, `removeItem`, `updateItemQuantity`, `applyCoupon`, `removeCoupon`, `clear`)
 - `OrderModel`, `OrderStatus` — order model with lifecycle status
 - `OrderItemModel`, `OrderItemOptionModel`, `OrderProductModel` — item and product models
 - `OrderAddItemInput` — typed input for item addition

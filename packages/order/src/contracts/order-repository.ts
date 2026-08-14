@@ -1,29 +1,18 @@
+import type { RepositoryError } from "@comity/primitives/errors";
 import type { Result } from "@comity/primitives/result";
 
-import type { OrderError } from "../errors/order.js";
 import type { OrderModel } from "./order.js";
-import type { OrderItemOptionModel } from "./item.js";
-
-/**
- * Input for adding an item to the order.
- */
-export interface OrderAddItemInput {
-  /** Product ID to add to the order. */
-  readonly productId: string;
-
-  /** Quantity to add. */
-  readonly quantity: number;
-
-  /** Optional variant selection. */
-  readonly options?: ReadonlyArray<OrderItemOptionModel>;
-}
 
 /**
  * Order repository contract.
  *
- * @remarks Open question: future operations may include {@link create}, {@link submit}
- * (transition draft → pending), {@link updateStatus}, {@link list} for order history,
- * and order-level pricing recalculations.
+ * @remarks
+ * This contract is the persistence boundary only. Domain operations such as
+ * adding items, applying coupons, and clearing the order live on
+ * `OrderCommands`.
+ *
+ * @remarks Open question: future read operations may include {@link list} for
+ * order history.
  */
 export interface OrderRepository {
   /**
@@ -33,58 +22,17 @@ export interface OrderRepository {
    *
    * @returns Order model or null if not found.
    */
-  get(id: string): Promise<Result<OrderModel | null, OrderError>>;
+  get(id: string): Promise<Result<OrderModel | null, RepositoryError>>;
 
   /**
-   * Add a product to the order.
+   * Persist an order.
    *
-   * @param input - Input data for adding an item to the order.
+   * @remarks
+   * Implementations MUST treat this as upsert: if the order id already
+   * exists the stored order is overwritten, otherwise a new order is
+   * created.
    *
-   * @returns Updated order model.
+   * @param order - Order to persist.
    */
-  addItem(input: OrderAddItemInput): Promise<Result<OrderModel, OrderError>>;
-
-  /**
-   * Remove an item from the order.
-   *
-   * @param itemId - Order item ID.
-   *
-   * @returns Updated order model.
-   */
-  removeItem(itemId: string): Promise<Result<OrderModel, OrderError>>;
-
-  /**
-   * Update item quantity.
-   *
-   * @param itemId - Order item ID.
-   * @param quantity - New quantity.
-   *
-   * @returns Updated order model.
-   */
-  updateItemQuantity(itemId: string, quantity: number): Promise<Result<OrderModel, OrderError>>;
-
-  /**
-   * Apply a discount coupon.
-   *
-   * @param code - Coupon code.
-   *
-   * @returns Updated order model.
-   */
-  applyCoupon(code: string): Promise<Result<OrderModel, OrderError>>;
-
-  /**
-   * Remove a discount coupon.
-   *
-   * @param code - Coupon code to remove.
-   *
-   * @returns Updated order model.
-   */
-  removeCoupon(code: string): Promise<Result<OrderModel, OrderError>>;
-
-  /**
-   * Clear all items from the order.
-   *
-   * @returns Empty order model.
-   */
-  clear(): Promise<Result<OrderModel, OrderError>>;
+  save(order: OrderModel): Promise<Result<void, RepositoryError>>;
 }

@@ -199,6 +199,17 @@ Migration:
 
 This migration aligns `@comity/order` with `@comity/customer`, `@comity/identity`, `@comity/address`, and `@comity/auth` (post-migration).
 
+#### Implementation (implemented)
+
+The migration above is complete in `@comity/order`:
+
+- `OrderCommands` is a new domain command port in `contracts/order-commands.ts` exposing `addItem`, `removeItem`, `updateItemQuantity`, `applyCoupon`, `removeCoupon`, and `clear`. All methods return `Result<OrderModel, OrderError>`.
+- `OrderAddItemInput` moved from `contracts/order-repository.ts` to `contracts/order-commands.ts`.
+- `OrderRepository` is reduced to the persistence boundary: `get(id): Promise<Result<OrderModel | null, RepositoryError>>` and `save(order): Promise<Result<void, RepositoryError>>`. All six mutating methods are removed; missing orders return `null` (`not_found` is a domain outcome mapped by callers).
+- `OrderError.reason = "repository_error"` is retained for command methods that delegate to an `OrderRepository` and surface infrastructure failures as a domain error (§5).
+
+Adapters implementing the old contract MUST drop the mutating methods and implement `get`/`save` only; command implementations live in the Application Layer or as concrete classes per §7.
+
 ## When a Repository Method Is Allowed to Exist
 
 A method belongs on a Repository port when it satisfies **all** of:
@@ -270,7 +281,7 @@ This ADR does NOT concern:
 | `@comity/identity` | none                                                                                                                                                                            | no                                                         |
 | `@comity/catalog`  | none (read projection)                                                                                                                                                          | no                                                         |
 | `@comity/auth`     | move `revoke()` from `AuthSessionRepository` to `AuthSessionCommands`; update `RevokeSession` use case; remove `AuthSessionRevocation` export from `auth-session-repository.ts` | yes — Repository signature change; **done** |
-| `@comity/order`    | rename `OrderRepository` to `OrderCommands`; expose minimal `OrderRepository` with `get`/`save`                                                                                 | yes — Repository interface change; command surface renamed |
+| `@comity/order`    | rename `OrderRepository` to `OrderCommands`; expose minimal `OrderRepository` with `get`/`save`                                                                                 | yes — Repository interface change; command surface renamed; **done** |
 
 All migrations are scoped to their respective modules. No other module is affected.
 
@@ -298,4 +309,5 @@ All migrations are scoped to their respective modules. No other module is affect
 - `packages/catalog/src/contracts/product-repository.ts` — reference implementation of read-projection exception.
 - `packages/auth/src/contracts/session-repository.ts` — current boundary case (`revoke`).
 - `packages/auth/src/use-cases/session-revoke.ts` — current use case that delegates to the repository.
-- `packages/order/src/contracts/order-repository.ts` — current non-compliant contract.
+- `packages/order/src/contracts/order-repository.ts` — migrated to persistence boundary (`get`/`save`).
+- `packages/order/src/contracts/order-commands.ts` — migrated domain command port.
