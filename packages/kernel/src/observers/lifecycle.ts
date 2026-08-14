@@ -1,5 +1,5 @@
 import type { SafeErrorPayload } from "@comity/primitives/errors";
-import type { KernelLifecycleState } from "./types.js";
+import type { KernelLifecycleState } from "../setup/types.js";
 
 /**
  * Kernel lifecycle events.

@@ -84,7 +84,7 @@
   },
   "devDependencies": {
     "@types/node": "^24.13.3",
-    "hono": "^4.13.0",
+    "hono": "^4.13.2",
     "typescript": "^5.9.3"
   },
   "peerDependencies": {

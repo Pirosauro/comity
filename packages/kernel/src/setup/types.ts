@@ -57,3 +57,8 @@ export type KernelHookBus<Hooks extends Record<keyof Hooks, unknown>> = {
   /** Execute a hook */
   execute: HookBus<Hooks>["execute"];
 };
+
+/**
+ * Kernel state type.
+ */
+export type KernelLifecycleState = "open" | "sealed" | "running" | "stopped";

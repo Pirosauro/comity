@@ -1,5 +1,5 @@
 import type { Result } from "@comity/primitives/result";
-import type { KernelLifecycleState } from "../observers/types.js";
+import type { KernelLifecycleState } from "../setup/types.js";
 
 import { failure, success } from "@comity/primitives/result";
 import { KernelError } from "../errors/kernel.js";

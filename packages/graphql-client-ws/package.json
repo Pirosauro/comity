@@ -23,9 +23,11 @@
   ],
   "scripts": {
     "build": "node ../../scripts/build.mjs",
-    "prepublish": "node ../../scripts/build.mjs",
+    "prepublishOnly": "node ../../scripts/build.mjs",
     "dev": "node ../../scripts/build.mjs --watch",
-    "test": "vitest run --coverage"
+    "test": "vitest run --coverage",
+    "type-check": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint --ext .ts src"
   },
   "files": [
     "./dist",
@@ -60,7 +62,7 @@
   },
   "devDependencies": {
     "@types/node": "^24.13.3",
-    "graphql-ws": "^6.2.0",
+    "graphql-ws": "^6.2.1",
     "typescript": "^5.9.3"
   },
   "peerDependencies": {
