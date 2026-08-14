@@ -117,6 +117,34 @@ describe("checkSessionInvariants", () => {
     });
   });
 
+  describe("revokedAt validation", () => {
+    it("should pass with revokedAt >= createdAt", () => {
+      const result = checkSessionInvariants({ ...validSession, revokedAt: 1500 }, 2000);
+
+      expect(result.ok).toBe(true);
+    });
+
+    it("should fail with revokedAt < createdAt", () => {
+      const result = checkSessionInvariants({ ...validSession, revokedAt: 900 }, 2000);
+
+      expect(result.ok).toBe(false);
+
+      if (!result.ok) {
+        expect(result.error.meta.details?.violation).toBe("revoked_at_invalid");
+      }
+    });
+
+    it("should allow undefined revokedAt", () => {
+      const session = { ...validSession } as any;
+
+      delete session.revokedAt;
+
+      const result = checkSessionInvariants(session, 2000);
+
+      expect(result.ok).toBe(true);
+    });
+  });
+
   describe("expiresAt validation", () => {
     it("should pass with expiresAt > createdAt", () => {
       const result = checkSessionInvariants({ ...validSession, expiresAt: 3000 }, 2000);

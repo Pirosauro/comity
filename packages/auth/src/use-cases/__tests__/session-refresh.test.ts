@@ -11,7 +11,6 @@ describe("RefreshSession", () => {
   let repository: {
     getById: ReturnType<typeof vi.fn>;
     save: ReturnType<typeof vi.fn>;
-    revoke: ReturnType<typeof vi.fn>;
   };
   let guard: {
     assert: ReturnType<typeof vi.fn>;
@@ -27,7 +26,6 @@ describe("RefreshSession", () => {
     repository = {
       getById: vi.fn(),
       save: vi.fn().mockResolvedValue({ success: true, value: undefined }),
-      revoke: vi.fn(),
     };
     guard = {
       assert: vi.fn(),

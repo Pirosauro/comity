@@ -60,6 +60,14 @@ export function checkSessionInvariants(
     });
   }
 
+  // Session revokedAt validity
+  if (typeof session.revokedAt === "number" && session.revokedAt < session.createdAt) {
+    return invalid("session_invalid", {
+      violation: "revoked_at_invalid",
+      subject: session.id.toString(),
+    });
+  }
+
   // Session expiresAt validity
   if (typeof session.expiresAt === "number" && session.expiresAt <= session.createdAt) {
     return invalid("session_invalid", {

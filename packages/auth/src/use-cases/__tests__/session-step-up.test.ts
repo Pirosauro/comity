@@ -11,7 +11,6 @@ describe("StepUpSession", () => {
   let repository: {
     getById: ReturnType<typeof vi.fn>;
     save: ReturnType<typeof vi.fn>;
-    revoke: ReturnType<typeof vi.fn>;
   };
   let evaluator: {
     evaluate: ReturnType<typeof vi.fn>;
@@ -31,7 +30,6 @@ describe("StepUpSession", () => {
     repository = {
       getById: vi.fn(),
       save: vi.fn().mockResolvedValue({ success: true, value: undefined }),
-      revoke: vi.fn(),
     };
     evaluator = {
       evaluate: vi.fn(),

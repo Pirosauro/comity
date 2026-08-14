@@ -61,6 +61,7 @@ export type AuthErrorReason =
  * - `session_id_missing`: The session ID is missing or not a valid string.
  * - `created_at_invalid`: The session's `createdAt` timestamp is missing, not a number, or in the future.
  * - `verified_at_invalid`: The session's `verifiedAt` timestamp is before `createdAt`.
+ * - `revoked_at_invalid`: The session's `revokedAt` timestamp is before `createdAt`.
  * - `expires_at_invalid`: The session's `expiresAt` timestamp is before or equal to `createdAt`.
  * - `assurance_missing`: The session's assurance object is missing or not an object.
  * - `assurance_methods_invalid`: The session's assurance methods are missing or not a non-empty array.
@@ -79,6 +80,7 @@ export type AuthErrorMetaViolation =
   | "session_id_missing"
   | "created_at_invalid"
   | "verified_at_invalid"
+  | "revoked_at_invalid"
   | "expires_at_invalid"
   | "assurance_missing"
   | "assurance_methods_invalid"

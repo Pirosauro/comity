@@ -164,6 +164,17 @@ export class AuthGuard {
    * @throws {AuthError} - If the session is revoked by policy
    */
   assertRevocation(session: AuthSession, now: number): void {
+    if (session.revokedAt !== undefined && session.revokedAt <= now) {
+      this.#observer?.onSessionInvalid({
+        sessionId: session.id,
+        at: now,
+        reason: "session_revoked",
+        error: toSafePayload(new AuthError("session_revoked")),
+      });
+
+      throw new AuthError("session_revoked");
+    }
+
     try {
       this.#revocation?.assert(session, now);
     } catch (error) {

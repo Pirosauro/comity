@@ -1,6 +1,14 @@
+import type { Result } from "@comity/primitives/result";
+import type {
+  AuthSessionCommands,
+  AuthSessionRevocation,
+} from "../contracts/session-commands.js";
 import type { AuthSessionRepository } from "../contracts/session-repository.js";
-import type { AuthSessionId } from "../value-objects/auth-session-id.js";
+import type { AuthSession } from "../contracts/session.js";
 import type { AuthSessionObserver } from "../observers/session.js";
+import type { AuthSessionId } from "../value-objects/auth-session-id.js";
+
+import { AuthError } from "../errors/auth.js";
 
 /**
  * Input used to revoke a session.
@@ -23,16 +31,14 @@ export interface RevokeSessionInput {
 }
 
 /**
- * Use case that revokes an authenticated session.
+ * Domain command that revokes an authenticated session.
  *
  * @remarks
- * Revocation is intentionally a best-effort operation: if the underlying
- * repository fails, this use case swallows the error and lets the caller
- * decide whether to retry. The repository contract itself returns a
- * `Result`, so callers that want stricter semantics can call
- * `AuthSessionRepository.revoke()` directly.
+ * Implements `AuthSessionCommands`. Reads the session via the repository,
+ * validates preconditions, mutates the session state (sets `revokedAt`) and
+ * persists it via `save()`.
  */
-export class RevokeSession {
+export class RevokeSession implements AuthSessionCommands {
   /** Repository for session persistence */
   #repository: AuthSessionRepository;
 
@@ -51,28 +57,113 @@ export class RevokeSession {
   /**
    * Revokes a session.
    *
+   * @param sessionId - Session identifier to revoke
+   * @param metadata - Revocation metadata (reason, timestamp, actor)
+   *
+   * @returns Success, or a domain error (`session_not_found`,
+   * `session_revoked`, `internal_error`).
+   */
+  async revoke(
+    sessionId: AuthSessionId,
+    metadata: AuthSessionRevocation
+  ): Promise<Result<void, AuthError>> {
+    // 1. Read session
+    const fetched = await this.#repository.getById(sessionId);
+
+    if (!fetched.success) {
+      if (fetched.error instanceof AuthError) {
+        return { success: false, error: fetched.error };
+      }
+
+      return {
+        success: false,
+        error: new AuthError("internal_error", {
+          details: {
+            policy: "persistence",
+            subject: sessionId.toString(),
+          },
+          cause: fetched.error,
+        }),
+      };
+    }
+
+    const session = fetched.value;
+
+    if (!session) {
+      return {
+        success: false,
+        error: new AuthError("session_not_found", {
+          details: {
+            subject: sessionId.toString(),
+          },
+        }),
+      };
+    }
+
+    // 2. Validate preconditions: not already revoked
+    if (session.revokedAt !== undefined) {
+      return {
+        success: false,
+        error: new AuthError("session_revoked", {
+          details: {
+            subject: sessionId.toString(),
+          },
+        }),
+      };
+    }
+
+    // 3. Mutate session state
+    const revoked: AuthSession = {
+      ...session,
+      revokedAt: metadata.at,
+    };
+
+    // 4. Persist
+    const persisted = await this.#repository.save(revoked);
+
+    if (!persisted.success) {
+      if (persisted.error instanceof AuthError) {
+        return { success: false, error: persisted.error };
+      }
+
+      return {
+        success: false,
+        error: new AuthError("internal_error", {
+          details: {
+            policy: "persistence",
+            subject: sessionId.toString(),
+          },
+          cause: persisted.error,
+        }),
+      };
+    }
+
+    // 5. Emit lifecycle event
+    this.#observer.onSessionRevoked({
+      sessionId,
+      reason: metadata.reason,
+      revokedAt: metadata.at,
+    });
+
+    return { success: true, value: undefined };
+  }
+
+  /**
+   * Best-effort facade wrapper.
+   *
+   * @remarks
+   * Delegates to `revoke()` and swallows failures, preserving the facade's
+   * `Promise<void>` contract. Callers that need domain errors should use
+   * `revoke()` directly.
+   *
    * @param input - Revocation input
    * @param now - Current timestamp in milliseconds
    */
   async execute(input: RevokeSessionInput, now: number): Promise<void> {
-    // 1. Persist revocation
-    const result = await this.#repository.revoke({
-      id: input.id,
+    await this.revoke(input.id, {
       reason: input.reason,
       at: now,
       ...(input.actor ? { actor: input.actor } : {}),
-    });
-
-    // 2. Best-effort: ignore repository errors and continue with event emission
-    if (!result.success) {
-      return;
-    }
-
-    // 3. Emit lifecycle event
-    this.#observer.onSessionRevoked({
-      sessionId: input.id,
-      reason: input.reason,
-      revokedAt: now,
     });
   }
 }

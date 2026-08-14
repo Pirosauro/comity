@@ -10,7 +10,6 @@ describe("CreateSession", () => {
   let repository: {
     getById: ReturnType<typeof vi.fn>;
     save: ReturnType<typeof vi.fn>;
-    revoke: ReturnType<typeof vi.fn>;
   };
   let evaluator: {
     evaluate: ReturnType<typeof vi.fn>;
@@ -32,7 +31,6 @@ describe("CreateSession", () => {
     repository = {
       getById: vi.fn(),
       save: vi.fn().mockResolvedValue({ success: true, value: undefined }),
-      revoke: vi.fn(),
     };
     evaluator = {
       evaluate: vi.fn(),

@@ -98,6 +98,20 @@ describe("AuthGuard", () => {
       );
     });
 
+    it("should throw and emit for session with revokedAt set", () => {
+      const revokedSession = { ...validSession, revokedAt: 1500 };
+
+      expect(() => guard.assert(revokedSession, 2000)).toThrow(AuthError);
+      expect(events.onSessionInvalid).toHaveBeenCalledWith(
+        expect.objectContaining({
+          sessionId: validSession.id,
+          at: 2000,
+          reason: "session_revoked",
+        })
+      );
+      expect(revocationPolicy.assert).not.toHaveBeenCalled();
+    });
+
     it("should throw and emit for assurance required", () => {
       assurancePolicy.assert.mockImplementation(() => {
         throw new AuthError("assurance_required");

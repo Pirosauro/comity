@@ -168,6 +168,21 @@ Verdict: `@comity/auth` SHOULD migrate to **Case A**. The audit metadata belongs
 
 Migration is **non-breaking for the public use-case surface**: `RevokeSession.execute()` (already a use-case class) absorbs the change. The Repository signature change is the only breaking change and is documented in this ADR.
 
+#### Implementation (implemented)
+
+The migration above is complete in `@comity/auth`:
+
+- `AuthSessionCommands` is a new command port in `contracts/session-commands.ts` exposing `revoke(sessionId, metadata): Promise<Result<void, AuthError>>`. It returns domain errors only (`AuthError`), never `RepositoryError`.
+- `AuthSessionRevocation` moved from `contracts/session-repository.ts` to `contracts/session-commands.ts`. The `id` field was dropped because the session identifier is now the `revoke(sessionId, …)` argument, not part of the metadata.
+- `AuthSessionRepository` is reduced to persistence: `getById(id): Promise<Result<AuthSession | null, RepositoryError>>` and `save(session): Promise<Result<void, RepositoryError>>`. `revoke()` is removed entirely (no compatibility shim). Missing sessions return `null` (`session_not_found` is a domain outcome mapped by the command).
+- `AuthSession` gained `revokedAt?: number` (Case A in-place revocation).
+- `RevokeSession` implements `AuthSessionCommands`. The command: `getById(sessionId)` → returns `session_not_found` when missing and `session_revoked` when `revokedAt` is already set → sets `revokedAt` → `save()` → emits `onSessionRevoked`. A best-effort `execute(input, now): Promise<void>` wrapper is retained for the facade, which delegates to `revoke()` and swallows failures.
+- `AuthGuard.assertRevocation` rejects sessions whose `revokedAt` is set and `<= now`, emitting `onSessionInvalid` with reason `session_revoked` before consulting revocation policies.
+- `checkSessionInvariants` validates `revokedAt` (must be `>= createdAt` if present) using the new `revoked_at_invalid` violation.
+- The in-memory adapter `MemoryAuthSessionRepository` no longer implements `revoke`; revocation persists by saving the session with `revokedAt` set.
+
+Adapters implementing the old contract MUST drop `revoke()` and rely on the command writing the revoked state through `save()`.
+
 ### `@comity/order`
 
 Current state: `OrderRepository` exposes `get`, `addItem`, `removeItem`, `updateItemQuantity`, `applyCoupon`, `removeCoupon`, `clear`. Returns `Result<T, OrderError>`. The contract is a domain surface masquerading as a repository.
@@ -254,7 +269,7 @@ This ADR does NOT concern:
 | `@comity/address`  | none                                                                                                                                                                            | no                                                         |
 | `@comity/identity` | none                                                                                                                                                                            | no                                                         |
 | `@comity/catalog`  | none (read projection)                                                                                                                                                          | no                                                         |
-| `@comity/auth`     | move `revoke()` from `AuthSessionRepository` to `AuthSessionCommands`; update `RevokeSession` use case; remove `AuthSessionRevocation` export from `auth-session-repository.ts` | yes — Repository signature change                          |
+| `@comity/auth`     | move `revoke()` from `AuthSessionRepository` to `AuthSessionCommands`; update `RevokeSession` use case; remove `AuthSessionRevocation` export from `auth-session-repository.ts` | yes — Repository signature change; **done** |
 | `@comity/order`    | rename `OrderRepository` to `OrderCommands`; expose minimal `OrderRepository` with `get`/`save`                                                                                 | yes — Repository interface change; command surface renamed |
 
 All migrations are scoped to their respective modules. No other module is affected.

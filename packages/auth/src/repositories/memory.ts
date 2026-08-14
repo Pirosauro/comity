@@ -1,9 +1,6 @@
 import type { RepositoryError } from "@comity/primitives/errors";
 import type { Result } from "@comity/primitives/result";
-import type {
-  AuthSessionRepository,
-  AuthSessionRevocation,
-} from "../contracts/session-repository.js";
+import type { AuthSessionRepository } from "../contracts/session-repository.js";
 import type { AuthSession } from "../contracts/session.js";
 import type { AuthSessionId } from "../value-objects/auth-session-id.js";
 
@@ -37,18 +34,6 @@ export class MemoryAuthSessionRepository implements AuthSessionRepository {
    */
   async save(session: AuthSession): Promise<Result<void, RepositoryError>> {
     this.#sessions.set(session.id.toString(), { ...session });
-
-    return success(undefined);
-  }
-
-  /**
-   * @inheritdoc
-   */
-  async revoke(revocation: AuthSessionRevocation): Promise<Result<void, RepositoryError>> {
-    // Revocation is idempotent: a missing session is not an error.
-    if (this.#sessions.has(revocation.id.toString())) {
-      this.#sessions.delete(revocation.id.toString());
-    }
 
     return success(undefined);
   }

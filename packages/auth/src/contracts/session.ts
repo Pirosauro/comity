@@ -25,6 +25,9 @@ export interface AuthSession {
   /** Last strong authentication time (invariant: >= createdAt if present) */
   readonly verifiedAt: number;
 
+  /** Revocation time (invariant: >= createdAt if present) */
+  readonly revokedAt?: number;
+
   /** Authentication assurance snapshot (invariant: non-null, valid) */
   readonly assurance: AuthSessionAssurance;
 
