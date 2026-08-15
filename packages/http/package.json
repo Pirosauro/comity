@@ -87,10 +87,10 @@
         "./dist/types/errors/index.d.ts"
       ],
       "observers": [
-        "dist/types/observers/index.d.ts"
+        "./dist/types/observers/index.d.ts"
       ],
       "setup": [
-        "dist/types/setup/index.d.ts"
+        "./dist/types/setup/index.d.ts"
       ]
     }
   },

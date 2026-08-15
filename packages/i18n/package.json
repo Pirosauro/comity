@@ -75,9 +75,6 @@
   },
   "typesVersions": {
     "*": {
-      "hooks": [
-        "./dist/types/hooks/index.d.ts"
-      ],
       "errors": [
         "./dist/types/errors/index.d.ts"
       ],
@@ -93,7 +90,6 @@
   "sideEffects": false,
   "dependencies": {
     "@comity/composition": "workspace:*",
-    "@comity/kernel": "workspace:*",
     "@comity/primitives": "workspace:*"
   },
   "devDependencies": {

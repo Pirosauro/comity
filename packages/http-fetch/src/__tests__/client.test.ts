@@ -14,6 +14,7 @@ describe("client", () => {
     vi.stubGlobal("fetch", fetchMock);
 
     const controller = new AbortController();
+
     controller.abort(new Error("upstream aborted"));
 
     await client(new URL("https://example.com"), {

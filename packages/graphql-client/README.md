@@ -6,7 +6,7 @@ GraphQL client contracts and transports for Comity.
 
 ## Purpose
 
-Defines the client-side GraphQL contracts, error model, transport abstractions, and module setup used to execute GraphQL operations.
+Defines the client-side GraphQL contracts, error model, transport abstractions, and module setup used to execute GraphQL operations. `GraphqlClient` is the canonical, transport-independent client facade; `GraphqlTransport` is the replaceable boundary.
 
 ---
 
@@ -15,23 +15,26 @@ Defines the client-side GraphQL contracts, error model, transport abstractions, 
 This package:
 
 - ✅ defines GraphQL request, response, and transport contracts
-- ✅ provides the GraphQL client and module setup
+- ✅ provides the `GraphqlClient` facade and module setup
 - ✅ exposes package-scoped GraphQL error types
 
 This package does NOT:
 
 - ❌ define query-building syntax
-- ❌ own a specific transport implementation
+- ❌ own a technology-bound transport implementation
 - ❌ embed application-specific GraphQL policy
 
 ---
 
 ## Public API
 
-- GraphQL client
+- `GraphqlClient` — canonical, transport-independent client facade (root)
+- `GraphqlClientOptions` — client construction options (root)
 - Request, response, and transport contracts
 - GraphQL error contract
 - Module setup contracts
+
+The client is a composition facade: it depends only on `GraphqlTransport`, `GraphqlRequest`, and `GraphqlResponse`. Technology-bound transport implementations (WebSocket, fetch, HTTP-specific) live in adapter packages; `GraphqlTransport` is the replaceable boundary.
 
 ---
 
@@ -46,7 +49,8 @@ This package does NOT:
 ## Related Packages
 
 - @comity/graphql-builder
-- @comity/graphql-client-ws
+- @comity/graphql-client-fetch — Fetch API transport adapter
+- @comity/graphql-client-ws — WebSocket transport adapter
 
 ---
 

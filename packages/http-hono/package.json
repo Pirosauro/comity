@@ -79,7 +79,6 @@
   "dependencies": {
     "@comity/composition": "workspace:*",
     "@comity/http": "workspace:*",
-    "@comity/kernel": "workspace:*",
     "@comity/primitives": "workspace:*"
   },
   "devDependencies": {

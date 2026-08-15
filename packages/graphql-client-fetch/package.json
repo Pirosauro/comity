@@ -1,0 +1,69 @@
+{
+  "name": "@comity/graphql-client-fetch",
+  "version": "0.9.0",
+  "description": "Fetch GraphQL transport adapter for Comity framework",
+  "type": "module",
+  "author": "Filippo Bovo <hello@filippobovo.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/comityjs/framework#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/comityjs/framework.git"
+  },
+  "bugs": {
+    "url": "https://github.com/comityjs/framework/issues"
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "keywords": [
+    "comity",
+    "comityjs",
+    "framework",
+    "graphql",
+    "fetch",
+    "adapter",
+    "typescript"
+  ],
+  "scripts": {
+    "build": "node ../../scripts/build.mjs",
+    "prepublishOnly": "node ../../scripts/build.mjs",
+    "dev": "node ../../scripts/build.mjs --watch",
+    "test": "vitest run --coverage",
+    "type-check": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint --ext .ts src"
+  },
+  "files": [
+    "./dist",
+    "!./dist/**/*.map"
+  ],
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "sideEffects": false,
+  "private": false,
+  "dependencies": {
+    "@comity/graphql-client": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "typescript": "^5.9.3"
+  }
+}

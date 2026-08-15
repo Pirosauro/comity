@@ -14,7 +14,7 @@ Every `@comity/*` package belongs to exactly one category:
 | ----------------------- | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Kernel / Primitives** | `@comity/primitives`, `@comity/kernel`, `@comity/composition`                 | Foundational building blocks, runtime engine, module lifecycle. No infrastructure-specific code.                                                                                                                                                                                                                                                                                             |
 | **Core Modules**        | `@comity/address`, `@comity/auth`, `@comity/http`, etc.                       | Business abstractions. Core Modules primarily define contracts and domain abstractions. MAY expose canonical domain implementations when those implementations represent domain behavior and prevent duplication across adapters. MUST NOT expose technology-specific implementations. MAY depend on `@comity/primitives` and `@comity/kernel`. MUST NOT depend on Adapters or Applications. |
-| **Adapters**            | `@comity/http-hono`, `@comity/sql-kysely`, `@comity/storefront-magento`, etc. | ONE concrete implementation of ONE Core Module. ONE adapter = ONE technological variant.                                                                                                                                                                                                                                                                                                     |
+| **Adapters**            | `@comity/http-hono`, `@comity/sql-kysely`, `@comity/storefront-magento`, etc. | Two categories: **Technology Adapters** provide ONE concrete implementation of ONE Core Module (ONE adapter = ONE technological variant); **Integration Adapters** integrate ONE external platform/system and may implement contracts from MULTIPLE Core Modules (see ADR-007).                                                                                                                                                                                                                                                                                                |
 | **Draft Core**          | Packages under development (e.g., `@comity/customer`, `@comity/validation`)   | Core Modules in draft state. Same rules as Core Modules.                                                                                                                                                                                                                                                                                                                                     |
 
 ---
@@ -42,9 +42,11 @@ Root barrel MUST NOT contain:
 
 ### 2.2 Adapters
 
+#### Technology Adapters
+
 Root barrel MUST contain ONLY:
 
-- The concrete implementation of the Core Module contract
+- The concrete implementation of the single Core Module contract
 - OPTIONAL: Type-only exports for configuration
 
 Root barrel MUST NOT contain:
@@ -52,6 +54,34 @@ Root barrel MUST NOT contain:
 - Multiple implementations
 - Core Module contracts (import from the Core Module)
 - Framework-type-specific exports beyond the adapter's purpose
+
+#### Integration Adapters
+
+Root barrel MUST contain ONLY:
+
+- The concrete implementations of the Core Module contracts the integration satisfies
+- OPTIONAL: Type-only exports for configuration
+
+Root barrel MUST NOT:
+
+- Re-export Core Module contracts (consumers MUST import contracts directly from their respective Core Modules)
+- Re-export shared platform internals
+
+Package rules:
+
+- Platform-specific internals (schema, mapping, normalization, filters) MUST live under `src/internal/` and MUST NOT be public.
+- Public configuration MUST live under `/setup` as a single unified surface.
+- An Integration Adapter MAY declare multiple Core Module dependencies ONLY when it satisfies ALL the qualifying criteria defined in `ADR-007` (single named external platform/system, shared platform-specific schema/mapping/normalization, unified configuration surface, replaceable as a whole against another platform).
+
+The dependency exemption is strictly limited to Integration Adapters. It does not weaken the one-Core-Module rule for Technology Adapters.
+
+#### GraphQL Terminology
+
+GraphQL spans both adapter categories; the classification depends on what the package binds:
+
+- `@comity/graphql-client` is a **Core Module**. It defines the GraphQL contracts and the `GraphqlClient` facade/abstraction, which is transport-independent.
+- The concrete transport (fetch, WebSocket, ...) is provided by **Technology Adapters**, e.g. `@comity/graphql-client-ws` (WebSocket) and a fetch-based adapter (`@comity/graphql-client-fetch`) where fetch is the underlying technology.
+- `@comity/storefront-magento` is an **Integration Adapter**. It may use the GraphQL client and its transport adapters to integrate the Magento platform without becoming a Technology Adapter itself.
 
 ### 2.3 Kernel / Primitives
 

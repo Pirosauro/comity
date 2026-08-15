@@ -13,6 +13,9 @@
   "bugs": {
     "url": "https://github.com/comityjs/framework/issues"
   },
+  "engines": {
+    "node": ">=24.0.0"
+  },
   "keywords": [
     "comity",
     "comityjs",
@@ -78,7 +81,6 @@
     "@comity/cache": "workspace:*",
     "@comity/catalog": "workspace:*",
     "@comity/composition": "workspace:*",
-    "@comity/content": "workspace:*",
     "@comity/graphql-builder": "workspace:*",
     "@comity/graphql-client": "workspace:*",
     "@comity/http": "workspace:*",

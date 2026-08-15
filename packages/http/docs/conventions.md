@@ -22,12 +22,16 @@ It provides:
 It does NOT provide:
 
 - HTTP framework adapters (Hono, Express, Fetch, etc.)
+- HTTP transports (fetch, undici, node http, etc.)
 - Rendering (HTML, React, JSX, templates)
 - Routing, authentication, authorization
 - Persistence or business logic
 
 Framework adapters MUST live in separate modules
 (e.g. `@comity/http-hono`).
+
+Transport implementations MUST live in separate modules
+(e.g. `@comity/http-fetch` implements the `HttpTransport` contract).
 
 ---
 

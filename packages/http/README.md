@@ -6,7 +6,7 @@ HTTP module for Comity framework applications.
 
 ## Purpose
 
-Provides a transport-agnostic HTTP pipeline with middleware, lifecycle events, and explicit response handling. It defines contracts for adapters and facades without binding to any specific server/runtime.
+Provides a transport-agnostic HTTP pipeline with middleware, lifecycle events, and explicit response handling. It defines contracts for adapters and facades without binding to any specific server/runtime or transport implementation.
 
 ---
 
@@ -30,7 +30,7 @@ This package does NOT:
 
 ## Public API
 
-- Contracts — request, context, result, middleware, pipeline
+- Contracts — request, context, result, middleware, pipeline, transport
 - Facade — lifecycle-aware orchestrator that executes the pipeline
 - Lifecycle — request lifecycle events
 - Setup — kernel module metadata and setup function
@@ -50,6 +50,7 @@ This package does NOT:
 
 - @comity/kernel
 - @comity/http-hono
+- @comity/http-fetch — fetch implementation of the `HttpTransport` contract
 - @comity/primitives
 
 ---

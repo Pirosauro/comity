@@ -1,9 +1,9 @@
-import type { GraphqlError } from "../contracts/error.js";
-import type { GraphqlRequest } from "../contracts/request.js";
-import type { GraphqlResponse } from "../contracts/response.js";
-import type { GraphqlTransport } from "../contracts/transport.js";
+import type { GraphqlError } from "@comity/graphql-client";
+import type { GraphqlRequest } from "@comity/graphql-client";
+import type { GraphqlResponse } from "@comity/graphql-client";
+import type { GraphqlTransport } from "@comity/graphql-client";
 
-import { GraphqlClientError } from "../errors/graphql.js";
+import { GraphqlClientError } from "@comity/graphql-client/errors";
 
 /**
  * Options for the FetchGraphqlTransport class.

@@ -31,7 +31,6 @@ This package does NOT:
 - `Island` — island markup component
 - `IslandComponentLoader`, `IslandComponentRegistry` — loader and registry types
 - `createHydrationRuntime` — runtime factory for React hydration
-- `setup` subpath — module setup
 
 No exhaustive reference; see docs for constraints.
 

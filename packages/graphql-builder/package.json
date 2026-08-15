@@ -13,6 +13,9 @@
   "bugs": {
     "url": "https://github.com/comityjs/framework/issues"
   },
+  "engines": {
+    "node": ">=24.0.0"
+  },
   "keywords": [
     "comity",
     "comityjs",
@@ -69,11 +72,6 @@
     "access": "public"
   },
   "sideEffects": false,
-  "dependencies": {
-    "@comity/composition": "workspace:*",
-    "@comity/kernel": "workspace:*",
-    "@comity/primitives": "workspace:*"
-  },
   "devDependencies": {
     "@types/node": "^24.13.3",
     "typescript": "^5.9.3"

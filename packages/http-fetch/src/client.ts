@@ -1,4 +1,8 @@
-import type { HttpMethod } from "./contracts/method.js";
+import type { HttpMethod } from "@comity/http";
+import type { AbortCleanup } from "./internal/abort.js";
+
+import { combineAbortSignals } from "./internal/abort.js";
+import { wait } from "./internal/wait.js";
 
 /**
  * Options for the HTTP client, extending standard RequestInit with additional features
@@ -15,101 +19,6 @@ export interface HttpOptions extends Omit<RequestInit, "method" | "headers"> {
 
   /** Headers to include in the request */
   readonly headers?: Record<string, string>;
-}
-
-/**
- * Utility function to pause execution
- *
- * @param ms - Time to wait in milliseconds
- *
- * @returns Promise that resolves after the specified time
- */
-const wait = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
-
-/** Cleanup function for abort listeners. */
-type AbortCleanup = () => void;
-
-/**
- * Reads the abort reason from a signal when available.
- *
- * @param signal - Abort signal to inspect.
- *
- * @returns Abort reason propagated by the caller or runtime.
- */
-function getAbortReason(signal: AbortSignal): unknown {
-  return "reason" in signal ? signal.reason : undefined;
-}
-
-/**
- * Combines multiple abort signals into a single signal.
- *
- * @param signals - Signals that should abort the same request.
- *
- * @returns Combined signal plus a cleanup function for listeners.
- */
-function combineAbortSignals(signals: readonly AbortSignal[]): {
-  /** Combined abort signal. */
-  signal: AbortSignal;
-  /** Cleanup for listeners attached during the fallback path. */
-  cleanup: AbortCleanup;
-} {
-  if (typeof AbortSignal.any === "function") {
-    return {
-      signal: AbortSignal.any(Array.from(signals)),
-      /**
-       *
-       */
-      cleanup: () => undefined,
-    };
-  }
-
-  const controller = new AbortController();
-  const cleanups: AbortCleanup[] = [];
-
-  /**
-   * Aborts the combined controller using the originating signal reason.
-   *
-   * @param signal - Signal that triggered the abort.
-   *
-   * @returns void
-   */
-  const abortFrom = (signal: AbortSignal) => {
-    controller.abort(getAbortReason(signal));
-  };
-
-  for (const signal of signals) {
-    if (signal.aborted) {
-      abortFrom(signal);
-
-      return {
-        signal: controller.signal,
-        /**
-         *
-         */
-        cleanup: () => undefined,
-      };
-    }
-
-    /**
-     *
-     */
-    const handler = () => abortFrom(signal);
-
-    signal.addEventListener("abort", handler, { once: true });
-    cleanups.push(() => signal.removeEventListener("abort", handler));
-  }
-
-  return {
-    signal: controller.signal,
-    /**
-     *
-     */
-    cleanup: () => {
-      for (const cleanup of cleanups) {
-        cleanup();
-      }
-    },
-  };
 }
 
 /**

@@ -6,11 +6,13 @@
 
 ## Package Structure
 
-- `client.ts` coordinates GraphQL execution
+- `client.ts` provides the canonical `GraphqlClient` facade — a transport-independent composition of `execute`, `query`, `mutation`, and `subscribe`
 - `contracts/` defines request, response, transport, and error contracts
-- `error/` contains package-scoped GraphQL client errors
+- `errors/` contains package-scoped GraphQL client errors
 - `setup/` contains module metadata and wiring contracts
-- `transports/` contains transport implementations and helpers
+- `transports/` contains transport composition helpers (`CombinedGraphqlTransport`)
+
+Technology-bound transport implementations (WebSocket, fetch, HTTP-specific) belong in adapter packages (`@comity/graphql-client-ws`, `@comity/graphql-client-fetch`).
 
 ---
 
@@ -26,6 +28,7 @@
 ## Boundary Rules
 
 - query construction is owned elsewhere
-- transport implementations remain replaceable
+- `GraphqlTransport` is the replaceable boundary; transport implementations remain replaceable
 - the client does not know about application data sources
+- the client facade is transport-independent and stays in the Core Module
 

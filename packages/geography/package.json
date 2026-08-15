@@ -48,7 +48,24 @@
         "default": "./dist/cjs/index.js"
       }
     },
+    "./errors": {
+      "import": {
+        "types": "./dist/types/errors/index.d.ts",
+        "default": "./dist/esm/errors/index.js"
+      },
+      "require": {
+        "types": "./dist/types/errors/index.d.ts",
+        "default": "./dist/cjs/errors/index.js"
+      }
+    },
     "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "errors": [
+        "./dist/types/errors/index.d.ts"
+      ]
+    }
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org",

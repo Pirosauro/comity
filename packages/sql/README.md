@@ -17,7 +17,7 @@ This package:
 - ✅ defines SQL client, transaction, and query contracts
 - ✅ defines typed SQL result and operation result contracts
 - ✅ exposes module-level error types via the `error` subpath
-- ✅ offers `hooks` subpath for lifecycle configuration
+- ✅ offers `observers` subpath for lifecycle observability
 
 This package does NOT:
 
@@ -34,7 +34,7 @@ This package does NOT:
 - `SqlQuery` — query contract
 - `SqlResult`, `SqlOperationResult` — typed result contracts
 - `error` subpath — SQL-specific error types
-- `hooks` subpath — SQL lifecycle hooks
+- `observers` subpath — SQL lifecycle observability
 
 No exhaustive reference; see docs for constraints.
 

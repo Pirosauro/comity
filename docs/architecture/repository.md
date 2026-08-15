@@ -1,6 +1,6 @@
 # Repository Overview
 
-## Package Inventory (36 packages)
+## Package Inventory (43 packages)
 
 ### Kernel / Primitives (3)
 
@@ -10,7 +10,7 @@
 | `@comity/kernel`      | Runtime engine: module lifecycle, service registration, event dispatching, hook execution, module initialization |
 | `@comity/composition` | Module loader, resolver, shared services, runtime orchestrator                                                   |
 
-### Core Modules (20)
+### Core Modules (22)
 
 | Package                   | Description                                                                                   |
 | ------------------------- | --------------------------------------------------------------------------------------------- |
@@ -33,9 +33,11 @@
 | `@comity/storefront`      | Storefront architecture: PageModel, composers, handler contracts                              |
 | `@comity/graphql-builder` | Zero-dependency GraphQL query builder                                                         |
 | `@comity/graphql-client`  | GraphQL client contracts: transport, registry, request, response                              |
-| `@comity/application`     | Application layer: resolver, contracts, result types                                          |
+| `@comity/address`         | Address domain: `Address`, `AddressId`, `AddressLine`, `AddressRepository`, `AddressValidator` |
+| `@comity/geography`       | Geography contracts: `GeographyProvider`, country/subdivision metadata, `GeographyError`      |
+| `@comity/identity`        | Identity domain: `User`, `UserId`, `UserValidator`                                            |
 
-### Adapters (13)
+### Adapters (16)
 
 | Package                         | Implements               | External Library                      |
 | ------------------------------- | ------------------------ | ------------------------------------- |
@@ -52,6 +54,9 @@
 | `@comity/sql-kysely`            | `@comity/sql`            | `kysely`                              |
 | `@comity/storefront-magento`    | `@comity/storefront`     | `zod`                                 |
 | `@comity/graphql-client-ws`     | `@comity/graphql-client` | `graphql-ws` (peer)                   |
+| `@comity/graphql-client-fetch`  | `@comity/graphql-client` | Fetch API                             |
+| `@comity/http-fetch`            | `@comity/http`           | Fetch API                             |
+| `@comity/validation-zod`        | `@comity/validation`     | `zod` (peer)                          |
 
 ### Draft Packages (excluded from analysis)
 

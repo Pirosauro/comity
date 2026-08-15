@@ -20,9 +20,9 @@
     "comity",
     "comityjs",
     "framework",
-    "http",
-    "hono",
-    "adapter",
+    "router",
+    "routing",
+    "rewriting",
     "typescript"
   ],
   "scripts": {
@@ -75,6 +75,9 @@
   },
   "typesVersions": {
     "*": {
+      "routers": [
+        "./dist/types/routers/index.d.ts"
+      ],
       "setup": [
         "./dist/types/setup/index.d.ts"
       ]
@@ -89,7 +92,6 @@
   "dependencies": {
     "@comity/composition": "workspace:*",
     "@comity/http": "workspace:*",
-    "@comity/kernel": "workspace:*",
     "@comity/primitives": "workspace:*"
   },
   "devDependencies": {

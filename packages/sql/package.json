@@ -58,12 +58,25 @@
         "default": "./dist/cjs/errors/index.js"
       }
     },
+    "./observers": {
+      "import": {
+        "types": "./dist/types/observers/index.d.ts",
+        "default": "./dist/esm/observers/index.js"
+      },
+      "require": {
+        "types": "./dist/types/observers/index.d.ts",
+        "default": "./dist/cjs/observers/index.js"
+      }
+    },
     "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
       "errors": [
         "./dist/types/errors/index.d.ts"
+      ],
+      "observers": [
+        "./dist/types/observers/index.d.ts"
       ]
     }
   },

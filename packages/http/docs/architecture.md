@@ -19,10 +19,12 @@ It explicitly does **not**:
 
 - bind to any HTTP server or runtime (Node, Deno, Bun, Cloudflare, etc.)
 - implement adapters (Hono, Express, Fetch, etc.)
+- implement transports (fetch, undici, node http, etc.)
 - perform rendering or serialization
 - define business or domain logic
 
 Adapters live in separate packages (e.g. `@comity/http-hono`).
+Transports live in separate packages (e.g. `@comity/http-fetch` implements the `HttpTransport` contract).
 
 ---
 

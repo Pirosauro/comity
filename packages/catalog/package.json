@@ -2,6 +2,7 @@
   "name": "@comity/catalog",
   "version": "0.1.0",
   "description": "Commerce catalog abstractions for Comity domain modules.",
+  "type": "module",
   "author": "Filippo Bovo <hello@filippobovo.com>",
   "license": "MIT",
   "homepage": "https://github.com/comityjs/framework#readme",
@@ -12,11 +13,15 @@
   "bugs": {
     "url": "https://github.com/comityjs/framework/issues"
   },
+  "engines": {
+    "node": ">=24.0.0"
+  },
   "keywords": [
     "comity",
     "comityjs",
-    "cart",
-    "shopping",
+    "catalog",
+    "commerce",
+    "product",
     "typescript"
   ],
   "scripts": {

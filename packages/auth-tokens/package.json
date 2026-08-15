@@ -1,7 +1,7 @@
 {
   "name": "@comity/auth-tokens",
   "version": "0.9.0",
-  "description": "Authentication module with JWT token handling using JOSE for Comity framework",
+  "description": "Token envelope and facade primitives for Comity.",
   "type": "module",
   "author": "Filippo Bovo <hello@filippobovo.com>",
   "license": "MIT",
@@ -12,6 +12,9 @@
   },
   "bugs": {
     "url": "https://github.com/comityjs/framework/issues"
+  },
+  "engines": {
+    "node": ">=24.0.0"
   },
   "keywords": [
     "comity",

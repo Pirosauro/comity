@@ -13,6 +13,9 @@
   "bugs": {
     "url": "https://github.com/comityjs/framework/issues"
   },
+  "engines": {
+    "node": ">=24.0.0"
+  },
   "keywords": [
     "comity",
     "comityjs",
@@ -68,16 +71,6 @@
         "default": "./dist/cjs/observers/index.js"
       }
     },
-    "./policies": {
-      "import": {
-        "types": "./dist/types/policies/index.d.ts",
-        "default": "./dist/esm/policies/index.js"
-      },
-      "require": {
-        "types": "./dist/types/policies/index.d.ts",
-        "default": "./dist/cjs/policies/index.js"
-      }
-    },
     "./package.json": "./package.json"
   },
   "typesVersions": {
@@ -87,9 +80,6 @@
       ],
       "observers": [
         "./dist/types/observers/index.d.ts"
-      ],
-      "policies": [
-        "./dist/types/policies/index.d.ts"
       ]
     }
   },

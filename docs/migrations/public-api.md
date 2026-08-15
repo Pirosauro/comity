@@ -24,18 +24,19 @@ Approved architectural decisions (out of scope here):
 - Public Entities follow the `Customer` pattern (entity class + value-object id + snapshot types + repository contract)
 - One Adapter = one package = one technology
 - Core Modules MUST NOT contain technology-specific code
+- `GraphqlClient` in `@comity/graphql-client` is a **canonical, transport-independent client facade**, not a technology-bound implementation. It depends only on `GraphqlTransport`, `GraphqlRequest`, and `GraphqlResponse` and stays in the Core Module root. `GraphqlTransport` is the replaceable boundary; only technology-bound transports (WebSocket, fetch, HTTP-specific) belong in adapter packages.
 
 ---
 
 ## 2. Severity Tiers
 
-| Tier  | Meaning                                                          |
-| ----- | ---------------------------------------------------------------- |
-| P0    | Empty or unusable public API. Blocks consumers immediately.      |
-| P1    | Architectural violation. Misleading or unstable contract.        |
+| Tier  | Meaning                                                               |
+| ----- | --------------------------------------------------------------------- |
+| P0    | Empty or unusable public API. Blocks consumers immediately.           |
+| P1    | Architectural violation. Misleading or unstable contract.             |
 | P2    | Wrong export kind or misplaced wiring. API surface correct but leaky. |
-| P3    | Dead code or partial ADR compliance.                              |
-| P4–P6 | Style, documentation, naming drift.                              |
+| P3    | Dead code or partial ADR compliance.                                  |
+| P4–P6 | Style, documentation, naming drift.                                   |
 
 ---
 
@@ -110,11 +111,11 @@ observer pattern.
 
 ## 9. Empty Barrels
 
-| Package                      | Required root export                  |
-| ---------------------------- | ------------------------------------- |
-| `@comity/cache-kv`           | `KvCacheStore`                        |
-| `@comity/cache-redis`        | `RedisCacheStore`                     |
-| `@comity/storefront-magento` | `CachedCatalogRepositoryContext`      |
+| Package                      | Required root export             |
+| ---------------------------- | -------------------------------- |
+| `@comity/cache-kv`           | `KvCacheStore`                   |
+| `@comity/cache-redis`        | `RedisCacheStore`                |
+| `@comity/storefront-magento` | `CachedCatalogRepositoryContext` |
 
 Rule reference: `docs/standards/public-api.md` §2 (Adapters MUST export the concrete implementation of the Core Module contract).
 
@@ -122,10 +123,10 @@ Rule reference: `docs/standards/public-api.md` §2 (Adapters MUST export the con
 
 ## 10. `export type` Conversion
 
-| Package            | Symbol(s)                   | Current | Target         |
-| ------------------ | --------------------------- | ------- | -------------- |
-| `@comity/auth-tokens` | Topic types              | `export` | `export type`  |
-| Various              | TypeScript-only exports   | `export` | `export type`  |
+| Package               | Symbol(s)               | Current  | Target        |
+| --------------------- | ----------------------- | -------- | ------------- |
+| `@comity/auth-tokens` | Topic types             | `export` | `export type` |
+| Various               | TypeScript-only exports | `export` | `export type` |
 
 Rule reference: `docs/standards/public-api.md` §8.
 
@@ -149,14 +150,36 @@ Pending decisions:
 
 ---
 
+## 11b. `@comity/graphql-client` Fetch Transport Extraction
+
+Current state: `FetchGraphqlTransport` was moved out of `@comity/graphql-client`
+into the dedicated Technology Adapter `@comity/graphql-client-fetch`.
+
+Migration:
+
+```ts
+// before
+import { FetchGraphqlTransport } from "@comity/graphql-client/transports";
+
+// after
+import { FetchGraphqlTransport } from "@comity/graphql-client-fetch";
+```
+
+`@comity/graphql-client/transports` still exists and continues to export
+`CombinedGraphqlTransport` (pure transport composition, no technology binding).
+`FetchGraphqlTransport` and `FetchTransportOptions` are no longer exported from
+the Core Module.
+
+---
+
 ## 12. Pending Decisions
 
-| Topic                              | Decision needed                                                                 |
-| ---------------------------------- | ------------------------------------------------------------------------------- |
-| `@comity/http` client adapters     | Adapter naming and migration strategy for existing consumers                    |
-| `@comity/cache` root exports       | Whether `DefaultCache`/`CACHE_TOKEN` are canonical or move to `/facade`         |
-| `@comity/storage` root exports     | Whether `DefaultStorage`/`STORAGE_TOKEN` are canonical or move to `/facade`      |
-| `@comity/order` ADR-002 compliance | Confirm `OrderCommands` exists as a separate port                              |
+| Topic                              | Decision needed                                                             |
+| ---------------------------------- | --------------------------------------------------------------------------- |
+| `@comity/http` client adapters     | Adapter naming and migration strategy for existing consumers                |
+| `@comity/cache` root exports       | Whether `DefaultCache`/`CACHE_TOKEN` are canonical or move to `/facade`     |
+| `@comity/storage` root exports     | Whether `DefaultStorage`/`STORAGE_TOKEN` are canonical or move to `/facade` |
+| `@comity/order` ADR-002 compliance | Confirm `OrderCommands` exists as a separate port                           |
 
 Each pending decision may shift the migration order in §3–§7.
 

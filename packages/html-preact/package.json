@@ -13,6 +13,9 @@
   "bugs": {
     "url": "https://github.com/comityjs/framework/issues"
   },
+  "engines": {
+    "node": ">=24.0.0"
+  },
   "keywords": [
     "comity",
     "comityjs",
@@ -49,16 +52,6 @@
         "default": "./dist/cjs/index.js"
       }
     },
-    "./setup": {
-      "import": {
-        "types": "./dist/types/setup/index.d.ts",
-        "default": "./dist/esm/setup/index.js"
-      },
-      "require": {
-        "types": "./dist/types/setup/index.d.ts",
-        "default": "./dist/cjs/setup/index.js"
-      }
-    },
     "./streaming": {
       "import": {
         "types": "./dist/types/streaming/index.d.ts",
@@ -75,9 +68,6 @@
   },
   "typesVersions": {
     "*": {
-      "setup": [
-        "./dist/types/setup/index.d.ts"
-      ],
       "streaming": [
         "./dist/types/streaming/index.d.ts"
       ]
@@ -91,7 +81,6 @@
   "dependencies": {
     "@comity/html": "workspace:*",
     "@comity/http": "workspace:*",
-    "@comity/primitives": "workspace:*",
     "preact-render-to-string": "^6.7.0"
   },
   "devDependencies": {

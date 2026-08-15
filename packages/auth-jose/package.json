@@ -1,7 +1,7 @@
 {
   "name": "@comity/auth-jose",
   "version": "0.9.0",
-  "description": "Authentication module with JWT token handling using JOSE for Comity framework",
+  "description": "JOSE-backed token service implementing @comity/auth token contracts.",
   "type": "module",
   "author": "Filippo Bovo <hello@filippobovo.com>",
   "license": "MIT",
@@ -12,6 +12,9 @@
   },
   "bugs": {
     "url": "https://github.com/comityjs/framework/issues"
+  },
+  "engines": {
+    "node": ">=24.0.0"
   },
   "keywords": [
     "comity",
@@ -76,14 +79,11 @@
   },
   "typesVersions": {
     "*": {
-      "errors": [
-        "./dist/types/errors/index.d.ts"
+      "observers": [
+        "./dist/types/observers/index.d.ts"
       ],
       "setup": [
         "./dist/types/setup/index.d.ts"
-      ],
-      "use-cases": [
-        "./dist/types/use-cases/index.d.ts"
       ]
     }
   },
@@ -97,11 +97,14 @@
     "@comity/auth-tokens": "workspace:*",
     "@comity/composition": "workspace:*",
     "@comity/kernel": "workspace:*",
-    "@comity/primitives": "workspace:*",
-    "jose": "^6.2.8"
+    "@comity/primitives": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^24.13.3",
+    "jose": "^6.2.8",
     "typescript": "^5.9.3"
+  },
+  "peerDependencies": {
+    "jose": "^6.0.0"
   }
 }

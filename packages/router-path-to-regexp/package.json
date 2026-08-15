@@ -20,8 +20,9 @@
     "comity",
     "comityjs",
     "framework",
-    "http",
-    "hono",
+    "router",
+    "routing",
+    "path-to-regexp",
     "adapter",
     "typescript"
   ],
@@ -53,13 +54,6 @@
     },
     "./package.json": "./package.json"
   },
-  "typesVersions": {
-    "*": {
-      "setup": [
-        "./dist/types/setup/index.d.ts"
-      ]
-    }
-  },
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public"
@@ -67,15 +61,14 @@
   "sideEffects": false,
   "private": false,
   "dependencies": {
-    "@comity/composition": "workspace:*",
-    "@comity/http": "workspace:*",
-    "@comity/kernel": "workspace:*",
-    "@comity/primitives": "workspace:*",
-    "@comity/router": "workspace:*",
-    "path-to-regexp": "^8.4.2"
+    "@comity/router": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^24.13.3",
+    "path-to-regexp": "^8.4.2",
     "typescript": "^5.9.3"
+  },
+  "peerDependencies": {
+    "path-to-regexp": "^8.0.0"
   }
 }

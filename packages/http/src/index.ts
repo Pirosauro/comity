@@ -1,4 +1,3 @@
-export type { HttpOptions } from "./client.js";
 export type { HttpContext, HttpRuntimeContext } from "./contracts/context.js";
 export type { HttpCookie } from "./contracts/cookie.js";
 export type { HttpHandler } from "./contracts/handler.js";
@@ -8,8 +7,8 @@ export type { HttpRequest } from "./contracts/request.js";
 export type { HttpBody, HttpResponse } from "./contracts/response.js";
 export type { HttpResult } from "./contracts/result.js";
 export type { HttpStatus } from "./contracts/status.js";
+export type { HttpTransport } from "./contracts/transport.js";
 
-export { client } from "./client.js";
 export { createHttpContext } from "./create-context.js";
 export { HttpFacade } from "./facade.js";
 export { createHttpHandler } from "./handler.js";

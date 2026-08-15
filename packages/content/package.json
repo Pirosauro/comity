@@ -2,6 +2,7 @@
   "name": "@comity/content",
   "version": "0.1.0",
   "description": "CMS and content abstractions for Comity domain modules.",
+  "type": "module",
   "license": "MIT",
   "homepage": "https://github.com/comityjs/framework#readme",
   "repository": {
@@ -10,6 +11,9 @@
   },
   "bugs": {
     "url": "https://github.com/comityjs/framework/issues"
+  },
+  "engines": {
+    "node": ">=24.0.0"
   },
   "keywords": [
     "comity",

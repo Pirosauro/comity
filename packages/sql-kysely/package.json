@@ -61,12 +61,14 @@
   "sideEffects": false,
   "private": false,
   "dependencies": {
-    "@comity/kernel": "workspace:*",
-    "@comity/sql": "workspace:*",
-    "kysely": "^0.28.17"
+    "@comity/sql": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^24.13.3",
+    "kysely": "^0.28.17",
     "typescript": "^5.9.3"
+  },
+  "peerDependencies": {
+    "kysely": "^0.28.0"
   }
 }

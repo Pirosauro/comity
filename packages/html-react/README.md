@@ -16,7 +16,6 @@ This package:
 
 - ✅ renders React output through Comity HTML contracts
 - ✅ exposes the `useLayout` helper for React components
-- ✅ provides the `setup` subpath for adapter module wiring
 - ✅ offers the `streaming` subpath for streaming React rendering
 
 This package does NOT:
@@ -31,7 +30,6 @@ This package does NOT:
 
 - `ReactStaticHtmlRenderer` — entrypoint for static React rendering
 - `useLayout` — React hook for layout management
-- `setup` subpath — adapter module setup
 - `streaming` subpath — streaming React rendering utilities
 
 No exhaustive reference; see docs for constraints.

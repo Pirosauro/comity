@@ -178,6 +178,123 @@ Adapters:
 
 ---
 
+## 11. Integration Adapters
+
+### Definition
+
+An **Integration Adapter** integrates a **single external platform/system** and MAY implement contracts belonging to **multiple Core Modules**. It is distinct from a **Technology Adapter**, which binds ONE Core Module to one interchangeable technology.
+
+Reference implementation: `@comity/storefront-magento`.
+
+> Magento is not an exception to the one-adapter-per-module rule. It is the first concrete example of a general architectural category: the Integration Adapter. Future integrations (Shopify, commercetools, Hygraph, or any other external platform) follow the same shape.
+
+### Integration Adapter vs Technology Adapter
+
+| Concern | Technology Adapter | Integration Adapter |
+| --- | --- | --- |
+| Binds | One Core Module | One external platform/system |
+| Core Module contracts | Exactly one | One or more |
+| Technology | Interchangeable | Fixed by the platform |
+| Shared platform layers | None | Schema, mapping, normalization, filters (in-package) |
+| Configuration surface | Per contract | Unified single surface |
+| Replaceability | Piece-by-piece (swap technology) | As a whole (swap platform) |
+| Example | `@comity/http-hono`, `@comity/sql-kysely`, `@comity/graphql-client-ws` | `@comity/storefront-magento` |
+
+The "one adapter = one Core Module" rule applies to **Technology Adapters only**.
+
+### Qualifying Criteria
+
+A package qualifies as an Integration Adapter ONLY when it satisfies ALL of the following criteria:
+
+1. **Single named external platform/system** — it binds to one named platform with one primary API surface.
+2. **Shared platform-specific schema/mapping/normalization** — the contracts it implements genuinely share platform-specific schema, mapping, and normalization that would otherwise be duplicated or forced into a shared package.
+3. **Unified configuration surface** — one client, one endpoint, one setup module.
+4. **Replaceable as a whole against another platform** — it can be replaced by another platform integration, not piece-by-piece.
+
+If ANY criterion is not satisfied, the package MUST be modeled as one or more Technology Adapters.
+
+### Dependency Rules
+
+An Integration Adapter:
+
+- MAY depend on the Core Modules whose contracts it implements;
+- MAY depend on the Technology Adapters that provide the underlying technology (e.g., a GraphQL transport adapter), keeping those dependencies replaceable;
+- MAY depend on `@comity/primitives` and `@comity/kernel`;
+- MUST NOT depend on other Integration Adapters;
+- MUST NOT depend on Application-layer code;
+- MUST NOT import Core Modules beyond those whose contracts it implements and the shared helpers needed to implement them.
+
+Example: `@comity/storefront-magento` declares `zod` as a regular dependency because the adapter validates integration runtime configuration. This is intentional and is not a peer-dependency violation.
+
+### Public API Rules
+
+- The root barrel exposes the concrete implementations of the Core Module contracts it satisfies.
+- The root barrel MUST NOT re-export Core Module contracts — consumers import contracts from their respective Core Modules.
+- Platform-specific internals (schema, mappers, normalization, filters) MUST live under `src/internal/` and MUST NOT be public.
+- Public configuration MUST live under `/setup` as a single unified surface.
+
+### Ownership
+
+- Core Modules retain ownership of their contracts and do not know about the integration.
+- The Integration Adapter owns the platform → domain mapping, the platform-specific schema/query/mapper layers, and the normalization of platform errors into Core Module error surfaces.
+- The Application layer decides how to compose the integration's repositories and services.
+
+### Lifecycle
+
+- The Integration Adapter is initialized through the standard module setup lifecycle (`composition/setup` `module` metadata).
+- Its `module` declares the Core Modules it depends on (`dependsOn`) so the kernel wires them in order.
+- Its setup registers the repositories and services it owns and defines the integration's configuration hooks (`*:configuring`, `*:initialized`).
+
+### Replaceability
+
+Replacing a platform (e.g., Magento → Shopify) means replacing the Integration Adapter package and its setup, without modifying Core Modules or Application orchestration.
+
+### GraphQL Terminology
+
+GraphQL spans both adapter categories; the classification depends on what the package binds:
+
+- `@comity/graphql-client` is a **Core Module**. It defines the GraphQL contracts and the `GraphqlClient` facade/abstraction, which is transport-independent.
+- The concrete transport (fetch, WebSocket, ...) is provided by **Technology Adapters**, e.g. `@comity/graphql-client-ws` (WebSocket) and a fetch-based adapter (`@comity/graphql-client-fetch`) where fetch is the underlying technology.
+- `@comity/storefront-magento` is an **Integration Adapter**. It may use the GraphQL client and its transport adapters to integrate the Magento platform without becoming a Technology Adapter itself.
+
+```text
+Integration Adapter
+    @comity/storefront-magento
+            │
+            ├── @comity/storefront
+            ├── @comity/catalog
+            ├── @comity/content
+            ├── @comity/router
+            └── @comity/graphql-client
+                         │
+                         ▼
+                Technology Adapter
+                (fetch / WebSocket / ...)
+```
+
+Magento is the external platform; GraphQL is the protocol/API used to integrate it.
+
+---
+
+## 12. Technology Binding Dependency Policy
+
+Technology bindings are the third-party libraries an adapter binds to (e.g. Hono, `path-to-regexp`, `kysely`, `jose`, `graphql-ws`).
+
+Technology bindings SHOULD be declared as `peerDependencies` when:
+
+- the consumer application controls the technology version
+- duplicate runtime instances must be avoided
+- the adapter only binds to the technology
+
+Dependencies may remain regular dependencies when:
+
+- the adapter owns the dependency lifecycle
+- the dependency is an internal implementation detail
+
+The bound technology version used for development and testing MUST also be declared as a `devDependency` so the adapter builds and its tests run in isolation.
+
+---
+
 ## Summary
 
 Adapters are **edges**, not **centers**.

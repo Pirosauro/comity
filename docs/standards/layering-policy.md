@@ -81,20 +81,87 @@ Core Modules define contracts — not concrete infrastructure.
 ## 2.3 Adapters
 
 **Purpose:**
-Bind Core Modules to concrete technologies.
+Bind Core Modules to concrete technologies and integrate external platforms.
+
+Adapters come in two distinct categories:
+
+### Technology Adapters
+
+**Purpose:**
+Bind ONE Core Module to one interchangeable technology.
 
 Examples:
 
 - `@comity/http-hono`
 - `@comity/sql-kysely`
+- `@comity/graphql-client-ws`
 - `@comity/html-react`
 
-Adapters:
+Technology Adapters:
 
-- MAY depend on one Core Module
+- implement/bind exactly **one** Core Module
+- represent an interchangeable technology
+- MAY depend on the Core Module they implement
 - MAY depend on third-party libraries
 - MUST NOT introduce business logic
 - MUST normalize external errors into module errors
+
+The rule **"one adapter = one Core Module"** applies to Technology Adapters.
+
+A Technology Adapter MAY consume technology-agnostic composition infrastructure
+(e.g. a canonical facade, factory, or wiring helper) from another Core Module
+without thereby becoming an adapter for that Core Module. The one-Core-Module
+rule governs which Core Module contract the adapter *implements*, not every
+package it consumes during composition. Such infrastructure consumption does not
+create a second implemented contract and does not weaken the rule.
+
+### Integration Adapters
+
+**Purpose:**
+Integrate a single external platform/system with one or more Core Module contracts.
+
+Example:
+
+- `@comity/storefront-magento`
+
+Integration Adapters:
+
+- integrate a **single** external platform/system;
+- MAY implement contracts belonging to **multiple** Core Modules (the "one adapter = one Core Module" rule does NOT apply to them);
+- keep shared platform-specific schema, mapping, normalization, and logic inside the package;
+- have a unified configuration surface and lifecycle;
+- are replaceable as a platform in its entirety;
+- MAY depend on the Core Modules whose contracts they implement and on the Technology Adapters that provide the underlying technology;
+- MUST NOT depend on Application-layer code;
+- MUST NOT depend on other Integration Adapters;
+- MUST NOT become a masked Application Layer (no business orchestration, no application logic).
+
+An Integration Adapter MUST satisfy the qualifying criteria defined in `ADR-007` (single named platform, shared platform-specific schema/mapping/normalization, unified configuration surface, replaceable as a whole). If it does not, it MUST be modeled as one or more Technology Adapters.
+
+### GraphQL Terminology
+
+GraphQL spans both adapter categories; the classification depends on what the package binds:
+
+- `@comity/graphql-client` is a **Core Module**. It defines the GraphQL contracts and the `GraphqlClient` facade/abstraction, which is transport-independent.
+- The concrete transport (fetch, WebSocket, ...) is provided by **Technology Adapters**, e.g. `@comity/graphql-client-ws` (WebSocket) and a fetch-based adapter (`@comity/graphql-client-fetch`) where fetch is the underlying technology.
+- `@comity/storefront-magento` is an **Integration Adapter**. It may use the GraphQL client and its transport adapters to integrate the Magento platform without becoming a Technology Adapter itself.
+
+```text
+Integration Adapter
+    @comity/storefront-magento
+            │
+            ├── @comity/storefront
+            ├── @comity/catalog
+            ├── @comity/content
+            ├── @comity/router
+            └── @comity/graphql-client
+                         │
+                         ▼
+                Technology Adapter
+                (fetch / WebSocket / ...)
+```
+
+Magento is the external platform; GraphQL is the protocol/API used to integrate it.
 
 Adapters are replaceable implementation details.
 

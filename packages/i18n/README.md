@@ -34,7 +34,6 @@ This package does NOT:
 - `I18nLocaleResolver`, `I18nResolveContext` — locale resolution contracts
 - `I18N_TOKEN` — DI token for the i18n service
 - `error` subpath — error types
-- `hooks` subpath — lifecycle hooks
 - `setup` subpath — module wiring tokens
 
 No exhaustive reference; see docs for constraints.

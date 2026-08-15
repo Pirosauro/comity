@@ -13,6 +13,9 @@
   "bugs": {
     "url": "https://github.com/comityjs/framework/issues"
   },
+  "engines": {
+    "node": ">=24.0.0"
+  },
   "keywords": [
     "comity",
     "comityjs",
@@ -77,8 +80,7 @@
     "@comity/content": "workspace:*",
     "@comity/http": "workspace:*",
     "@comity/primitives": "workspace:*",
-    "@comity/search": "workspace:*",
-    "@comity/seo": "workspace:*"
+    "@comity/search": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^24.13.3",
