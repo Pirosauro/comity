@@ -90,7 +90,7 @@ High-level description of the public API surface. No exhaustive reference.
 
 ## Status
 
-Experimental | Stable | Internal
+Stable | Experimental | Draft
 ```
 
 ---
@@ -176,22 +176,20 @@ Defines:
 
 `decisions/*.md` (OPTIONAL)
 
-Used to document active design decisions. These files replace traditional ADRs.
+Used to document active design decisions. Package-level decisions use the ADR-style format below.
 
 ---
 
-## Design Decisions (No ADRs)
+## Design Decisions (ADRs)
 
-Comity does NOT use classic ADR files with headers, dates, and authors. Instead, decisions are documented as individual files in the `decisions/` directory.
+Comity documents architectural decisions as **Architecture Decision Records (ADRs)**.
 
-### Decision File Format
-
-Filename convention: `decisions/<topic>.md` (e.g., `decisions/error-handling.md`).
-
-Each decision file MUST follow this structure:
+Architecture ADRs live under `docs/standards/decisions/` and use the classic ADR format:
 
 ```text
-# Decision: <short title>
+# ADR-<NNN> — <short title>
+
+**Status:** <Accepted | Proposed | Deprecated>
 
 ## Context
 Why this decision was needed.
@@ -201,17 +199,39 @@ What was chosen.
 
 ## Consequences
 What this enables and what it forbids.
+
+## References
+Supporting documents, standards, and code paths.
 ```
 
 Rules:
 
 - One decision per file.
-- No dates.
-- No version numbers inside the file.
-- No authors.
-- Only current decisions.
+- ADRs represent **architectural history**: they record what was decided and why, including decisions that are later superseded.
+- Historical decisions MUST remain traceable. Do not delete an accepted ADR; if a decision is overturned, record the new ADR and reference the old one.
+- Corrections MUST preserve historical context: describe what existed historically and what changed, rather than rewriting the record as if the current state had always been true.
+- Existing ADR references MUST NOT be removed.
+- Package-level decisions MAY be documented in `packages/<name>/docs/decisions/*.md` using the same ADR-style format.
 
-Deprecated decisions MUST be deleted from the directory.
+### Machine-readable ADR artifacts
+
+ADR files use the convention `ADR-NNN-title.md` (e.g., `ADR-008-explicit-core-module-composition-exceptions.md`).
+
+Machine-readable artifacts that serialize ADR decisions (e.g., data contracts, registers) live under `docs/standards/decisions/data/`:
+
+```text
+docs/standards/decisions/
+├─ ADR-NNN-title.md
+└─ data/
+   └─ adr-nnn-description.ext
+```
+
+Data artifacts use the lowercase convention `adr-nnn-description.ext`, deriving their name from the ADR they serialize:
+
+- `adr-008-core-exception-register.json`
+- `adr-008-core-exception-register.schema.json`
+
+Such artifacts are derived representations of their ADR. The ADR remains the architectural authority; a data artifact MUST NOT redefine architectural decisions.
 
 ---
 
@@ -228,14 +248,12 @@ docs/
 │  ├─ module-boundaries.md
 │
 ├─ standards/
+│  ├─ decisions/
+│  │  ├─ ADR-NNN-title.md   (architecture ADRs)
+│  │  └─ data/              (machine-readable ADR artifacts)
 │  ├─ documentation.md
 │  ├─ events.md
 │  ├─ errors.md
-│
-├─ decisions/
-│  ├─ platform.md
-│  ├─ auth.md
-│  ├─ http.md
 │
 ├─ glossary.md
 ```

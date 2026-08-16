@@ -337,10 +337,25 @@ Dependencies may only flow downward. Reverse dependencies are architectural defe
 
 **Adapters** — Integrate external technologies (e.g. `@comity/http-hono`, `@comity/sql-kysely`).
 
-- Depend on one Core Module
+Two categories, governed by ADR-007:
+
+**Technology Adapters** — bind a Core Module contract to a technology implementation.
+
+- MUST depend on exactly one Core Module
 - Depend on a third-party library (peerDependency)
 - Must remain replaceable
 - Must not introduce business logic
+
+Example: `http-hono → http`, `sql-kysely → sql`
+
+**Integration Adapters** — represent platform or ecosystem integrations (ADR-007).
+
+- MAY depend on multiple Core Modules
+- Bind a single external platform/system
+- Must remain replaceable as a whole
+- Must not introduce business logic
+
+Example: `storefront-magento → storefront, catalog, router, cache, graphql-client`
 
 **Application** — Composes the framework.
 

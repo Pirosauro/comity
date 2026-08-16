@@ -23,7 +23,7 @@ constructor(fields: CustomerCreate, id?: CustomerId) {
 }
 ```
 
-The architectural audit identified that `@comity/address` and `@comity/identity` currently violate §5: their constructors unconditionally call `Instant.now()` for `createdAt` and (in Identity) hard-code `status: "active"`. A repository adapter that constructs an entity from a database row silently overwrites the original persisted timestamps and lifecycle status.
+The architectural audit historically identified that `@comity/address` and `@comity/identity` violated §5: their constructors unconditionally called `Instant.now()` for `createdAt` and (in Identity) hard-coded `status: "active"`. A repository adapter that constructed an entity from a database row silently overwrote the original persisted timestamps and lifecycle status. This violation was fixed: the migration is complete and the current implementation of both modules conforms to this decision.
 
 The framework needs a single, documented pattern for entity construction so that:
 
@@ -257,10 +257,15 @@ The `Customer` reference illustrates the **constructor pattern** and the **times
 
 This decision was prompted by the audit of:
 
-- `@comity/address` — currently regenerates `createdAt` at `packages/address/src/entities/address.ts:41`.
-- `@comity/identity` — currently regenerates `createdAt` and hard-codes `status: "active"` at `packages/identity/src/entities/user.ts:26-27`.
+- `@comity/address` — historically regenerated `createdAt` at `packages/address/src/entities/address.ts:41`.
+- `@comity/identity` — historically regenerated `createdAt` and hard-coded `status: "active"` at `packages/identity/src/entities/user.ts:26-27`.
 
-Both modules need to align with this decision in a separate, dedicated migration task. This ADR only records the architectural decision; it does not implement the fixes.
+Both modules were aligned with this decision in a dedicated migration task. The current implementations conform:
+
+- `packages/address/src/entities/address.ts:42` — `createdAt` falls back to `Instant.now()` only when not supplied.
+- `packages/identity/src/entities/user.ts:27-28` — `status` defaults to `"inactive"` and `createdAt` falls back to `Instant.now()` only when not supplied.
+
+This ADR records the architectural decision; the migration was executed separately.
 
 ## Consequences
 

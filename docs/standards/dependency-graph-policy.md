@@ -19,9 +19,31 @@ Comity follows a strict layered architecture.
 - adapters → corresponding contract module + primitives
 - rendering modules → primitives
 
+Rendering modules MAY reference HTTP contract types only when:
+
+- the dependency is type-only
+- no HTTP runtime dependency exists
+- the edge is registered as an Infrastructure Contract Exception in ADR-008
+
+## Core-to-Core dependencies (closed register)
+
+- Core Modules MUST NOT depend on other Core Modules unless explicitly registered as an approved exception.
+- The exhaustive exception register is maintained in `docs/standards/decisions/ADR-008-explicit-core-module-composition-exceptions.md`.
+- Any Core-to-Core dependency not registered in ADR-008 is an architectural violation.
+
 ## Forbidden
 
 - contracts must never depend on adapters
 - primitives must never depend on any other internal package
 - no cross-adapter dependencies
-- rendering must not depend on http
+- rendering modules must never depend on HTTP runtime implementations or transport behavior
+
+## Rendering modules and HTTP contract types
+
+Rendering Core Modules MUST NOT depend on HTTP runtime implementations or transport behavior.
+
+A Rendering Core Module MAY reference HTTP contract types only when:
+
+- the import is type-only;
+- the dependency is registered as an Infrastructure Contract Exception in ADR-008;
+- no HTTP execution logic is introduced.

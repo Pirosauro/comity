@@ -36,6 +36,8 @@ This package does NOT:
 
 The client is a composition facade: it depends only on `GraphqlTransport`, `GraphqlRequest`, and `GraphqlResponse`. Technology-bound transport implementations (WebSocket, fetch, HTTP-specific) live in adapter packages; `GraphqlTransport` is the replaceable boundary.
 
+
+No exhaustive reference; see docs for constraints.
 ---
 
 ## Documentation
@@ -58,6 +60,6 @@ The client is a composition facade: it depends only on `GraphqlTransport`, `Grap
 
 Stable
 
-_Review Completed: July 25, 2026_
+_Review Completed: 2026-07-25_
 _Reviewer: Hobiri MAGI (DeepSeek v4 Pro)_
 _Compliance Score: 99.5% (Green)_

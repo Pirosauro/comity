@@ -34,6 +34,8 @@ This package does NOT:
 - `GeographicInput` / `GeographicContext` — resolution input and context types
 - `errors` subpath — `GeographyError` and error reasons
 
+
+No exhaustive reference; see docs for constraints.
 ---
 
 ## Documentation

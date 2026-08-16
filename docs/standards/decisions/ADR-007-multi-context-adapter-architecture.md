@@ -8,7 +8,6 @@
 
 - `@comity/storefront` (route resolution, context resolver)
 - `@comity/catalog` (`CategoryRepository`, `ProductRepository`)
-- `@comity/content` (content repositories)
 - `@comity/router` (URL rewriters)
 - `@comity/cache` (cached repository decorators)
 - `@comity/graphql-client` (client contract, transport)

@@ -32,19 +32,7 @@ This package does NOT:
 - `FetchGraphqlTransport` — Fetch API implementation of `GraphqlTransport`
 - `FetchTransportOptions` — transport configuration type
 
----
-
-## Usage
-
-```ts
-import { FetchGraphqlTransport } from "@comity/graphql-client-fetch";
-
-const transport = new FetchGraphqlTransport({
-  url: "https://api.example.com/graphql",
-});
-
-const client = new GraphqlClient({ transport });
-```
+No exhaustive reference; see docs for constraints.
 
 ---
 

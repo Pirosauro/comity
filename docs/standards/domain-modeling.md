@@ -396,20 +396,22 @@ Core Modules MUST preserve clear ownership boundaries.
 
 A Core Module MUST NOT depend on the **lifecycle, persistence, or mutable state management** of an entity owned by another Core Module.
 
-This does **not** mean that Core Modules can never reference types from other Core Modules.
+This does **not** mean that Core Modules can never reference types from other Core Modules. However, Core Modules do **not** generally depend on each other.
 
-### Allowed Cross-Module Dependencies
+### Core-to-Core Dependencies (closed register)
 
-A Core Module MAY depend on stable contracts or immutable models from another Core Module when the dependency represents a legitimate domain relationship and does not transfer ownership.
+Any Core-to-Core dependency MUST be explicitly registered as an approved exception in ADR-008 (`docs/standards/decisions/ADR-008-explicit-core-module-composition-exceptions.md`). ADR-008 is the exhaustive, closed register of Core-to-Core exceptions. A Core-to-Core dependency not registered there is an architectural violation.
 
-Examples include:
+Domain ownership and immutable contracts are **evaluation criteria** used to assess whether an exception may be registered — they are not automatic permission to depend on another Core Module.
+
+Examples of criteria that MAY justify a registered exception include:
 
 - immutable snapshots
 - point-in-time models
 - shared value models
 - stable domain contracts
 
-For example, `@comity/order` MAY use a product model from `@comity/catalog` when the model represents the product information required by an order at the time the order is created.
+For example, `@comity/order` MAY use a product model from `@comity/catalog` when the model represents the product information required by an order at the time the order is created. This dependency is registered in ADR-008.
 
 The Order does not own the Product and MUST NOT manage its lifecycle or persistence.
 
@@ -460,9 +462,9 @@ The Application Layer is responsible for orchestration when no direct domain-mod
 
 The architectural constraint is **ownership independence**, not zero imports.
 
-A dependency is acceptable when it expresses a stable domain contract without transferring lifecycle or persistence ownership.
+A dependency is acceptable when it is registered in ADR-008 and expresses a stable domain contract without transferring lifecycle or persistence ownership.
 
-A dependency is not acceptable when one Core Module becomes responsible for the mutable lifecycle, persistence, or infrastructure of another Core Module.
+A dependency is not acceptable when one Core Module becomes responsible for the mutable lifecycle, persistence, or infrastructure of another Core Module, or when the dependency is not registered in ADR-008.
 
 ---
 

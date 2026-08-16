@@ -115,13 +115,15 @@ Every module MUST export a **module descriptor**.
 Example:
 
 ```ts
-import type { ModuleMeta } from "@comity/kernel/modules";
+import type { ModuleMeta } from "@comity/composition/setup";
 
 export const module: ModuleMeta = {
   name: "@comity/http",
-  version: "1.0.0",
+  version: "0.9.0",
 
-  dependsOn: ["@comity/kernel"],
+  dependsOn: {
+    "@comity/kernel": { version: "^0.9.0" },
+  },
   incompatibleWith: [],
 
   setup: async (options) => {

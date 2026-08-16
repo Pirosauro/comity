@@ -38,6 +38,8 @@ This package does NOT:
 - `UserCreate` / `UserUpdate` / `UserStatus` — mutation and status types
 - `UserValidator` — validation contract
 
+
+No exhaustive reference; see docs for constraints.
 ---
 
 ## Documentation
@@ -55,7 +57,7 @@ None — no package-specific documentation exists.
 
 ## Status
 
-Experimental/Draft
+Experimental
 
 _Review Completed: 2026-08-15_
 _Reviewer: Hobiri MAGI (DeepSeek v4 Pro)_

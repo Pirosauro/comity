@@ -14,7 +14,7 @@ The fetch client is concrete infrastructure:
 
 This violates the layering boundary: the Core Module owns a concrete transport while claiming to be implementation-agnostic.
 
-The `@comity/graphql-client` package already demonstrates the correct shape: it defines a `GraphqlTransport` contract in `contracts/transport.ts` and ships `FetchGraphqlTransport` in `transports/fetch.ts`. `@comity/http` should follow the same pattern.
+The `@comity/graphql-client` package already demonstrates the correct shape: it defines a `GraphqlTransport` contract in `contracts/transport.ts`, and the adapter implementation ships separately as `FetchGraphqlTransport` in `@comity/graphql-client-fetch` (`fetch-transport.ts`). `@comity/http` should follow the same pattern.
 
 ## Decision
 
@@ -95,7 +95,7 @@ This ADR does NOT concern:
 - `docs/standards/layering-policy.md` §2.2 — Core Modules define contracts, not concrete infrastructure.
 - `docs/standards/layering-policy.md` §2.3 — Adapters bind Core Modules to concrete technologies.
 - `packages/graphql-client/src/contracts/transport.ts` — `GraphqlTransport` contract precedent.
-- `packages/graphql-client/src/transports/fetch.ts` — `FetchGraphqlTransport` adapter precedent.
+- `packages/graphql-client-fetch/src/fetch-transport.ts` — `FetchGraphqlTransport` adapter precedent.
 - `packages/http/src/contracts/transport.ts` — new `HttpTransport` contract.
-- `packages/http-fetch/src/fetch-http-client.ts` — `FetchHttpClient` implementation.
+- `packages/http-fetch/src/adapter.ts` — `FetchHttpClient` implementation (`FetchHttpClient` currently lives in `adapter.ts`).
 - `packages/http-fetch/src/client.ts` — moved `client` helper and `HttpOptions`.

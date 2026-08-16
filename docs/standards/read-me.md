@@ -59,7 +59,7 @@ No exhaustive reference; see docs for constraints.
 
 ## Status
 
-Stable|Beta|Experimental
+Stable | Experimental | Draft
 
 _Review Completed: YYYY-MM-DD_
 _Reviewer: ..._
@@ -130,9 +130,11 @@ Avoid: handles, does, has, includes, supports, is, works, allows.
 
 ### Status Section Rules
 
-- Must contain: `## Status`, stable/beta/experimental label, review metadata
+- Must contain: `## Status`, a stable/experimental/draft label, review metadata
 - Date in ISO format: `YYYY-MM-DD`
 - Compliance: `Compliance: N% (Green)`
+- Vocabulary: `Draft` (design incomplete or not ready for general usage), `Experimental` (usable, APIs may change without compatibility guarantees), `Stable` (public API compatibility guaranteed)
+- Do not infer maturity from package version numbers
 
 ## Review Checklist
 

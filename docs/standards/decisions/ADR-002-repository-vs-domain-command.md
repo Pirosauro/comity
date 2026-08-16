@@ -307,7 +307,8 @@ All migrations are scoped to their respective modules. No other module is affect
 - `packages/identity/src/contracts/user-repository.ts` — reference implementation of minimal surface.
 - `packages/address/src/contracts/address-repository.ts` — reference implementation of minimal surface.
 - `packages/catalog/src/contracts/product-repository.ts` — reference implementation of read-projection exception.
-- `packages/auth/src/contracts/session-repository.ts` — current boundary case (`revoke`).
-- `packages/auth/src/use-cases/session-revoke.ts` — current use case that delegates to the repository.
+- `packages/auth/src/contracts/session-repository.ts` — migration source: previously contained `revoke`; now reduced to persistence access (`getById`/`save`).
+- `packages/auth/src/contracts/session-commands.ts` — migrated boundary case: `revoke()` now lives on `AuthSessionCommands`.
+- `packages/auth/src/use-cases/session-revoke.ts` — use case that delegates to the domain command.
 - `packages/order/src/contracts/order-repository.ts` — migrated to persistence boundary (`get`/`save`).
 - `packages/order/src/contracts/order-commands.ts` — migrated domain command port.

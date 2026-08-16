@@ -37,6 +37,8 @@ This package does NOT:
 - `CustomerCreate` / `CustomerUpdate` — mutation input types
 - `CustomerContact` / `CustomerPreferences` — customer detail types
 
+
+No exhaustive reference; see docs for constraints.
 ---
 
 ## Documentation
@@ -54,7 +56,7 @@ None — no package-specific documentation exists.
 
 ## Status
 
-Experimental/Draft
+Draft
 
 _Review Completed: 2026-08-15_
 _Reviewer: Hobiri MAGI (DeepSeek v4 Pro)_

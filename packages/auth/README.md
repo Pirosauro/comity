@@ -50,6 +50,8 @@ The public API includes:
 Adapters and infrastructure modules are expected to orchestrate the domain
 through the facade.
 
+
+No exhaustive reference; see docs for constraints.
 ---
 
 ## Documentation
@@ -74,6 +76,6 @@ through the facade.
 
 Stable
 
-_Review Completed: July 25, 2026_
+_Review Completed: 2026-07-25_
 _Reviewer: Hobiri MAGI (DeepSeek v4 Pro)_
 _Compliance Score: 99.5% (Green)_

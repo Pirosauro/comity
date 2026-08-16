@@ -2,51 +2,64 @@
 
 Address domain abstractions for Comity.
 
-## Installation
+---
 
-```sh
-npm install @comity/address
-```
+## Purpose
 
-## Usage
+Owns the address domain: the mutable `Address` entity, immutable snapshots, value objects, the repository contract, and the validator contract. Provides the canonical address representation reused across bounded contexts.
 
-```typescript
-import { Address, AddressId, AddressLine } from "@comity/address";
-import { Instant } from "@comity/primitives/time";
+---
 
-const address = new Address({
-  lines: [new AddressLine("Via Roma 10")],
-  city: "Milano",
-  administrativeArea: "MI",
-  postalCode: "20100",
-  countryCode: "IT",
-  label: null,
-  metadata: null,
-  contacts: [],
-  createdAt: Instant.now(),
-}, new AddressId("addr-1"));
+## Scope
 
-address.update({ city: "Roma" });
+This package:
 
-const snapshot = address.snapshot();
-```
+- ✅ defines the `Address` entity and `AddressSnapshot` value model
+- ✅ defines address value objects (`AddressId`, `AddressLine`, `AddressContact`)
+- ✅ defines `AddressRepository` and `AddressValidator` contracts
+- ✅ exposes creation and hydration types (`AddressCreate`, `AddressUpdate`, `AddressState`)
+
+This package does NOT:
+
+- ❌ implement country-specific address models
+- ❌ handle geography enrichment or formatting
+- ❌ import validation libraries directly
+- ❌ own persistence or lifecycle of other modules' entities
+
+---
 
 ## Public API
 
-| Export              | Description                            |
-| ------------------- | -------------------------------------- |
-| `Address`           | Mutable address entity                 |
-| `AddressId`         | Address identifier value object        |
-| `AddressLine`       | Single address line value object       |
-| `AddressSnapshot`   | Immutable point-in-time address type   |
-| `AddressContact`    | Contact info associated with address   |
-| `AddressCreate`     | Data required to create or hydrate an Address |
-| `AddressUpdate`     | Partial update data for Address        |
-| `AddressData`       | Core address data                      |
-| `AddressState`      | Persistent state (`AddressData` + id + lifecycle metadata) |
-| `AddressRepository` | Repository contract                    |
-| `AddressValidator`  | Validation contract                    |
+- `Address` — mutable address entity
+- `AddressSnapshot` — immutable point-in-time address type
+- `AddressId`, `AddressLine`, `AddressContact` — value objects
+- `AddressCreate`, `AddressUpdate`, `AddressData`, `AddressState` — creation and hydration types
+- `AddressRepository` — repository contract
+- `AddressValidator` — validation contract
 
-## License
+No exhaustive reference; see docs for constraints.
 
-MIT
+---
+
+## Documentation
+
+- docs/overview.md
+- docs/conventions.md
+- docs/architecture.md
+
+---
+
+## Related Packages
+
+- @comity/primitives — foundational building blocks
+- @comity/validation — shared validation contracts
+
+---
+
+## Status
+
+Stable
+
+_Review Completed: 2026-08-15_
+_Reviewer: Hobiri MAGI (DeepSeek v4 Pro)_
+_Compliance Score: 95% (Green)_

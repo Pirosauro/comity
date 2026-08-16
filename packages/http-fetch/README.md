@@ -32,6 +32,8 @@ This package does NOT:
 - `client` — standalone fetch helper with timeout and delay
 - `HttpOptions` — client options type
 
+
+No exhaustive reference; see docs for constraints.
 ---
 
 ## Documentation
@@ -51,6 +53,6 @@ This package does NOT:
 
 Experimental
 
-_Review Completed: August 14, 2026_
+_Review Completed: 2026-08-14_
 _Reviewer: DeepSeek v4 Flash_
 _Compliance Score: N/A_

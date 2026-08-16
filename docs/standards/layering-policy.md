@@ -76,6 +76,8 @@ Core Modules:
 
 Core Modules define contracts — not concrete infrastructure.
 
+Core-to-Core dependencies are forbidden by default. Approved exceptions are maintained exclusively in ADR-008 (`docs/standards/decisions/ADR-008-explicit-core-module-composition-exceptions.md`). This policy does not duplicate the register.
+
 ---
 
 ## 2.3 Adapters
@@ -152,8 +154,8 @@ Integration Adapter
             │
             ├── @comity/storefront
             ├── @comity/catalog
-            ├── @comity/content
             ├── @comity/router
+            ├── @comity/cache
             └── @comity/graphql-client
                          │
                          ▼

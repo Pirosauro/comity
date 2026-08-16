@@ -34,6 +34,8 @@ This package does NOT:
 - HTTP handler factory
 - Module setup contracts
 
+
+No exhaustive reference; see docs for constraints.
 ---
 
 ## Documentation
@@ -56,6 +58,6 @@ This package does NOT:
 
 Stable
 
-_Review Completed: July 25, 2026_
+_Review Completed: 2026-07-25_
 _Reviewer: Hobiri MAGI (DeepSeek v4 Pro)_
 _Compliance Score: 99.5% (Green)_

@@ -1,0 +1,176 @@
+{
+  "$schema": "comity:adr-008-core-exception-register.schema.json",
+  "schemaVersion": 1,
+  "authority": "ADR-008",
+  "source": "docs/standards/decisions/ADR-008-explicit-core-module-composition-exceptions.md",
+  "edges": [
+    {
+      "from": "@comity/storefront",
+      "to": "@comity/catalog",
+      "layer": "core-to-core",
+      "categories": ["capability", "value-import"],
+      "importKind": "mixed",
+      "lifecycle": "approved",
+      "justification": "Storefront references catalog domain contracts and models; DI wiring constants (CATEGORY_REPOSITORY_TOKEN, PRODUCT_REPOSITORY_TOKEN) are required during module setup composition.",
+      "adrReference": "ADR-008 — Dependency Register, Capability Exceptions and Value-Import Exceptions"
+    },
+    {
+      "from": "@comity/storefront",
+      "to": "@comity/content",
+      "layer": "core-to-core",
+      "categories": ["capability"],
+      "importKind": "type-only",
+      "lifecycle": "approved",
+      "justification": "Storefront content page composer references content domain models.",
+      "adrReference": "ADR-008 — Dependency Register, Capability Exceptions"
+    },
+    {
+      "from": "@comity/storefront",
+      "to": "@comity/search",
+      "layer": "core-to-core",
+      "categories": ["capability"],
+      "importKind": "type-only",
+      "lifecycle": "approved",
+      "justification": "Storefront search page contract references SearchResultModel.",
+      "adrReference": "ADR-008 — Dependency Register, Capability Exceptions"
+    },
+    {
+      "from": "@comity/storefront",
+      "to": "@comity/http",
+      "layer": "core-to-core",
+      "categories": ["infrastructure-contract"],
+      "importKind": "type-only",
+      "lifecycle": "deprecated",
+      "justification": "Storefront context contracts reference HttpRequest as part of their public contract surface. Tolerated compatibility exception; transport-neutral StorefrontContext redesign may remove it.",
+      "adrReference": "ADR-008 — Dependency Register, Infrastructure Contract Exceptions"
+    },
+    {
+      "from": "@comity/catalog",
+      "to": "@comity/media",
+      "layer": "core-to-core",
+      "categories": ["capability"],
+      "importKind": "type-only",
+      "lifecycle": "approved",
+      "justification": "Catalog entities reference MediaModel for product/category media.",
+      "adrReference": "ADR-008 — Dependency Register, Capability Exceptions"
+    },
+    {
+      "from": "@comity/catalog",
+      "to": "@comity/search",
+      "layer": "core-to-core",
+      "categories": ["candidate-for-removal"],
+      "importKind": "type-only",
+      "lifecycle": "migration-candidate",
+      "justification": "Public contract surface coupling — CategoryRepository/ProductRepository embed SearchCriteriaModel/SearchResultModel in their contracts; search is a separate capability, not owned by catalog.",
+      "adrReference": "ADR-008 — Dependency Register, Candidates for Removal",
+      "removalCandidate": {
+        "criteria": "Contract surface isolation — a Core Module must not expose another Core Module's specialized domain concepts in its public contracts.",
+        "action": "Move search-shaped repository methods to a search-specific contract (e.g., @comity/search ports). Public API change; follow the breaking-change process."
+      }
+    },
+    {
+      "from": "@comity/content",
+      "to": "@comity/media",
+      "layer": "core-to-core",
+      "categories": ["capability"],
+      "importKind": "type-only",
+      "lifecycle": "approved",
+      "justification": "Content blocks/pages reference MediaModel.",
+      "adrReference": "ADR-008 — Dependency Register, Capability Exceptions"
+    },
+    {
+      "from": "@comity/content",
+      "to": "@comity/search",
+      "layer": "core-to-core",
+      "categories": ["candidate-for-removal"],
+      "importKind": "type-only",
+      "lifecycle": "migration-candidate",
+      "justification": "Public contract surface coupling — embedding of search types in content repository contracts.",
+      "adrReference": "ADR-008 — Dependency Register, Candidates for Removal",
+      "removalCandidate": {
+        "criteria": "Contract surface isolation — a Core Module must not expose another Core Module's specialized domain concepts in its public contracts.",
+        "action": "Relocate search-shaped repository methods to search-owned contracts. Public API change; follow the breaking-change process."
+      }
+    },
+    {
+      "from": "@comity/content",
+      "to": "@comity/seo",
+      "layer": "core-to-core",
+      "categories": ["capability"],
+      "importKind": "type-only",
+      "lifecycle": "approved",
+      "justification": "Content pages reference SeoModel.",
+      "adrReference": "ADR-008 — Dependency Register, Capability Exceptions"
+    },
+    {
+      "from": "@comity/order",
+      "to": "@comity/catalog",
+      "layer": "core-to-core",
+      "categories": ["capability"],
+      "importKind": "type-only",
+      "lifecycle": "approved",
+      "justification": "Order items reference PriceModel / PriceModifierModel.",
+      "adrReference": "ADR-008 — Dependency Register, Capability Exceptions"
+    },
+    {
+      "from": "@comity/address",
+      "to": "@comity/validation",
+      "layer": "core-to-core",
+      "categories": ["capability"],
+      "importKind": "type-only",
+      "lifecycle": "approved",
+      "justification": "Address validator consumes the shared Validator contract.",
+      "adrReference": "ADR-008 — Dependency Register, Capability Exceptions"
+    },
+    {
+      "from": "@comity/customer",
+      "to": "@comity/validation",
+      "layer": "core-to-core",
+      "categories": ["capability"],
+      "importKind": "type-only",
+      "lifecycle": "approved",
+      "justification": "Customer validator consumes the shared Validator contract.",
+      "adrReference": "ADR-008 — Dependency Register, Capability Exceptions"
+    },
+    {
+      "from": "@comity/identity",
+      "to": "@comity/validation",
+      "layer": "core-to-core",
+      "categories": ["capability"],
+      "importKind": "type-only",
+      "lifecycle": "approved",
+      "justification": "Identity validator consumes the shared Validator contract.",
+      "adrReference": "ADR-008 — Dependency Register, Capability Exceptions"
+    },
+    {
+      "from": "@comity/auth-tokens",
+      "to": "@comity/auth",
+      "layer": "core-to-core",
+      "categories": ["value-import"],
+      "importKind": "mixed",
+      "lifecycle": "approved",
+      "justification": "Token facade error surface normalizes AuthError at runtime. @comity/auth owns authentication error semantics; direction is intentional and non-cyclic.",
+      "adrReference": "ADR-008 — Dependency Register, Value-Import Exceptions"
+    },
+    {
+      "from": "@comity/html",
+      "to": "@comity/http",
+      "layer": "core-to-core",
+      "categories": ["infrastructure-contract"],
+      "importKind": "type-only",
+      "lifecycle": "deprecated",
+      "justification": "HTML render result/renderer reference HttpResponse/HttpStatus. Contract types only — no HTTP runtime dependency, no HTTP execution logic. Compatibility exception; extraction candidate.",
+      "adrReference": "ADR-008 — Dependency Register, Infrastructure Contract Exceptions"
+    },
+    {
+      "from": "@comity/router",
+      "to": "@comity/http",
+      "layer": "core-to-core",
+      "categories": ["infrastructure-contract"],
+      "importKind": "type-only",
+      "lifecycle": "deprecated",
+      "justification": "Router contracts reference HttpContext, HttpHandler, HttpMethod. Compatibility exception; extraction candidate.",
+      "adrReference": "ADR-008 — Dependency Register, Infrastructure Contract Exceptions"
+    }
+  ]
+}

@@ -263,8 +263,8 @@ Integration Adapter
             │
             ├── @comity/storefront
             ├── @comity/catalog
-            ├── @comity/content
             ├── @comity/router
+            ├── @comity/cache
             └── @comity/graphql-client
                          │
                          ▼

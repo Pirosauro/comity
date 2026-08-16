@@ -52,7 +52,7 @@
 | `@comity/cache-redis`           | `@comity/cache`          | `ioredis` or `redis` (peer, optional) |
 | `@comity/i18n-typesafe`         | `@comity/i18n`           | `typesafe-i18n` (peer)                |
 | `@comity/sql-kysely`            | `@comity/sql`            | `kysely`                              |
-| `@comity/storefront-magento`    | `@comity/storefront`     | `zod`                                 |
+| `@comity/storefront-magento`    | `@comity/storefront`, `@comity/catalog`, `@comity/router`, `@comity/cache`, `@comity/graphql-client` (Integration Adapter, ADR-007) | `zod`                                 |
 | `@comity/graphql-client-ws`     | `@comity/graphql-client` | `graphql-ws` (peer)                   |
 | `@comity/graphql-client-fetch`  | `@comity/graphql-client` | Fetch API                             |
 | `@comity/http-fetch`            | `@comity/http`           | Fetch API                             |
