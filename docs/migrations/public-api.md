@@ -42,11 +42,10 @@ Approved architectural decisions (out of scope here):
 
 ## 3. P0 — Immediate
 
-| Package                      | Issue        | Action                                            |
-| ---------------------------- | ------------ | ------------------------------------------------- |
-| `@comity/cache-kv`           | Empty barrel | Export `KvCacheStore` from root                   |
-| `@comity/cache-redis`        | Empty barrel | Export `RedisCacheStore` from root                |
-| `@comity/storefront-magento` | Empty barrel | Export `CachedCatalogRepositoryContext` from root |
+| Package               | Issue        | Action                             |
+| --------------------- | ------------ | ---------------------------------- |
+| `@comity/cache-kv`    | Empty barrel | Export `KvCacheStore` from root    |
+| `@comity/cache-redis` | Empty barrel | Export `RedisCacheStore` from root |
 
 ---
 
@@ -111,11 +110,10 @@ observer pattern.
 
 ## 9. Empty Barrels
 
-| Package                      | Required root export             |
-| ---------------------------- | -------------------------------- |
-| `@comity/cache-kv`           | `KvCacheStore`                   |
-| `@comity/cache-redis`        | `RedisCacheStore`                |
-| `@comity/storefront-magento` | `CachedCatalogRepositoryContext` |
+| Package               | Required root export |
+| --------------------- | -------------------- |
+| `@comity/cache-kv`    | `KvCacheStore`       |
+| `@comity/cache-redis` | `RedisCacheStore`    |
 
 Rule reference: `docs/standards/public-api.md` §2 (Adapters MUST export the concrete implementation of the Core Module contract).
 

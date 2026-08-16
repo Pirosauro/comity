@@ -1,6 +1,6 @@
 # Architecture Validator Baseline
 
-**Date:** 2026-08-15
+**Date:** 2026-08-16
 **Validator:** `scripts/validate-architecture.mjs` (Phase 1 — report-only)
 **Status:** Baseline recorded. No changes were made to architecture, ADRs, or standards.
 
@@ -11,6 +11,7 @@ This baseline records the first automated conformance run of the repository agai
 The Adapter rule `ARCH-ADAPTER-001` was refined (2026-08-15) to classify a Technology Adapter's Core Module references from its source: a real runtime dependency is a violation only when it is neither a type-only reference nor composition infrastructure, and an adapter is considered contract-implementing when it `implements` a Core contract type or binds a single real-runtime Core dependency. This removed three false positives while keeping the rule strict.
 
 The Metadata Validation rule family (`ARCH-META-001..007`) was added (2026-08-16) per ADR-010 §Metadata Validation. Rules implemented:
+
 - `ARCH-META-001` package name MUST follow `@comity/<name>` (`architecture-validation.md §8`).
 - `ARCH-META-002` package `type` MUST be `module`.
 - `ARCH-META-003` `engines.node` MUST exist and satisfy `>=24.0.0` (dependency versions are not enforced).
@@ -27,41 +28,41 @@ Not covered by this run (future phases): CI integration.
 
 Derived from `docs/architecture/repository.md` classification and `packages/*/package.json` discovery.
 
-| Metric | Count |
-| --- | --- |
-| Packages | 43 |
-| Kernel / Primitives | 3 |
-| Core Modules | 22 |
-| Technology Adapters | 15 |
-| Integration Adapters | 1 |
-| Draft packages | 2 |
-| Internal `@comity/*` dependency edges (all) | 93 |
-| Core-to-Core dependency edges | 16 |
-| ADR-008 register entries | 16 |
+| Metric                                      | Count |
+| ------------------------------------------- | ----- |
+| Packages                                    | 42    |
+| Kernel / Primitives                         | 3     |
+| Core Modules                                | 22    |
+| Technology Adapters                         | 15    |
+| Integration Adapters                        | 0     |
+| Draft packages                              | 2     |
+| Internal `@comity/*` dependency edges (all) | 81    |
+| Core-to-Core dependency edges               | 16    |
+| ADR-008 register entries                    | 16    |
 
 ## Validation Results
 
 Executed: `node scripts/validate-architecture.mjs` (exit code 0).
 
-| Rule | Status |
-| --- | --- |
-| ADR-009 register schema | PASS |
-| Core dependency completeness | PASS |
-| Register stale entries | PASS |
-| Rejected exceptions as approved | PASS |
-| Kernel: primitives isolation | PASS |
-| Kernel: kernel dependency boundary | PASS |
-| Kernel: composition dependency boundary | PASS |
-| Adapter: no multi-Core-Module Technology Adapter | PASS |
-| Adapter: no cross-adapter edges | PASS |
-| Adapter: no Core Module → Adapter | PASS |
-| Metadata: package naming | PASS |
-| Metadata: package type | PASS |
-| Metadata: Node engine | PASS |
-| Metadata: license | PASS |
-| Metadata: export target resolution | PASS |
-| Metadata: typesVersions consistency | PASS |
-| Metadata: public API subpath rules | PASS |
+| Rule                                             | Status |
+| ------------------------------------------------ | ------ |
+| ADR-009 register schema                          | PASS   |
+| Core dependency completeness                     | PASS   |
+| Register stale entries                           | PASS   |
+| Rejected exceptions as approved                  | PASS   |
+| Kernel: primitives isolation                     | PASS   |
+| Kernel: kernel dependency boundary               | PASS   |
+| Kernel: composition dependency boundary          | PASS   |
+| Adapter: no multi-Core-Module Technology Adapter | PASS   |
+| Adapter: no cross-adapter edges                  | PASS   |
+| Adapter: no Core Module → Adapter                | PASS   |
+| Metadata: package naming                         | PASS   |
+| Metadata: package type                           | PASS   |
+| Metadata: Node engine                            | PASS   |
+| Metadata: license                                | PASS   |
+| Metadata: export target resolution               | PASS   |
+| Metadata: typesVersions consistency              | PASS   |
+| Metadata: public API subpath rules               | PASS   |
 
 ## Detected Violations
 
@@ -81,7 +82,7 @@ These are regression PASS cases for the refined rule. No architecture, ADR, or m
 
 ### Metadata rules
 
-No violations. The earlier `@comity/graphql-client-fetch` finding is resolved: the package now emits `dist/types/index.d.ts`, so both `import.types` and `require.types` targets resolve. All 43 packages satisfy `ARCH-META-001..007`.
+No violations. The earlier `@comity/graphql-client-fetch` finding is resolved: the package now emits `dist/types/index.d.ts`, so both `import.types` and `require.types` targets resolve. All 42 packages satisfy `ARCH-META-001..007`.
 
 ## Comparison With Documentation
 
@@ -89,21 +90,21 @@ No violations. The earlier `@comity/graphql-client-fetch` finding is resolved: t
 
 - **`docs/standards/architecture-validation.md` §11** states "All Core-to-Core edges registered in ADR-008 — Conform (16 edges verified)". Validator confirms: 16 Core-to-Core edges, all present in the register (0 unregistered, 0 stale).
 - **`docs/standards/architecture-validation.md` §11** states "Kernel layer dependencies (primitives/kernel/composition) — Conform". Validator confirms: `@comity/primitives` has no internal dependencies, `@comity/kernel` → `@comity/primitives`, `@comity/composition` → `@comity/kernel`, `@comity/primitives`. No Kernel violations.
-- **`docs/architecture/repository.md`** inventory (43 packages: 3 Kernel/Primitives, 22 Core Modules, 16 Adapters, 2 Draft) matches validator classification output exactly (15 Technology + 1 Integration Adapter).
+- **`docs/architecture/repository.md`** inventory (42 packages: 3 Kernel/Primitives, 22 Core Modules, 15 Adapters, 2 Draft) matches validator classification output exactly (15 Technology + 0 Integration Adapter).
 - **ADR-009 / ADR-010** load paths used by the validator match the documented locations (`docs/standards/decisions/data/adr-008-core-exception-register.json`, `.schema.json`, `ADR-008-explicit-core-module-composition-exceptions.md`).
 - Example PASS case (`@comity/storefront → @comity/catalog`) is registered and validated clean.
 
 ### Adapter rule comparison (`architecture-validation.md §7`, ADR-007, `adapters.md §11`)
 
-- **`architecture-validation.md` §11 "Adapter → Adapter edges — None present"** — confirmed: no Adapter → Adapter edges exist (the Integration Adapter `@comity/storefront-magento` has no adapter dependencies today).
-- **`architecture-validation.md` §11 "Adapter classification (1 Integration + 15 Technology) — Conform"** — confirmed by classification from `docs/architecture/repository.md`.
+- **`architecture-validation.md` §11 "Adapter → Adapter edges — None present"** — confirmed: no Adapter → Adapter edges exist (the public repository currently has no Integration Adapter).
+- **`architecture-validation.md` §11 "Adapter classification (15 Technology) — Conform"** — confirmed by classification from `docs/architecture/repository.md`.
 - **Known observation `auth-jose → kernel`** — NOT a violation. `@comity/kernel` is in the Technology Adapter allowed set (`architecture-validation.md §7.1`: "MAY depend on `@comity/primitives` and `@comity/kernel`"). The `§11` "dead internal dependencies" entry classifies it as a metadata/dependency-hygiene concern, not a layering violation.
 - **Known observations `graphql-client-ws → composition` and `graphql-client-ws → primitives`** — NOT violations. `@comity/composition` and `@comity/primitives` are Kernel-layer packages; Technology Adapters may depend on `@comity/primitives` and on composition infrastructure (`layering-policy.md §2.3`, `architecture-validation.md §4.1`). The `§11` "dead internal dependencies" entry reflects unused/declared dependency hygiene, not an adapter-rule violation.
 
 ### Metadata rule comparison (`architecture-validation.md §8`, `public-api.md §3`)
 
-- **`architecture-validation.md §8`** states "`type: module`, `engines.node >= 24.0.0`, `license` — Conform (all 43 packages)". Validator confirms: all 43 packages satisfy `name`, `type`, `engines.node`, and `license`. No deviation from the documented conformance claim.
-- **`architecture-validation.md §9.1`** states "Every declared `exports` target MUST resolve to an existing file" and "`typesVersions` entries MUST have matching `exports` entries". Validator confirms `typesVersions` consistency across all 43 packages but finds the missing `./dist/types/` output for `@comity/graphql-client-fetch` (two `import.types` / `require.types` targets point to the same non-existent file).
+- **`architecture-validation.md §8`** states "`type: module`, `engines.node >= 24.0.0`, `license` — Conform (all 42 packages)". Validator confirms: all 42 packages satisfy `name`, `type`, `engines.node`, and `license`. No deviation from the documented conformance claim.
+- **`architecture-validation.md §9.1`** states "Every declared `exports` target MUST resolve to an existing file" and "`typesVersions` entries MUST have matching `exports` entries". Validator confirms `typesVersions` consistency across all 42 packages but finds the missing `./dist/types/` output for `@comity/graphql-client-fetch` (two `import.types` / `require.types` targets point to the same non-existent file).
 - **`public-api.md §3.2`** forbidden subpaths (`/utils`, `/helpers`, `/shared`, `/internal`, `/lazy`) are not present in any package's `exports`. Other subpaths outside §3.1 (e.g. `auth/use-cases`, `primitives/di`, `primitives/result`, `primitives/time`, `router/routers`) are not flagged because the rule enforces only the forbidden set; allowed-list membership is informational and not introduced as a stricter rule.
 
 ### Discrepancies
@@ -171,7 +172,7 @@ Current repository conformance (`node scripts/validate-architecture.mjs`, exit 1
 
 ### README migration (2026-08-16)
 
-A one-shot migration (`scripts/migrate-readmes.mjs`) was run to close the README backlog: 35 non-ISO dates were normalized to `YYYY-MM-DD` and 21 missing canonical Public API lines were added across 39 READMEs. The canonical line was inserted before the section's `---` divider, preserving section order and structure (verified: all 43 READMEs retain valid section structure). Validator now reports `PASS README documentation contract` with exit 0 and zero violations. No validator logic, standards, or ADRs were changed; only `packages/*/README.md` files and the new migration script were modified.
+A one-shot migration (`scripts/migrate-readmes.mjs`) was run to close the README backlog: 35 non-ISO dates were normalized to `YYYY-MM-DD` and 21 missing canonical Public API lines were added across 39 READMEs. The canonical line was inserted before the section's `---` divider, preserving section order and structure (verified: all 42 READMEs retain valid section structure). Validator now reports `PASS README documentation contract` with exit 0 and zero violations. No validator logic, standards, or ADRs were changed; only `packages/*/README.md` files and the new migration script were modified.
 
 ### Follow-up items from this phase
 
@@ -179,4 +180,4 @@ A one-shot migration (`scripts/migrate-readmes.mjs`) was run to close the README
 - The `ARCH-ADAPTER-001` refinement introduces a source-analysis dependency; any Technology Adapter that binds its contract via a pattern other than `implements` and has more than one real-runtime Core dependency will be flagged. This is intentional (conservative) and should be re-reviewed if such an adapter is added.
 - The `@comity/graphql-client-fetch` `ARCH-META-005` finding is resolved (see Detected Violations).
 
-> Baseline established 2026-08-15. Updated 2026-08-15 to include the Kernel layer rule family. Updated 2026-08-15 to include the Adapter layer rule family. Updated 2026-08-15 to refine `ARCH-ADAPTER-001` with source-level Core reference classification (regression PASS for `auth-jose`, `html-preact`, `html-react`). Updated 2026-08-16 to include the Metadata rule family (`ARCH-META-001..007`) and to modularize the validator per ADR-010. Updated 2026-08-16 to include the README documentation contract (`ARCH-README-001..005`) and to run the one-shot README migration (closing the backlog). Updated 2026-08-16 to restructure the modular validator into the target layout (`utils/`, unified `validate(context)` rule interface); both `node scripts/architecture-validator/index.mjs` and `node scripts/validate-architecture.mjs` produce identical output and exit 0. Future runs should reconcile against this report; in-scope results are expected to remain PASS until a dependency, register, or README change is introduced.
+> Baseline established 2026-08-15. Updated 2026-08-15 to include the Kernel layer rule family. Updated 2026-08-15 to include the Adapter layer rule family. Updated 2026-08-15 to refine `ARCH-ADAPTER-001` with source-level Core reference classification (regression PASS for `auth-jose`, `html-preact`, `html-react`). Updated 2026-08-16 to include the Metadata rule family (`ARCH-META-001..007`) and to modularize the validator per ADR-010. Updated 2026-08-16 to include the README documentation contract (`ARCH-README-001..005`) and to run the one-shot README migration (closing the backlog). Updated 2026-08-16 to restructure the modular validator into the target layout (`utils/`, unified `validate(context)` rule interface); both `node scripts/architecture-validator/index.mjs` and `node scripts/validate-architecture.mjs` produce identical output and exit 0.

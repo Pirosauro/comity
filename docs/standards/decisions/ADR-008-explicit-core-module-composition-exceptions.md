@@ -219,4 +219,4 @@ This ADR does NOT concern:
 - `docs/standards/dependency-graph-policy.md` — Layered dependency model and forbidden edges. The rendering/HTTP rule has been amended to allow registered type-only HTTP contract references (see Revision 2.1 coordinated change).
 - `docs/standards/public-api.md` §1 — Package classification.
 - Package manifests and `src/` import graph — dependency evidence (`packages/*/package.json`, `packages/*/src/**/*.ts`).
-- ADR-007 — Integration Adapter category (unchanged; storefront-magento's multi-Core-Module dependencies are governed by ADR-007, not this ADR).
+- ADR-007 — Integration Adapter category (unchanged; Integration Adapter dependencies are governed by ADR-007, not this ADR).

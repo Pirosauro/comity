@@ -113,7 +113,7 @@ The rule **"one adapter = one Core Module"** applies to Technology Adapters.
 A Technology Adapter MAY consume technology-agnostic composition infrastructure
 (e.g. a canonical facade, factory, or wiring helper) from another Core Module
 without thereby becoming an adapter for that Core Module. The one-Core-Module
-rule governs which Core Module contract the adapter *implements*, not every
+rule governs which Core Module contract the adapter _implements_, not every
 package it consumes during composition. Such infrastructure consumption does not
 create a second implemented contract and does not weaken the rule.
 
@@ -121,10 +121,6 @@ create a second implemented contract and does not weaken the rule.
 
 **Purpose:**
 Integrate a single external platform/system with one or more Core Module contracts.
-
-Example:
-
-- `@comity/storefront-magento`
 
 Integration Adapters:
 
@@ -146,11 +142,11 @@ GraphQL spans both adapter categories; the classification depends on what the pa
 
 - `@comity/graphql-client` is a **Core Module**. It defines the GraphQL contracts and the `GraphqlClient` facade/abstraction, which is transport-independent.
 - The concrete transport (fetch, WebSocket, ...) is provided by **Technology Adapters**, e.g. `@comity/graphql-client-ws` (WebSocket) and a fetch-based adapter (`@comity/graphql-client-fetch`) where fetch is the underlying technology.
-- `@comity/storefront-magento` is an **Integration Adapter**. It may use the GraphQL client and its transport adapters to integrate the Magento platform without becoming a Technology Adapter itself.
+- An Integration Adapter may use the GraphQL client and its transport adapters to integrate an external platform without becoming a Technology Adapter itself.
 
 ```text
 Integration Adapter
-    @comity/storefront-magento
+    storefront platform integration
             │
             ├── @comity/storefront
             ├── @comity/catalog
@@ -163,7 +159,7 @@ Integration Adapter
                 (fetch / WebSocket / ...)
 ```
 
-Magento is the external platform; GraphQL is the protocol/API used to integrate it.
+The external platform is the system being integrated; GraphQL is the protocol/API used to integrate it.
 
 Adapters are replaceable implementation details.
 

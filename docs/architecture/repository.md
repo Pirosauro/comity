@@ -1,6 +1,6 @@
 # Repository Overview
 
-## Package Inventory (43 packages)
+## Package Inventory (42 packages)
 
 ### Kernel / Primitives (3)
 
@@ -12,32 +12,32 @@
 
 ### Core Modules (22)
 
-| Package                   | Description                                                                                   |
-| ------------------------- | --------------------------------------------------------------------------------------------- |
-| `@comity/http`            | HTTP contracts: request, response, handler, middleware, cookie, status codes, context         |
-| `@comity/router`          | Routing contracts: `Route`, `Router`, `UrlRewriter`                                           |
-| `@comity/html`            | HTML rendering contracts: `Renderer`, `Document`, `Layout`, `Head`, `Attribute`               |
-| `@comity/hydration`       | Island hydration contracts: `Island`, `HydrationScheduler`, strategy, serializer              |
-| `@comity/auth`            | Authentication: session contracts, policies (assurance/refresh/revocation), guards, use-cases |
-| `@comity/auth-tokens`     | Token contracts: envelope, facade                                                             |
-| `@comity/cache`           | Caching contracts: `Cache`, `CacheStore`, in-memory store implementation                      |
-| `@comity/catalog`         | Product and category domain: repositories, inventory, price                                   |
-| `@comity/order`           | Order domain: `OrderRepository`, `OrderModel`, `OrderItemModel`, status lifecycle             |
-| `@comity/content`         | CMS/Content: `BlockRepository`, `PageRepository`, `Navigation`, `Breadcrumb`                  |
-| `@comity/media`           | Media asset contracts: ` Media` interface                                                     |
-| `@comity/search`          | Search contracts: criteria, filter, sort, pagination, aggregation, result                     |
-| `@comity/seo`             | SEO contracts: `OpenGraph`, `StructuredData`, `TwitterCard`                                   |
-| `@comity/i18n`            | Internationalization: translator, locale, loader, resolver                                    |
-| `@comity/sql`             | SQL abstraction: client, query, transaction, result                                           |
-| `@comity/storage`         | Storage contracts: store interface with error types and setup                                 |
-| `@comity/storefront`      | Storefront architecture: PageModel, composers, handler contracts                              |
-| `@comity/graphql-builder` | Zero-dependency GraphQL query builder                                                         |
-| `@comity/graphql-client`  | GraphQL client contracts: transport, registry, request, response                              |
+| Package                   | Description                                                                                    |
+| ------------------------- | ---------------------------------------------------------------------------------------------- |
+| `@comity/http`            | HTTP contracts: request, response, handler, middleware, cookie, status codes, context          |
+| `@comity/router`          | Routing contracts: `Route`, `Router`, `UrlRewriter`                                            |
+| `@comity/html`            | HTML rendering contracts: `Renderer`, `Document`, `Layout`, `Head`, `Attribute`                |
+| `@comity/hydration`       | Island hydration contracts: `Island`, `HydrationScheduler`, strategy, serializer               |
+| `@comity/auth`            | Authentication: session contracts, policies (assurance/refresh/revocation), guards, use-cases  |
+| `@comity/auth-tokens`     | Token contracts: envelope, facade                                                              |
+| `@comity/cache`           | Caching contracts: `Cache`, `CacheStore`, in-memory store implementation                       |
+| `@comity/catalog`         | Product and category domain: repositories, inventory, price                                    |
+| `@comity/order`           | Order domain: `OrderRepository`, `OrderModel`, `OrderItemModel`, status lifecycle              |
+| `@comity/content`         | CMS/Content: `BlockRepository`, `PageRepository`, `Navigation`, `Breadcrumb`                   |
+| `@comity/media`           | Media asset contracts: ` Media` interface                                                      |
+| `@comity/search`          | Search contracts: criteria, filter, sort, pagination, aggregation, result                      |
+| `@comity/seo`             | SEO contracts: `OpenGraph`, `StructuredData`, `TwitterCard`                                    |
+| `@comity/i18n`            | Internationalization: translator, locale, loader, resolver                                     |
+| `@comity/sql`             | SQL abstraction: client, query, transaction, result                                            |
+| `@comity/storage`         | Storage contracts: store interface with error types and setup                                  |
+| `@comity/storefront`      | Storefront architecture: PageModel, composers, handler contracts                               |
+| `@comity/graphql-builder` | Zero-dependency GraphQL query builder                                                          |
+| `@comity/graphql-client`  | GraphQL client contracts: transport, registry, request, response                               |
 | `@comity/address`         | Address domain: `Address`, `AddressId`, `AddressLine`, `AddressRepository`, `AddressValidator` |
-| `@comity/geography`       | Geography contracts: `GeographyProvider`, country/subdivision metadata, `GeographyError`      |
-| `@comity/identity`        | Identity domain: `User`, `UserId`, `UserValidator`                                            |
+| `@comity/geography`       | Geography contracts: `GeographyProvider`, country/subdivision metadata, `GeographyError`       |
+| `@comity/identity`        | Identity domain: `User`, `UserId`, `UserValidator`                                             |
 
-### Adapters (16)
+### Adapters (15)
 
 | Package                         | Implements               | External Library                      |
 | ------------------------------- | ------------------------ | ------------------------------------- |
@@ -52,8 +52,6 @@
 | `@comity/cache-redis`           | `@comity/cache`          | `ioredis` or `redis` (peer, optional) |
 | `@comity/i18n-typesafe`         | `@comity/i18n`           | `typesafe-i18n` (peer)                |
 | `@comity/sql-kysely`            | `@comity/sql`            | `kysely`                              |
-| `@comity/storefront-magento`    | `@comity/storefront`, `@comity/catalog`, `@comity/router`, `@comity/cache`, `@comity/graphql-client` (Integration Adapter, ADR-007) | `zod`                                 |
-| `@comity/graphql-client-ws`     | `@comity/graphql-client` | `graphql-ws` (peer)                   |
 | `@comity/graphql-client-fetch`  | `@comity/graphql-client` | Fetch API                             |
 | `@comity/http-fetch`            | `@comity/http`           | Fetch API                             |
 | `@comity/validation-zod`        | `@comity/validation`     | `zod` (peer)                          |

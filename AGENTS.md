@@ -167,12 +167,12 @@ Every task must respect its declared scope.
 
 > **Rule Priority applies.** If a rule conflict arises, Correctness and Architecture rules override Scope Discipline. Document the conflict and resolution in the PR description.
 
-| Scope         | Allowed                           | Forbidden                 |
-| ------------- | --------------------------------- | ------------------------- |
-| Documentation | Modify docs, README, conventions  | Modify source code        |
-| Refactoring   | Restructure code, extract helpers | Redesign architecture     |
-| Cleanup       | Remove dead code, fix style       | Change behavior           |
-| Analysis      | Observe, measure, report          | Modify files              |
+| Scope         | Allowed                                                   | Forbidden                 |
+| ------------- | --------------------------------------------------------- | ------------------------- |
+| Documentation | Modify docs, README, conventions                          | Modify source code        |
+| Refactoring   | Restructure code, extract helpers                         | Redesign architecture     |
+| Cleanup       | Remove dead code, fix style                               | Change behavior           |
+| Analysis      | Observe, measure, report                                  | Modify files              |
 | Bug fix       | Fix targeted issue, update tests required for correctness | Refactor surrounding code |
 
 If a change exceeds the requested scope, stop and report it.
@@ -355,7 +355,7 @@ Example: `http-hono → http`, `sql-kysely → sql`
 - Must remain replaceable as a whole
 - Must not introduce business logic
 
-Example: `storefront-magento → storefront, catalog, router, cache, graphql-client`
+Example: a storefront platform integration → `storefront, catalog, router, cache, graphql-client`
 
 **Application** — Composes the framework.
 

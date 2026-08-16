@@ -56,24 +56,12 @@ importers:
 
   examples/hobiri-corporate:
     dependencies:
-      '@comity/cache':
-        specifier: workspace:*
-        version: link:../../packages/cache
       '@comity/composition':
         specifier: workspace:*
         version: link:../../packages/composition
       '@comity/content':
         specifier: workspace:*
         version: link:../../packages/content
-      '@comity/graphql-builder':
-        specifier: workspace:*
-        version: link:../../packages/graphql-builder
-      '@comity/graphql-client':
-        specifier: workspace:*
-        version: link:../../packages/graphql-client
-      '@comity/graphql-client-ws':
-        specifier: workspace:*
-        version: link:../../packages/graphql-client-ws
       '@comity/html':
         specifier: workspace:*
         version: link:../../packages/html
@@ -110,12 +98,6 @@ importers:
       cubito:
         specifier: ^0.6.3
         version: 0.6.3
-      graphql:
-        specifier: ^16.14.2
-        version: 16.14.2
-      graphql-ws:
-        specifier: ^6.2.1
-        version: 6.2.1(graphql@16.14.2)(ws@8.21.3)
       hono:
         specifier: ^4.13.2
         version: 4.13.2
@@ -130,7 +112,7 @@ importers:
         version: 10.29.8(preact-render-to-string@6.7.0)
       vite:
         specifier: ^7.3.6
-        version: 7.3.6(@types/node@24.13.3)(tsx@4.23.1)
+        version: 7.3.6(@types/node@25.0.9)(tsx@4.23.1)
       zod:
         specifier: ^4.4.3
         version: 4.4.3
@@ -151,8 +133,8 @@ importers:
         specifier: ^2.0.14
         version: 2.0.14
       '@types/node':
-        specifier: ^24.13.3
-        version: 24.13.3
+        specifier: ^25.0.0
+        version: 25.0.9
       remark-gfm:
         specifier: ^4.0.1
         version: 4.0.1
@@ -850,55 +832,6 @@ importers:
       '@comity/search':
         specifier: workspace:*
         version: link:../search
-    devDependencies:
-      '@types/node':
-        specifier: ^24.13.3
-        version: 24.13.3
-      typescript:
-        specifier: ^5.9.3
-        version: 5.9.3
-
-  packages/storefront-magento:
-    dependencies:
-      '@comity/cache':
-        specifier: workspace:*
-        version: link:../cache
-      '@comity/catalog':
-        specifier: workspace:*
-        version: link:../catalog
-      '@comity/composition':
-        specifier: workspace:*
-        version: link:../composition
-      '@comity/graphql-builder':
-        specifier: workspace:*
-        version: link:../graphql-builder
-      '@comity/graphql-client':
-        specifier: workspace:*
-        version: link:../graphql-client
-      '@comity/http':
-        specifier: workspace:*
-        version: link:../http
-      '@comity/media':
-        specifier: workspace:*
-        version: link:../media
-      '@comity/primitives':
-        specifier: workspace:*
-        version: link:../primitives
-      '@comity/router':
-        specifier: workspace:*
-        version: link:../router
-      '@comity/search':
-        specifier: workspace:*
-        version: link:../search
-      '@comity/seo':
-        specifier: workspace:*
-        version: link:../seo
-      '@comity/storefront':
-        specifier: workspace:*
-        version: link:../storefront
-      zod:
-        specifier: ^4.4.3
-        version: 4.4.3
     devDependencies:
       '@types/node':
         specifier: ^24.13.3
@@ -5137,7 +5070,6 @@ snapshots:
   '@types/node@25.0.9':
     dependencies:
       undici-types: 7.16.0
-    optional: true
 
   '@types/react-dom@19.2.4(@types/react@19.2.18)':
     dependencies:
@@ -7755,8 +7687,7 @@ snapshots:
       has-symbols: 1.1.0
       which-boxed-primitive: 1.1.1
 
-  undici-types@7.16.0:
-    optional: true
+  undici-types@7.16.0: {}
 
   undici-types@7.18.2: {}
 
@@ -7823,19 +7754,6 @@ snapshots:
       vfile-message: 4.0.3
 
   vite-plugin-sitemap@0.8.2: {}
-
-  vite@7.3.6(@types/node@24.13.3)(tsx@4.23.1):
-    dependencies:
-      esbuild: 0.28.2
-      fdir: 6.5.0(picomatch@4.0.5)
-      picomatch: 4.0.5
-      postcss: 8.5.26
-      rollup: 4.62.4
-      tinyglobby: 0.2.17
-    optionalDependencies:
-      '@types/node': 24.13.3
-      fsevents: 2.3.3
-      tsx: 4.23.1
 
   vite@7.3.6(@types/node@25.0.9)(tsx@4.23.1):
     dependencies:
