@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { MockRenderer } from "../__mocks__/html-renderer.js";
+import type { HtmlLayoutCollector } from "../contracts/layout.js";
 import { HtmlRendererPipeline } from "../renderer-pipeline.js";
 
 describe("HtmlRendererPipeline", () => {
@@ -54,11 +55,12 @@ describe("HtmlRendererPipeline", () => {
     const mockRenderer = new MockRenderer(true);
     const spy = vi.spyOn(mockRenderer, "render");
     const pipeline = new HtmlRendererPipeline([mockRenderer]);
+    const collector = {} as HtmlLayoutCollector;
     const options = { status: 404, headers: { "X-Test": "value" } };
 
-    await pipeline.render("test", options);
+    await pipeline.render("test", collector, options);
 
-    expect(spy).toHaveBeenCalledWith("test", options);
+    expect(spy).toHaveBeenCalledWith("test", collector, options);
   });
 
   it("should emit renderStarted and renderCompleted events", async () => {

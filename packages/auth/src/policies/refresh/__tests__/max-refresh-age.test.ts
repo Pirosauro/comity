@@ -2,7 +2,7 @@ import type { AuthSession } from "../../../contracts/session.js";
 
 import { describe, expect, it } from "vitest";
 import { AuthError } from "../../../errors/auth.js";
-import { MaxRefreshAgePolicy } from "../max-refresh-age.js";
+import { MaxRefreshAgePolicy } from "../max-age.js";
 
 describe("MaxRefreshAgePolicy", () => {
   const createSession = (createdAt: number): AuthSession => ({

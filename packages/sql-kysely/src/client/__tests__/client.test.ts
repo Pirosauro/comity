@@ -53,7 +53,7 @@ describe("@comity/sql-kysely", () => {
     const res = await sql.query<Row>({ statement: "select 1", params: { id: 1 } as any });
     expect(res.success).toBe(false);
     if (!res.success) {
-      expect(res.error.meta["reason"]).toBe("invalid-query");
+      expect(res.error.meta["reason"]).toBe("invalid_query");
     }
   });
 

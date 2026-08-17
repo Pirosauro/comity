@@ -4,139 +4,110 @@ import { SqlError } from "../sql.js";
 
 describe("SqlError", () => {
   // Create a concrete implementation for testing
-  class TestSqlError extends SqlError {
-    readonly code = "sql:test";
-  }
+  class TestSqlError extends SqlError {}
 
-  it("should instantiate with message and meta", () => {
-    const meta = { reason: "query-failed" as const };
-    const error = new TestSqlError("Test error", meta);
+  it("should instantiate with reason and meta", () => {
+    const error = new TestSqlError("query_failed");
 
     expect(error).toBeInstanceOf(Error);
     expect(error).toBeInstanceOf(SqlError);
-    expect(error.message).toBe("Test error");
-    expect(error.meta["reason"]).toBe("query-failed");
+    expect(error.message).toBe("The SQL query failed to execute");
+    expect(error.meta["reason"]).toBe("query_failed");
+    expect(error.meta["httpStatus"]).toBe(500);
   });
 
   it("should inherit from BaseError", () => {
-    const meta = { reason: "connection-failed" as const };
-    const error = new TestSqlError("Connection failed", meta);
+    const error = new TestSqlError("connection_failed");
 
     expect(error.name).toBe("TestSqlError");
-    expect(error.code).toBe("sql:test");
+    expect(error.code).toBe("sql:connection_failed");
   });
 
   it("should attach cause to error object", () => {
     const originalError = new Error("Original error");
-    const meta = { reason: "query-failed" as const, cause: originalError };
-    const error = new TestSqlError("Wrapped error", meta);
+    const error = new TestSqlError("query_failed", { cause: originalError });
 
     expect(error.cause).toBe(originalError);
   });
 
   it("should freeze metadata to prevent mutation", () => {
-    const meta = { reason: "invalid-query" as const, detail: "syntax error" };
-    const error = new TestSqlError("Invalid query", meta);
+    const error = new TestSqlError("invalid_query", {
+      details: { detail: "syntax error" },
+    });
 
     expect(() => {
-      (error.meta as any).reason = "query-failed";
+      (error.meta as any).reason = "query_failed";
     }).toThrow();
 
     expect(Object.isFrozen(error.meta)).toBe(true);
   });
 
   it("should support operation metadata", () => {
-    const meta = {
-      reason: "query-failed" as const,
-      operation: "query" as const,
-      adapter: "postgres",
-    };
-    const error = new TestSqlError("Query failed", meta);
+    const error = new TestSqlError("query_failed", {
+      details: { operation: "query", adapter: "postgres" },
+    });
 
-    expect(error.meta["operation"]).toBe("query");
-    expect(error.meta["adapter"]).toBe("postgres");
+    expect(error.meta["details"]?.["operation"]).toBe("query");
+    expect(error.meta["details"]?.["adapter"]).toBe("postgres");
   });
 
   it("should support retriable flag", () => {
-    const meta = {
-      reason: "timeout" as const,
-      retriable: true,
-    };
-    const error = new TestSqlError("Operation timed out", meta);
+    const error = new TestSqlError("timeout", {
+      details: { retriable: true },
+    });
 
-    expect(error.meta["retriable"]).toBe(true);
+    expect(error.meta["details"]?.["retriable"]).toBe(true);
   });
 
   it("should support detail field", () => {
-    const meta = {
-      reason: "invalid-query" as const,
-      detail: "42601",
-    };
-    const error = new TestSqlError("Syntax error", meta);
+    const error = new TestSqlError("invalid_query", {
+      details: { detail: "42601" },
+    });
 
-    expect(error.meta["detail"]).toBe("42601");
+    expect(error.meta["details"]?.["detail"]).toBe("42601");
   });
 
   it("should support multiple reasons", () => {
-    const reasons: Array<
-      | "connection-failed"
-      | "invalid-query"
-      | "query-failed"
-      | "transaction-failed"
-      | "timeout"
-      | "cancelled"
-    > = [
-      "connection-failed",
-      "invalid-query",
-      "query-failed",
-      "transaction-failed",
+    const reasons: Array<SqlError["meta"]["reason"]> = [
+      "connection_failed",
+      "invalid_query",
+      "query_failed",
+      "transaction_failed",
       "timeout",
       "cancelled",
     ];
 
     for (const reason of reasons) {
-      const error = new TestSqlError(`Error: ${reason}`, { reason });
+      const error = new TestSqlError(reason);
       expect(error.meta["reason"]).toBe(reason);
+      expect(error.code).toBe(`sql:${reason}`);
     }
   });
 
   it("should work with additional metadata properties", () => {
-    const meta = {
-      reason: "query-failed" as const,
-      operation: "query" as const,
-      adapter: "mysql",
-      retriable: false,
-      detail: 1234,
-    };
-    const error = new TestSqlError("MySQL error", meta);
+    const error = new TestSqlError("query_failed", {
+      details: { operation: "query", adapter: "mysql", retriable: false, detail: "1234" },
+    });
 
-    expect(error.meta["reason"]).toBe("query-failed");
-    expect(error.meta["operation"]).toBe("query");
-    expect(error.meta["adapter"]).toBe("mysql");
-    expect(error.meta["retriable"]).toBe(false);
-    expect(error.meta["detail"]).toBe(1234);
+    expect(error.meta["reason"]).toBe("query_failed");
+    expect(error.meta["details"]?.["operation"]).toBe("query");
+    expect(error.meta["details"]?.["adapter"]).toBe("mysql");
+    expect(error.meta["details"]?.["retriable"]).toBe(false);
+    expect(error.meta["details"]?.["detail"]).toBe("1234");
   });
 
   it("should handle undefined optional metadata", () => {
-    const meta = { reason: "query-failed" as const };
-    const error = new TestSqlError("Error", meta);
+    const error = new TestSqlError("query_failed");
 
-    expect(error.meta["operation"]).toBeUndefined();
-    expect(error.meta["adapter"]).toBeUndefined();
-    expect(error.meta["retriable"]).toBeUndefined();
-    expect(error.meta["detail"]).toBeUndefined();
+    expect(error.meta["details"]).toBeUndefined();
   });
 
   it("should maintain metadata immutability across instances", () => {
-    const error1 = new TestSqlError("Error 1", {
-      reason: "query-failed" as const,
-    });
-    const error2 = new TestSqlError("Error 2", {
-      reason: "connection-failed" as const,
-    });
+    const error1 = new TestSqlError("query_failed");
+    const error2 = new TestSqlError("connection_failed");
 
-    expect(error1.meta["reason"]).toBe("query-failed");
-    expect(error2.meta["reason"]).toBe("connection-failed");
+    expect(error1.meta["reason"]).toBe("query_failed");
+    expect(error2.meta["reason"]).toBe("connection_failed");
     expect(Object.isFrozen(error1.meta)).toBe(true);
     expect(Object.isFrozen(error2.meta)).toBe(true);
   });

@@ -45,7 +45,7 @@ describe("executeTransaction", () => {
 
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.message).toBe("Transaction failed");
+      expect(result.error.message).toBe("The SQL transaction failed");
       expect(result.error.cause).toBe(creationError);
     }
   });
@@ -112,6 +112,36 @@ describe("executeTransaction", () => {
       const commitResult = await transactionResult.commit();
 
       expect(commitResult.success).toBe(true);
+    });
+
+    it("should report commit failures when the underlying transaction rejects", async () => {
+      const commitError = new Error("Commit failed");
+      let resolveBarrier: () => void;
+      const barrier = new Promise<void>((resolve) => {
+        resolveBarrier = resolve;
+      });
+
+      mockDb = {
+        transaction: vi.fn().mockReturnValue({
+          execute: vi.fn().mockImplementation(async (fn) => {
+            const result = fn(mockTransaction);
+            resolveBarrier();
+            await result;
+            throw commitError;
+          }),
+        }),
+      };
+
+      const result = await executeTransaction(mockDb, adapter);
+      if (!result.success) throw new Error("expected transaction");
+
+      const commitResult = await result.value.commit();
+
+      expect(commitResult.success).toBe(false);
+      if (!commitResult.success) {
+        expect(commitResult.error.meta.reason).toBe("transaction_failed");
+        expect(commitResult.error.cause).toBe(commitError);
+      }
     });
 
     it("should rollback transaction successfully", async () => {

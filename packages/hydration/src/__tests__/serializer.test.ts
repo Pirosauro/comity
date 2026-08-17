@@ -43,4 +43,78 @@ describe("JsonIslandSerializer", () => {
       strategy: { kind: "immediate" },
     });
   });
+
+  it("serializes null to the literal null JSON", () => {
+    expect(JsonIslandSerializer.serialize(null)).toBe("null");
+  });
+
+  it("deserializes the literal null JSON to null", () => {
+    expect(JsonIslandSerializer.deserialize("null")).toBeNull();
+  });
+
+  it("rejects payloads without a valid id", () => {
+    expect(() =>
+      JsonIslandSerializer.deserialize(
+        JSON.stringify({ component: "counter", data: {}, strategy: { kind: "immediate" } })
+      )
+    ).toThrow(TypeError);
+  });
+
+  it("rejects payloads without a valid component", () => {
+    expect(() =>
+      JsonIslandSerializer.deserialize(
+        JSON.stringify({ id: "counter", data: {}, strategy: { kind: "immediate" } })
+      )
+    ).toThrow(TypeError);
+  });
+
+  it("rejects payloads without a valid strategy", () => {
+    expect(() =>
+      JsonIslandSerializer.deserialize(
+        JSON.stringify({ id: "counter", component: "counter", data: {} })
+      )
+    ).toThrow(TypeError);
+  });
+
+  it("rejects payloads without a data property", () => {
+    expect(() =>
+      JsonIslandSerializer.deserialize(
+        JSON.stringify({ id: "counter", component: "counter", strategy: { kind: "immediate" } })
+      )
+    ).toThrow(TypeError);
+  });
+
+  it("rejects payloads with an invalid mode", () => {
+    expect(() =>
+      JsonIslandSerializer.deserialize(
+        JSON.stringify({
+          id: "counter",
+          component: "counter",
+          data: {},
+          strategy: { kind: "immediate" },
+          mode: "invalid",
+        })
+      )
+    ).toThrow(TypeError);
+  });
+
+  it("accepts payloads with the client-only mode", () => {
+    const parsed = JsonIslandSerializer.deserialize(
+      JSON.stringify({
+        id: "counter",
+        component: "counter",
+        data: {},
+        strategy: { kind: "immediate" },
+        mode: "client-only",
+      })
+    );
+
+    expect(parsed).toEqual({
+      id: "counter",
+      component: "counter",
+      data: {},
+      strategy: { kind: "immediate" },
+      mode: "client-only",
+    });
+  });
 });

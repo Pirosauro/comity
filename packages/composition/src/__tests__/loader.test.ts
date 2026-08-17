@@ -107,7 +107,7 @@ describe("load", () => {
   });
 
   it("should pass options to setup", async () => {
-    const setupFn = vi.fn(async (options) => {
+    const setupFn = vi.fn(async (_ctx: any, options: any) => {
       expect(options).toEqual({ key: "value" });
 
       return success(async () => success(undefined));
@@ -125,7 +125,14 @@ describe("load", () => {
 
     await load(mockKernel, modules, options);
 
-    expect(setupFn).toHaveBeenCalledWith({ key: "value" });
+    expect(setupFn).toHaveBeenCalledWith(
+      {
+        services: undefined,
+        events: undefined,
+        hooks: undefined,
+      },
+      { key: "value" }
+    );
   });
 
   it("should load multiple modules in order", async () => {
@@ -150,7 +157,7 @@ describe("load", () => {
   });
 
   it("should pass undefined options when not provided", async () => {
-    const setupFn = vi.fn(async (options) => {
+    const setupFn = vi.fn(async (_ctx: any, options: any) => {
       expect(options).toBeUndefined();
 
       return success(async () => success(undefined));
@@ -166,7 +173,14 @@ describe("load", () => {
 
     await load(mockKernel, modules);
 
-    expect(setupFn).toHaveBeenCalledWith(undefined);
+    expect(setupFn).toHaveBeenCalledWith(
+      {
+        services: undefined,
+        events: undefined,
+        hooks: undefined,
+      },
+      undefined
+    );
   });
 
   it("should handle empty module array", async () => {

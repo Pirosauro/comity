@@ -94,6 +94,35 @@ describe("FetchGraphqlTransport", () => {
     });
   });
 
+  it("omits details when a transport error has no operation name", async () => {
+    const fetchMock = vi.fn<typeof fetch>(async () => new Response("boom", { status: 500 }));
+
+    vi.stubGlobal("fetch", fetchMock);
+
+    const transport = new FetchGraphqlTransport({ url: "https://example.com/graphql" });
+
+    await expect(transport.execute({ query: "query { ok }" })).rejects.toMatchObject({
+      code: "graphql:transport_error",
+      meta: { httpStatus: 500 },
+    });
+  });
+
+  it("omits data when absent from the response", async () => {
+    const fetchMock = vi.fn<typeof fetch>(async () =>
+      new Response(JSON.stringify({ errors: [{ message: "oops" }] }), { status: 200 })
+    );
+
+    vi.stubGlobal("fetch", fetchMock);
+
+    const transport = new FetchGraphqlTransport({ url: "https://example.com/graphql" });
+
+    const result = await transport.execute({ query: "query { ok }" });
+
+    expect(result.data).toBeUndefined();
+    expect(result.errors).toEqual([{ message: "oops" }]);
+    expect(result.meta?.httpStatus).toBe(200);
+  });
+
   it("normalizes data, errors, extensions, headers and status into the response", async () => {
     const headers = new Headers({ "x-request-id": "abc" });
 

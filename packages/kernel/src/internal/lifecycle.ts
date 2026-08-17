@@ -148,7 +148,8 @@ export class Lifecycle {
    * @returns True if services can be resolved, false otherwise.
    */
   canResolveServices(): boolean {
-    return this.#state !== "stopped";
+    // return this.#state !== "closed";
+    return this.#state === "sealed" || this.#state === "running";
   }
 
   /**
@@ -157,8 +158,8 @@ export class Lifecycle {
    * @returns True if events can be emitted, false otherwise.
    */
   canEmitEvents(): boolean {
-    // Events should be always permitted
-    return this.#state !== "stopped";
+    // return this.#state !== "closed";
+    return this.#state === "sealed" || this.#state === "running";
   }
 
   /**
@@ -167,7 +168,7 @@ export class Lifecycle {
    * @returns True if hooks can be executed, false otherwise.
    */
   canExecuteHooks(): boolean {
-    // Hooks should be always permitted
-    return this.#state !== "stopped";
+    // return this.#state !== "closed";
+    return this.#state === "sealed" || this.#state === "running";
   }
 }

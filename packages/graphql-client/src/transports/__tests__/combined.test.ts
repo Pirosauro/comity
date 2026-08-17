@@ -26,4 +26,14 @@ describe("CombinedGraphqlTransport", () => {
     expect(subscribe).toHaveBeenCalledWith({ query: "subscription { ok }" });
     expect(iterator).toEqual({});
   });
+
+  it("throws subscription_not_supported when no subscribe transport is given", () => {
+    const execute = vi.fn();
+
+    const transport = new CombinedGraphqlTransport({ execute, subscribe: undefined as never });
+
+    expect(() => transport.subscribe({ query: "subscription { ok }" })).toThrowError(
+      "GraphQL transport does not support subscriptions"
+    );
+  });
 });

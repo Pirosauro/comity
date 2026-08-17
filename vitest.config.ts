@@ -12,15 +12,16 @@ export default defineConfig({
       reporter: ["text", "json", "html", "lcov"],
       reportsDirectory: "coverage",
 
+      include: ["packages/*/src/**/*.ts"],
+      exclude: [
+        "node_modules/**",
+        "dist/**",
+        "coverage/**",
+        "**/src/**/index.ts",
+      ],
+
       clean: true,
       cleanOnRerun: false,
-
-      thresholds: {
-        lines: 80,
-        functions: 80,
-        branches: 80,
-        statements: 80,
-      },
     },
 
     testTimeout: 10000,

@@ -216,6 +216,14 @@ describe("EventBus", () => {
       }).not.toThrow();
     });
 
+    it("should handle unsubscribing from an event with no handlers", () => {
+      const handler = vi.fn();
+
+      expect(() => {
+        bus.unsubscribe("userDeleted", handler);
+      }).not.toThrow();
+    });
+
     it("should allow re-subscribing after unsubscribing", async () => {
       const handler = vi.fn();
 

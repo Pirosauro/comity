@@ -34,4 +34,52 @@ describe("MemoryCacheStore", () => {
       vi.useRealTimers();
     }
   });
+
+  it("returns entries before they expire", async () => {
+    vi.useFakeTimers();
+
+    try {
+      const store = new MemoryCacheStore();
+
+      await store.set("session", "value", { ttl: 60 });
+
+      vi.advanceTimersByTime(1000);
+
+      await expect(store.get("session")).resolves.toBe("value");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("retains entries without a ttl indefinitely", async () => {
+    const store = new MemoryCacheStore();
+
+    await store.set("session", "value");
+
+    await expect(store.get("session")).resolves.toBe("value");
+  });
+
+  it("deletes a single entry", async () => {
+    const store = new MemoryCacheStore();
+
+    await store.set("session", "value");
+    await store.set("other", "value");
+
+    await store.delete("session");
+
+    await expect(store.get("session")).resolves.toBeUndefined();
+    await expect(store.get("other")).resolves.toBe("value");
+  });
+
+  it("clears all entries", async () => {
+    const store = new MemoryCacheStore();
+
+    await store.set("session", "value");
+    await store.set("other", "value");
+
+    await store.clear();
+
+    await expect(store.get("session")).resolves.toBeUndefined();
+    await expect(store.get("other")).resolves.toBeUndefined();
+  });
 });

@@ -1,19 +1,19 @@
-import type { HttpContext, HttpFacade, HttpResponse } from "@comity/http";
+import type { HttpContext, HttpFacade, HttpResponse, HttpRuntimeContext } from "@comity/http";
 import type { Context as HonoContext } from "hono";
 
 import { describe, expect, it, vi } from "vitest";
 import { httpHonoAdapter } from "../adapter.js";
 
 // Mock the internal functions
-vi.mock("../../internal/context.js", () => ({
+vi.mock("../internal/context.js", () => ({
   createHttpContext: vi.fn(),
 }));
 
-vi.mock("../../internal/map-error.js", () => ({
+vi.mock("../internal/map-error.js", () => ({
   mapErrorToHttpResponse: vi.fn(),
 }));
 
-vi.mock("../../internal/map-response.js", () => ({
+vi.mock("../internal/map-response.js", () => ({
   mapHttpResponseToHono: vi.fn(),
 }));
 
@@ -195,6 +195,7 @@ describe("httpHonoAdapter", () => {
   describe("middleware execution", () => {
     let mockHono: Hono;
     let mockFacade: HttpFacade;
+    let mockRuntime: HttpRuntimeContext;
     let mockContext: HonoContext;
     let capturedMiddleware: Function;
 
@@ -217,13 +218,18 @@ describe("httpHonoAdapter", () => {
         handle: vi.fn(),
       } as unknown as HttpFacade;
 
+      mockRuntime = {
+        services: {},
+        events: {},
+      } as HttpRuntimeContext;
+
       mockHono = {
         use: vi.fn((pattern, handler) => {
           capturedMiddleware = handler;
         }),
       } as unknown as Hono;
 
-      httpHonoAdapter(mockHono, mockFacade);
+      httpHonoAdapter(mockHono, mockFacade, mockRuntime);
     });
 
     it("should create HttpContext from Hono context", async () => {
@@ -236,7 +242,7 @@ describe("httpHonoAdapter", () => {
 
       await capturedMiddleware(mockContext);
 
-      expect(createHttpContext).toHaveBeenCalledWith(mockContext);
+      expect(createHttpContext).toHaveBeenCalledWith(mockContext, mockRuntime);
     });
 
     it("should call facade.handle with created context", async () => {

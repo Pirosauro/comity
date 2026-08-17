@@ -3,7 +3,7 @@ import { RepositoryError, RepositoryErrorReason } from "../repository.js";
 
 describe("RepositoryError", () => {
   it.each([
-    ["validation_failed", "Validation failed", 422],
+    ["invalid_data", "Invalid data", 422],
     ["access_denied", "Access denied", 403],
     ["service_unavailable", "Service unavailable", 503],
     ["protocol_error", "Protocol error", 502],
@@ -50,7 +50,7 @@ describe("RepositoryError", () => {
 
   it("uses a namespaced code for every reason", () => {
     const reasons: RepositoryErrorReason[] = [
-      "validation_failed",
+      "invalid_data",
       "access_denied",
       "service_unavailable",
       "protocol_error",

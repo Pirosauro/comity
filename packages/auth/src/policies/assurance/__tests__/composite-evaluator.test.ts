@@ -4,7 +4,7 @@ import type {
 } from "../../../contracts/session-assurance-evaluator.js";
 
 import { describe, expect, it, vi } from "vitest";
-import { CompositeAssuranceEvaluator } from "../composite-evaluator.js";
+import { CompositeAssuranceEvaluator } from "../../../composite-evaluator.js";
 
 describe("CompositeAssuranceEvaluator", () => {
   describe("evaluate", () => {

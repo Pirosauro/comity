@@ -348,3 +348,109 @@ describe("toSafePayload", () => {
     expect(payload.context).toEqual({});
   });
 });
+
+describe("toSafePayload with non-BaseError input", () => {
+  let now: Date;
+
+  beforeEach(() => {
+    now = new Date("2024-01-15T10:30:00Z");
+
+    vi.useFakeTimers();
+    vi.setSystemTime(now);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("should convert a plain Error to an unknown payload", () => {
+    const error = new Error("Plain error");
+
+    const payload = toSafePayload(error);
+
+    expect(payload).toEqual({
+      code: "unknown",
+      message: "Plain error",
+      timestamp: now.toISOString(),
+    });
+  });
+
+  it("should convert a non-Error value via String coercion", () => {
+    const payload = toSafePayload("some string");
+
+    expect(payload.code).toBe("unknown");
+    expect(payload.message).toBe("some string");
+  });
+
+  it("should fall back to a default message for empty non-Error input", () => {
+    const payload = toSafePayload("");
+
+    expect(payload.code).toBe("unknown");
+    expect(payload.message).toBe("An unknown error occurred");
+  });
+
+  it("should fall back to a default message for empty Error message", () => {
+    const error = new Error();
+
+    const payload = toSafePayload(error);
+
+    expect(payload.code).toBe("unknown");
+    expect(payload.message).toBe("An unknown error occurred");
+  });
+
+  it("should coerce null and undefined to their String representation", () => {
+    expect(toSafePayload(null).message).toBe("null");
+    expect(toSafePayload(undefined).message).toBe("undefined");
+  });
+
+  it("should include a timestamp for non-BaseError input", () => {
+    const payload = toSafePayload("some string");
+
+    expect(payload.timestamp).toBe(now.toISOString());
+  });
+});
+
+describe("toSafePayload details metadata", () => {
+  let now: Date;
+
+  beforeEach(() => {
+    now = new Date("2024-01-15T10:30:00Z");
+
+    vi.useFakeTimers();
+    vi.setSystemTime(now);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("should include sanitized details", () => {
+    const error = new TestError("Error with details", {
+      details: { repository: "catalog", operation: "list" },
+    });
+    const payload = toSafePayload(error);
+
+    expect(payload.details).toEqual({
+      repository: "catalog",
+      operation: "list",
+    });
+  });
+
+  it("should exclude non-JSON values from details", () => {
+    const error = new TestError("Error with invalid details", {
+      details: { valid: "string", invalid: () => {} },
+    });
+    const payload = toSafePayload(error);
+
+    expect(payload.details).toEqual({ valid: "string" });
+  });
+
+  it("should normalize null details to an empty object", () => {
+    const error = new TestError("Error with null details", {
+      details: null,
+    });
+    const payload = toSafePayload(error);
+
+    expect(payload.details).toEqual({});
+  });
+});

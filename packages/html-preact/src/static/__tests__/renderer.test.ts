@@ -1,6 +1,6 @@
 import { DefaultHtmlLayoutCollector } from "@comity/html";
 import { h } from "preact";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { PreactStaticHtmlRenderer } from "../renderer.js";
 
 describe("PreactStaticHtmlRenderer", () => {
@@ -50,20 +50,25 @@ describe("PreactStaticHtmlRenderer", () => {
       }
     });
 
-    it("should handle rendering errors", async () => {
-      // Create an element that might cause rendering issues
-      const element = h("div", null, "Test");
+    it("should return a render_error result when rendering throws", async () => {
       const collector = new DefaultHtmlLayoutCollector();
-      const mockRenderToString = vi.fn().mockImplementation(() => {
+      const Boom = () => {
         throw new Error("Rendering failed");
-      });
+      };
+      const element = h(Boom);
+      const result = await renderer.render(element, collector);
 
-      // This is tricky to test since renderToString is imported at module level
-      // For now, we'll assume the error handling works as the code shows it should
-      expect(renderer).toBeDefined();
-      expect(element).toBeDefined();
-      expect(collector).toBeDefined();
-      expect(mockRenderToString).toBeDefined();
+      expect(result.ok).toBe(false);
+
+      if (!result.ok) {
+        expect(result.error.code).toBe("html:render_error");
+        expect(result.error.meta.reason).toBe("render_error");
+        expect(result.error.meta.context).toEqual({
+          renderer: "preact",
+          mode: "static",
+          layout: expect.stringContaining("Rendering failed"),
+        });
+      }
     });
   });
 });

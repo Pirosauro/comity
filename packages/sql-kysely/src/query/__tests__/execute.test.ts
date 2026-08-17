@@ -2,38 +2,8 @@ import { describe, expect, it, vi } from "vitest";
 
 import type { SqlQuery } from "@comity/sql";
 
-import { KyselySqlError } from "../../errors/kysely.js";
-import { assertSupportedQuery, executeQuery } from "../execute.js";
-
-describe("assertSupportedQuery", () => {
-  it("should not throw for queries without params", () => {
-    const query: SqlQuery = {
-      statement: "SELECT * FROM users",
-    };
-
-    expect(() => assertSupportedQuery(query)).not.toThrow();
-  });
-
-  it("should not throw for queries with array params", () => {
-    const query: SqlQuery = {
-      statement: "SELECT * FROM users WHERE id = ?",
-      params: [1],
-    };
-
-    expect(() => assertSupportedQuery(query)).not.toThrow();
-  });
-
-  it("should throw for queries with named params", () => {
-    const query: SqlQuery = {
-      statement: "SELECT * FROM users WHERE id = :id",
-      params: { id: 1 },
-    };
-
-    expect(() => assertSupportedQuery(query)).toThrow(
-      "Named parameters are not supported by Kysely adapter"
-    );
-  });
-});
+import { SqlError } from "@comity/sql/errors";
+import { executeQuery } from "../execute.js";
 
 describe("executeQuery", () => {
   const adapter = "test-adapter";
@@ -150,10 +120,9 @@ describe("executeQuery", () => {
     expect(result.success).toBe(false);
 
     if (!result.success) {
-      expect(result.error).toBeInstanceOf(KyselySqlError);
-      expect(result.error.message).toBe("Named parameters not supported");
-      expect(result.error.meta["reason"]).toBe("invalid-query");
-      expect(result.error.meta["retriable"]).toBe(false);
+      expect(result.error).toBeInstanceOf(SqlError);
+      expect(result.error.meta["reason"]).toBe("invalid_query");
+      expect(result.error.meta["details"]?.["retriable"]).toBe(false);
     }
 
     expect(mockDb.executeQuery).not.toHaveBeenCalled();
@@ -174,8 +143,8 @@ describe("executeQuery", () => {
     expect(result.success).toBe(false);
 
     if (!result.success) {
-      expect(result.error).toBeInstanceOf(KyselySqlError);
-      expect(result.error.message).toBe("Query failed");
+      expect(result.error).toBeInstanceOf(SqlError);
+      expect(result.error.meta["reason"]).toBe("query_failed");
       expect(result.error.cause).toBe(executionError);
     }
   });
@@ -195,10 +164,9 @@ describe("executeQuery", () => {
     expect(result.success).toBe(false);
 
     if (!result.success) {
-      expect(result.error).toBeInstanceOf(KyselySqlError);
-      expect(result.error.message).toBe("Operation cancelled");
+      expect(result.error).toBeInstanceOf(SqlError);
       expect(result.error.meta["reason"]).toBe("cancelled");
-      expect(result.error.meta["retriable"]).toBe(true);
+      expect(result.error.meta["details"]?.["retriable"]).toBe(true);
     }
   });
 });

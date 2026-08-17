@@ -1,19 +1,22 @@
+import { DefaultHtmlLayoutCollector } from "@comity/html";
 import { createElement } from "react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { ReactStaticHtmlRenderer } from "../renderer.js";
 
 describe("ReactStaticHtmlRenderer", () => {
   let renderer: ReactStaticHtmlRenderer;
+  let collector: DefaultHtmlLayoutCollector;
 
   beforeEach(() => {
     renderer = new ReactStaticHtmlRenderer();
+    collector = new DefaultHtmlLayoutCollector();
   });
 
   describe("render", () => {
     it("should render a simple React element to HTML", async () => {
       const element = createElement("div", { "data-testid": "test" }, "Hello World");
 
-      const result = await renderer.render(element);
+      const result = await renderer.render(element, collector);
 
       expect(result.ok).toBe(true);
 
@@ -26,7 +29,7 @@ describe("ReactStaticHtmlRenderer", () => {
 
     it("should use custom status code", async () => {
       const element = createElement("div", null, "Test");
-      const result = await renderer.render(element, { status: 404 });
+      const result = await renderer.render(element, collector, { status: 404 });
 
       expect(result.ok).toBe(true);
       if (result.ok) {
@@ -36,7 +39,7 @@ describe("ReactStaticHtmlRenderer", () => {
 
     it("should merge custom headers", async () => {
       const element = createElement("div", null, "Test");
-      const result = await renderer.render(element, {
+      const result = await renderer.render(element, collector, {
         headers: { "X-Custom": "value" },
       });
 
@@ -47,18 +50,24 @@ describe("ReactStaticHtmlRenderer", () => {
       }
     });
 
-    it("should handle rendering errors", async () => {
-      // Create an element that might cause rendering issues
-      const element = createElement("div", null, "Test");
-      // Mock renderToString to throw
-      const originalRenderToString = await import("react-dom/server");
-      const mockRenderToString = vi.fn().mockImplementation(() => {
+    it("should return a render_error result when rendering throws", async () => {
+      const Boom = () => {
         throw new Error("Rendering failed");
-      });
+      };
+      const element = createElement(Boom);
+      const result = await renderer.render(element, collector);
 
-      // This is tricky to test since renderToString is imported at module level
-      // For now, we'll assume the error handling works as the code shows it should
-      expect(renderer).toBeDefined();
+      expect(result.ok).toBe(false);
+
+      if (!result.ok) {
+        expect(result.error.code).toBe("html:render_error");
+        expect(result.error.meta.reason).toBe("render_error");
+        expect(result.error.meta.context).toEqual({
+          renderer: "react",
+          mode: "static",
+          layout: expect.stringContaining("Rendering failed"),
+        });
+      }
     });
   });
 });

@@ -13,7 +13,6 @@ const fields: CustomerCreate = {
   contacts: [{ type: "email", value: "contact@acme.com" }],
   preferences: { currency: "USD", language: "en" },
   createdAt: Instant.fromEpochMilliseconds(123456789),
-  updatedAt: null,
   deletedAt: null,
 };
 
@@ -61,10 +60,10 @@ describe("Customer", () => {
       expect(customer.createdAt).toBeInstanceOf(Instant);
     });
 
-    it("should default updatedAt to null", () => {
+    it("should default updatedAt to createdAt", () => {
       const customer = new Customer(fields);
 
-      expect(customer.updatedAt).toBeNull();
+      expect(customer.updatedAt).toBeInstanceOf(Instant);
     });
 
     it("should default deletedAt to null", () => {
@@ -241,7 +240,7 @@ describe("Customer", () => {
       const customer = new Customer(fields, id);
       const snapshot = customer.snapshot();
 
-      expect(snapshot.updatedAt).toBeNull();
+      expect(snapshot.updatedAt).toBeInstanceOf(Instant);
     });
 
     it("should include deletedAt in snapshot", () => {
