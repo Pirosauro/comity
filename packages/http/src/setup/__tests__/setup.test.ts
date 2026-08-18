@@ -53,11 +53,16 @@ describe("http module setup", () => {
   it("should fail when no HTTP handler is provided", async () => {
     const result = await module.setup(ctx, {});
 
-    expect(result.success).toBe(false);
-    if (!result.success) {
-      expect(result.error).toBeInstanceOf(CompositionError);
-      expect(result.error.meta?.reason).toBe("setup_failed");
-      expect(result.error.meta?.details?.module).toBe("@comity/http");
+    expect(result.success).toBe(true);
+    if (isSuccess(result)) {
+      const init = await result.value();
+
+      expect(init.success).toBe(false);
+      if (!init.success) {
+        expect(init.error).toBeInstanceOf(CompositionError);
+        expect(init.error.meta?.reason).toBe("initialization_failed");
+        expect(init.error.meta?.details?.module).toBe("@comity/http");
+      }
     }
   });
 

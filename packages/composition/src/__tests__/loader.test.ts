@@ -14,14 +14,21 @@ class TestError extends BaseError {
   }
 }
 
+function createMockKernel() {
+  return {
+    services: { define: vi.fn(), resolve: vi.fn(), clear: vi.fn() },
+    events: { subscribe: vi.fn(), unsubscribe: vi.fn(), emit: vi.fn() },
+    hooks: { define: vi.fn(), execute: vi.fn() },
+    seal: vi.fn(() => success("sealed")),
+    start: vi.fn(() => success("running")),
+  };
+}
+
 describe("load", () => {
-  let mockKernel: any;
+  let mockKernel: ReturnType<typeof createMockKernel>;
 
   beforeEach(() => {
-    mockKernel = {
-      createModuleSetupContext: vi.fn(() => ({})),
-      seal: vi.fn(),
-    };
+    mockKernel = createMockKernel();
   });
 
   it("should load modules successfully", async () => {
@@ -37,22 +44,16 @@ describe("load", () => {
 
     expect(result.success).toBe(true);
     expect(mockKernel.seal).toHaveBeenCalled();
+    expect(mockKernel.start).toHaveBeenCalled();
   });
 
   it("should handle module resolution failure", async () => {
-    // Mock resolveModuleOrder to return failure
-    const mockResolver = vi.fn(() =>
-      failure(new CompositionError("cycle_detected", { cycle: ["moduleA"] }))
-    );
-
-    vi.doMock("../resolver.js", () => ({ resolveModuleOrder: mockResolver }));
-
     const modules = [
       {
         name: "moduleA",
         version: "1.0.0",
         setup: vi.fn(async () => success(async () => success(undefined))),
-        dependsOn: { moduleA: {} }, // cycle
+        dependsOn: { moduleA: {} }, // self-cycle -> resolution failure
       },
     ];
 
@@ -127,9 +128,9 @@ describe("load", () => {
 
     expect(setupFn).toHaveBeenCalledWith(
       {
-        services: undefined,
-        events: undefined,
-        hooks: undefined,
+        services: mockKernel.services,
+        events: mockKernel.events,
+        hooks: mockKernel.hooks,
       },
       { key: "value" }
     );
@@ -153,7 +154,6 @@ describe("load", () => {
     const result = await load(mockKernel, modules);
 
     expect(result.success).toBe(true);
-    // Assuming resolver orders them correctly
   });
 
   it("should pass undefined options when not provided", async () => {
@@ -175,9 +175,9 @@ describe("load", () => {
 
     expect(setupFn).toHaveBeenCalledWith(
       {
-        services: undefined,
-        events: undefined,
-        hooks: undefined,
+        services: mockKernel.services,
+        events: mockKernel.events,
+        hooks: mockKernel.hooks,
       },
       undefined
     );
@@ -188,5 +188,115 @@ describe("load", () => {
 
     expect(result.success).toBe(true);
     expect(mockKernel.seal).toHaveBeenCalled();
+    expect(mockKernel.start).toHaveBeenCalled();
+  });
+
+  it("should seal the kernel before running initializers", async () => {
+    const order: string[] = [];
+    const initFn = vi.fn(async () => {
+      order.push("init");
+
+      return success(undefined);
+    });
+
+    mockKernel.seal.mockImplementation(() => {
+      order.push("seal");
+
+      return success("sealed");
+    });
+
+    const modules = [
+      {
+        name: "moduleA",
+        version: "1.0.0",
+        setup: vi.fn(async () => success(initFn)),
+      },
+    ];
+
+    await load(mockKernel, modules);
+
+    expect(order).toEqual(["seal", "init"]);
+  });
+
+  it("should propagate a seal failure", async () => {
+    mockKernel.seal.mockReturnValue(failure(new Error("Seal failed") as any));
+
+    const modules = [
+      {
+        name: "moduleA",
+        version: "1.0.0",
+        setup: vi.fn(async () => success(async () => success(undefined))),
+      },
+    ];
+
+    const result = (await load(mockKernel, modules)) as ResultFailure;
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBeInstanceOf(CompositionError);
+    expect(result.error.meta.reason).toBe("initialization_failed");
+  });
+
+  it("should not run initializers when sealing fails", async () => {
+    const initFn = vi.fn(async () => success(undefined));
+
+    mockKernel.seal.mockReturnValue(failure(new Error("Seal failed") as any));
+
+    const modules = [
+      {
+        name: "moduleA",
+        version: "1.0.0",
+        setup: vi.fn(async () => success(initFn)),
+      },
+    ];
+
+    await load(mockKernel, modules);
+
+    expect(initFn).not.toHaveBeenCalled();
+    expect(mockKernel.start).not.toHaveBeenCalled();
+  });
+
+  it("should propagate a start failure", async () => {
+    mockKernel.start.mockReturnValue(failure(new Error("Start failed") as any));
+
+    const modules = [
+      {
+        name: "moduleA",
+        version: "1.0.0",
+        setup: vi.fn(async () => success(async () => success(undefined))),
+      },
+    ];
+
+    const result = (await load(mockKernel, modules)) as ResultFailure;
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBeInstanceOf(CompositionError);
+    expect(result.error.meta.reason).toBe("initialization_failed");
+  });
+
+  it("should start the kernel after initialization", async () => {
+    const order: string[] = [];
+    const initFn = vi.fn(async () => {
+      order.push("init");
+
+      return success(undefined);
+    });
+
+    mockKernel.start.mockImplementation(() => {
+      order.push("start");
+
+      return success("running");
+    });
+
+    const modules = [
+      {
+        name: "moduleA",
+        version: "1.0.0",
+        setup: vi.fn(async () => success(initFn)),
+      },
+    ];
+
+    await load(mockKernel, modules);
+
+    expect(order).toEqual(["init", "start"]);
   });
 });

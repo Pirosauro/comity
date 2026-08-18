@@ -28,34 +28,37 @@ export const module: ModuleMeta<I18nModuleOptions, I18nModuleContext> = {
     const initial: I18nModuleOptions = {
       ...options,
     };
-    const cfg = (await ctx.hooks.execute("@comity/i18n:configuring", initial)) ?? initial;
 
-    if (!cfg.loader) {
-      return failure(
-        new CompositionError("setup_failed", {
-          details: {
-            module: "@comity/i18n",
-            violation: "missing_loader",
-          },
-        })
-      );
-    }
+    let service: DefaultI18n | undefined;
 
-    if (!cfg.factory) {
-      return failure(
-        new CompositionError("setup_failed", {
-          details: {
-            module: "@comity/i18n",
-            violation: "missing_translator",
-          },
-        })
-      );
-    }
-
-    const service = new DefaultI18n(cfg as I18nOptions);
+    ctx.services.define(I18N_TOKEN, () => service!);
 
     return success(async () => {
-      ctx.services.define(I18N_TOKEN, () => service);
+      const cfg = (await ctx.hooks.execute("@comity/i18n:configuring", initial)) ?? initial;
+
+      if (!cfg.loader) {
+        return failure(
+          new CompositionError("initialization_failed", {
+            details: {
+              module: "@comity/i18n",
+              violation: "missing_loader",
+            },
+          })
+        );
+      }
+
+      if (!cfg.factory) {
+        return failure(
+          new CompositionError("initialization_failed", {
+            details: {
+              module: "@comity/i18n",
+              violation: "missing_translator",
+            },
+          })
+        );
+      }
+
+      service = new DefaultI18n(cfg as I18nOptions);
 
       await ctx.hooks.execute("@comity/i18n:initialized", undefined);
 

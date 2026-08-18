@@ -117,6 +117,8 @@ Example:
 ```ts
 import type { ModuleMeta } from "@comity/composition/setup";
 
+import { success } from "@comity/primitives/result";
+
 export const module: ModuleMeta = {
   name: "@comity/http",
   version: "0.9.0",
@@ -126,10 +128,16 @@ export const module: ModuleMeta = {
   },
   incompatibleWith: [],
 
-  setup: async (options) => {
-    return async (ctx) => {
-      // register hooks, services, events
-    };
+  setup: async (ctx, options) => {
+    // CONFIGURE phase (reverse dependency order): validate options and
+    // register services, hooks and event listeners declaratively.
+
+    ctx.services.define(TOKEN, () => facade);
+
+    return success(async () => {
+      // INITIALIZE phase (forward dependency order): resolve services,
+      // execute hooks and emit events.
+    });
   },
 };
 
@@ -140,12 +148,15 @@ export default module;
 
 ## 5. Setup Semantics
 
-- `setup` is executed during kernel initialization
+- `setup(ctx, options)` is executed during the CONFIGURE phase of `load`, in reverse dependency order
 - `setup` MUST be pure (no side effects outside kernel context)
 - `setup` MAY register:
   - hooks
   - services
   - event listeners
+- `setup` MUST NOT resolve services, execute hooks, or emit events; these are only allowed after the kernel is sealed, during the INITIALIZE phase
+- `setup` returns a `Result` containing the module's init function, executed during the INITIALIZE phase in forward dependency order
+- the init function MAY resolve services, execute hooks, and emit events
 
 `setup` MUST NOT:
 

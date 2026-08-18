@@ -27,23 +27,26 @@ export const module: ModuleMeta<GraphqlClientModuleOptions, GraphqlClientModuleC
     const initial: GraphqlClientModuleOptions = {
       ...options,
     };
-    const cfg = (await ctx.hooks.execute("@comity/graphql-client:configuring", initial)) ?? initial;
 
-    if (typeof cfg !== "object" || Object.keys(cfg).length === 0) {
-      return failure(
-        new CompositionError("setup_failed", {
-          details: {
-            module: "@comity/graphql-client",
-            violation: "missing_transport",
-          },
-        })
-      );
-    }
+    let registry: DefaultGraphqlRegistry | undefined;
+
+    ctx.services.define(GRAPHQL_CLIENT_TOKEN, () => registry!);
 
     return success(async () => {
-      const registry = new DefaultGraphqlRegistry(cfg as GraphqlClientModuleOptions);
+      const cfg = (await ctx.hooks.execute("@comity/graphql-client:configuring", initial)) ?? initial;
 
-      ctx.services.define(GRAPHQL_CLIENT_TOKEN, () => registry);
+      if (typeof cfg !== "object" || Object.keys(cfg).length === 0) {
+        return failure(
+          new CompositionError("initialization_failed", {
+            details: {
+              module: "@comity/graphql-client",
+              violation: "missing_transport",
+            },
+          })
+        );
+      }
+
+      registry = new DefaultGraphqlRegistry(cfg as GraphqlClientModuleOptions);
 
       await ctx.hooks.execute("@comity/graphql-client:initialized", undefined);
 

@@ -34,7 +34,7 @@ export const module: ModuleMeta<
   version: "0.9.0",
 
   dependsOn: {
-    // "@comity/catalog": { optional: false },
+    "@comity/catalog": { optional: false },
   },
   incompatibleWith: [],
 
@@ -47,30 +47,32 @@ export const module: ModuleMeta<
       search: [],
     };
 
-    const enrichers =
-      (await ctx.hooks.execute("@comity/storefront:configuring", initial)) ?? initial;
+    let enrichers: StorefrontOptions = initial;
+
+    // Product
+    ctx.services.define(
+      PRODUCT_PAGE_COMPOSER_TOKEN,
+      () =>
+        new DefaultProductPageComposer(
+          ctx.services.resolve(PRODUCT_REPOSITORY_TOKEN),
+          enrichers.product
+        )
+    );
+    // Cateogory
+    ctx.services.define(
+      CATEGORY_PAGE_COMPOSER_TOKEN,
+      () =>
+        new DefaultCategoryPageComposer(
+          ctx.services.resolve(CATEGORY_REPOSITORY_TOKEN),
+          enrichers.category
+        )
+    );
+    // ctx.services.define(CONTENT_PAGE_COMPOSER_TOKEN, () => contentComposer);
+    // ctx.services.define(SEARCH_PAGE_COMPOSER_TOKEN, () => searchComposer);
 
     return success(async () => {
-      // Product
-      ctx.services.define(
-        PRODUCT_PAGE_COMPOSER_TOKEN,
-        () =>
-          new DefaultProductPageComposer(
-            ctx.services.resolve(PRODUCT_REPOSITORY_TOKEN),
-            enrichers.product
-          )
-      );
-      // Cateogory
-      ctx.services.define(
-        CATEGORY_PAGE_COMPOSER_TOKEN,
-        () =>
-          new DefaultCategoryPageComposer(
-            ctx.services.resolve(CATEGORY_REPOSITORY_TOKEN),
-            enrichers.category
-          )
-      );
-      // ctx.services.define(CONTENT_PAGE_COMPOSER_TOKEN, () => contentComposer);
-      // ctx.services.define(SEARCH_PAGE_COMPOSER_TOKEN, () => searchComposer);
+      enrichers =
+        (await ctx.hooks.execute("@comity/storefront:configuring", initial)) ?? initial;
 
       return success(undefined);
     });

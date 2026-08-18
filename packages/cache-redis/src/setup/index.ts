@@ -12,7 +12,7 @@ export const module: ModuleMeta<
   name: "@comity/cache-redis",
   version: "0.9.0",
 
-  dependsOn: {},
+  dependsOn: { "@comity/cache": { optional: false } },
   incompatibleWith: [],
 
   /** @inheritdoc */

@@ -33,44 +33,49 @@ export const module: ModuleMeta<JoseAuthModuleOptions, JoseAuthModuleContext & A
       const initial: JoseAuthModuleOptions = {
         ...options,
       };
-      const cfg = (await ctx.hooks.execute("@comity/auth-jose:configuring", initial)) ?? initial;
 
-      // validate required configuration
-      if (!cfg.issuer) {
-        return failure(
-          new CompositionError("setup_failed", {
-            details: {
-              module: "@comity/auth-jose",
-              violation: "missing_issuer",
-            },
-          })
-        );
-      }
+      let facade: DefaultAuthTokenFacade | undefined;
 
-      if (!cfg.accessKey) {
-        return failure(
-          new CompositionError("setup_failed", {
-            details: {
-              module: "@comity/auth-jose",
-              violation: "missing_access_key",
-            },
-          })
-        );
-      }
-
-      if (!cfg.refreshKey) {
-        return failure(
-          new CompositionError("setup_failed", {
-            details: {
-              module: "@comity/auth-jose",
-              violation: "missing_refresh_key",
-            },
-          })
-        );
-      }
+      ctx.services.define(AUTH_JOSE_TOKEN, () => facade!);
 
       // Init
       return success(async () => {
+        const cfg = (await ctx.hooks.execute("@comity/auth-jose:configuring", initial)) ?? initial;
+
+        // validate required configuration
+        if (!cfg.issuer) {
+          return failure(
+            new CompositionError("initialization_failed", {
+              details: {
+                module: "@comity/auth-jose",
+                violation: "missing_issuer",
+              },
+            })
+          );
+        }
+
+        if (!cfg.accessKey) {
+          return failure(
+            new CompositionError("initialization_failed", {
+              details: {
+                module: "@comity/auth-jose",
+                violation: "missing_access_key",
+              },
+            })
+          );
+        }
+
+        if (!cfg.refreshKey) {
+          return failure(
+            new CompositionError("initialization_failed", {
+              details: {
+                module: "@comity/auth-jose",
+                violation: "missing_refresh_key",
+              },
+            })
+          );
+        }
+
         const observer: AuthJoseEventObserver = {
           /** @inheritdoc */
           onTokenVerified: (payload) =>
@@ -82,9 +87,7 @@ export const module: ModuleMeta<JoseAuthModuleOptions, JoseAuthModuleContext & A
 
         const auth = ctx.services.resolve(AUTH_TOKEN);
         const tokenService = new JoseAuthTokenService(cfg as JoseAuthTokenServiceOptions, observer);
-        const facade = new DefaultAuthTokenFacade(auth, tokenService);
-
-        ctx.services.define(AUTH_JOSE_TOKEN, () => facade);
+        facade = new DefaultAuthTokenFacade(auth, tokenService);
 
         await ctx.hooks.execute("@comity/auth-jose:initialized", undefined);
 

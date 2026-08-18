@@ -37,28 +37,38 @@ describe("i18n module setup", () => {
   it("should fail when no loader is configured", async () => {
     const result = await module.setup(ctx, { factory: vi.fn() });
 
-    expect(result.success).toBe(false);
-    if (!result.success) {
-      expect(result.error).toMatchObject({
-        code: "composition:setup_failed",
-        meta: {
-          details: { module: "@comity/i18n", violation: "missing_loader" },
-        },
-      });
+    expect(result.success).toBe(true);
+    if (isSuccess(result)) {
+      const init = await result.value();
+
+      expect(init.success).toBe(false);
+      if (!init.success) {
+        expect(init.error).toMatchObject({
+          code: "composition:initialization_failed",
+          meta: {
+            details: { module: "@comity/i18n", violation: "missing_loader" },
+          },
+        });
+      }
     }
   });
 
   it("should fail when no translator factory is configured", async () => {
     const result = await module.setup(ctx, { loader: { load: vi.fn() } });
 
-    expect(result.success).toBe(false);
-    if (!result.success) {
-      expect(result.error).toMatchObject({
-        code: "composition:setup_failed",
-        meta: {
-          details: { module: "@comity/i18n", violation: "missing_translator" },
-        },
-      });
+    expect(result.success).toBe(true);
+    if (isSuccess(result)) {
+      const init = await result.value();
+
+      expect(init.success).toBe(false);
+      if (!init.success) {
+        expect(init.error).toMatchObject({
+          code: "composition:initialization_failed",
+          meta: {
+            details: { module: "@comity/i18n", violation: "missing_translator" },
+          },
+        });
+      }
     }
   });
 

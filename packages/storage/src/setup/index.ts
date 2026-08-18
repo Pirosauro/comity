@@ -27,23 +27,26 @@ export const module: ModuleMeta<StorageModuleOptions, StorageModuleContext> = {
     const initial: StorageModuleOptions = {
       ...options,
     };
-    const cfg = (await ctx.hooks.execute("@comity/storage:configuring", initial)) ?? initial;
 
-    if (!cfg.store) {
-      return failure(
-        new CompositionError("setup_failed", {
-          details: {
-            module: "@comity/storage",
-            violation: "missing_store",
-          },
-        })
-      );
-    }
+    let facade: DefaultStorage | undefined;
+
+    ctx.services.define(STORAGE_TOKEN, () => facade!);
 
     return success(async () => {
-      const facade = new DefaultStorage(cfg.store!);
+      const cfg = (await ctx.hooks.execute("@comity/storage:configuring", initial)) ?? initial;
 
-      ctx.services.define(STORAGE_TOKEN, () => facade);
+      if (!cfg.store) {
+        return failure(
+          new CompositionError("initialization_failed", {
+            details: {
+              module: "@comity/storage",
+              violation: "missing_store",
+            },
+          })
+        );
+      }
+
+      facade = new DefaultStorage(cfg.store!);
 
       await ctx.hooks.execute("@comity/storage:initialized", undefined);
 

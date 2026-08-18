@@ -9,7 +9,7 @@ export const module: ModuleMeta<KvCacheModuleOptions, KvCacheModuleContext & Cac
   name: "@comity/cache-kv",
   version: "0.9.0",
 
-  dependsOn: {},
+  dependsOn: { "@comity/cache": { optional: false } },
   incompatibleWith: [],
 
   /** @inheritdoc */

@@ -56,12 +56,17 @@ describe("auth-jose module setup", () => {
       algorithm: "HS256",
     });
 
-    expect(result.success).toBe(false);
-    if (!result.success) {
-      expect(result.error).toBeInstanceOf(CompositionError);
-      expect(result.error.meta?.reason).toBe("setup_failed");
-      expect(result.error.meta?.details?.module).toBe("@comity/auth-jose");
-      expect(result.error.meta?.details?.violation).toBe("missing_issuer");
+    expect(result.success).toBe(true);
+    if (isSuccess(result)) {
+      const init = await result.value();
+
+      expect(init.success).toBe(false);
+      if (!init.success) {
+        expect(init.error).toBeInstanceOf(CompositionError);
+        expect(init.error.meta?.reason).toBe("initialization_failed");
+        expect(init.error.meta?.details?.module).toBe("@comity/auth-jose");
+        expect(init.error.meta?.details?.violation).toBe("missing_issuer");
+      }
     }
   });
 
@@ -73,9 +78,14 @@ describe("auth-jose module setup", () => {
       algorithm: "HS256",
     });
 
-    expect(result.success).toBe(false);
-    if (!result.success) {
-      expect(result.error.meta?.details?.violation).toBe("missing_access_key");
+    expect(result.success).toBe(true);
+    if (isSuccess(result)) {
+      const init = await result.value();
+
+      expect(init.success).toBe(false);
+      if (!init.success) {
+        expect(init.error.meta?.details?.violation).toBe("missing_access_key");
+      }
     }
   });
 
@@ -87,9 +97,14 @@ describe("auth-jose module setup", () => {
       algorithm: "HS256",
     });
 
-    expect(result.success).toBe(false);
-    if (!result.success) {
-      expect(result.error.meta?.details?.violation).toBe("missing_refresh_key");
+    expect(result.success).toBe(true);
+    if (isSuccess(result)) {
+      const init = await result.value();
+
+      expect(init.success).toBe(false);
+      if (!init.success) {
+        expect(init.error.meta?.details?.violation).toBe("missing_refresh_key");
+      }
     }
   });
 

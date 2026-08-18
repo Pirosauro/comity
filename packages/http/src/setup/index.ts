@@ -32,24 +32,29 @@ export const module: ModuleMeta<HttpModuleOptions, HttpModuleContext> = {
   /** @inheritdoc */
   setup: async (ctx, options) => {
     const initial: HttpModuleOptions = { ...options };
-    const cfg = (await ctx.hooks.execute("@comity/http:configuring", initial)) ?? initial;
 
-    // Validate configuration
-    if (!cfg.handler) {
-      return failure(
-        new CompositionError("setup_failed", {
-          details: {
-            module: "@comity/http",
-          },
-          context: {
-            message: "No HTTP handler provided in module configuration.",
-          },
-        })
-      );
-    }
+    let facade: HttpFacade | undefined;
+
+    ctx.services.define(HTTP_TOKEN, () => facade!);
 
     // Init
     return success(async () => {
+      const cfg = (await ctx.hooks.execute("@comity/http:configuring", initial)) ?? initial;
+
+      // Validate configuration
+      if (!cfg.handler) {
+        return failure(
+          new CompositionError("initialization_failed", {
+            details: {
+              module: "@comity/http",
+            },
+            context: {
+              message: "No HTTP handler provided in module configuration.",
+            },
+          })
+        );
+      }
+
       const observer: HttpObserver = {
         /** @inheritdoc */
         onRequestStarted: (p) => {
@@ -70,12 +75,9 @@ export const module: ModuleMeta<HttpModuleOptions, HttpModuleContext> = {
       // 1. build pipeline
       const httpHandler = createHttpHandler(cfg.middleware ?? [], cfg.handler!);
       // 2. build facade
-      const facade = new HttpFacade(httpHandler, observer);
+      facade = new HttpFacade(httpHandler, observer);
 
-      // 3. register service
-      ctx.services.define(HTTP_TOKEN, () => facade);
-
-      // 4. lifecycle hook
+      // 3. lifecycle hook
       await ctx.hooks.execute("@comity/http:initialized", undefined);
 
       return success(undefined);

@@ -27,23 +27,26 @@ export const module: ModuleMeta<CacheModuleOptions, CacheModuleContext> = {
     const initial: CacheModuleOptions = {
       ...options,
     };
-    const cfg = (await ctx.hooks.execute("@comity/cache:configuring", initial)) ?? initial;
 
-    if (!cfg.store) {
-      return failure(
-        new CompositionError("setup_failed", {
-          details: {
-            module: "@comity/storage",
-            violation: "missing_store",
-          },
-        })
-      );
-    }
+    let facade: DefaultCache | undefined;
+
+    ctx.services.define(CACHE_TOKEN, () => facade!);
 
     return success(async () => {
-      const facade = new DefaultCache(cfg.store!);
+      const cfg = (await ctx.hooks.execute("@comity/cache:configuring", initial)) ?? initial;
 
-      ctx.services.define(CACHE_TOKEN, () => facade);
+      if (!cfg.store) {
+        return failure(
+          new CompositionError("initialization_failed", {
+            details: {
+              module: "@comity/cache",
+              violation: "missing_store",
+            },
+          })
+        );
+      }
+
+      facade = new DefaultCache(cfg.store!);
 
       await ctx.hooks.execute("@comity/cache:initialized", undefined);
 

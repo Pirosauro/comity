@@ -28,15 +28,20 @@ export const module: ModuleMeta<RouterModuleOptions, RouterModuleContext & HttpM
   /** @inheritdoc */
   setup: async (ctx, options) => {
     const initial: RouterModuleOptions = { ...options };
-    const cfg: RouterModuleOptions =
-      (await ctx.hooks.execute("@comity/router:configuring", initial)) ?? initial;
-    const pipeline = new RouterPipeline(cfg.routers || [], cfg.rewriters || [], cfg.policies || {});
 
-    // Configure the HTTP adapter to use the router pipeline as the request handler
-    ctx.hooks.define("@comity/http:configuring", (v, i) => {
-      const httpHandler = createRouterHttpHandler(pipeline);
+    // Configure the HTTP adapter to use the router pipeline as the request handler.
+    // The pipeline is built lazily when the parent executes its configuring hook
+    // during initialize, so injected routers/rewriters/policies are honored after sealing.
+    ctx.hooks.define("@comity/http:configuring", async (v) => {
+      const cfg: RouterModuleOptions =
+        (await ctx.hooks.execute("@comity/router:configuring", initial)) ?? initial;
+      const pipeline = new RouterPipeline(
+        cfg.routers || [],
+        cfg.rewriters || [],
+        cfg.policies || {}
+      );
 
-      return { ...v, handler: httpHandler };
+      return { ...v, handler: createRouterHttpHandler(pipeline) };
     });
 
     return success(async () => {
