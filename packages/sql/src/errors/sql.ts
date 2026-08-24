@@ -10,6 +10,7 @@ import { BaseError } from "@comity/primitives/errors";
  */
 export type SqlErrorReason =
   | "connection_failed"
+  | "invalid_configuration"
   | "invalid_query"
   | "query_failed"
   | "transaction_failed"
@@ -38,11 +39,15 @@ export interface SqlErrorMeta extends ErrorMeta {
 
     /**  */
     retriable?: boolean;
+
+    /**  */
+    expected?: string;
   }>;
 }
 
 const REASON_MESSAGES: Record<SqlErrorReason, string> = {
   connection_failed: "Failed to connect to the database",
+  invalid_configuration: "The SQL client configuration is invalid",
   invalid_query: "The SQL query is invalid",
   query_failed: "The SQL query failed to execute",
   transaction_failed: "The SQL transaction failed",

@@ -5,10 +5,21 @@ import type { AuthSession } from "../contracts/session.js";
 import type { AuthEvaluationObserver } from "../observers/evaluation.js";
 import type { AuthRefreshEvaluationObserver } from "../observers/refresh.js";
 
+import { isFailure } from "@comity/primitives/result";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AuthError } from "../errors/auth.js";
 import { AuthGuard } from "../guard.js";
 import { AuthSessionId } from "../value-objects/auth-session-id.js";
+
+function makeSessionId(value: string): AuthSessionId {
+  const result = AuthSessionId.create(value);
+
+  if (isFailure(result)) {
+    throw new Error("Unexpected failure");
+  }
+
+  return result.value;
+}
 
 interface AuthGuardEmitter
   extends AuthEvaluationObserver,
@@ -42,7 +53,7 @@ describe("AuthGuard", () => {
 
   describe("assert", () => {
     const validSession: AuthSession = {
-      id: new AuthSessionId("session1"),
+      id: makeSessionId("session1"),
       createdAt: 1000,
       assurance: {
         methods: ["password"],
@@ -148,7 +159,7 @@ describe("AuthGuard", () => {
 
     it("should emit sessionValidated without optional fields", () => {
       const sessionMinimal: AuthSession = {
-        id: new AuthSessionId("session1"),
+        id: makeSessionId("session1"),
         createdAt: 1000,
         assurance: {
           methods: ["password"],
@@ -200,7 +211,7 @@ describe("AuthGuard", () => {
 
   describe("assertRefreshable", () => {
     const validSession: AuthSession = {
-      id: new AuthSessionId("session1"),
+      id: makeSessionId("session1"),
       createdAt: 1000,
       assurance: {
         methods: ["password"],

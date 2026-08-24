@@ -1,0 +1,1 @@
+export const TAXONOMY_REPOSITORY_TOKEN = Symbol("@comity/taxonomy:taxonomy-repository");

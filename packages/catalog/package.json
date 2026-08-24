@@ -1,7 +1,7 @@
 {
   "name": "@comity/catalog",
   "version": "0.1.0",
-  "description": "Commerce catalog abstractions for Comity domain modules.",
+  "description": "Product catalog domain abstractions for Comity.",
   "type": "module",
   "author": "Filippo Bovo <hello@filippobovo.com>",
   "license": "MIT",
@@ -60,12 +60,25 @@
         "default": "./dist/cjs/setup/index.js"
       }
     },
+    "./errors": {
+      "import": {
+        "types": "./dist/types/errors/index.d.ts",
+        "default": "./dist/esm/errors/index.js"
+      },
+      "require": {
+        "types": "./dist/types/errors/index.d.ts",
+        "default": "./dist/cjs/errors/index.js"
+      }
+    },
     "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
       "setup": [
         "./dist/types/setup/index.d.ts"
+      ],
+      "errors": [
+        "./dist/types/errors/index.d.ts"
       ]
     }
   },

@@ -1,7 +1,8 @@
 import type { ModuleSetupContext } from "@comity/composition/setup";
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { CATEGORY_REPOSITORY_TOKEN, PRODUCT_REPOSITORY_TOKEN } from "@comity/catalog/setup";
+import { PRODUCT_REPOSITORY_TOKEN } from "@comity/catalog/setup";
+import { TAXONOMY_REPOSITORY_TOKEN } from "@comity/taxonomy/setup";
 import { DefaultHookBus } from "@comity/primitives/lifecycle";
 import { isSuccess } from "@comity/primitives/result";
 import { CATEGORY_PAGE_COMPOSER_TOKEN, PRODUCT_PAGE_COMPOSER_TOKEN } from "../constants.js";
@@ -53,7 +54,7 @@ describe("storefront module setup", () => {
       categoryFactory?.();
 
       expect(resolve).toHaveBeenCalledWith(PRODUCT_REPOSITORY_TOKEN);
-      expect(resolve).toHaveBeenCalledWith(CATEGORY_REPOSITORY_TOKEN);
+      expect(resolve).toHaveBeenCalledWith(TAXONOMY_REPOSITORY_TOKEN);
     }
   });
 

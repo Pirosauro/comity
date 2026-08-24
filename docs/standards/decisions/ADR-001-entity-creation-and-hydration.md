@@ -18,7 +18,7 @@ constructor(fields: CustomerCreate, id?: CustomerId) {
   // ...
 
   this.#createdAt = fields.createdAt ?? Instant.now();
-  this.#updatedAt = fields.updatedAt ?? null;
+  this.#updatedAt = fields.updatedAt ?? this.#createdAt;
   this.#deletedAt = fields.deletedAt ?? null;
 }
 ```
@@ -57,6 +57,12 @@ An existing entity is reconstructed from persisted state. Persistence metadata s
 
 ```ts
 const persisted = readRow();
+const idResult = CustomerId.create(persisted.id);
+
+if (isFailure(idResult)) {
+  // handle invalid persisted identifier
+}
+
 const entity = new Customer(
   {
     ...persisted,
@@ -64,7 +70,7 @@ const entity = new Customer(
     updatedAt: persisted.updatedAt,
     deletedAt: persisted.deletedAt,
   },
-  new CustomerId(persisted.id)
+  idResult.value
 );
 ```
 

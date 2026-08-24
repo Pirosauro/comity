@@ -1,11 +1,16 @@
-export type { CategoryRepository } from "./contracts/category-repository.js";
+export type { BrandProjection } from "./contracts/brand.js";
+export type { BrandRepository } from "./contracts/brand-repository.js";
 export type {
-  CategoryHierarchyModel,
-  CategoryModel,
-  CategoryTreeNodeModel,
-} from "./contracts/category.js";
-export type { InventoryModel } from "./contracts/inventory.js";
-export type { PriceModel, PriceModifierModel } from "./contracts/price.js";
+  ProductAttribute,
+  ProductCreate,
+  ProductOption,
+  ProductOptionSelection,
+  ProductProjection,
+  ProductStatus,
+  ProductType,
+  ProductVariant,
+} from "./contracts/product.js";
 export type { ProductRepository } from "./contracts/product-repository.js";
-export type { ProductModel } from "./contracts/product.js";
 export type { CatalogRepositoryContext } from "./contracts/repository-context.js";
+export { createProduct } from "./domain/create-product.js";
+export { transitionProductStatus } from "./domain/product-status.js";

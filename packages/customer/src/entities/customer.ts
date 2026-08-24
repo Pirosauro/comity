@@ -93,7 +93,7 @@ export class Customer {
   }
 
   /**
-   * @returns The timestamp when the customer was last updated, if applicable.
+   * @returns The timestamp when the customer was last updated.
    */
   get updatedAt(): Instant {
     return this.#updatedAt;
@@ -142,13 +142,15 @@ export class Customer {
 
   /**
    * Creates a snapshot of the current state of the customer.
-   * Requires the customer to have an assigned identifier.
+   *
+   * Works regardless of persistence state: a non-persisted entity snapshots
+   * without an identifier.
    *
    * @returns A snapshot representing the current state of the customer.
    */
   snapshot(): CustomerSnapshot {
     return {
-      id: this.#id as CustomerId,
+      id: this.#id,
       displayName: this.#displayName,
       givenName: this.#givenName,
       familyName: this.#familyName,

@@ -34,7 +34,7 @@ export class DefaultContentPageComposer implements ContentPageComposer {
     id: string,
     ctx: StorefrontContext
   ): Promise<Result<ContentPageModel, RepositoryError>> {
-    const result = await this.#repository.get(id, ctx);
+    const result = await this.#repository.getById(id, ctx);
 
     if (isSuccess(result)) {
       let page: ContentPageModel = {

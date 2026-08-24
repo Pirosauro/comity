@@ -175,11 +175,14 @@ export class Address {
   /**
    * Creates a snapshot of the current state of the address.
    *
+   * Works regardless of persistence state: a non-persisted entity snapshots
+   * without an identifier.
+   *
    * @returns A snapshot representing the current state of the address.
    */
   snapshot(): AddressSnapshot {
     return {
-      id: this.#id as AddressId,
+      id: this.#id,
       lines: [...this.#lines],
       city: this.#city,
       administrativeArea: this.#administrativeArea,

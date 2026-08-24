@@ -1,11 +1,32 @@
 import { describe, expect, it, beforeEach } from "vitest";
+import { isFailure } from "@comity/primitives/result";
 import { Instant } from "@comity/primitives/time";
 import { Address } from "../address.js";
 import { AddressId } from "../../value-objects/address-id.js";
 import { AddressLine } from "../../value-objects/address-line.js";
 
-const id = new AddressId("addr-1");
-const line = new AddressLine("Via Roma 10");
+function makeAddressId(value: string): AddressId {
+  const result = AddressId.create(value);
+
+  if (isFailure(result)) {
+    throw new Error("Unexpected failure");
+  }
+
+  return result.value;
+}
+
+function makeAddressLine(value: string): AddressLine {
+  const result = AddressLine.create(value);
+
+  if (isFailure(result)) {
+    throw new Error("Unexpected failure");
+  }
+
+  return result.value;
+}
+
+const id = makeAddressId("addr-1");
+const line = makeAddressLine("Via Roma 10");
 
 const persistedCreatedAt = Instant.fromEpochMilliseconds(1_700_000_000_000);
 const persistedUpdatedAt = Instant.fromEpochMilliseconds(1_700_000_500_000);
@@ -25,7 +46,7 @@ const fields = {
 };
 
 function createAddress(overrides?: Partial<typeof fields>) {
-  return new Address({ ...fields, ...overrides }, new AddressId("test-id"));
+  return new Address({ ...fields, ...overrides }, makeAddressId("test-id"));
 }
 
 describe("Address", () => {
@@ -52,17 +73,17 @@ describe("Address", () => {
     });
 
     it("should defensive-copy arrays on creation", () => {
-      const lines = [new AddressLine("A")];
-      const address = new Address({ ...fields, lines }, new AddressId("id"));
+      const lines = [makeAddressLine("A")];
+      const address = new Address({ ...fields, lines }, makeAddressId("id"));
 
-      lines.push(new AddressLine("B"));
+      lines.push(makeAddressLine("B"));
 
       expect(address.lines).toHaveLength(1);
     });
 
     it("should defensive-copy metadata on creation", () => {
       const metadata = { foo: "bar" };
-      const address = new Address({ ...fields, metadata }, new AddressId("id"));
+      const address = new Address({ ...fields, metadata }, makeAddressId("id"));
 
       metadata["baz"] = "qux";
 
@@ -71,7 +92,7 @@ describe("Address", () => {
 
     it("should defensive-copy contacts on creation", () => {
       const contacts = [{ type: "phone", value: "+39" }];
-      const address = new Address({ ...fields, contacts }, new AddressId("id"));
+      const address = new Address({ ...fields, contacts }, makeAddressId("id"));
 
       contacts.push({ type: "email", value: "x@y.com" });
 
@@ -93,7 +114,7 @@ describe("Address", () => {
         createdAt: undefined,
       };
 
-      const address = new Address(withoutTimestamp as never, new AddressId("id"));
+      const address = new Address(withoutTimestamp as never, makeAddressId("id"));
 
       expect(address.createdAt).toBeInstanceOf(Instant);
     });
@@ -111,7 +132,7 @@ describe("Address", () => {
         createdAt: undefined,
       };
 
-      const address = new Address(withoutTimestamp as never, new AddressId("id"));
+      const address = new Address(withoutTimestamp as never, makeAddressId("id"));
 
       expect(address.updatedAt.epochMilliseconds).toBe(address.createdAt.epochMilliseconds);
     });
@@ -122,7 +143,7 @@ describe("Address", () => {
           ...fields,
           createdAt: persistedCreatedAt,
         },
-        new AddressId("id")
+        makeAddressId("id")
       );
 
       expect(address.updatedAt.epochMilliseconds).toBe(persistedCreatedAt.epochMilliseconds);
@@ -134,7 +155,7 @@ describe("Address", () => {
           ...fields,
           createdAt: hydratedCreatedAt,
         },
-        new AddressId("id")
+        makeAddressId("id")
       );
 
       expect(address.createdAt.epochMilliseconds).toBe(hydratedCreatedAt.epochMilliseconds);
@@ -147,7 +168,7 @@ describe("Address", () => {
           createdAt: hydratedCreatedAt,
           updatedAt: hydratedUpdatedAt,
         },
-        new AddressId("id")
+        makeAddressId("id")
       );
 
       expect(address.updatedAt.epochMilliseconds).toBe(hydratedUpdatedAt.epochMilliseconds);
@@ -160,7 +181,7 @@ describe("Address", () => {
           createdAt: hydratedCreatedAt,
           updatedAt: hydratedUpdatedAt,
         },
-        new AddressId("hydrated-1")
+        makeAddressId("hydrated-1")
       );
 
       expect(address.id?.toString()).toBe("hydrated-1");
@@ -169,7 +190,7 @@ describe("Address", () => {
     });
 
     it("should not regenerate createdAt across the lifetime of the entity", () => {
-      const address = new Address({ ...fields, createdAt: hydratedCreatedAt }, new AddressId("id"));
+      const address = new Address({ ...fields, createdAt: hydratedCreatedAt }, makeAddressId("id"));
       const original = address.createdAt;
 
       address.update({ city: "Roma" });
@@ -184,7 +205,7 @@ describe("Address", () => {
           createdAt: hydratedCreatedAt,
           updatedAt: hydratedUpdatedAt,
         },
-        new AddressId("id")
+        makeAddressId("id")
       );
 
       expect(address.createdAt.epochMilliseconds).toBe(hydratedCreatedAt.epochMilliseconds);
@@ -201,7 +222,7 @@ describe("Address", () => {
     });
 
     it("should update lines", () => {
-      address.update({ lines: [new AddressLine("New Street")] });
+      address.update({ lines: [makeAddressLine("New Street")] });
 
       expect(address.lines).toHaveLength(1);
       expect(address.lines[0]?.toString()).toBe("New Street");
@@ -285,7 +306,7 @@ describe("Address", () => {
   });
 
   describe("snapshot", () => {
-    it("should capture current state with id", () => {
+    it("should snapshot a persisted address with its id", () => {
       const address = new Address(fields, id);
       const snapshot = address.snapshot();
 
@@ -294,11 +315,12 @@ describe("Address", () => {
       expect(snapshot.capturedAt).toBeInstanceOf(Instant);
     });
 
-    it("should capture current state without id", () => {
+    it("should snapshot a non-persisted address without an id", () => {
       const address = new Address(fields);
       const snapshot = address.snapshot();
 
       expect(snapshot.id).toBeUndefined();
+      expect(snapshot.city).toBe("Milano");
     });
 
     it("should include label, metadata, and contacts in snapshot", () => {

@@ -25,7 +25,7 @@ import { CompositionError } from "./errors/composition.js";
  *
  * **Dependency Resolution Rules:**
  * - Dependencies must exist in the provided compositions array
- * - Circular dependencies are detected and throw errors
+ * - Circular dependencies are detected and reported as failures
  * - Compositions without dependencies can appear in any order relative to each other
  * - The output order guarantees safe initialization sequence
  *

@@ -4,7 +4,7 @@ import type { ModuleSetupContext } from "@comity/composition/setup";
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { DefaultHookBus } from "@comity/primitives/lifecycle";
-import { isSuccess } from "@comity/primitives/result";
+import { isFailure, isSuccess } from "@comity/primitives/result";
 import { CompositionError } from "@comity/composition/errors";
 import { AuthSessionId } from "@comity/auth";
 import { AUTH_TOKEN } from "@comity/auth/setup";
@@ -14,9 +14,19 @@ import { module } from "../index.js";
 const accessKey = new TextEncoder().encode("access-secret-32-bytes-length!!");
 const refreshKey = new TextEncoder().encode("refresh-secret-32-bytes-length!");
 
+function sessionId(value: string): AuthSessionId {
+  const result = AuthSessionId.create(value);
+
+  if (isFailure(result)) {
+    throw new Error("Unexpected failure");
+  }
+
+  return result.value;
+}
+
 function createSession(): AuthSession {
   return {
-    id: new AuthSessionId("session-1"),
+    id: sessionId("session-1"),
     createdAt: 1000,
     verifiedAt: 1000,
     assurance: {
@@ -156,7 +166,7 @@ describe("auth-jose module setup", () => {
 
       const envelope = await tokenFacade.issueTokens(
         {
-          id: new AuthSessionId("session-1"),
+          id: sessionId("session-1"),
           methods: ["password"],
           version: 1,
           transport: { type: "bearer" },

@@ -1,4 +1,4 @@
-import type { CategoryRepository } from "@comity/catalog";
+import type { TaxonomyRepository } from "@comity/taxonomy";
 import type { RepositoryError } from "@comity/primitives/errors";
 import { isSuccess, success, type Result } from "@comity/primitives/result";
 import type {
@@ -12,14 +12,14 @@ import type { StorefrontContext } from "../contracts/context.js";
  * Default implementation of the CategoryPageComposer interface, responsible for presenting category pages in the storefront.
  */
 export class DefaultCategoryPageComposer implements CategoryPageComposer {
-  #repository: CategoryRepository;
+  #repository: TaxonomyRepository;
   #enrichers: ReadonlyArray<CategoryPageEnricher>;
 
   /**
-   * @param repository - The category repository to use for fetching category data.
+   * @param repository - The taxonomy repository to use for fetching category data.
    * @param enrichers - Optional array of enrichers to apply to the category page model.
    */
-  constructor(repository: CategoryRepository, enrichers?: ReadonlyArray<CategoryPageEnricher>) {
+  constructor(repository: TaxonomyRepository, enrichers?: ReadonlyArray<CategoryPageEnricher>) {
     this.#repository = repository;
     this.#enrichers = enrichers ?? [];
   }
@@ -31,7 +31,7 @@ export class DefaultCategoryPageComposer implements CategoryPageComposer {
     id: string,
     ctx: StorefrontContext
   ): Promise<Result<CategoryPageModel, RepositoryError>> {
-    const result = await this.#repository.get(id, ctx);
+    const result = await this.#repository.getById(id, ctx);
 
     if (isSuccess(result)) {
       let page: CategoryPageModel = {

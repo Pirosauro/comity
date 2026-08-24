@@ -1,6 +1,6 @@
 # Repository Overview
 
-## Package Inventory (42 packages)
+## Package Inventory (45 packages)
 
 ### Kernel / Primitives (3)
 
@@ -10,7 +10,7 @@
 | `@comity/kernel`      | Runtime engine: module lifecycle, service registration, event dispatching, hook execution, module initialization |
 | `@comity/composition` | Module loader, resolver, shared services, runtime orchestrator                                                   |
 
-### Core Modules (22)
+### Core Modules (25)
 
 | Package                   | Description                                                                                    |
 | ------------------------- | ---------------------------------------------------------------------------------------------- |
@@ -21,8 +21,11 @@
 | `@comity/auth`            | Authentication: session contracts, policies (assurance/refresh/revocation), guards, use-cases  |
 | `@comity/auth-tokens`     | Token contracts: envelope, facade                                                              |
 | `@comity/cache`           | Caching contracts: `Cache`, `CacheStore`, in-memory store implementation                       |
-| `@comity/catalog`         | Product and category domain: repositories, inventory, price                                    |
-| `@comity/order`           | Order domain: `OrderRepository`, `OrderModel`, `OrderItemModel`, status lifecycle              |
+| `@comity/catalog`         | Product catalog domain: product definition, `ProductRepository`, `BrandRepository`      |
+| `@comity/pricing`         | Pricing domain: `Currency`, `Money`, `Price`, `PriceModifier`, `calculatePrice`       |
+| `@comity/inventory`       | Inventory contracts: `InventoryModel`                                                    |
+| `@comity/taxonomy`        | Shared taxonomy: `CategoryModel`, `TaxonomyModel`, `TaxonomyRepository`                  |
+| `@comity/order`           | Order domain: `Order` entity, `OrderRepository`, `OrderId`, status lifecycle                    |
 | `@comity/content`         | CMS/Content: `BlockRepository`, `PageRepository`, `Navigation`, `Breadcrumb`                   |
 | `@comity/media`           | Media asset contracts: ` Media` interface                                                      |
 | `@comity/search`          | Search contracts: criteria, filter, sort, pagination, aggregation, result                      |

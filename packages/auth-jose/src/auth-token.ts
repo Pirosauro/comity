@@ -6,6 +6,7 @@ import type { JoseAuthTokenServiceOptions, JoseJwtPayload } from "./types.js";
 
 import { AuthError } from "@comity/auth/errors";
 import { toSafePayload } from "@comity/primitives/errors";
+import { isFailure } from "@comity/primitives/result";
 import { SignJWT, jwtVerify } from "jose";
 import { joseErrorToAuthError } from "./internal/jose-error-to-auth-error.js";
 import { jwtPayloadToAuthSession } from "./internal/jwt-to-session.js";
@@ -72,7 +73,7 @@ export class JoseAuthTokenService implements AuthTokenService {
 
       this.#observer.onTokenInvalid({ kind: "refresh", reason, error: toSafePayload(error) });
 
-      throw error;
+      return { ok: false, error };
     }
 
     const payload = authSessionToJwtPayload(session);
@@ -117,7 +118,7 @@ export class JoseAuthTokenService implements AuthTokenService {
         error: toSafePayload(error),
       });
 
-      throw error;
+      return { ok: false, error };
     }
   }
 
@@ -157,24 +158,13 @@ export class JoseAuthTokenService implements AuthTokenService {
     key: CryptoKey | KeyObject | JWK | Uint8Array,
     kind: "access" | "refresh"
   ): Promise<Result<AuthSession, AuthError, "ok">> {
+    let payload: JoseJwtPayload;
+
     try {
-      const { payload } = await jwtVerify<JoseJwtPayload>(token, key, {
+      ({ payload } = await jwtVerify<JoseJwtPayload>(token, key, {
         issuer: this.#options.issuer,
         audience: this.#options.audience,
-      });
-      const session = jwtPayloadToAuthSession(payload);
-
-      // Emit event
-      this.#observer.onTokenVerified({
-        kind,
-        sessionId: session.id,
-        assuranceScore: session.assurance.score,
-        issuedAt: session.createdAt,
-        ...(session.expiresAt ? { expiresAt: session.expiresAt } : {}),
-        ...(session.scopes ? { scopes: session.scopes } : {}),
-      });
-
-      return { ok: true, value: session };
+      }));
     } catch (cause) {
       const error = joseErrorToAuthError(cause, "verify");
 
@@ -186,5 +176,33 @@ export class JoseAuthTokenService implements AuthTokenService {
 
       return { ok: false, error };
     }
+
+    const sessionResult = jwtPayloadToAuthSession(payload);
+
+    if (isFailure(sessionResult)) {
+      const error = sessionResult.error;
+
+      this.#observer.onTokenInvalid({
+        kind,
+        reason: error.meta.reason,
+        error: toSafePayload(error),
+      });
+
+      return { ok: false, error };
+    }
+
+    const session = sessionResult.value;
+
+    // Emit event
+    this.#observer.onTokenVerified({
+      kind,
+      sessionId: session.id,
+      assuranceScore: session.assurance.score,
+      issuedAt: session.createdAt,
+      ...(session.expiresAt ? { expiresAt: session.expiresAt } : {}),
+      ...(session.scopes ? { scopes: session.scopes } : {}),
+    });
+
+    return { ok: true, value: session };
   }
 }

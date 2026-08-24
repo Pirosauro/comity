@@ -75,7 +75,7 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@comity/catalog": "workspace:*",
+    "@comity/pricing": "workspace:*",
     "@comity/primitives": "workspace:*"
   },
   "devDependencies": {

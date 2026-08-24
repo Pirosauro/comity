@@ -1,4 +1,4 @@
-import type { CategoryModel } from "@comity/catalog";
+import type { CategoryModel } from "@comity/taxonomy";
 import type { CategoryPageEnricher } from "../contracts/category-page.js";
 
 import { describe, expect, it, vi } from "vitest";
@@ -15,12 +15,12 @@ const category: CategoryModel = {
 
 describe("DefaultCategoryPageComposer", () => {
   it("should compose a category page from the repository result", async () => {
-    const repository = { get: vi.fn().mockResolvedValue(success(category)) };
+    const repository = { getById: vi.fn().mockResolvedValue(success(category)) };
     const composer = new DefaultCategoryPageComposer(repository as any);
 
     const result = await composer.compose("c-1", ctx);
 
-    expect(repository.get).toHaveBeenCalledWith("c-1", ctx);
+    expect(repository.getById).toHaveBeenCalledWith("c-1", ctx);
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.value).toMatchObject({
@@ -36,7 +36,7 @@ describe("DefaultCategoryPageComposer", () => {
 
   it("should propagate a repository failure", async () => {
     const error = new Error("repo error");
-    const repository = { get: vi.fn().mockResolvedValue({ success: false, error }) };
+    const repository = { getById: vi.fn().mockResolvedValue({ success: false, error }) };
     const composer = new DefaultCategoryPageComposer(repository as any);
 
     const result = await composer.compose("c-1", ctx);
@@ -47,7 +47,7 @@ describe("DefaultCategoryPageComposer", () => {
 
   it("should use fallbacks when the category has no id, url or name", async () => {
     const repository = {
-      get: vi
+      getById: vi
         .fn()
         .mockResolvedValue(success({ ...category, id: undefined, url: undefined, name: undefined })),
     };
@@ -62,7 +62,7 @@ describe("DefaultCategoryPageComposer", () => {
   });
 
   it("should apply enrichers and keep their result", async () => {
-    const repository = { get: vi.fn().mockResolvedValue(success(category)) };
+    const repository = { getById: vi.fn().mockResolvedValue(success(category)) };
     const enrichers: CategoryPageEnricher[] = [
       {
         enrich: vi.fn().mockImplementation(async (page) =>
@@ -81,7 +81,7 @@ describe("DefaultCategoryPageComposer", () => {
   });
 
   it("should ignore enrichers that return a failure", async () => {
-    const repository = { get: vi.fn().mockResolvedValue(success(category)) };
+    const repository = { getById: vi.fn().mockResolvedValue(success(category)) };
     const failingEnricher: CategoryPageEnricher = {
       enrich: vi.fn().mockResolvedValue({ success: false, error: new Error("enrich") }),
     };

@@ -1,11 +1,22 @@
 import type { CustomerCreate } from "../../contracts/customer.js";
 
+import { isFailure } from "@comity/primitives/result";
 import { Instant } from "@comity/primitives/time";
 import { beforeEach, describe, expect, it } from "vitest";
 import { CustomerId } from "../../value-objects/customer-id.js";
 import { Customer } from "../customer.js";
 
-const id = new CustomerId("cust-1");
+function makeCustomerId(value: string): CustomerId {
+  const result = CustomerId.create(value);
+
+  if (isFailure(result)) {
+    throw new Error("Unexpected failure");
+  }
+
+  return result.value;
+}
+
+const id = makeCustomerId("cust-1");
 const fields: CustomerCreate = {
   displayName: "ACME Corp",
   givenName: "John",
@@ -17,7 +28,7 @@ const fields: CustomerCreate = {
 };
 
 function createCustomer(overrides?: Partial<typeof fields>) {
-  return new Customer({ ...fields, ...overrides }, new CustomerId("test-id"));
+  return new Customer({ ...fields, ...overrides }, makeCustomerId("test-id"));
 }
 
 describe("Customer", () => {
@@ -88,7 +99,7 @@ describe("Customer", () => {
 
     it("should defensive-copy contacts on creation", () => {
       const contacts = [{ type: "phone", value: "+39" }];
-      const customer = new Customer({ ...fields, contacts }, new CustomerId("id"));
+      const customer = new Customer({ ...fields, contacts }, makeCustomerId("id"));
 
       contacts.push({ type: "email", value: "x@y.com" });
 
@@ -97,7 +108,7 @@ describe("Customer", () => {
 
     it("should defensive-copy preferences on creation", () => {
       const preferences: Record<string, unknown> = { lang: "en" };
-      const customer = new Customer({ ...fields, preferences }, new CustomerId("id"));
+      const customer = new Customer({ ...fields, preferences }, makeCustomerId("id"));
 
       preferences["theme"] = "dark";
 
@@ -204,14 +215,21 @@ describe("Customer", () => {
   });
 
   describe("snapshot", () => {
-    it("should capture current state with id", () => {
+    it("should snapshot a persisted customer with its id", () => {
       const customer = new Customer(fields, id);
       const snapshot = customer.snapshot();
 
-      expect(snapshot.id.toString()).toBe("cust-1");
+      expect(snapshot.id?.toString()).toBe("cust-1");
       expect(snapshot.displayName).toBe("ACME Corp");
       expect(snapshot.contacts).toHaveLength(1);
       expect(snapshot.capturedAt).toBeInstanceOf(Instant);
+    });
+
+    it("should snapshot a non-persisted customer without an id", () => {
+      const customer = new Customer(fields);
+      const snapshot = customer.snapshot();
+
+      expect(snapshot.id).toBeUndefined();
     });
 
     it("should include givenName and familyName in snapshot", () => {

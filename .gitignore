@@ -31,7 +31,7 @@ Thumbs.db
 .turbo/
 
 # AI
-opencode.json
+.opencode
 
 # Examples and drafts (temporary until 1.0.0 release)
 examples

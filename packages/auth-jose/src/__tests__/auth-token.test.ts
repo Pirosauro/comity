@@ -1,14 +1,25 @@
 import type { AuthSession } from "@comity/auth";
 import { AuthSessionId } from "@comity/auth";
+import { isFailure } from "@comity/primitives/result";
 
 import { describe, expect, it, vi } from "vitest";
 import { JoseAuthTokenService } from "../auth-token.js";
+
+function makeSessionId(value: string): AuthSessionId {
+  const result = AuthSessionId.create(value);
+
+  if (isFailure(result)) {
+    throw new Error("Unexpected failure");
+  }
+
+  return result.value;
+}
 
 const createSession = (overrides: Partial<AuthSession> = {}): AuthSession => {
   const now = Date.now();
 
   return {
-    id: new AuthSessionId("session-1"),
+    id: makeSessionId("session-1"),
     createdAt: now,
     verifiedAt: now,
     expiresAt: now + 60 * 60 * 1000,
@@ -24,7 +35,7 @@ const createSession = (overrides: Partial<AuthSession> = {}): AuthSession => {
       expiresAt: now + 2 * 60 * 60 * 1000,
     },
     stepUp: {
-      parent: new AuthSessionId("session-root"),
+      parent: makeSessionId("session-root"),
       at: now + 2000,
     },
     scopes: ["read", "write"],
@@ -149,7 +160,7 @@ describe("JoseAuthTokenService", () => {
     expect("scopes" in payload).toBe(false);
   });
 
-  it("throws when refresh is not allowed", async () => {
+  it("returns failure when refresh is not allowed", async () => {
     const key = new TextEncoder().encode("refresh-disabled-32-bytes-len!");
     const observer = createObserver();
     const service = new JoseAuthTokenService(
@@ -164,9 +175,13 @@ describe("JoseAuthTokenService", () => {
     );
     const session = createSession({ refresh: { enabled: false } });
 
-    await expect(service.signRefreshToken(session)).rejects.toMatchObject({
-      meta: { reason: "refresh_not_allowed" },
-    });
+    const result = await service.signRefreshToken(session);
+
+    expect(result.ok).toBe(false);
+
+    if (result.ok) throw new Error("Expected failure");
+
+    expect(result.error.meta.reason).toBe("refresh_not_allowed");
     expect(observer.onTokenInvalid).toHaveBeenCalledWith(
       expect.objectContaining({
         kind: "refresh",
@@ -204,7 +219,7 @@ describe("JoseAuthTokenService", () => {
     );
   });
 
-  it("emits invalid event when signing fails", async () => {
+  it("returns failure when signing fails", async () => {
     const observer = createObserver();
     const service = new JoseAuthTokenService(
       {
@@ -218,9 +233,13 @@ describe("JoseAuthTokenService", () => {
     );
     const session = createSession();
 
-    await expect(service.signAccessToken(session)).rejects.toMatchObject({
-      meta: { reason: "invalid_credentials" },
-    });
+    const result = await service.signAccessToken(session);
+
+    expect(result.ok).toBe(false);
+
+    if (result.ok) throw new Error("Expected failure");
+
+    expect(result.error.meta.reason).toBe("invalid_credentials");
     expect(observer.onTokenInvalid).toHaveBeenCalledWith(
       expect.objectContaining({
         kind: "access",

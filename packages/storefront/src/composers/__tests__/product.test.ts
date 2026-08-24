@@ -1,4 +1,4 @@
-import type { ProductModel } from "@comity/catalog";
+import type { ProductProjection } from "@comity/catalog";
 import type { ProductPageEnricher } from "../contracts/product-page.js";
 
 import { describe, expect, it, vi } from "vitest";
@@ -7,21 +7,22 @@ import { DefaultProductPageComposer } from "../product.js";
 
 const ctx = { locale: "en-US", currency: "USD" };
 
-const product: ProductModel = {
+const product: ProductProjection = {
   id: "p-1",
   name: "T-Shirt",
   url: "/products/t-shirt",
+  status: "active",
   variants: [],
 };
 
 describe("DefaultProductPageComposer", () => {
   it("should compose a product page from the repository result", async () => {
-    const repository = { get: vi.fn().mockResolvedValue(success(product)) };
+    const repository = { getById: vi.fn().mockResolvedValue(success(product)) };
     const composer = new DefaultProductPageComposer(repository as any);
 
     const result = await composer.compose("p-1", ctx);
 
-    expect(repository.get).toHaveBeenCalledWith("p-1", ctx);
+    expect(repository.getById).toHaveBeenCalledWith("p-1", ctx);
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.value).toMatchObject({
@@ -36,7 +37,7 @@ describe("DefaultProductPageComposer", () => {
 
   it("should use fallbacks when the product has no id, url or name", async () => {
     const repository = {
-      get: vi.fn().mockResolvedValue(success({ ...product, id: undefined, url: undefined, name: undefined })),
+      getById: vi.fn().mockResolvedValue(success({ ...product, id: undefined, url: undefined, name: undefined })),
     };
     const composer = new DefaultProductPageComposer(repository as any);
 
@@ -50,7 +51,7 @@ describe("DefaultProductPageComposer", () => {
 
   it("should propagate a repository failure", async () => {
     const error = new Error("repo error");
-    const repository = { get: vi.fn().mockResolvedValue({ success: false, error }) };
+    const repository = { getById: vi.fn().mockResolvedValue({ success: false, error }) };
     const composer = new DefaultProductPageComposer(repository as any);
 
     const result = await composer.compose("p-1", ctx);
@@ -60,7 +61,7 @@ describe("DefaultProductPageComposer", () => {
   });
 
   it("should apply enrichers in order", async () => {
-    const repository = { get: vi.fn().mockResolvedValue(success(product)) };
+    const repository = { getById: vi.fn().mockResolvedValue(success(product)) };
     const enrichers: ProductPageEnricher[] = [
       {
         enrich: vi.fn().mockImplementation(async (page) =>
@@ -79,7 +80,7 @@ describe("DefaultProductPageComposer", () => {
   });
 
   it("should ignore enrichers that return a failure", async () => {
-    const repository = { get: vi.fn().mockResolvedValue(success(product)) };
+    const repository = { getById: vi.fn().mockResolvedValue(success(product)) };
     const failingEnricher: ProductPageEnricher = {
       enrich: vi.fn().mockResolvedValue({ success: false, error: new Error("enrich") }),
     };

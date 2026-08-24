@@ -14,7 +14,8 @@ Defines order contracts and models consumed by commerce and storefront modules. 
 
 This package:
 
-- ✅ defines order, item, and product models with status lifecycle
+- ✅ defines the order entity with lifecycle and item mutations
+- ✅ defines order, item, and product contracts with status lifecycle
 - ✅ defines order repository contracts
 - ✅ exposes the `error` subpath for order-specific error types
 
@@ -22,18 +23,28 @@ This package does NOT:
 
 - ❌ implement checkout orchestration or payment processing
 - ❌ manage inventory or pricing logic
+- ❌ validate coupons or apply promotion rules
 - ❌ render order UI
 
 ---
 
 ## Public API
 
-- `OrderRepository` — persistence-boundary contract (`get`, `save`)
-- `OrderCommands` — domain command port for order mutations (`addItem`, `removeItem`, `updateItemQuantity`, `applyCoupon`, `removeCoupon`, `clear`)
-- `OrderModel`, `OrderStatus` — order model with lifecycle status
-- `OrderItemModel`, `OrderItemOptionModel`, `OrderProductModel` — item and product models
-- `OrderAddItemInput` — typed input for item addition
+- `Order` — order entity with lifecycle and item mutations (`addItem`, `removeItem`, `updateItemQuantity`, `submit`, `confirm`, `fulfill`, `cancel`)
+- `OrderId` — order identifier value object
+- `OrderRepository` — persistence-boundary contract (`getById`, `search`, `save`)
+- `OrderState`, `OrderCreate`, `OrderUpdate`, `OrderSnapshot`, `OrderData`, `OrderStatus` — domain contracts
+- `OrderItem`, `OrderProductSnapshot` (with `OrderVariantSnapshot`, `OrderProductAttribute`, `OrderProductOption`) — embedded item value structures
 - `errors` subpath — structured error types for the order domain
+
+The product data in an order is an **owned, immutable snapshot**
+(`OrderProductSnapshot`): it is self-contained and never references the
+catalog after order creation. The application/checkout maps
+`ProductProjection` into the snapshot at creation time.
+
+Price composition is owned by `@comity/pricing`: orders store the immutable
+`Price` value (line item and order level) and do not store modifiers
+separately — modifiers are accessed only through `price.modifiers`.
 
 No exhaustive reference; see docs for constraints.
 
@@ -48,9 +59,9 @@ No exhaustive reference; see docs for constraints.
 
 ## Related Packages
 
-- @comity/catalog — product pricing models and repositories
+- @comity/pricing — price and money models (`order → pricing`, registered in ADR-008)
+- @comity/catalog — source of `ProductProjection`, mapped by the application into owned `OrderProductSnapshot` (no direct dependency)
 - @comity/kernel — module lifecycle runtime
-- @comity/search — generic search abstractions
 
 ---
 

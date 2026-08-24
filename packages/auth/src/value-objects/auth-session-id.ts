@@ -1,3 +1,6 @@
+import type { Result } from "@comity/primitives/result";
+
+import { failure, success } from "@comity/primitives/result";
 import { InvalidIdentifierError } from "@comity/primitives/errors";
 
 /**
@@ -18,17 +21,32 @@ export class AuthSessionId {
   #value: string;
 
   /**
+   * Creates an AuthSessionId from an identifier string.
+   *
+   * The Value Object is always created in a valid state; an empty or
+   * whitespace-only value yields an `empty` failure instead of throwing.
+   *
    * @param value - The value of the auth session ID.
    *
-   * @throws {InvalidIdentifierError} when the value is empty or whitespace-only.
+   * @returns The AuthSessionId, or an `empty` error when the value is empty
+   * or whitespace-only.
    */
-  constructor(value: string) {
+  static create(value: string): Result<AuthSessionId, InvalidIdentifierError> {
     if (value.trim().length === 0) {
-      throw new InvalidIdentifierError("empty", {
-        details: { kind: "AuthSessionId" },
-      });
+      return failure(
+        new InvalidIdentifierError("empty", {
+          details: { kind: "AuthSessionId" },
+        })
+      );
     }
 
+    return success(new AuthSessionId(value));
+  }
+
+  /**
+   * @param value - The value of the auth session ID.
+   */
+  private constructor(value: string) {
     this.#value = value;
   }
 

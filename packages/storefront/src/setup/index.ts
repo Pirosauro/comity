@@ -1,12 +1,14 @@
 import type { CatalogModuleContext } from "@comity/catalog/setup";
 import type { ModuleMeta } from "@comity/composition/setup";
+import type { TaxonomyModuleContext } from "@comity/taxonomy/setup";
 import type {
   StorefrontModuleContext,
   StorefrontModuleOptions,
   StorefrontOptions,
 } from "./types.js";
 
-import { CATEGORY_REPOSITORY_TOKEN, PRODUCT_REPOSITORY_TOKEN } from "@comity/catalog/setup";
+import { PRODUCT_REPOSITORY_TOKEN } from "@comity/catalog/setup";
+import { TAXONOMY_REPOSITORY_TOKEN } from "@comity/taxonomy/setup";
 import { success } from "@comity/primitives/result";
 import { DefaultCategoryPageComposer } from "../composers/category.js";
 import { DefaultProductPageComposer } from "../composers/product.js";
@@ -28,13 +30,14 @@ export type {
 
 export const module: ModuleMeta<
   StorefrontModuleOptions,
-  StorefrontModuleContext & CatalogModuleContext
+  StorefrontModuleContext & CatalogModuleContext & TaxonomyModuleContext
 > = {
   name: "@comity/storefront",
   version: "0.9.0",
 
   dependsOn: {
     "@comity/catalog": { optional: false },
+    "@comity/taxonomy": { optional: false },
   },
   incompatibleWith: [],
 
@@ -63,7 +66,7 @@ export const module: ModuleMeta<
       CATEGORY_PAGE_COMPOSER_TOKEN,
       () =>
         new DefaultCategoryPageComposer(
-          ctx.services.resolve(CATEGORY_REPOSITORY_TOKEN),
+          ctx.services.resolve(TAXONOMY_REPOSITORY_TOKEN),
           enrichers.category
         )
     );

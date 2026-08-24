@@ -15,12 +15,12 @@ const page: PageModel = {
 
 describe("DefaultContentPageComposer", () => {
   it("should compose a content page from the repository result", async () => {
-    const repository = { get: vi.fn().mockResolvedValue(success(page)) };
+    const repository = { getById: vi.fn().mockResolvedValue(success(page)) };
     const composer = new DefaultContentPageComposer(repository as any);
 
     const result = await composer.compose("page-1", ctx);
 
-    expect(repository.get).toHaveBeenCalledWith("page-1", ctx);
+    expect(repository.getById).toHaveBeenCalledWith("page-1", ctx);
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.value).toMatchObject({
@@ -34,7 +34,7 @@ describe("DefaultContentPageComposer", () => {
 
   it("should propagate a repository failure", async () => {
     const error = new Error("repo error");
-    const repository = { get: vi.fn().mockResolvedValue({ success: false, error }) };
+    const repository = { getById: vi.fn().mockResolvedValue({ success: false, error }) };
     const composer = new DefaultContentPageComposer(repository as any);
 
     const result = await composer.compose("page-1", ctx);
@@ -45,7 +45,7 @@ describe("DefaultContentPageComposer", () => {
 
   it("should use fallbacks when the page has no id, url or title", async () => {
     const repository = {
-      get: vi
+      getById: vi
         .fn()
         .mockResolvedValue(success({ ...page, id: undefined, url: undefined, title: undefined })),
     };
@@ -60,7 +60,7 @@ describe("DefaultContentPageComposer", () => {
   });
 
   it("should apply enrichers and keep their result", async () => {
-    const repository = { get: vi.fn().mockResolvedValue(success(page)) };
+    const repository = { getById: vi.fn().mockResolvedValue(success(page)) };
     const enrichers: ContentPageEnricher[] = [
       {
         enrich: vi.fn().mockImplementation(async (composed) =>
@@ -79,7 +79,7 @@ describe("DefaultContentPageComposer", () => {
   });
 
   it("should ignore enrichers that return a failure", async () => {
-    const repository = { get: vi.fn().mockResolvedValue(success(page)) };
+    const repository = { getById: vi.fn().mockResolvedValue(success(page)) };
     const failingEnricher: ContentPageEnricher = {
       enrich: vi.fn().mockResolvedValue({ success: false, error: new Error("enrich") }),
     };

@@ -1,3 +1,6 @@
+import type { Result } from "@comity/primitives/result";
+
+import { failure, success } from "@comity/primitives/result";
 import { InvalidIdentifierError } from "@comity/primitives/errors";
 
 /**
@@ -7,17 +10,32 @@ export class UserId {
   #value: string;
 
   /**
+   * Creates a UserId from an identifier string.
+   *
+   * The Value Object is always created in a valid state; an empty or
+   * whitespace-only value yields an `empty` failure instead of throwing.
+   *
    * @param value - The value of the user ID.
    *
-   * @throws {InvalidIdentifierError} when the value is empty or whitespace-only.
+   * @returns The UserId, or an `empty` error when the value is empty or
+   * whitespace-only.
    */
-  constructor(value: string) {
+  static create(value: string): Result<UserId, InvalidIdentifierError> {
     if (value.trim().length === 0) {
-      throw new InvalidIdentifierError("empty", {
-        details: { kind: "UserId" },
-      });
+      return failure(
+        new InvalidIdentifierError("empty", {
+          details: { kind: "UserId" },
+        })
+      );
     }
 
+    return success(new UserId(value));
+  }
+
+  /**
+   * @param value - The value of the user ID.
+   */
+  private constructor(value: string) {
     this.#value = value;
   }
 

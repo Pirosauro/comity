@@ -667,6 +667,19 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
 
+  packages/inventory:
+    dependencies:
+      '@comity/primitives':
+        specifier: workspace:*
+        version: link:../primitives
+    devDependencies:
+      '@types/node':
+        specifier: ^24.13.3
+        version: 24.13.3
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+
   packages/kernel:
     dependencies:
       '@comity/primitives':
@@ -691,9 +704,22 @@ importers:
 
   packages/order:
     dependencies:
-      '@comity/catalog':
+      '@comity/pricing':
         specifier: workspace:*
-        version: link:../catalog
+        version: link:../pricing
+      '@comity/primitives':
+        specifier: workspace:*
+        version: link:../primitives
+    devDependencies:
+      '@types/node':
+        specifier: ^24.13.3
+        version: 24.13.3
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+
+  packages/pricing:
+    dependencies:
       '@comity/primitives':
         specifier: workspace:*
         version: link:../primitives
@@ -826,6 +852,31 @@ importers:
       '@comity/http':
         specifier: workspace:*
         version: link:../http
+      '@comity/primitives':
+        specifier: workspace:*
+        version: link:../primitives
+      '@comity/search':
+        specifier: workspace:*
+        version: link:../search
+      '@comity/taxonomy':
+        specifier: workspace:*
+        version: link:../taxonomy
+    devDependencies:
+      '@types/node':
+        specifier: ^24.13.3
+        version: 24.13.3
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+
+  packages/taxonomy:
+    dependencies:
+      '@comity/composition':
+        specifier: workspace:*
+        version: link:../composition
+      '@comity/media':
+        specifier: workspace:*
+        version: link:../media
       '@comity/primitives':
         specifier: workspace:*
         version: link:../primitives

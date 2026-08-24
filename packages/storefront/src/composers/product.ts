@@ -34,7 +34,7 @@ export class DefaultProductPageComposer implements ProductPageComposer {
     id: string,
     ctx: StorefrontContext
   ): Promise<Result<ProductPageModel, RepositoryError>> {
-    const result = await this.#repository.get(id, ctx);
+    const result = await this.#repository.getById(id, ctx);
 
     if (isSuccess(result)) {
       let page: ProductPageModel = {

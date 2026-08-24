@@ -48,7 +48,7 @@ export interface CustomerState extends CustomerData {
   /** The timestamp when the customer was created. */
   readonly createdAt: Instant;
 
-  /** The timestamp when the customer was last updated, if applicable. */
+  /** The timestamp when the customer was last updated. */
   readonly updatedAt: Instant;
 
   /** The timestamp when the customer was deleted, if applicable. */
@@ -56,10 +56,16 @@ export interface CustomerState extends CustomerData {
 }
 
 /**
- * Immutable point-in-time snapshot of an existing customer.
+ * Immutable point-in-time snapshot of a customer.
+ *
+ * The identifier may be absent: a snapshot may be captured before the entity
+ * has been persisted and assigned an identifier.
  */
 export type CustomerSnapshot = Readonly<
-  CustomerState & {
+  Omit<CustomerState, "id"> & {
+    /** The unique identifier of the customer, if it has been assigned. */
+    readonly id: CustomerId | undefined;
+
     /** The timestamp when the snapshot was captured. */
     readonly capturedAt: Instant;
   }

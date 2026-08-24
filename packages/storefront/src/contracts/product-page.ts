@@ -1,4 +1,4 @@
-import type { ProductModel } from "@comity/catalog";
+import type { ProductProjection } from "@comity/catalog";
 import type { BreadcrumbModel } from "@comity/content";
 import type { RepositoryError } from "@comity/primitives/errors";
 import type { Result } from "@comity/primitives/result";
@@ -13,7 +13,7 @@ export interface ProductPageModel extends StorefrontPageModel {
   readonly type: "product";
 
   /** Product model for the product page. */
-  readonly product: ProductModel | null;
+  readonly product: ProductProjection | null;
 
   /** Breadcrumbs for the product page. */
   readonly breadcrumbs?: readonly BreadcrumbModel[];

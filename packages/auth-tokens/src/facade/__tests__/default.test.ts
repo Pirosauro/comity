@@ -4,8 +4,19 @@ import type { AuthTokenEnvelope } from "../../contracts/envelope";
 import type { IssueTokensInput } from "../../contracts/facade";
 
 import { AuthError } from "@comity/auth/errors";
+import { isFailure } from "@comity/primitives/result";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { DefaultAuthTokenFacade } from "../default";
+
+function sessionId(value: string): AuthSessionId {
+  const result = AuthSessionId.create(value);
+
+  if (isFailure(result)) {
+    throw new Error("Unexpected failure");
+  }
+
+  return result.value;
+}
 
 describe("DefaultAuthTokenFacade", () => {
   let authFacade: AuthFacade;
@@ -13,7 +24,7 @@ describe("DefaultAuthTokenFacade", () => {
   let facade: DefaultAuthTokenFacade;
 
   const mockSession: AuthSession = {
-    id: new AuthSessionId("session-123"),
+    id: sessionId("session-123"),
     createdAt: 1000,
     expiresAt: 2000,
     verifiedAt: 0,
@@ -110,7 +121,7 @@ describe("DefaultAuthTokenFacade", () => {
 
   describe("issueTokens", () => {
     const issueInput: IssueTokensInput = {
-      id: new AuthSessionId("user@example.com"),
+      id: sessionId("user@example.com"),
       transport: { type: "bearer" },
       methods: [],
       version: 0,
@@ -219,7 +230,7 @@ describe("DefaultAuthTokenFacade", () => {
 
       const result = await facade.refreshTokens(
         "old-refresh-token",
-        new AuthSessionId("session-123"),
+        sessionId("session-123"),
         2000
       );
 
@@ -241,7 +252,7 @@ describe("DefaultAuthTokenFacade", () => {
 
       const result = await facade.refreshTokens(
         "invalid-token",
-        new AuthSessionId("session-123"),
+        sessionId("session-123"),
         2000
       );
 
@@ -263,7 +274,7 @@ describe("DefaultAuthTokenFacade", () => {
 
       const result = await facade.refreshTokens(
         "valid-token",
-        new AuthSessionId("session-123"),
+        sessionId("session-123"),
         2000
       );
 
@@ -289,7 +300,7 @@ describe("DefaultAuthTokenFacade", () => {
 
       const result = await facade.refreshTokens(
         "valid-token",
-        new AuthSessionId("session-123"),
+        sessionId("session-123"),
         2000
       );
 
@@ -319,7 +330,7 @@ describe("DefaultAuthTokenFacade", () => {
 
       const result = await facade.refreshTokens(
         "valid-token",
-        new AuthSessionId("session-123"),
+        sessionId("session-123"),
         2000
       );
 

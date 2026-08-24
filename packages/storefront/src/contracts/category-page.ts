@@ -1,4 +1,5 @@
-import type { CategoryModel, ProductModel } from "@comity/catalog";
+import type { ProductProjection } from "@comity/catalog";
+import type { CategoryModel } from "@comity/taxonomy";
 import type { BreadcrumbModel } from "@comity/content";
 import type { RepositoryError } from "@comity/primitives/errors";
 import type { Result } from "@comity/primitives/result";
@@ -16,7 +17,7 @@ export interface CategoryPageModel extends StorefrontPageModel {
   readonly category: CategoryModel | null;
 
   /** Product models for the category page. */
-  readonly products: ReadonlyArray<ProductModel>;
+  readonly products: ReadonlyArray<ProductProjection>;
 
   /** Breadcrumbs for the category page. */
   readonly breadcrumbs?: readonly BreadcrumbModel[];

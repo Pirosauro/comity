@@ -11,7 +11,17 @@
       "categories": ["capability", "value-import"],
       "importKind": "mixed",
       "lifecycle": "approved",
-      "justification": "Storefront references catalog domain contracts and models; DI wiring constants (CATEGORY_REPOSITORY_TOKEN, PRODUCT_REPOSITORY_TOKEN) are required during module setup composition.",
+      "justification": "Storefront references catalog domain contracts and models; DI wiring constants (PRODUCT_REPOSITORY_TOKEN) are required during module setup composition.",
+      "adrReference": "ADR-008 — Dependency Register, Capability Exceptions and Value-Import Exceptions"
+    },
+    {
+      "from": "@comity/storefront",
+      "to": "@comity/taxonomy",
+      "layer": "core-to-core",
+      "categories": ["capability", "value-import"],
+      "importKind": "mixed",
+      "lifecycle": "approved",
+      "justification": "Storefront category composer references taxonomy domain contracts and models; DI wiring constant (TAXONOMY_REPOSITORY_TOKEN) is required during module setup composition.",
       "adrReference": "ADR-008 — Dependency Register, Capability Exceptions and Value-Import Exceptions"
     },
     {
@@ -51,7 +61,7 @@
       "categories": ["capability"],
       "importKind": "type-only",
       "lifecycle": "approved",
-      "justification": "Catalog entities reference MediaModel for product/category media.",
+      "justification": "Catalog projections reference MediaModel for product/brand media.",
       "adrReference": "ADR-008 — Dependency Register, Capability Exceptions"
     },
     {
@@ -61,7 +71,7 @@
       "categories": ["candidate-for-removal"],
       "importKind": "type-only",
       "lifecycle": "migration-candidate",
-      "justification": "Public contract surface coupling — CategoryRepository/ProductRepository embed SearchCriteriaModel/SearchResultModel in their contracts; search is a separate capability, not owned by catalog.",
+      "justification": "Public contract surface coupling — ProductRepository embeds SearchCriteriaModel/SearchResultModel in its contract; search is a separate capability, not owned by catalog.",
       "adrReference": "ADR-008 — Dependency Register, Candidates for Removal",
       "removalCandidate": {
         "criteria": "Contract surface isolation — a Core Module must not expose another Core Module's specialized domain concepts in its public contracts.",
@@ -103,13 +113,37 @@
       "adrReference": "ADR-008 — Dependency Register, Capability Exceptions"
     },
     {
-      "from": "@comity/order",
-      "to": "@comity/catalog",
+      "from": "@comity/taxonomy",
+      "to": "@comity/media",
       "layer": "core-to-core",
       "categories": ["capability"],
       "importKind": "type-only",
       "lifecycle": "approved",
-      "justification": "Order items reference PriceModel / PriceModifierModel.",
+      "justification": "Taxonomy models reference MediaModel for category image.",
+      "adrReference": "ADR-008 — Dependency Register, Capability Exceptions"
+    },
+    {
+      "from": "@comity/taxonomy",
+      "to": "@comity/search",
+      "layer": "core-to-core",
+      "categories": ["candidate-for-removal"],
+      "importKind": "type-only",
+      "lifecycle": "migration-candidate",
+      "justification": "Public contract surface coupling — embedding of search types in the taxonomy repository contract.",
+      "adrReference": "ADR-008 — Dependency Register, Candidates for Removal",
+      "removalCandidate": {
+        "criteria": "Contract surface isolation — a Core Module must not expose another Core Module's specialized domain concepts in its public contracts.",
+        "action": "Relocate search-shaped repository methods to search-owned contracts. Public API change; follow the breaking-change process."
+      }
+    },
+    {
+      "from": "@comity/order",
+      "to": "@comity/pricing",
+      "layer": "core-to-core",
+      "categories": ["capability"],
+      "importKind": "type-only",
+      "lifecycle": "approved",
+      "justification": "Order items reference Price / PriceModifier.",
       "adrReference": "ADR-008 — Dependency Register, Capability Exceptions"
     },
     {

@@ -48,7 +48,7 @@ class Address {
 
 ```ts
 const address = new Address({
-  lines: [new AddressLine("Via Roma 1")],
+  lines: [AddressLine.create("Via Roma 1")],
   city: "Milano",
   postalCode: "20100",
   countryCode: "IT",
@@ -56,7 +56,7 @@ const address = new Address({
   label: null,
   metadata: null,
   contacts: [],
-}, new AddressId("addr-1"));
+}, AddressId.create("addr-1"));
 ```
 
 `id` is optional. A newly created address without an id has `id` as `undefined`.
@@ -83,12 +83,17 @@ Returns an immutable snapshot with field `capturedAt` rather than `createdAt`. T
 
 ```ts
 class AddressId {
-  constructor(value: string);
+  static create(value: string): Result<AddressId, InvalidIdentifierError>;
+  get value(): string;
 
   equals(other: AddressId): boolean;
   toString(): string;
 }
 ```
+
+Value Objects are created through `create()`, which returns a `Result`. The
+constructor is private: an empty or whitespace-only identifier yields an
+`empty` failure instead of throwing, so an invalid `AddressId` can never exist.
 
 ---
 
@@ -96,12 +101,17 @@ class AddressId {
 
 ```ts
 class AddressLine {
-  constructor(value: string);
+  static create(value: string): Result<AddressLine, never>;
+  get value(): string;
 
   equals(other: AddressLine): boolean;
   toString(): string;
 }
 ```
+
+Address lines carry no validation: any string is a valid line. Creation is
+kept consistent with the Comity Value Object pattern through `create()`, whose
+`never` error type signals that creation cannot fail.
 
 ---
 

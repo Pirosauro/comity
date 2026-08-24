@@ -80,7 +80,8 @@
     "@comity/content": "workspace:*",
     "@comity/http": "workspace:*",
     "@comity/primitives": "workspace:*",
-    "@comity/search": "workspace:*"
+    "@comity/search": "workspace:*",
+    "@comity/taxonomy": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^24.13.3",

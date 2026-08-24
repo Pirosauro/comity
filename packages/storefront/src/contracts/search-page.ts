@@ -1,4 +1,4 @@
-import type { ProductModel } from "@comity/catalog";
+import type { ProductProjection } from "@comity/catalog";
 import type { RepositoryError } from "@comity/primitives/errors";
 import type { Result } from "@comity/primitives/result";
 import type { SearchResultModel } from "@comity/search";
@@ -16,7 +16,7 @@ export interface SearchPageModel extends StorefrontPageModel {
   readonly query: string;
 
   /** Product models for the search page. */
-  readonly result: SearchResultModel<ProductModel>;
+  readonly result: SearchResultModel<ProductProjection>;
 }
 
 /**

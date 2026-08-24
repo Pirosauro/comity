@@ -1,12 +1,18 @@
 # @comity/catalog
 
-Catalog abstractions for Comity domain modules.
+Product catalog domain abstractions for Comity.
+
+> **Catalog owns product definition, not commercial execution.**
 
 ---
 
 ## Purpose
 
-Defines category, product, inventory, and pricing contracts consumed by storefront and commerce-related modules. Provides repository interfaces and setup tokens for dependency wiring.
+Defines the product catalog domain: `ProductProjection` and its definitional
+concepts (status, attributes, options, variants, brand), plus read-projection
+repository contracts and setup tokens. The catalog is domain-neutral — physical
+products, digital products, and future product types share one contract, with
+`type` as application-defined metadata.
 
 ---
 
@@ -14,29 +20,37 @@ Defines category, product, inventory, and pricing contracts consumed by storefro
 
 This package:
 
-- ✅ defines repository contracts for categories and products
-- ✅ defines catalog models across categories, products, inventory, and pricing
-- ✅ exposes setup tokens for repository wiring
-- ✅ provides module setup types for composition
-
-This package does NOT:
-
-- ❌ implement query logic or GraphQL specific backends
-- ❌ resolve or enrich products
-- ❌ render catalog UI at all
+- ✅ defines the `ProductProjection` read-projection and `ProductRepository` contract
+- ✅ defines `ProductStatus` and its explicit transitions
+- ✅ defines `ProductVariant`, `ProductOption`, `ProductAttribute`, `BrandProjection`
+- ✅ exposes `createProduct`, `CatalogError`, setup tokens, and module metadata
+- ❌ knows about price, stock, shipping, or payments — those belong to
+  `@comity/pricing`, `@comity/inventory`, `@comity/order`, and friends
+- ❌ implements adapters, persistence, or GraphQL backends
+- ❌ renders catalog UI
 
 ---
 
 ## Public API
 
-- `CategoryRepository`, `ProductRepository` — repository contracts
-- `CategoryModel`, `CategoryHierarchyModel`, `CategoryTreeNodeModel` — category model types
-- `ProductModel`, `InventoryModel`, `PriceModel` — product model types
-- `CatalogRepositoryContext` — typed repository context
-- `CATEGORY_REPOSITORY_TOKEN`, `PRODUCT_REPOSITORY_TOKEN` — DI tokens
-- Setup types — module context, events, hooks, and services
+- `ProductProjection`, `ProductCreate`, `ProductStatus`, `ProductType` — product contracts
+- `ProductAttribute`, `ProductOption`, `ProductOptionSelection`, `ProductVariant`
+- `BrandProjection`, `BrandRepository`
+- `ProductRepository` — read-projection contract
+- `CatalogRepositoryContext` — request context (locale, fields, tenant)
+- `createProduct`, `transitionProductStatus` — pure domain functions
+- `CatalogError` (`@comity/catalog/errors`) — domain error type
+- `PRODUCT_REPOSITORY_TOKEN`, `BRAND_REPOSITORY_TOKEN`, `module` (`@comity/catalog/setup`)
 
-No exhaustive reference; see docs for constraints.
+---
+
+## Related Packages
+
+- @comity/pricing — price contracts
+- @comity/inventory — stock contracts
+- @comity/taxonomy — category/taxonomy contracts (`categoryId`)
+- @comity/storefront — page composition consuming catalog
+- @comity/search — search criteria models
 
 ---
 
@@ -44,21 +58,11 @@ No exhaustive reference; see docs for constraints.
 
 - docs/overview.md
 - docs/conventions.md
-
----
-
-## Related Packages
-
-- @comity/storefront — page domain composes catalog
-- @comity/order — order domain depends on catalog
-- @comity/search — search criteria models
+- docs/architecture.md
+- `docs/standards/decisions/ADR-011-catalog-product-definition-only.md`
 
 ---
 
 ## Status
 
 Stable
-
-_Review Completed: 2026-07-25_
-_Reviewer: Hobiri MAGI (DeepSeek v4 Pro)_
-_Compliance Score: 99.5% (Green)_

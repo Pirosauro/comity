@@ -12,6 +12,7 @@ export type {
   CustomerState,
   CustomerUpdate,
 } from "./contracts/customer.js";
+export type { CustomerValidator } from "./contracts/customer-validator.js";
 
 export { Customer } from "./entities/customer.js";
 export { CustomerId } from "./value-objects/customer-id.js";

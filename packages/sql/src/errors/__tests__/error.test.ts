@@ -70,6 +70,7 @@ describe("SqlError", () => {
   it("should support multiple reasons", () => {
     const reasons: Array<SqlError["meta"]["reason"]> = [
       "connection_failed",
+      "invalid_configuration",
       "invalid_query",
       "query_failed",
       "transaction_failed",

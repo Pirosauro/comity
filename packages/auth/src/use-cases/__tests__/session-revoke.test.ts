@@ -5,7 +5,18 @@ import type { RevokeSessionInput } from "../session-revoke.js";
 import { AuthError } from "../../errors/auth.js";
 import { AuthSessionId } from "../../value-objects/auth-session-id.js";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { isFailure } from "@comity/primitives/result";
 import { RevokeSession } from "../session-revoke.js";
+
+function makeSessionId(value: string): AuthSessionId {
+  const result = AuthSessionId.create(value);
+
+  if (isFailure(result)) {
+    throw new Error("Unexpected failure");
+  }
+
+  return result.value;
+}
 
 describe("RevokeSession", () => {
   let repository: {
@@ -20,7 +31,7 @@ describe("RevokeSession", () => {
   let useCase: RevokeSession;
 
   const baseSession: AuthSession = {
-    id: new AuthSessionId("session-1"),
+    id: makeSessionId("session-1"),
     createdAt: 1000,
     verifiedAt: 1000,
     assurance: {
@@ -49,7 +60,7 @@ describe("RevokeSession", () => {
   });
 
   it("should revoke a session", async () => {
-    const sessionId = new AuthSessionId("session-1");
+    const sessionId = makeSessionId("session-1");
     const input: RevokeSessionInput = {
       id: sessionId,
       reason: "user_logout",
@@ -74,7 +85,7 @@ describe("RevokeSession", () => {
   });
 
   it("should revoke session with actor", async () => {
-    const sessionId = new AuthSessionId("session-2");
+    const sessionId = makeSessionId("session-2");
     const input: RevokeSessionInput = {
       id: sessionId,
       reason: "admin_forced",
@@ -103,7 +114,7 @@ describe("RevokeSession", () => {
   });
 
   it("should return session_not_found when session is missing", async () => {
-    const sessionId = new AuthSessionId("session-3");
+    const sessionId = makeSessionId("session-3");
     repository.getById.mockResolvedValue({ success: true, value: null });
 
     const result = await useCase.revoke(sessionId, {
@@ -121,7 +132,7 @@ describe("RevokeSession", () => {
   });
 
   it("should return session_revoked when session is already revoked", async () => {
-    const sessionId = new AuthSessionId("session-4");
+    const sessionId = makeSessionId("session-4");
     repository.getById.mockResolvedValue({
       success: true,
       value: { ...baseSession, revokedAt: 1500 },
@@ -141,7 +152,7 @@ describe("RevokeSession", () => {
   });
 
   it("should not emit event when repository save fails", async () => {
-    const sessionId = new AuthSessionId("session-5");
+    const sessionId = makeSessionId("session-5");
     repository.save.mockResolvedValue({
       success: false,
       error: new Error("Database error"),
@@ -157,7 +168,7 @@ describe("RevokeSession", () => {
   });
 
   it("should not emit event when repository getById fails", async () => {
-    const sessionId = new AuthSessionId("session-6");
+    const sessionId = makeSessionId("session-6");
     repository.getById.mockResolvedValue({
       success: false,
       error: new Error("Database error"),
@@ -174,7 +185,7 @@ describe("RevokeSession", () => {
   });
 
   it("execute should delegate to revoke best-effort", async () => {
-    const sessionId = new AuthSessionId("session-7");
+    const sessionId = makeSessionId("session-7");
     repository.getById.mockResolvedValue({
       success: false,
       error: new Error("Database error"),

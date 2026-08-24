@@ -1,11 +1,22 @@
 import type { UserCreate, UserState } from "../../contracts/user.js";
 
+import { isFailure } from "@comity/primitives/result";
 import { Instant } from "@comity/primitives/time";
 import { beforeEach, describe, expect, it } from "vitest";
 import { UserId } from "../../value-objects/user-id.js";
 import { User } from "../user.js";
 
-const id = new UserId("usr-1");
+function makeUserId(value: string): UserId {
+  const result = UserId.create(value);
+
+  if (isFailure(result)) {
+    throw new Error("Unexpected failure");
+  }
+
+  return result.value;
+}
+
+const id = makeUserId("usr-1");
 
 const createdInstant = Instant.fromEpochMilliseconds(1_700_000_000_000);
 const updatedInstant = Instant.fromEpochMilliseconds(1_700_000_500_000);
@@ -20,7 +31,7 @@ const createFields: UserCreate = {
 };
 
 function createUser(overrides?: Partial<UserCreate>) {
-  return new User({ ...createFields, ...overrides }, new UserId("test-id"));
+  return new User({ ...createFields, ...overrides }, makeUserId("test-id"));
 }
 
 /**
@@ -168,7 +179,7 @@ describe("User", () => {
     it("should preserve a supplied createdAt during hydration", () => {
       const user = new User(
         { ...createFields, createdAt: hydratedCreatedAt },
-        new UserId("id")
+        makeUserId("id")
       );
 
       expect(user.createdAt.epochMilliseconds).toBe(hydratedCreatedAt.epochMilliseconds);
@@ -181,7 +192,7 @@ describe("User", () => {
           createdAt: hydratedCreatedAt,
           updatedAt: hydratedUpdatedAt,
         },
-        new UserId("id")
+        makeUserId("id")
       );
 
       expect(user.updatedAt.epochMilliseconds).toBe(hydratedUpdatedAt.epochMilliseconds);
@@ -189,7 +200,7 @@ describe("User", () => {
 
     it("should preserve status 'inactive' during hydration", () => {
       const state: UserState = {
-        id: new UserId("usr-inactive"),
+        id: makeUserId("usr-inactive"),
         displayName: "Old User",
         givenName: null,
         familyName: null,
@@ -205,7 +216,7 @@ describe("User", () => {
 
     it("should preserve status 'revoked' during hydration", () => {
       const state: UserState = {
-        id: new UserId("usr-revoked"),
+        id: makeUserId("usr-revoked"),
         displayName: "Old User",
         givenName: null,
         familyName: null,
@@ -221,7 +232,7 @@ describe("User", () => {
 
     it("should preserve status 'active' during hydration", () => {
       const state: UserState = {
-        id: new UserId("usr-active"),
+        id: makeUserId("usr-active"),
         displayName: "Old User",
         givenName: null,
         familyName: null,
@@ -237,7 +248,7 @@ describe("User", () => {
 
     it("should preserve all persisted lifecycle metadata during hydration", () => {
       const state: UserState = {
-        id: new UserId("usr-hydrated"),
+        id: makeUserId("usr-hydrated"),
         displayName: "Jane",
         givenName: "Jane",
         familyName: "Doe",
@@ -259,7 +270,7 @@ describe("User", () => {
 
     it("should not regenerate persisted status when status !== 'inactive'", () => {
       const state: UserState = {
-        id: new UserId("usr-revoked"),
+        id: makeUserId("usr-revoked"),
         displayName: "Old User",
         givenName: null,
         familyName: null,
@@ -367,7 +378,7 @@ describe("User", () => {
 
     it("should expose the persisted status in the snapshot", () => {
       const state: UserState = {
-        id: new UserId("usr-revoked"),
+        id: makeUserId("usr-revoked"),
         displayName: "Old User",
         givenName: null,
         familyName: null,

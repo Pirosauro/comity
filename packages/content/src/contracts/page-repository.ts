@@ -16,7 +16,7 @@ export interface PageRepository {
    *
    * @returns Page model or null if not found.
    */
-  get(
+  getById(
     id: string,
     ctx?: ContentRepositoryContext
   ): Promise<Result<PageModel | null, RepositoryError>>;

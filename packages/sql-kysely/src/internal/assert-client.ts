@@ -18,7 +18,7 @@ type MaybeKyselyDatabase = {
  *
  * @param client - Value to validate as KyselyDatabase
  *
- * @throws KyselySqlError with reason "sql:connection_failed" if invalid
+ * @throws SqlError with reason "sql:invalid_configuration" if invalid
  */
 export function assertKyselyClient(client: unknown): asserts client is KyselyDatabase {
   if (
@@ -27,8 +27,11 @@ export function assertKyselyClient(client: unknown): asserts client is KyselyDat
     typeof (client as MaybeKyselyDatabase).executeQuery !== "function" ||
     typeof (client as MaybeKyselyDatabase).transaction !== "function"
   ) {
-    throw new SqlError("connection_failed", {
-      details: { retriable: false },
+    throw new SqlError("invalid_configuration", {
+      details: {
+        retriable: false,
+        expected: "KyselyDatabase",
+      },
     });
   }
 }

@@ -4,7 +4,18 @@ import type { CreateSessionInput } from "../session-create.js";
 import { AuthError } from "../../errors/auth.js";
 import { AuthSessionId } from "../../value-objects/auth-session-id.js";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { isFailure } from "@comity/primitives/result";
 import { CreateSession } from "../session-create.js";
+
+function sessionId(value: string): AuthSessionId {
+  const result = AuthSessionId.create(value);
+
+  if (isFailure(result)) {
+    throw new Error("Unexpected failure");
+  }
+
+  return result.value;
+}
 
 describe("CreateSession", () => {
   let repository: {
@@ -56,7 +67,7 @@ describe("CreateSession", () => {
 
   it("should create a basic session", async () => {
     const input: CreateSessionInput = {
-      id: new AuthSessionId("session-1"),
+      id: sessionId("session-1"),
       methods: ["password"],
       version: 1,
       transport: { type: "bearer" },
@@ -105,7 +116,7 @@ describe("CreateSession", () => {
 
   it("should create session with proof and context", async () => {
     const input: CreateSessionInput = {
-      id: new AuthSessionId("session-2"),
+      id: sessionId("session-2"),
       methods: ["totp"],
       proof: "123456",
       context: { deviceId: "mobile" },
@@ -137,7 +148,7 @@ describe("CreateSession", () => {
 
   it("should create session with expiration", async () => {
     const input: CreateSessionInput = {
-      id: new AuthSessionId("session-3"),
+      id: sessionId("session-3"),
       methods: ["password"],
       version: 1,
       transport: { type: "bearer" },
@@ -158,7 +169,7 @@ describe("CreateSession", () => {
 
   it("should create session with refresh enabled", async () => {
     const input: CreateSessionInput = {
-      id: new AuthSessionId("session-4"),
+      id: sessionId("session-4"),
       methods: ["password"],
       version: 1,
       transport: { type: "bearer" },
@@ -183,7 +194,7 @@ describe("CreateSession", () => {
 
   it("should create session with refresh disabled", async () => {
     const input: CreateSessionInput = {
-      id: new AuthSessionId("session-5"),
+      id: sessionId("session-5"),
       methods: ["password"],
       version: 1,
       transport: { type: "bearer" },
@@ -205,11 +216,11 @@ describe("CreateSession", () => {
 
   it("should create session with parent for step-up", async () => {
     const input: CreateSessionInput = {
-      id: new AuthSessionId("session-6"),
+      id: sessionId("session-6"),
       methods: ["totp"],
       version: 1,
       transport: { type: "bearer" },
-      parent: new AuthSessionId("parent-session"),
+      parent: sessionId("parent-session"),
     };
 
     evaluator.evaluate.mockReturnValue({
@@ -222,14 +233,14 @@ describe("CreateSession", () => {
     const result = await useCase.execute(input, 3000);
 
     expect(result.value.stepUp).toEqual({
-      parent: new AuthSessionId("parent-session"),
+      parent: sessionId("parent-session"),
       at: 3000,
     });
   });
 
   it("should create session with scopes", async () => {
     const input: CreateSessionInput = {
-      id: new AuthSessionId("session-7"),
+      id: sessionId("session-7"),
       methods: ["password"],
       version: 1,
       transport: { type: "bearer" },
@@ -250,7 +261,7 @@ describe("CreateSession", () => {
 
   it("should return failure if guard rejects session", async () => {
     const input: CreateSessionInput = {
-      id: new AuthSessionId("session-8"),
+      id: sessionId("session-8"),
       methods: ["password"],
       version: 1,
       transport: { type: "bearer" },
@@ -276,7 +287,7 @@ describe("CreateSession", () => {
 
   it("should return failure if repository save fails", async () => {
     const input: CreateSessionInput = {
-      id: new AuthSessionId("session-9"),
+      id: sessionId("session-9"),
       methods: ["password"],
       version: 1,
       transport: { type: "bearer" },

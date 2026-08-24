@@ -58,9 +58,15 @@ export interface AddressState extends AddressData {
 
 /**
  * AddressSnapshot is a read-only representation of the AddressState.
+ *
+ * The identifier may be absent: a snapshot may be captured before the entity
+ * has been persisted and assigned an identifier.
  */
 export type AddressSnapshot = Readonly<
-  AddressState & {
+  Omit<AddressState, "id"> & {
+    /** The unique identifier of the address, if it has been assigned */
+    readonly id: AddressId | undefined;
+
     /** The timestamp when the snapshot was captured */
     readonly capturedAt: Instant;
   }

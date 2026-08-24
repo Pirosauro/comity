@@ -23,7 +23,6 @@ During repository review, several Core-to-Core dependencies were identified in t
 | `content → media`       | Type-only                  |
 | `content → search`      | Type-only                  |
 | `content → seo`         | Type-only                  |
-| `order → catalog`       | Type-only                  |
 | `address → validation`  | Type-only                  |
 | `customer → validation` | Type-only                  |
 | `identity → validation` | Type-only                  |
@@ -112,10 +111,12 @@ Dependencies that fail one or more acceptance criteria and SHOULD be removed or 
 | `storefront → catalog`  | Type-only   | Storefront references catalog domain contracts and models.          |
 | `storefront → content`  | Type-only   | Storefront content page composer references content domain models.  |
 | `storefront → search`   | Type-only   | Storefront search page contract references `SearchResultModel`.     |
-| `catalog → media`       | Type-only   | Catalog entities reference `MediaModel` for product/category media. |
+| `storefront → taxonomy` | Type-only   | Storefront category composer references taxonomy domain contracts and models. |
+| `catalog → media`       | Type-only   | Catalog entities reference `MediaModel` for product/brand media.               |
 | `content → media`       | Type-only   | Content blocks/pages reference `MediaModel`.                        |
 | `content → seo`         | Type-only   | Content pages reference `SeoModel`.                                 |
-| `order → catalog`       | Type-only   | Order items reference `PriceModel` / `PriceModifierModel`.          |
+| `taxonomy → media`      | Type-only   | Taxonomy models reference `MediaModel` for category image.          |
+| `order → pricing`       | Type-only   | Order items reference `Price` / `PriceModifier` / `Money`.            |
 | `address → validation`  | Type-only   | Address validator consumes the shared `Validator` contract.         |
 | `customer → validation` | Type-only   | Customer validator consumes the shared `Validator` contract.        |
 | `identity → validation` | Type-only   | Identity validator consumes the shared `Validator` contract.        |
@@ -135,7 +136,8 @@ Dependencies that fail one or more acceptance criteria and SHOULD be removed or 
 | Dependency             | Import kind                                                     | Justification                                                                                                                           |
 | ---------------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | `auth-tokens → auth`   | Value (`AuthError`) + type                                      | Token facade error surface normalizes `AuthError` at runtime.                                                                           |
-| `storefront → catalog` | Value (`CATEGORY_REPOSITORY_TOKEN`, `PRODUCT_REPOSITORY_TOKEN`) | These are DI wiring constants only. They do not expose catalog implementation details and are required during module setup composition. |
+| `storefront → catalog` | Value (`PRODUCT_REPOSITORY_TOKEN`) | These are DI wiring constants only. They do not expose catalog implementation details and are required during module setup composition. |
+| `storefront → taxonomy` | Value (`TAXONOMY_REPOSITORY_TOKEN`) | DI wiring constant only. Required during module setup composition; does not expose taxonomy implementation details.                     |
 
 ### Ownership notes
 
@@ -149,10 +151,11 @@ The dependency direction is intentional.
 
 | Dependency         | Failing criteria                                                                                                                                                                                           | Required action                                                                                                                                             |
 | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `catalog → search` | Public contract surface coupling — `CategoryRepository` / `ProductRepository` embed `SearchCriteriaModel` / `SearchResultModel` in their contracts; search is a separate capability, not owned by catalog. | Move search-shaped repository methods to a search-specific contract (e.g., `@comity/search` ports) rather than embedding search types in catalog contracts. |
-| `content → search` | Public contract surface coupling — same embedding of search types in content repository contracts.                                                                                                         | Same action as above, for content repositories.                                                                                                             |
+| `catalog → search` | Public contract surface coupling — `ProductRepository` embeds `SearchCriteriaModel` / `SearchResultModel` in its contract; search is a separate capability, not owned by catalog. | Move search-shaped repository methods to a search-specific contract (e.g., `@comity/search` ports) rather than embedding search types in catalog contracts. |
+| `taxonomy → search` | Public contract surface coupling — same embedding of search types in the taxonomy repository contract.                                                                    | Same action as above, for taxonomy repositories.                                                                                                              |
+| `content → search` | Public contract surface coupling — same embedding of search types in content repository contracts.                                                                         | Same action as above, for content repositories.                                                                                                             |
 
-> Moving search-shaped methods out of catalog/content repository contracts is a public API change and must follow the breaking-change process.
+> Moving search-shaped methods out of catalog/taxonomy/content repository contracts is a public API change and must follow the breaking-change process.
 
 ### Explicitly NOT registered
 
@@ -163,6 +166,36 @@ The following were evaluated and REJECTED as exceptions:
 | `catalog → storefront`             | Reverse ownership.                                                                            |
 | `catalog → html`, `catalog → http` | Presentation/infrastructure leakage; domain capability must not reference delivery contracts. |
 | `catalog → <adapter>`              | Core Module must not depend on an Adapter.                                                    |
+
+### Planned future edges
+
+The following edges were previously considered when a `@comity/checkout`
+Core Module was imagined. That package does not exist; checkout is an
+Application Layer workflow, not a Core Module.
+
+- `checkout → catalog` — was intended as mapping `ProductProjection` into the
+  order's owned product snapshot; the order already stores its own
+  `OrderProductSnapshot` independently of the catalog.
+- `checkout → pricing` — was intended as computing prices via `@comity/pricing`;
+  the order already consumes `Money`/`Price` type-only (registered in
+  ADR-008). No new `checkout → pricing` edge is required.
+- `checkout → order` — was intended as reading and mutating `Order` through
+  entity methods and repository; order mutations are now driven by the
+  Application Layer, not a checkout package.
+- `checkout → customer` — was intended as reading customer contracts to compose
+  buyer data; the Application Layer loads customer facts and maps them into
+  `OrderCustomerSnapshot` at order creation time.
+
+These edges are **not** registered and must not be re-introduced. The
+dependency graph documents compile-time module edges, not temporal
+orchestration sequence.
+
+---
+The only registered Core-to-Core dependency edge is:
+
+| Dependency              | Import kind | Justification                                                                                                                          |
+| ----------------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `order → pricing`       | Type-only   | Order items reference `Price` / `PriceModifier` / `Money`. Registered in ADR-008.                                                       |
 
 ## Forbidden Patterns (unchanged)
 
@@ -192,7 +225,7 @@ The following were evaluated and REJECTED as exceptions:
 - **No action required** for the Capability Exceptions.
 - Infrastructure Contract Exceptions remain registered in ADR-008 and are tracked as future extraction candidates. Any extraction work requires a dedicated ADR.
 - **Remove or refactor** the Candidates for Removal:
-  - `catalog → search`, `content → search`: relocate search-shaped repository methods to search-owned contracts.
+  - `catalog → search`, `taxonomy → search`, `content → search`: relocate search-shaped repository methods to search-owned contracts.
 - **Enforce the closed register.** Repository architecture validation MUST verify:
   - every Core Module dependency edge exists in ADR-008;
   - unregistered Core-to-Core dependencies fail validation;

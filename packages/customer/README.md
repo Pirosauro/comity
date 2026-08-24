@@ -16,6 +16,7 @@ This package:
 
 - ✅ defines the `Customer` entity and `CustomerId` value object
 - ✅ defines the `CustomerRepository` contract
+- ✅ defines the `CustomerValidator` contract
 - ✅ defines customer data, state, snapshot, create, and update types
 - ✅ depends only on `@comity/primitives` and `@comity/validation`
 
@@ -32,6 +33,7 @@ This package does NOT:
 - `Customer` — customer entity
 - `CustomerId` — customer identifier value object
 - `CustomerRepository` — repository contract
+- `CustomerValidator` — validation contract
 - `CustomerSearchCriteria` / `CustomerSearchResult` — repository search contract
 - `CustomerData` / `CustomerState` / `CustomerSnapshot` — customer data types
 - `CustomerCreate` / `CustomerUpdate` — mutation input types

@@ -5,7 +5,18 @@ import type { StepUpSessionInput } from "../session-step-up.js";
 import { AuthError } from "../../errors/auth.js";
 import { AuthSessionId } from "../../value-objects/auth-session-id.js";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { isFailure } from "@comity/primitives/result";
 import { StepUpSession } from "../session-step-up.js";
+
+function sessionId(value: string): AuthSessionId {
+  const result = AuthSessionId.create(value);
+
+  if (isFailure(result)) {
+    throw new Error("Unexpected failure");
+  }
+
+  return result.value;
+}
 
 describe("StepUpSession", () => {
   let repository: {
@@ -52,8 +63,8 @@ describe("StepUpSession", () => {
   });
 
   it("should step up a session", async () => {
-    const parentId = new AuthSessionId("parent-session");
-    const newId = new AuthSessionId("stepped-up-session");
+    const parentId = sessionId("parent-session");
+    const newId = sessionId("stepped-up-session");
     const parentSession: AuthSession = {
       id: parentId,
       createdAt: 1000,
@@ -122,7 +133,7 @@ describe("StepUpSession", () => {
 
   it("should step up with proof and context", async () => {
     const parentSession: AuthSession = {
-      id: new AuthSessionId("parent-session"),
+      id: sessionId("parent-session"),
       createdAt: 1000,
       verifiedAt: 1000,
       assurance: {
@@ -144,8 +155,8 @@ describe("StepUpSession", () => {
     });
 
     const input: StepUpSessionInput = {
-      parentId: new AuthSessionId("parent-session"),
-      id: new AuthSessionId("stepped-up-session"),
+      parentId: sessionId("parent-session"),
+      id: sessionId("stepped-up-session"),
       methods: ["totp"],
       proof: "123456",
       context: { deviceId: "mobile" },
@@ -168,7 +179,7 @@ describe("StepUpSession", () => {
 
   it("should step up with expiration", async () => {
     const parentSession: AuthSession = {
-      id: new AuthSessionId("parent-session"),
+      id: sessionId("parent-session"),
       createdAt: 1000,
       verifiedAt: 1000,
       assurance: {
@@ -190,8 +201,8 @@ describe("StepUpSession", () => {
     });
 
     const input: StepUpSessionInput = {
-      parentId: new AuthSessionId("parent-session"),
-      id: new AuthSessionId("stepped-up-session"),
+      parentId: sessionId("parent-session"),
+      id: sessionId("stepped-up-session"),
       methods: ["totp"],
       version: 1,
       transport: { type: "bearer" },
@@ -205,7 +216,7 @@ describe("StepUpSession", () => {
 
   it("should step up with scopes", async () => {
     const parentSession: AuthSession = {
-      id: new AuthSessionId("parent-session"),
+      id: sessionId("parent-session"),
       createdAt: 1000,
       verifiedAt: 1000,
       assurance: {
@@ -227,8 +238,8 @@ describe("StepUpSession", () => {
     });
 
     const input: StepUpSessionInput = {
-      parentId: new AuthSessionId("parent-session"),
-      id: new AuthSessionId("stepped-up-session"),
+      parentId: sessionId("parent-session"),
+      id: sessionId("stepped-up-session"),
       methods: ["totp"],
       version: 1,
       transport: { type: "bearer" },
@@ -244,8 +255,8 @@ describe("StepUpSession", () => {
     repository.getById.mockResolvedValue({ success: true, value: null });
 
     const input: StepUpSessionInput = {
-      parentId: new AuthSessionId("missing-session"),
-      id: new AuthSessionId("stepped-up-session"),
+      parentId: sessionId("missing-session"),
+      id: sessionId("stepped-up-session"),
       methods: ["totp"],
       version: 1,
       transport: { type: "bearer" },
@@ -260,7 +271,7 @@ describe("StepUpSession", () => {
 
   it("should return failure if parent session is invalid", async () => {
     const parentSession: AuthSession = {
-      id: new AuthSessionId("parent-session"),
+      id: sessionId("parent-session"),
       createdAt: 1000,
       verifiedAt: 1000,
       assurance: {
@@ -278,8 +289,8 @@ describe("StepUpSession", () => {
     });
 
     const input: StepUpSessionInput = {
-      parentId: new AuthSessionId("parent-session"),
-      id: new AuthSessionId("stepped-up-session"),
+      parentId: sessionId("parent-session"),
+      id: sessionId("stepped-up-session"),
       methods: ["totp"],
       version: 1,
       transport: { type: "bearer" },
@@ -293,7 +304,7 @@ describe("StepUpSession", () => {
 
   it("should return failure if new assurance score is not higher", async () => {
     const parentSession: AuthSession = {
-      id: new AuthSessionId("parent-session"),
+      id: sessionId("parent-session"),
       createdAt: 1000,
       verifiedAt: 1000,
       assurance: {
@@ -315,8 +326,8 @@ describe("StepUpSession", () => {
     });
 
     const input: StepUpSessionInput = {
-      parentId: new AuthSessionId("parent-session"),
-      id: new AuthSessionId("stepped-up-session"),
+      parentId: sessionId("parent-session"),
+      id: sessionId("stepped-up-session"),
       methods: ["totp"],
       version: 1,
       transport: { type: "bearer" },
@@ -330,7 +341,7 @@ describe("StepUpSession", () => {
 
   it("should return failure if new assurance score equals parent", async () => {
     const parentSession: AuthSession = {
-      id: new AuthSessionId("parent-session"),
+      id: sessionId("parent-session"),
       createdAt: 1000,
       verifiedAt: 1000,
       assurance: {
@@ -352,8 +363,8 @@ describe("StepUpSession", () => {
     });
 
     const input: StepUpSessionInput = {
-      parentId: new AuthSessionId("parent-session"),
-      id: new AuthSessionId("stepped-up-session"),
+      parentId: sessionId("parent-session"),
+      id: sessionId("stepped-up-session"),
       methods: ["totp"],
       version: 1,
       transport: { type: "bearer" },
@@ -366,7 +377,7 @@ describe("StepUpSession", () => {
 
   it("should return failure if new session fails guard validation", async () => {
     const parentSession: AuthSession = {
-      id: new AuthSessionId("parent-session"),
+      id: sessionId("parent-session"),
       createdAt: 1000,
       verifiedAt: 1000,
       assurance: {
@@ -394,8 +405,8 @@ describe("StepUpSession", () => {
       });
 
     const input: StepUpSessionInput = {
-      parentId: new AuthSessionId("parent-session"),
-      id: new AuthSessionId("stepped-up-session"),
+      parentId: sessionId("parent-session"),
+      id: sessionId("stepped-up-session"),
       methods: ["totp"],
       version: 1,
       transport: { type: "bearer" },
@@ -409,7 +420,7 @@ describe("StepUpSession", () => {
 
   it("should return failure if repository save fails", async () => {
     const parentSession: AuthSession = {
-      id: new AuthSessionId("parent-session"),
+      id: sessionId("parent-session"),
       createdAt: 1000,
       verifiedAt: 1000,
       assurance: {
@@ -436,8 +447,8 @@ describe("StepUpSession", () => {
     });
 
     const input: StepUpSessionInput = {
-      parentId: new AuthSessionId("parent-session"),
-      id: new AuthSessionId("stepped-up-session"),
+      parentId: sessionId("parent-session"),
+      id: sessionId("stepped-up-session"),
       methods: ["totp"],
       version: 1,
       transport: { type: "bearer" },

@@ -4,24 +4,18 @@ import { BaseError } from "@comity/primitives/errors";
 
 /**
  * Order error reason.
+ *
+ * Contains only domain conditions owned by the Order aggregate. Not-found is
+ * a `null` repository result, never an error; infrastructure and
+ * cross-module failures (`repository_error`, `insufficient_stock`,
+ * `product_not_available`, coupon validation) belong to other layers/modules.
  */
 export type OrderErrorReason =
-  | "not_found"
-  | "validation_failed"
-  | "access_denied"
-  | "repository_error"
-  | "invalid_status_transition"
-  | "unknown";
-
-/**
- * Order violation.
- */
-type OrderViolation =
-  | "insufficient_stock"
   | "invalid_quantity"
-  | "product_not_available"
-  | "coupon_invalid"
-  | "coupon_expired";
+  | "invalid_item"
+  | "invalid_status_transition"
+  | "shipping_destination_immutable"
+  | "ambiguous_shipping_destination";
 
 /**
  * Order error metadata.
@@ -29,9 +23,6 @@ type OrderViolation =
 interface OrderErrorMeta extends ErrorMeta {
   /** Error reason. */
   readonly reason: OrderErrorReason;
-
-  /** Domain violation. */
-  readonly violation?: OrderViolation;
 
   /** Contextual details. */
   readonly details?: Readonly<{
@@ -41,27 +32,31 @@ interface OrderErrorMeta extends ErrorMeta {
     /** Affected item ID. */
     itemId?: string;
 
-    /** Affected SKU. */
-    sku?: string;
+    /** Invalid input field. */
+    field?: string;
+
+    /** Source status of an invalid transition. */
+    from?: string;
+
+    /** Target status of an invalid transition. */
+    to?: string;
   }>;
 }
 
 const REASON_MESSAGES: Record<OrderErrorReason, string> = {
-  not_found: "Order not found",
-  validation_failed: "Order validation failed",
-  access_denied: "Access to order denied",
-  repository_error: "Order repository error",
+  invalid_quantity: "Invalid order item quantity",
+  invalid_item: "Order item not found",
   invalid_status_transition: "Invalid order status transition",
-  unknown: "Unknown error",
+  shipping_destination_immutable: "Shipping destination cannot be changed in the current order status",
+  ambiguous_shipping_destination: "Order must contain exactly one shipping destination",
 };
 
 const REASON_HTTP_STATUS: Record<OrderErrorReason, number> = {
-  not_found: 404,
-  validation_failed: 400,
-  access_denied: 403,
-  repository_error: 500,
+  invalid_quantity: 400,
+  invalid_item: 400,
   invalid_status_transition: 409,
-  unknown: 500,
+  shipping_destination_immutable: 409,
+  ambiguous_shipping_destination: 409,
 };
 
 /**

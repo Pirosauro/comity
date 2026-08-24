@@ -20,12 +20,12 @@ describe("assertKyselyClient", () => {
 
   it("should throw SqlError for null client", () => {
     expect(() => assertKyselyClient(null as any)).toThrow(SqlError);
-    expect(() => assertKyselyClient(null as any)).toThrow("Failed to connect to the database");
+    expect(() => assertKyselyClient(null as any)).toThrow("The SQL client configuration is invalid");
   });
 
   it("should throw SqlError for undefined client", () => {
     expect(() => assertKyselyClient(undefined as any)).toThrow(SqlError);
-    expect(() => assertKyselyClient(undefined as any)).toThrow("Failed to connect to the database");
+    expect(() => assertKyselyClient(undefined as any)).toThrow("The SQL client configuration is invalid");
   });
 
   it("should throw SqlError for non-object client", () => {
@@ -40,7 +40,7 @@ describe("assertKyselyClient", () => {
 
     expect(() => assertKyselyClient(invalidClient as any)).toThrow(SqlError);
     expect(() => assertKyselyClient(invalidClient as any)).toThrow(
-      "Failed to connect to the database"
+      "The SQL client configuration is invalid"
     );
   });
 
@@ -52,7 +52,7 @@ describe("assertKyselyClient", () => {
 
     expect(() => assertKyselyClient(invalidClient as any)).toThrow(SqlError);
     expect(() => assertKyselyClient(invalidClient as any)).toThrow(
-      "Failed to connect to the database"
+      "The SQL client configuration is invalid"
     );
   });
 
@@ -63,7 +63,7 @@ describe("assertKyselyClient", () => {
 
     expect(() => assertKyselyClient(invalidClient as any)).toThrow(SqlError);
     expect(() => assertKyselyClient(invalidClient as any)).toThrow(
-      "Failed to connect to the database"
+      "The SQL client configuration is invalid"
     );
   });
 
@@ -75,7 +75,7 @@ describe("assertKyselyClient", () => {
 
     expect(() => assertKyselyClient(invalidClient as any)).toThrow(SqlError);
     expect(() => assertKyselyClient(invalidClient as any)).toThrow(
-      "Failed to connect to the database"
+      "The SQL client configuration is invalid"
     );
   });
 });

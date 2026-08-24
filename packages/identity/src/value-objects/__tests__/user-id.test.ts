@@ -1,50 +1,76 @@
 import { describe, expect, it } from "vitest";
+import { isFailure } from "@comity/primitives/result";
 import { InvalidIdentifierError } from "@comity/primitives/errors";
 import { UserId } from "../user-id.js";
 
+function id(value: string): UserId {
+  const result = UserId.create(value);
+
+  if (isFailure(result)) {
+    throw new Error("Unexpected failure");
+  }
+
+  return result.value;
+}
+
 describe("UserId", () => {
   it("should create with a value", () => {
-    const id = new UserId("usr-123");
+    const userId = id("usr-123");
 
-    expect(id.value).toBe("usr-123");
-    expect(id.toString()).toBe("usr-123");
+    expect(userId.value).toBe("usr-123");
+    expect(userId.toString()).toBe("usr-123");
   });
 
   it("should preserve the original value when non-empty", () => {
-    const id = new UserId("  user-with-spaces  ");
+    const userId = id("  user-with-spaces  ");
 
-    expect(id.value).toBe("  user-with-spaces  ");
-    expect(id.toString()).toBe("  user-with-spaces  ");
+    expect(userId.value).toBe("  user-with-spaces  ");
+    expect(userId.toString()).toBe("  user-with-spaces  ");
   });
 
   it("should equal same value", () => {
-    const a = new UserId("usr-1");
-    const b = new UserId("usr-1");
+    const a = id("usr-1");
+    const b = id("usr-1");
 
     expect(a.equals(b)).toBe(true);
   });
 
   it("should not equal different value", () => {
-    const a = new UserId("usr-1");
-    const b = new UserId("usr-2");
+    const a = id("usr-1");
+    const b = id("usr-2");
 
     expect(a.equals(b)).toBe(false);
   });
 
   it("should reject an empty string with InvalidIdentifierError", () => {
-    expect(() => new UserId("")).toThrow(InvalidIdentifierError);
+    const result = UserId.create("");
+
+    expect(isFailure(result)).toBe(true);
+    if (isFailure(result)) {
+      expect(result.error).toBeInstanceOf(InvalidIdentifierError);
+    }
   });
 
   it("should reject a whitespace-only string with InvalidIdentifierError", () => {
-    expect(() => new UserId("   ")).toThrow(InvalidIdentifierError);
+    const result = UserId.create("   ");
+
+    expect(isFailure(result)).toBe(true);
+    if (isFailure(result)) {
+      expect(result.error).toBeInstanceOf(InvalidIdentifierError);
+    }
   });
 
   it("should expose the kind in InvalidIdentifierError details", () => {
-    try {
-      new UserId("");
-    } catch (error) {
-      expect(error).toBeInstanceOf(InvalidIdentifierError);
-      expect((error as InvalidIdentifierError).meta.details.kind).toBe("UserId");
+    const result = UserId.create("");
+
+    expect(isFailure(result)).toBe(true);
+    if (isFailure(result)) {
+      expect(result.error.meta.details.kind).toBe("UserId");
     }
+  });
+
+  it("should not allow bypassing validation through the constructor", () => {
+    // @ts-expect-error the constructor is private; creation goes through create()
+    new UserId("anything");
   });
 });

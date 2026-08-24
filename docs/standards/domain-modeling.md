@@ -73,6 +73,84 @@ Value Objects:
 - expose `toString()`
 - validate construction invariants
 
+### Creation Boundary
+
+A Value Object MUST be created through a single validation boundary and never
+expose an invalid instance.
+
+Canonical pattern:
+
+```ts
+export class ExampleId {
+  #value: string;
+
+  static create(value: string): Result<ExampleId, ExampleError> {
+    const normalized = value.trim();
+
+    if (normalized.length === 0) {
+      return failure(new ExampleError("invalid_value"));
+    }
+
+    return success(new ExampleId(normalized));
+  }
+
+  private constructor(value: string) {
+    this.#value = value;
+  }
+}
+```
+
+Rules:
+
+- Value Objects MUST expose a `static create(...)` that returns
+  `Result<ValueObject, DomainError>`.
+- Constructors MUST NOT validate domain input and MUST NOT throw domain
+  errors. They only assign already-validated state.
+- Constructors MUST be `private` unless a documented architectural reason
+  requires otherwise. There is no `fromTrusted()`, `unsafeCreate()`,
+  `hydrate()`, or similar bypass of the validation boundary.
+- Invalid domain state MUST be represented through `Result` failures, never
+  through exceptions.
+- Persistence data is NOT considered trusted. Hydration of Value Objects from
+  database records, imports, migrations, or external integrations MUST pass
+  through the same validation path: legacy or migrated data can violate
+  current invariants and must be rejected, not silently accepted.
+- Validation errors belong to the owning module (`OrderId` → `OrderError`,
+  `CustomerId` → `CustomerError`). Generic cross-domain errors are allowed only
+  when the validated concept is truly shared (for example, the empty-identifier
+  invariant is shared across identifier Value Objects and is owned by
+  `@comity/primitives`).
+
+### Guard and Policy Assertions Exception
+
+Guard and policy assertion APIs — whose purpose is enforcing a precondition —
+MAY throw domain errors instead of returning `Result`:
+
+```ts
+guard.assertSessionValid(session);
+policy.assertCanRefresh(session);
+```
+
+This exception applies ONLY to:
+
+- guard APIs (`assertInvariants`, `assertAssurance`, `assertRevocation`,
+  `assertRefreshable`, `assert`)
+- policy assertion APIs (`policy.assert(session, now)`)
+
+Rules:
+
+- The throwing behavior MUST be documented with `@throws` on the API.
+- Thrown errors are domain errors (`DomainError`), not infrastructure errors.
+- Callers at the application boundary MUST convert thrown errors back into
+  `Result` failures before exposing them to consumers.
+
+This exception does NOT apply to:
+
+- constructors
+- Value Object creation
+- normal domain operations that return `Result`
+- domain creation or mutation operations, which MUST use `Result`
+
 ### Read-Projection Exception
 
 Read-only projections of externally-owned entities MAY represent external identifiers using primitive types such as `string`.
@@ -80,14 +158,28 @@ Read-only projections of externally-owned entities MAY represent external identi
 For example:
 
 ```ts
-interface ProductModel {
+interface ProductProjection {
   readonly id: string;
 }
 ```
 
-is valid when `ProductModel` is a read projection over an external system and the Core Module does not own the Product lifecycle.
+is valid when `ProductProjection` is a read projection over an external system and the Core Module does not own the Product lifecycle.
 
 Primitive aliases SHOULD NOT replace Value Objects for identifiers of Comity-owned domain aggregates.
+
+### Projection Naming
+
+Read projections MUST use the explicit `Projection` suffix:
+
+```
+ProductProjection
+BrandProjection
+```
+
+The ambiguous suffixes `Model` and `Data` MUST NOT be used for aggregate read
+models. Embedded value structures within an aggregate are named with the
+canonical no-suffix value naming (`AddressContact`, `ProductAttribute`,
+`ProductOption`), matching the `Value Objects` naming conventions.
 
 ---
 
@@ -343,6 +435,27 @@ They do not represent business validation failures.
 
 Business rules belong to domain services or entity methods.
 
+### Not Found Is Not an Error
+
+A single-element lookup that finds nothing returns `null`:
+
+```
+Result<Entity | null, RepositoryError>
+```
+
+`not_found` error reasons are forbidden for domain modules. They represent a
+regular control-flow outcome, not a failure.
+
+### Module Error Reasons
+
+Domain modules MUST NOT define an `unknown` fallback reason. Error codes are
+`namespace:reason` (`errors.md`), and each reason names a precise failure
+(e.g. `catalog:invalid_product`, `catalog:invalid_status_transition`,
+`customer:duplicate_email`).
+
+Generic reasons such as `validation_failed` MUST be replaced by the
+domain-specific reason when the module owns the failing concept.
+
 ---
 
 # 9. Search
@@ -411,7 +524,9 @@ Examples of criteria that MAY justify a registered exception include:
 - shared value models
 - stable domain contracts
 
-For example, `@comity/order` MAY use a product model from `@comity/catalog` when the model represents the product information required by an order at the time the order is created. This dependency is registered in ADR-008.
+An aggregate may consume another module's data during creation, but it must not retain a dependency on that module's read model. Historical aggregates store owned snapshots.
+
+For example, `@comity/order` does not depend on `@comity/catalog`: at creation time the application maps `ProductProjection` into an owned `OrderProductSnapshot`, after which the order no longer references the catalog. The order snapshot is self-contained and remains renderable regardless of later catalog edits or deletions. `order → catalog` is not a registered exception.
 
 The Order does not own the Product and MUST NOT manage its lifecycle or persistence.
 
@@ -438,11 +553,13 @@ is an architectural violation.
 Whereas:
 
 ```text
-@comity/order
-    └── ProductModel / ProductSnapshot
+Catalog (ProductProjection)
+    └── Application / Checkout (maps to owned snapshot)
+            └── Order (stores OrderProductSnapshot, never queries the catalog)
 ```
 
-may be valid when the dependency represents a point-in-time domain model rather than ownership.
+is the correct shape: the historical aggregate stores its own snapshot and
+does not retain a dependency on the source module's read model.
 
 ### Application Layer Composition
 

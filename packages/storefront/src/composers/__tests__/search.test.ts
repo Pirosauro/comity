@@ -1,4 +1,4 @@
-import type { ProductModel } from "@comity/catalog";
+import type { ProductProjection } from "@comity/catalog";
 import type { SearchResultModel } from "@comity/search";
 import type { SearchPageEnricher } from "../contracts/search-page.js";
 
@@ -8,8 +8,8 @@ import { DefaultSearchPageComposer } from "../search.js";
 
 const ctx = { locale: "en-US" };
 
-const result: SearchResultModel<ProductModel> = {
-  items: [{ id: "p-1", name: "T-Shirt", variants: [] }],
+const result: SearchResultModel<ProductProjection> = {
+  items: [{ id: "p-1", name: "T-Shirt", status: "active", variants: [] }],
   total: 1,
   page: 1,
   pageSize: 20,

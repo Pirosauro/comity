@@ -1,3 +1,6 @@
+import type { Result } from "@comity/primitives/result";
+
+import { failure, success } from "@comity/primitives/result";
 import { InvalidIdentifierError } from "@comity/primitives/errors";
 
 /**
@@ -7,17 +10,32 @@ export class AddressId {
   #value: string;
 
   /**
+   * Creates an AddressId from an identifier string.
+   *
+   * The Value Object is always created in a valid state; an empty or
+   * whitespace-only value yields an `empty` failure instead of throwing.
+   *
    * @param value - The value of the address ID.
    *
-   * @throws {InvalidIdentifierError} when the value is empty or whitespace-only.
+   * @returns The AddressId, or an `empty` error when the value is empty or
+   * whitespace-only.
    */
-  constructor(value: string) {
+  static create(value: string): Result<AddressId, InvalidIdentifierError> {
     if (value.trim().length === 0) {
-      throw new InvalidIdentifierError("empty", {
-        details: { kind: "AddressId" },
-      });
+      return failure(
+        new InvalidIdentifierError("empty", {
+          details: { kind: "AddressId" },
+        })
+      );
     }
 
+    return success(new AddressId(value));
+  }
+
+  /**
+   * @param value - The value of the address ID.
+   */
+  private constructor(value: string) {
     this.#value = value;
   }
 

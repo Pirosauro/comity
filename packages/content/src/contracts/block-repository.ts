@@ -16,7 +16,7 @@ export interface BlockRepository {
    *
    * @returns Block model or null if not found.
    */
-  get<T extends BlockModel = BlockModel>(
+  getById<T extends BlockModel = BlockModel>(
     id: string,
     ctx?: ContentRepositoryContext
   ): Promise<Result<T | null, RepositoryError>>;

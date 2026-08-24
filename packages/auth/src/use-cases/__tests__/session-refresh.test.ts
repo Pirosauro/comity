@@ -5,7 +5,18 @@ import type { RefreshSessionInput } from "../session-refresh.js";
 import { AuthError } from "../../errors/auth.js";
 import { AuthSessionId } from "../../value-objects/auth-session-id.js";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { isFailure } from "@comity/primitives/result";
 import { RefreshSession } from "../session-refresh.js";
+
+function sessionId(value: string): AuthSessionId {
+  const result = AuthSessionId.create(value);
+
+  if (isFailure(result)) {
+    throw new Error("Unexpected failure");
+  }
+
+  return result.value;
+}
 
 describe("RefreshSession", () => {
   let repository: {
@@ -43,8 +54,8 @@ describe("RefreshSession", () => {
   });
 
   it("should refresh a session", async () => {
-    const originalId = new AuthSessionId("original-session");
-    const newId = new AuthSessionId("new-session");
+    const originalId = sessionId("original-session");
+    const newId = sessionId("new-session");
     const originalSession: AuthSession = {
       id: originalId,
       createdAt: 1000,
@@ -88,8 +99,8 @@ describe("RefreshSession", () => {
   });
 
   it("should refresh session with new expiration", async () => {
-    const originalId = new AuthSessionId("original-session");
-    const newId = new AuthSessionId("new-session");
+    const originalId = sessionId("original-session");
+    const newId = sessionId("new-session");
     const originalSession: AuthSession = {
       id: originalId,
       createdAt: 1000,
@@ -127,8 +138,8 @@ describe("RefreshSession", () => {
     repository.getById.mockResolvedValue({ success: true, value: null });
 
     const input: RefreshSessionInput = {
-      id: new AuthSessionId("new-session"),
-      originalId: new AuthSessionId("missing-session"),
+      id: sessionId("new-session"),
+      originalId: sessionId("missing-session"),
     };
 
     const result = await useCase.execute(input, 2000);
@@ -141,7 +152,7 @@ describe("RefreshSession", () => {
   });
 
   it("should return failure if guard rejects refresh", async () => {
-    const originalId = new AuthSessionId("original-session");
+    const originalId = sessionId("original-session");
     const originalSession: AuthSession = {
       id: originalId,
       createdAt: 1000,
@@ -161,7 +172,7 @@ describe("RefreshSession", () => {
     });
 
     const input: RefreshSessionInput = {
-      id: new AuthSessionId("new-session"),
+      id: sessionId("new-session"),
       originalId,
     };
 
@@ -173,7 +184,7 @@ describe("RefreshSession", () => {
   });
 
   it("should return failure if repository save fails", async () => {
-    const originalId = new AuthSessionId("original-session");
+    const originalId = sessionId("original-session");
     const originalSession: AuthSession = {
       id: originalId,
       createdAt: 1000,
@@ -194,7 +205,7 @@ describe("RefreshSession", () => {
     });
 
     const input: RefreshSessionInput = {
-      id: new AuthSessionId("new-session"),
+      id: sessionId("new-session"),
       originalId,
     };
 

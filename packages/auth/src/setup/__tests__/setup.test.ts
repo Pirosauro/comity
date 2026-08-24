@@ -4,12 +4,22 @@ import type { AuthModuleOptions } from "../types.js";
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { DefaultHookBus } from "@comity/primitives/lifecycle";
-import { isSuccess } from "@comity/primitives/result";
+import { isFailure, isSuccess } from "@comity/primitives/result";
 import { CompositionError } from "@comity/composition/errors";
 import { AuthSessionId } from "../../value-objects/auth-session-id.js";
 import { MemoryAuthSessionRepository } from "../../repositories/memory.js";
 import { AUTH_TOKEN } from "../constants.js";
 import { module } from "../index.js";
+
+function sessionId(value: string): AuthSessionId {
+  const result = AuthSessionId.create(value);
+
+  if (isFailure(result)) {
+    throw new Error("Unexpected failure");
+  }
+
+  return result.value;
+}
 
 function createEvaluator(): AuthSessionAssuranceEvaluator {
   return {
@@ -145,7 +155,7 @@ describe("auth module setup", () => {
 
       const created = await auth.createSession(
         {
-          id: new AuthSessionId("session-1"),
+          id: sessionId("session-1"),
           methods: ["password"],
           version: 1,
           transport: { type: "bearer" },
@@ -155,7 +165,7 @@ describe("auth module setup", () => {
 
       expect(created.ok).toBe(true);
 
-      const stored = await repository.getById(new AuthSessionId("session-1"));
+      const stored = await repository.getById(sessionId("session-1"));
       expect(stored.success).toBe(true);
       if (stored.success) {
         expect(stored.value).not.toBeNull();
@@ -174,7 +184,7 @@ describe("auth module setup", () => {
 
       await auth.createSession(
         {
-          id: new AuthSessionId("session-1"),
+          id: sessionId("session-1"),
           methods: ["password"],
           version: 1,
           transport: { type: "bearer" },

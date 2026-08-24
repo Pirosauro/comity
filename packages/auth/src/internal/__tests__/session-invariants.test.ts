@@ -1,13 +1,24 @@
 import type { AuthSession } from "../../contracts/session.js";
 
 import { describe, expect, it } from "vitest";
+import { isFailure } from "@comity/primitives/result";
 import { AuthError } from "../../errors/auth.js";
 import { AuthSessionId } from "../../value-objects/auth-session-id.js";
 import { checkSessionInvariants } from "../session-invariants.js";
 
+function makeSessionId(value: string): AuthSessionId {
+  const result = AuthSessionId.create(value);
+
+  if (isFailure(result)) {
+    throw new Error("Unexpected failure");
+  }
+
+  return result.value;
+}
+
 describe("checkSessionInvariants", () => {
   const validSession: AuthSession = {
-    id: new AuthSessionId("session-123"),
+    id: makeSessionId("session-123"),
     createdAt: 1000,
     verifiedAt: 1000,
     assurance: {
@@ -644,7 +655,7 @@ describe("checkSessionInvariants", () => {
       const result = checkSessionInvariants(
         {
           ...validSession,
-          stepUp: { parent: new AuthSessionId("parent-id"), at: 3000 },
+          stepUp: { parent: makeSessionId("parent-id"), at: 3000 },
         },
         2000
       );
@@ -660,7 +671,7 @@ describe("checkSessionInvariants", () => {
       const result = checkSessionInvariants(
         {
           ...validSession,
-          stepUp: { parent: new AuthSessionId("parent-id"), at: 0 },
+          stepUp: { parent: makeSessionId("parent-id"), at: 0 },
         },
         2000
       );
@@ -676,7 +687,7 @@ describe("checkSessionInvariants", () => {
       const result = checkSessionInvariants(
         {
           ...validSession,
-          stepUp: { parent: new AuthSessionId("parent-id"), at: 1000 },
+          stepUp: { parent: makeSessionId("parent-id"), at: 1000 },
         },
         2000
       );
@@ -688,7 +699,7 @@ describe("checkSessionInvariants", () => {
   describe("success case", () => {
     it("should validate fully valid session", () => {
       const session: AuthSession = {
-        id: new AuthSessionId("session-123"),
+        id: makeSessionId("session-123"),
         createdAt: 1000,
         expiresAt: 5000,
         verifiedAt: 1500,
@@ -702,7 +713,7 @@ describe("checkSessionInvariants", () => {
         },
         transport: { type: "bearer" },
         refresh: { enabled: true, expiresAt: 4000 },
-        stepUp: { parent: new AuthSessionId("parent-id"), at: 1200 },
+        stepUp: { parent: makeSessionId("parent-id"), at: 1200 },
       };
 
       const result = checkSessionInvariants(session, 2000);
