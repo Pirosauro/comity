@@ -9,6 +9,7 @@ export type {
   ContentPageModel,
 } from "./contracts/content-page.js";
 export type { StorefrontContext, StorefrontContextResolver } from "./contracts/context.js";
+export type { PurchaseContext } from "./contracts/purchase-context.js";
 export type {
   ProductPageComposer,
   ProductPageEnricher,
@@ -19,8 +20,12 @@ export type {
   SearchPageEnricher,
   SearchPageModel,
 } from "./contracts/search-page.js";
+export type { PurchasePolicy } from "./policies/purchase-policy.js";
 
 export { DefaultCategoryPageComposer } from "./composers/category.js";
 export { DefaultContentPageComposer } from "./composers/content.js";
 export { DefaultProductPageComposer } from "./composers/product.js";
 export { DefaultSearchPageComposer } from "./composers/search.js";
+
+export type { PurchaseErrorMeta, PurchaseErrorReason } from "./errors/index.js";
+export { PurchaseError } from "./errors/index.js";

@@ -1,0 +1,1 @@
+export { MemoryProductRepository } from "./memory.js";

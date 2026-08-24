@@ -1,0 +1,1 @@
+export const PAYMENT_PROVIDER_TOKEN = Symbol("@comity/payment:provider");

@@ -79,6 +79,7 @@
     "@comity/composition": "workspace:*",
     "@comity/content": "workspace:*",
     "@comity/http": "workspace:*",
+    "@comity/pricing": "workspace:*",
     "@comity/primitives": "workspace:*",
     "@comity/search": "workspace:*",
     "@comity/taxonomy": "workspace:*"
