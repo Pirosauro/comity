@@ -205,6 +205,16 @@
       "lifecycle": "deprecated",
       "justification": "Router contracts reference HttpContext, HttpHandler, HttpMethod. Compatibility exception; extraction candidate.",
       "adrReference": "ADR-008 — Dependency Register, Infrastructure Contract Exceptions"
+    },
+    {
+      "from": "@comity/payment",
+      "to": "@comity/pricing",
+      "layer": "core-to-core",
+      "categories": ["capability"],
+      "importKind": "type-only",
+      "lifecycle": "approved",
+      "justification": "Payment module uses Money value object from pricing for amount representation in PaymentRequest and PaymentOutcome.",
+      "adrReference": "ADR-008 — Dependency Register, Capability Exceptions"
     }
   ]
 }

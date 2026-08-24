@@ -718,6 +718,25 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
 
+  packages/payment:
+    dependencies:
+      '@comity/composition':
+        specifier: workspace:*
+        version: link:../composition
+      '@comity/pricing':
+        specifier: workspace:*
+        version: link:../pricing
+      '@comity/primitives':
+        specifier: workspace:*
+        version: link:../primitives
+    devDependencies:
+      '@types/node':
+        specifier: ^24.13.3
+        version: 24.13.3
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+
   packages/pricing:
     dependencies:
       '@comity/primitives':
@@ -840,6 +859,9 @@ importers:
 
   packages/storefront:
     dependencies:
+      '@comity/address':
+        specifier: workspace:*
+        version: link:../address
       '@comity/catalog':
         specifier: workspace:*
         version: link:../catalog
@@ -849,9 +871,18 @@ importers:
       '@comity/content':
         specifier: workspace:*
         version: link:../content
+      '@comity/customer':
+        specifier: workspace:*
+        version: link:../customer
       '@comity/http':
         specifier: workspace:*
         version: link:../http
+      '@comity/order':
+        specifier: workspace:*
+        version: link:../order
+      '@comity/payment':
+        specifier: workspace:*
+        version: link:../payment
       '@comity/pricing':
         specifier: workspace:*
         version: link:../pricing
