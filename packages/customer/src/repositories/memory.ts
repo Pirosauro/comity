@@ -8,6 +8,7 @@ import type {
 import type { CustomerState } from "../contracts/customer.js";
 import type { Customer } from "../entities/customer.js";
 import type { CustomerId } from "../value-objects/customer-id.js";
+import type { TenantId } from "../value-objects/tenant-id.js";
 
 import { success } from "@comity/primitives/result";
 
@@ -18,14 +19,21 @@ import { success } from "@comity/primitives/result";
  * sessions and is not shared across multiple instances of the application.
  */
 export class MemoryCustomerRepository implements CustomerRepository {
-  /** */
+  /** Internal storage keyed by tenant + customer ID */
   #customers = new Map<string, Customer>();
+
+  #makeKey(tenant: TenantId, id: CustomerId): string {
+    return `${tenant.toString()}:${id.toString()}`;
+  }
 
   /**
    * @inheritdoc
    */
-  async getById(id: CustomerId): Promise<Result<Customer | null, RepositoryError>> {
-    const customer = this.#customers.get(id.toString());
+  async getById(
+    id: CustomerId,
+    tenant: TenantId
+  ): Promise<Result<Customer | null, RepositoryError>> {
+    const customer = this.#customers.get(this.#makeKey(tenant, id));
 
     if (!customer) {
       return success(null);
@@ -37,8 +45,8 @@ export class MemoryCustomerRepository implements CustomerRepository {
   /**
    * @inheritdoc
    */
-  async save(customer: Customer): Promise<Result<void, RepositoryError>> {
-    this.#customers.set(customer.id!.toString(), customer);
+  async save(customer: Customer, tenant: TenantId): Promise<Result<void, RepositoryError>> {
+    this.#customers.set(this.#makeKey(tenant, customer.id!), customer);
 
     return success(undefined);
   }
@@ -46,8 +54,8 @@ export class MemoryCustomerRepository implements CustomerRepository {
   /**
    * @inheritdoc
    */
-  async remove(id: CustomerId): Promise<Result<void, RepositoryError>> {
-    this.#customers.delete(id.toString());
+  async remove(id: CustomerId, tenant: TenantId): Promise<Result<void, RepositoryError>> {
+    this.#customers.delete(this.#makeKey(tenant, id));
 
     return success(undefined);
   }
@@ -56,9 +64,13 @@ export class MemoryCustomerRepository implements CustomerRepository {
    * @inheritdoc
    */
   async search(
-    criteria?: CustomerSearchCriteria
+    criteria: CustomerSearchCriteria | undefined,
+    tenant: TenantId
   ): Promise<Result<CustomerSearchResult, RepositoryError>> {
-    const all = [...this.#customers.values()] as Customer[];
+    const tenantPrefix = `${tenant.toString()}:`;
+    const all = [...this.#customers.entries()]
+      .filter(([key]) => key.startsWith(tenantPrefix))
+      .map(([, customer]) => customer);
     let filtered = all;
 
     if (criteria?.query) {

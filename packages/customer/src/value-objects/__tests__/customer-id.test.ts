@@ -1,6 +1,6 @@
-import { describe, expect, it } from "vitest";
-import { isFailure } from "@comity/primitives/result";
 import { InvalidIdentifierError } from "@comity/primitives/errors";
+import { isFailure } from "@comity/primitives/result";
+import { describe, expect, it } from "vitest";
 import { CustomerId } from "../customer-id.js";
 
 function id(value: string): CustomerId {

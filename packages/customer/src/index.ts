@@ -3,6 +3,7 @@ export type {
   CustomerSearchCriteria,
   CustomerSearchResult,
 } from "./contracts/customer-repository.js";
+export type { CustomerValidator } from "./contracts/customer-validator.js";
 export type {
   CustomerContact,
   CustomerCreate,
@@ -12,7 +13,7 @@ export type {
   CustomerState,
   CustomerUpdate,
 } from "./contracts/customer.js";
-export type { CustomerValidator } from "./contracts/customer-validator.js";
 
 export { Customer } from "./entities/customer.js";
 export { CustomerId } from "./value-objects/customer-id.js";
+export { TenantId } from "./value-objects/tenant-id.js";

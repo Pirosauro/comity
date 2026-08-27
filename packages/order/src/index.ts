@@ -1,10 +1,6 @@
+export type { OrderAddressRole, OrderAddressSnapshot } from "./contracts/address-snapshot.js";
 export type { OrderContact } from "./contracts/contact.js";
-export type {
-  OrderAddressRole,
-  OrderAddressSnapshot,
-} from "./contracts/address-snapshot.js";
 export type { OrderCustomerSnapshot } from "./contracts/customer-snapshot.js";
-export type { OrderPaymentSnapshot, OrderPaymentStatus } from "./contracts/payment-snapshot.js";
 export type {
   OrderItem,
   OrderProductAttribute,
@@ -12,7 +8,11 @@ export type {
   OrderProductSnapshot,
   OrderVariantSnapshot,
 } from "./contracts/item.js";
-export type { OrderRepository, OrderSearchCriteria, OrderSearchResult } from "./contracts/order-repository.js";
+export type {
+  OrderRepository,
+  OrderSearchCriteria,
+  OrderSearchResult,
+} from "./contracts/order-repository.js";
 export type {
   OrderCreate,
   OrderData,
@@ -22,6 +22,8 @@ export type {
   OrderStatus,
   OrderUpdate,
 } from "./contracts/order.js";
+export type { OrderPaymentSnapshot, OrderPaymentStatus } from "./contracts/payment-snapshot.js";
 
 export { Order } from "./entities/order.js";
+export { ChannelId } from "./value-objects/channel-id.js";
 export { OrderId } from "./value-objects/order-id.js";
