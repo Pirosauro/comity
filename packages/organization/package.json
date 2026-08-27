@@ -1,7 +1,7 @@
 {
-  "name": "@comity/customer",
+  "name": "@comity/organization",
   "version": "0.1.0",
-  "description": "Customer domain abstractions for Comity modules.",
+  "description": "Shared organization identifiers for Comity modules.",
   "type": "module",
   "author": "Filippo Bovo <hello@filippobovo.com>",
   "license": "MIT",
@@ -19,8 +19,9 @@
   "private": false,
   "keywords": [
     "comity",
-    "customer",
-    "domain"
+    "organization",
+    "tenant",
+    "channel"
   ],
   "scripts": {
     "build": "node ../../scripts/build.mjs",
@@ -56,9 +57,7 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@comity/organization": "workspace:*",
-    "@comity/primitives": "workspace:*",
-    "@comity/validation": "workspace:*"
+    "@comity/primitives": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^24.13.3",

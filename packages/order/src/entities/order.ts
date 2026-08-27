@@ -13,6 +13,7 @@ import type {
 } from "../contracts/order.js";
 import type { OrderPaymentSnapshot } from "../contracts/payment-snapshot.js";
 import type { OrderId } from "../value-objects/order-id.js";
+import type { ChannelId } from "@comity/organization";
 
 import { failure, success } from "@comity/primitives/result";
 import { Instant } from "@comity/primitives/time";
@@ -142,6 +143,7 @@ export class Order {
   #status: OrderStatus;
   #items: OrderItem[];
   #price: Price;
+  #channelId: ChannelId;
   #customer: OrderCustomerSnapshot | undefined;
   #addresses: OrderAddressSnapshot[] | undefined;
   #payments: OrderPaymentSnapshot[] | undefined;
@@ -158,6 +160,7 @@ export class Order {
     this.#status = fields.status ?? "draft";
     this.#items = [...fields.items];
     this.#price = fields.price;
+    this.#channelId = fields.channelId;
     this.#customer = fields.customer !== undefined ? copyCustomerSnapshot(fields.customer) : undefined;
     this.#addresses =
       fields.addresses !== undefined ? fields.addresses.map((address) => copyAddressSnapshot(address)) : undefined;
@@ -175,6 +178,13 @@ export class Order {
    */
   get id(): OrderId | undefined {
     return this.#id;
+  }
+
+  /**
+   * @returns The commercial channel through which the order was placed.
+   */
+  get channelId(): ChannelId {
+    return this.#channelId;
   }
 
   /**
@@ -496,6 +506,7 @@ export class Order {
       status: this.#status,
       items: [...this.#items],
       price: this.#price,
+      channelId: this.#channelId,
       ...(this.#customer !== undefined ? { customer: copyCustomerSnapshot(this.#customer) } : {}),
       ...(this.#addresses !== undefined
         ? { addresses: this.#addresses.map((address) => copyAddressSnapshot(address)) }

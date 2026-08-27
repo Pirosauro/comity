@@ -8,11 +8,7 @@ export type {
   OrderProductSnapshot,
   OrderVariantSnapshot,
 } from "./contracts/item.js";
-export type {
-  OrderRepository,
-  OrderSearchCriteria,
-  OrderSearchResult,
-} from "./contracts/order-repository.js";
+export type { OrderRepository, OrderRepositoryContext, OrderSearchCriteria, OrderSearchResult } from "./contracts/order-repository.js";
 export type {
   OrderCreate,
   OrderData,
@@ -25,5 +21,4 @@ export type {
 export type { OrderPaymentSnapshot, OrderPaymentStatus } from "./contracts/payment-snapshot.js";
 
 export { Order } from "./entities/order.js";
-export { ChannelId } from "./value-objects/channel-id.js";
 export { OrderId } from "./value-objects/order-id.js";

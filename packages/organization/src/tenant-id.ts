@@ -2,11 +2,11 @@ import type { Result } from "@comity/primitives/result";
 
 import { InvalidIdentifierError } from "@comity/primitives/errors";
 import { failure, success } from "@comity/primitives/result";
+
 /**
  * TenantId is a value object that represents the unique identifier of a tenant.
  *
- * Tenant is a first-class isolation scope: repositories bind to a tenant via
- * `forTenant(tenant)` and the resulting instance is structurally scoped.
+ * Tenant is a first-class isolation scope for repository operations.
  */
 export class TenantId {
   #value: string;

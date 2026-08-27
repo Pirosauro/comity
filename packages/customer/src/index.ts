@@ -16,4 +16,3 @@ export type {
 
 export { Customer } from "./entities/customer.js";
 export { CustomerId } from "./value-objects/customer-id.js";
-export { TenantId } from "./value-objects/tenant-id.js";

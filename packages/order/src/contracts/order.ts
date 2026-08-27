@@ -1,6 +1,7 @@
 import type { Price } from "@comity/pricing";
 import type { Instant } from "@comity/primitives/time";
 import type { OrderId } from "../value-objects/order-id.js";
+import type { ChannelId } from "@comity/organization";
 import type { OrderAddressSnapshot } from "./address-snapshot.js";
 import type { OrderCustomerSnapshot } from "./customer-snapshot.js";
 import type { OrderItem, OrderProductSnapshot } from "./item.js";
@@ -31,6 +32,9 @@ export interface OrderData {
 
   /** Order price. `@comity/pricing` owns price composition: modifiers are accessed through `price.modifiers`. */
   readonly price: Price;
+
+  /** The commercial channel through which the order was placed. */
+  readonly channelId: ChannelId;
 
   /** Historical buyer fact, captured at purchase time. */
   readonly customer?: OrderCustomerSnapshot;

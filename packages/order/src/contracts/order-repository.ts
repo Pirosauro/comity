@@ -1,5 +1,6 @@
 import type { RepositoryError } from "@comity/primitives/errors";
 import type { Result } from "@comity/primitives/result";
+import type { TenantId } from "@comity/organization";
 import type { Order } from "../entities/order.js";
 import type { OrderId } from "../value-objects/order-id.js";
 import type { OrderState, OrderStatus } from "./order.js";
@@ -30,6 +31,18 @@ export interface OrderSearchResult {
 }
 
 /**
+ * Context for order repository operations.
+ *
+ * The tenant provides the isolation boundary for the operation.
+ * It is not stored on the order itself — tenant is an operational
+ * context, not a business fact of the order.
+ */
+export interface OrderRepositoryContext {
+  /** The tenant identifier for isolation. */
+  readonly tenant: TenantId;
+}
+
+/**
  * Order repository contract.
  *
  * @remarks
@@ -47,29 +60,32 @@ export interface OrderRepository {
    * Retrieve an order by identifier.
    *
    * @param id - Order ID.
+   * @param ctx - Repository context containing tenant for isolation.
    *
    * @returns Order entity or null if not found.
    */
-  getById(id: OrderId): Promise<Result<Order | null, RepositoryError>>;
+  getById(id: OrderId, ctx: OrderRepositoryContext): Promise<Result<Order | null, RepositoryError>>;
 
   /**
    * Persist an order.
    *
    * @param order - Order to persist.
+   * @param ctx - Repository context containing tenant for isolation.
    *
    * @remarks
    * Implementations MUST treat this as upsert: if the order id already
    * exists the stored order is overwritten, otherwise a new order is
    * created.
    */
-  save(order: Order): Promise<Result<void, RepositoryError>>;
+  save(order: Order, ctx: OrderRepositoryContext): Promise<Result<void, RepositoryError>>;
 
   /**
    * Search orders matching the given criteria.
    *
    * @param criteria - Search criteria.
+   * @param ctx - Repository context containing tenant for isolation.
    *
    * @returns Matching orders with a total count.
    */
-  search(criteria?: OrderSearchCriteria): Promise<Result<OrderSearchResult, RepositoryError>>;
+  search(criteria: OrderSearchCriteria | undefined, ctx: OrderRepositoryContext): Promise<Result<OrderSearchResult, RepositoryError>>;
 }

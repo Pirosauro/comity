@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { Customer } from "../../entities/customer.js";
 import { CustomerId } from "../../value-objects/customer-id.js";
 import { MemoryCustomerRepository } from "../memory.js";
-import { TenantId } from "@comity/primitives/scope";
+import { TenantId } from "@comity/organization";
 
 function createId(value: string): CustomerId {
   const result = CustomerId.create(value);

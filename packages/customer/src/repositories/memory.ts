@@ -1,5 +1,6 @@
 import type { RepositoryError } from "@comity/primitives/errors";
 import type { Result } from "@comity/primitives/result";
+import type { TenantId } from "@comity/organization";
 import type {
   CustomerRepository,
   CustomerSearchCriteria,
@@ -8,7 +9,6 @@ import type {
 import type { CustomerState } from "../contracts/customer.js";
 import type { Customer } from "../entities/customer.js";
 import type { CustomerId } from "../value-objects/customer-id.js";
-import type { TenantId } from "../value-objects/tenant-id.js";
 
 import { success } from "@comity/primitives/result";
 

@@ -352,6 +352,9 @@ importers:
 
   packages/customer:
     dependencies:
+      '@comity/organization':
+        specifier: workspace:*
+        version: link:../organization
       '@comity/primitives':
         specifier: workspace:*
         version: link:../primitives
@@ -704,9 +707,28 @@ importers:
 
   packages/order:
     dependencies:
+      '@comity/customer':
+        specifier: workspace:*
+        version: link:../customer
+      '@comity/organization':
+        specifier: workspace:*
+        version: link:../organization
       '@comity/pricing':
         specifier: workspace:*
         version: link:../pricing
+      '@comity/primitives':
+        specifier: workspace:*
+        version: link:../primitives
+    devDependencies:
+      '@types/node':
+        specifier: ^24.13.3
+        version: 24.13.3
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+
+  packages/organization:
+    dependencies:
       '@comity/primitives':
         specifier: workspace:*
         version: link:../primitives
@@ -877,6 +899,9 @@ importers:
       '@comity/http':
         specifier: workspace:*
         version: link:../http
+      '@comity/inventory':
+        specifier: workspace:*
+        version: link:../inventory
       '@comity/order':
         specifier: workspace:*
         version: link:../order

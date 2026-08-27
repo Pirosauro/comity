@@ -75,6 +75,8 @@
   },
   "sideEffects": false,
   "dependencies": {
+    "@comity/customer": "workspace:*",
+    "@comity/organization": "workspace:*",
     "@comity/pricing": "workspace:*",
     "@comity/primitives": "workspace:*"
   },

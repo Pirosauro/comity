@@ -1,7 +1,9 @@
 import type { RepositoryError } from "@comity/primitives/errors";
 import type { Result } from "@comity/primitives/result";
+import type { TenantId } from "@comity/organization";
 import type {
   OrderRepository,
+  OrderRepositoryContext,
   OrderSearchCriteria,
   OrderSearchResult,
 } from "../contracts/order-repository.js";
@@ -18,14 +20,18 @@ import { success } from "@comity/primitives/result";
  * sessions and is not shared across multiple instances of the application.
  */
 export class MemoryOrderRepository implements OrderRepository {
-  /** */
+  /** Internal storage keyed by tenant + order ID */
   #orders = new Map<string, Order>();
+
+  #makeKey(tenant: TenantId, id: OrderId): string {
+    return `${tenant.toString()}\u0000${id.toString()}`;
+  }
 
   /**
    * @inheritdoc
    */
-  async getById(id: OrderId): Promise<Result<Order | null, RepositoryError>> {
-    const order = this.#orders.get(id.toString());
+  async getById(id: OrderId, ctx: OrderRepositoryContext): Promise<Result<Order | null, RepositoryError>> {
+    const order = this.#orders.get(this.#makeKey(ctx.tenant, id));
 
     if (!order) {
       return success(null);
@@ -37,8 +43,8 @@ export class MemoryOrderRepository implements OrderRepository {
   /**
    * @inheritdoc
    */
-  async save(order: Order): Promise<Result<void, RepositoryError>> {
-    this.#orders.set(order.id!.toString(), order);
+  async save(order: Order, ctx: OrderRepositoryContext): Promise<Result<void, RepositoryError>> {
+    this.#orders.set(this.#makeKey(ctx.tenant, order.id!), order);
 
     return success(undefined);
   }
@@ -47,9 +53,13 @@ export class MemoryOrderRepository implements OrderRepository {
    * @inheritdoc
    */
   async search(
-    criteria?: OrderSearchCriteria
+    criteria: OrderSearchCriteria | undefined,
+    ctx: OrderRepositoryContext
   ): Promise<Result<OrderSearchResult, RepositoryError>> {
-    const all = [...this.#orders.values()] as Order[];
+    const tenantPrefix = `${ctx.tenant.toString()}\u0000`;
+    const all = [...this.#orders.entries()]
+      .filter(([key]) => key.startsWith(tenantPrefix))
+      .map(([, order]) => order);
     let filtered = all;
 
     if (criteria?.status !== undefined) {
@@ -65,6 +75,7 @@ export class MemoryOrderRepository implements OrderRepository {
       updatedAt: o.updatedAt,
       items: o.items,
       price: o.price,
+      channelId: o.channelId,
       ...(o.customer !== undefined ? { customer: o.customer } : {}),
       ...(o.addresses !== undefined ? { addresses: o.addresses } : {}),
       ...(o.payments !== undefined ? { payments: o.payments } : {}),
