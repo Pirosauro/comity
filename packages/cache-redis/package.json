@@ -84,6 +84,9 @@
     "typescript": "^5.9.3"
   },
   "peerDependencies": {
+    "@comity/cache": "workspace:*",
+    "@comity/composition": "workspace:*",
+    "@comity/primitives": "workspace:*",
     "ioredis": "^5.0.0",
     "redis": "^5.0.0"
   },

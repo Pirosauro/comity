@@ -65,5 +65,8 @@
   "devDependencies": {
     "@types/node": "^24.13.3",
     "typescript": "^5.9.3"
+  },
+  "peerDependencies": {
+    "@comity/graphql-client": "workspace:*"
   }
 }

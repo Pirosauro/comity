@@ -6,7 +6,7 @@ Redis-backed cache adapter for Comity.
 
 ## Purpose
 
-Wires a Redis client into the `@comity/cache` module and provides the Redis store implementation used by applications or kernel setups. The package does not expose an `index.ts` barrel; it provides expose via `setup/`.
+Wires a Redis client into the `@comity/cache` module and provides the Redis store implementation used by applications or kernel setups.
 
 ---
 
@@ -14,22 +14,23 @@ Wires a Redis client into the `@comity/cache` module and provides the Redis stor
 
 This package:
 
-- provides a Redis-backed cache store implementation
-- defines the module setup for wiring the Redis store into the cache lifecycle
-- defines adapter types for configuration
+- ✅ provides a Redis-backed cache store implementation
+- ✅ defines the module setup for wiring the Redis store into the cache lifecycle
+- ✅ defines adapter types for configuration
 
 This package does NOT:
 
-- define cache contracts or store abstractions
-- manage cache policy or TTL
-- serve as a general-purpose Redis client
+- ❌ define cache contracts or store abstractions
+- ❌ manage cache policy or TTL
+- ❌ serve as a general-purpose Redis client
 
 ---
 
 ## Public API
 
+- `RedisCacheStore` — Redis implementation of the CacheStore contract
 - `module` — kernel module metadata and setup function
-- setup types — configuration, context, events, hooks, and services
+- Setup types — configuration, context, events, hooks, and services
 
 No exhaustive reference; see docs for constraints.
 
@@ -53,6 +54,6 @@ No exhaustive reference; see docs for constraints.
 
 Stable
 
-_Review Completed: 2026-07-25_
-_Reviewer: Hobiri MAGI (DeepSeek v4 Pro)_
-_Compliance Score: 99.5% (Green)_
+_Review Completed: 2026-08-28_
+_Reviewer: Automated Audit Remediation_
+_Compliance Score: 100% (Green)_

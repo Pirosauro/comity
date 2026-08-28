@@ -291,6 +291,114 @@ The bound technology version used for development and testing MUST also be decla
 
 ---
 
+## 13. Core Module peerDependency Requirement for Technology Adapters
+
+A **Technology Adapter** binds a primary Core Module to a concrete technology. An adapter MAY depend on additional Core Modules when those dependencies are required by its implementation and are architecturally justified.
+
+The Core Module(s) consumed by a Technology Adapter MUST be declared as `peerDependencies`.
+
+### Rationale
+
+When a Technology Adapter is published and consumed by an application, the application should control the Core Module version used by the adapter and the rest of the application.
+
+Declaring the adapted Core Module as a `peerDependency`:
+
+1. Expresses that the adapter is designed to operate against a compatible version of the Core Module supplied by the consumer.
+2. Makes the Core Module part of the adapter's compatibility contract.
+3. Reduces the risk of incompatible or unintended Core Module versions being introduced into the dependency graph.
+4. Keeps the relationship between an Adapter and the Core Module it implements explicit in published package metadata.
+
+### Requirement
+
+A Technology Adapter MUST declare every Core Module it consumes as a `peerDependency`.
+
+Core Module peer dependency ranges MUST be compatible with the versions supported by the adapter.
+
+Inside the monorepo, `workspace:*` MAY be used for Core Module peer dependencies. The repository's publishing/release process is responsible for converting workspace ranges into appropriate published semver ranges.
+
+### Example
+
+For `@comity/sql-kysely`:
+
+```json
+{
+  "dependencies": {
+    "@comity/sql": "workspace:*"
+  },
+  "peerDependencies": {
+    "@comity/sql": "workspace:*",
+    "kysely": "^0.28.0"
+  }
+}
+```
+
+For `@comity/http-hono`:
+
+```json
+{
+  "dependencies": {
+    "@comity/composition": "workspace:*",
+    "@comity/http": "workspace:*",
+    "@comity/primitives": "workspace:*"
+  },
+  "peerDependencies": {
+    "@comity/composition": "workspace:*",
+    "@comity/http": "workspace:*",
+    "@comity/primitives": "workspace:*",
+    "hono": "^4.12"
+  }
+}
+```
+
+### Technology Dependencies
+
+Technology/framework libraries used by an adapter MUST be declared as `peerDependencies` when the consuming application is expected to control the technology version or provide the technology implementation.
+
+Examples include:
+
+- Hono
+- Kysely
+- CASL
+- Zod
+- React
+- Preact
+
+This is part of the adapter's compatibility contract.
+
+### Implementation Dependencies
+
+Private implementation dependencies that are fully encapsulated by the adapter and are not expected to be provided or controlled by the consuming application MAY remain in `dependencies`.
+
+The Core Module(s) adapted by the package MUST nevertheless be declared as `peerDependencies`.
+
+An adapter MAY declare the same Core Module in both `dependencies` and `peerDependencies` when the dependency is required at runtime by the adapter while the peer declaration is also needed to express the compatibility contract with the consumer.
+
+### Monorepo Consideration
+
+`workspace:*` is valid for Core Module references within the monorepo.
+
+The presence of a `workspace:*` dependency MUST NOT be considered sufficient reason to omit the corresponding `peerDependency`. Workspace resolution solves monorepo package linking; it does not replace the published package compatibility contract.
+
+### Architectural Intent
+
+This rule is a **packaging and compatibility rule for Technology Adapters**.
+
+It does not change the architectural dependency direction:
+
+```text
+Application
+    ↓
+Adapter
+    ↓
+Core Module
+    ↓
+Kernel
+```
+
+Nor does it imply that every dependency of an Adapter must be a peer dependency. The requirement specifically applies to the Core Module(s) consumed by the adapter and to technology dependencies that are intentionally part of the consumer-controlled compatibility contract.
+
+---
+
 ## Summary
 
 Adapters are **edges**, not **centers**.

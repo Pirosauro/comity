@@ -1,3 +1,10 @@
+export type { ClassificationContext } from "./contracts/classification-context.js";
+export {
+  CustomerGroupRegistry,
+  CustomerSegmentEvaluator,
+  NoOpCustomerGroupRegistry,
+  NoOpCustomerSegmentEvaluator,
+} from "./contracts/customer-classification.js";
 export type {
   CustomerRepository,
   CustomerSearchCriteria,

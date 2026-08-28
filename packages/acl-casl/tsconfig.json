@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "lib": ["ES2022"],
+    "noEmit": false,
+    "outDir": "dist",
+    "rootDir": "src",
+    "types": ["node"],
+    "moduleResolution": "bundler",
+    "module": "es2022",
+    "skipLibCheck": true
+  },
+  "exclude": ["node_modules", "dist", "**/__tests__/**"],
+  "include": ["src/**/*"]
+}

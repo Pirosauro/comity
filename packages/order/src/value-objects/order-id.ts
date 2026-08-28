@@ -5,6 +5,12 @@ import { InvalidIdentifierError } from "@comity/primitives/errors";
 
 /**
  * OrderId is a value object that represents the unique identifier of an order.
+ *
+ * @remarks
+ * OrderId is globally unique. The current implementation generates UUIDs.
+ * The repository uses a composite key of `TenantId + OrderId` as its physical
+ * storage namespace, but the OrderId itself is globally unique and not scoped
+ * to a tenant.
  */
 export class OrderId {
   #value: string;

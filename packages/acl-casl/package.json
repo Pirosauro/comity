@@ -1,7 +1,7 @@
 {
-  "name": "@comity/cache-kv",
-  "version": "0.9.0",
-  "description": "Key-Value cache module for Comity framework",
+  "name": "@comity/acl-casl",
+  "version": "0.1.0",
+  "description": "CASL adapter for @comity/acl.",
   "type": "module",
   "author": "Filippo Bovo <hello@filippobovo.com>",
   "license": "MIT",
@@ -16,12 +16,12 @@
   "engines": {
     "node": ">=24.0.0"
   },
+  "private": false,
   "keywords": [
     "comity",
-    "comityjs",
-    "cache",
-    "caching",
-    "typescript"
+    "acl",
+    "casl",
+    "authorization"
   ],
   "scripts": {
     "build": "node ../../scripts/build.mjs",
@@ -49,24 +49,7 @@
         "default": "./dist/cjs/index.js"
       }
     },
-    "./setup": {
-      "import": {
-        "types": "./dist/types/setup/index.d.ts",
-        "default": "./dist/esm/setup/index.js"
-      },
-      "require": {
-        "types": "./dist/types/setup/index.d.ts",
-        "default": "./dist/cjs/setup/index.js"
-      }
-    },
     "./package.json": "./package.json"
-  },
-  "typesVersions": {
-    "*": {
-      "setup": [
-        "./dist/types/setup/index.d.ts"
-      ]
-    }
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
@@ -74,17 +57,16 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@comity/cache": "workspace:*",
-    "@comity/composition": "workspace:*",
+    "@comity/acl": "workspace:*",
     "@comity/primitives": "workspace:*"
   },
   "devDependencies": {
+    "@casl/ability": "^7.0.1",
     "@types/node": "^24.13.3",
     "typescript": "^5.9.3"
   },
   "peerDependencies": {
-    "@comity/cache": "workspace:*",
-    "@comity/composition": "workspace:*",
-    "@comity/primitives": "workspace:*"
+    "@comity/acl": "workspace:*",
+    "@casl/ability": "^7.0.0"
   }
 }

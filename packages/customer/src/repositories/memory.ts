@@ -1,6 +1,6 @@
+import type { TenantId } from "@comity/organization";
 import type { RepositoryError } from "@comity/primitives/errors";
 import type { Result } from "@comity/primitives/result";
-import type { TenantId } from "@comity/organization";
 import type {
   CustomerRepository,
   CustomerSearchCriteria,

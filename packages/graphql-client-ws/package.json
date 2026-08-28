@@ -68,6 +68,7 @@
     "typescript": "^5.9.3"
   },
   "peerDependencies": {
+    "@comity/graphql-client": "workspace:*",
     "graphql-ws": "^6.0.0"
   }
 }

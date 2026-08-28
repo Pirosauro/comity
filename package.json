@@ -18,13 +18,13 @@
     "preinstall": "npx only-allow pnpm"
   },
   "workspaces": [
-    "examples/*",
-    "packages/*"
+    "examples/**",
+    "packages/**"
   ],
   "devDependencies": {
     "@changesets/cli": "^2.31.1",
-    "@typescript-eslint/eslint-plugin": "^8.67.0",
-    "@typescript-eslint/parser": "^8.67.0",
+    "@typescript-eslint/eslint-plugin": "^8.68.0",
+    "@typescript-eslint/parser": "^8.68.0",
     "@vitest/coverage-v8": "^4.1.11",
     "eslint": "^9.39.5",
     "eslint-config-prettier": "^10.1.8",
@@ -32,15 +32,12 @@
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-jsdoc": "^62.9.0",
     "prettier": "^3.9.6",
-    "turbo": "^2.10.11",
+    "turbo": "^2.10.12",
     "typescript": "^5.9.3",
     "undici": "^7.29.0",
     "vitest": "^4.1.11"
   },
   "pnpm": {
-    "overrides": {
-      "typescript": "^5.9.3"
-    },
     "peerDependencyRules": {
       "ignoreMissing": [
         "react",
@@ -51,5 +48,8 @@
     "onlyBuiltDependencies": [
       "esbuild"
     ]
+  },
+  "overrides": {
+    "typescript": "^5.9.3"
   }
 }

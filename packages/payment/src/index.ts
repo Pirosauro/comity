@@ -16,8 +16,6 @@ export type {
   PaymentErrorReason,
 } from "./errors/index.js";
 
-export { PaymentError } from "./errors/index.js";
-
 export { MemoryPaymentProvider } from "./providers/memory.js";
 
 export { PAYMENT_PROVIDER_TOKEN } from "./setup/constants.js";

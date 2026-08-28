@@ -34,22 +34,15 @@ This package does NOT:
 
 ## Public API
 
-The public API includes:
-
-- `AuthFacade`
-- session-related contracts
-- assurance, refresh, and revocation policy interfaces
-- domain event interfaces
-- `error` subpath
-- `hooks` subpath
-- `policies` subpath
-- `repositories` subpath
-- `setup` subpath
-- `use-cases` subpath
-
-Adapters and infrastructure modules are expected to orchestrate the domain
-through the facade.
-
+- Authentication facade — `AuthFacade` for session lifecycle operations
+- Session contracts — session, assurance, refresh, and revocation types
+- Policy contracts — assurance, refresh, and revocation policy interfaces
+- Domain events — session lifecycle event interfaces
+- Errors — authorization error types (`@comity/auth/errors`)
+- Observers — passive event subscribers (`@comity/auth/observers`)
+- Policies — canonical policy implementations (`@comity/auth/policies`)
+- Setup — kernel module metadata and wiring (`@comity/auth/setup`)
+- Use cases — session lifecycle operations (`@comity/auth/use-cases`)
 
 No exhaustive reference; see docs for constraints.
 ---

@@ -33,15 +33,14 @@ This package:
 
 ## Public API
 
-- `ProductProjection`, `ProductCreate`, `ProductStatus`, `ProductType` — product contracts
-- `ProductAttribute`, `ProductOption`, `ProductOptionSelection`, `ProductVariant`
-- `BrandProjection`, `BrandRepository`
-- `ProductRepository` — read-projection contract
-- `CatalogRepositoryContext` — request context (locale, fields, tenant)
-- `createProduct`, `transitionProductStatus` — pure domain functions
-- `CatalogError` (`@comity/catalog/errors`) — domain error type
-- `PRODUCT_REPOSITORY_TOKEN`, `BRAND_REPOSITORY_TOKEN`, `module` (`@comity/catalog/setup`)
+- Product contracts — projection, creation, status, type, variants, options, attributes
+- Brand contracts — projection and repository
+- Repository contracts — read-projection repository and request context
+- Domain functions — product creation and status transitions
+- Errors — catalog error types (`@comity/catalog/errors`)
+- Setup — kernel module metadata, tokens, and wiring (`@comity/catalog/setup`)
 
+No exhaustive reference; see docs for constraints.
 ---
 
 ## Related Packages

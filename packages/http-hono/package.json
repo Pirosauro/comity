@@ -83,10 +83,13 @@
   },
   "devDependencies": {
     "@types/node": "^24.13.3",
-    "hono": "^4.13.3",
+    "hono": "^4.13.5",
     "typescript": "^5.9.3"
   },
   "peerDependencies": {
+    "@comity/composition": "workspace:*",
+    "@comity/http": "workspace:*",
+    "@comity/primitives": "workspace:*",
     "hono": "^4.12"
   }
 }
