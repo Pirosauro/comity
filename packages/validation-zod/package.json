@@ -1,6 +1,6 @@
 {
   "name": "@comity/validation-zod",
-  "version": "0.1.0",
+  "version": "0.9.0",
   "description": "Zod adapter for @comity/validation contracts.",
   "type": "module",
   "author": "Filippo Bovo <hello@filippobovo.com>",

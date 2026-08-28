@@ -1,6 +1,6 @@
 {
   "name": "@comity/payment",
-  "version": "0.1.0",
+  "version": "0.9.0",
   "description": "Payment domain abstractions for Comity.",
   "type": "module",
   "author": "Filippo Bovo <hello@filippobovo.com>",

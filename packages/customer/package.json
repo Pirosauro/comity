@@ -1,6 +1,6 @@
 {
   "name": "@comity/customer",
-  "version": "0.1.0",
+  "version": "0.9.0",
   "description": "Customer domain abstractions for Comity modules.",
   "type": "module",
   "author": "Filippo Bovo <hello@filippobovo.com>",

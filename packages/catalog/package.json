@@ -1,6 +1,6 @@
 {
   "name": "@comity/catalog",
-  "version": "0.1.0",
+  "version": "0.9.0",
   "description": "Product catalog domain abstractions for Comity.",
   "type": "module",
   "author": "Filippo Bovo <hello@filippobovo.com>",

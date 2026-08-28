@@ -1,6 +1,6 @@
 {
   "name": "@comity/order",
-  "version": "0.1.0",
+  "version": "0.9.0",
   "description": "Order domain contracts for Comity commerce modules.",
   "type": "module",
   "author": "Filippo Bovo <hello@filippobovo.com>",

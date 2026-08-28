@@ -1,6 +1,6 @@
 {
   "name": "@comity/taxonomy",
-  "version": "0.1.0",
+  "version": "0.9.0",
   "description": "Shared taxonomy and category abstractions for Comity domain modules.",
   "type": "module",
   "author": "Filippo Bovo <hello@filippobovo.com>",

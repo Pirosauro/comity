@@ -1,6 +1,6 @@
 {
   "name": "@comity/content",
-  "version": "0.1.0",
+  "version": "0.9.0",
   "description": "CMS and content abstractions for Comity domain modules.",
   "type": "module",
   "license": "MIT",

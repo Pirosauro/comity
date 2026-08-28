@@ -1,6 +1,6 @@
 {
   "name": "@comity/acl",
-  "version": "0.1.0",
+  "version": "0.9.0",
   "description": "Authorization capability for Comity modules.",
   "type": "module",
   "author": "Filippo Bovo <hello@filippobovo.com>",

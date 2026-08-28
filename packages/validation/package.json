@@ -1,6 +1,6 @@
 {
   "name": "@comity/validation",
-  "version": "0.1.0",
+  "version": "0.9.0",
   "description": "Validation contracts for Comity core modules.",
   "type": "module",
   "author": "Filippo Bovo <hello@filippobovo.com>",
