@@ -102,6 +102,32 @@ For rendering modules (`@comity/html`), the exception is scoped strictly to cont
 
 Dependencies that fail one or more acceptance criteria and SHOULD be removed or refactored. They are kept in the register only because they currently exist and removal is a migration, not a decision.
 
+#### Migration Status
+
+| Dependency         | Status      | Target Resolution | Notes                                                                 |
+| ------------------ | ----------- | ----------------- | --------------------------------------------------------------------- |
+| `catalog → search` | **Deferred** | Next major version | Migration requires public API change. See Migration Plan below.      |
+| `taxonomy → search` | **Deferred** | Next major version | Same as above; taxonomy repository contract embeds search types.      |
+| `content → search` | **Deferred** | Next major version | Same as above; content repository contract embeds search types.       |
+
+#### Migration Plan: `catalog → search`
+
+**Problem**: `ProductRepository` embeds `SearchCriteriaModel` / `SearchResultModel` from `@comity/search` in its public contract, violating contract surface isolation (Acceptance Criterion 8). Search is a separate capability not owned by catalog.
+
+**Migration Path** (breaking change, requires major version):
+
+1. **Define a Search Port** in `@comity/search` (e.g., `ProductSearchPort` or similar) that exposes the search-shaped operations (`search(criteria): SearchResultModel<ProductProjection>`) without embedding the full `SearchCriteriaModel`/`SearchResultModel` in the catalog contract.
+
+2. **Update `ProductRepository`** to remove the `search()` method. The catalog contract becomes a pure read-projection port (`getById`, `getBySlug`).
+
+3. **Application Layer** composes `ProductRepository` + `ProductSearchPort` for search functionality. This aligns with the capability composition model: the Application Layer decides which capabilities to compose.
+
+4. **Adapters** implementing `ProductRepository` no longer need to implement search logic. Search adapters implement the Search Port.
+
+**Timeline**: Target removal in next major version cycle. No action required in current minor/patch releases.
+
+---
+
 ## Dependency Register (closed list)
 
 ### Capability Exceptions

@@ -3,6 +3,7 @@
   "version": "0.9.0",
   "description": "Key-Value cache module for Comity framework",
   "type": "module",
+  "private": false,
   "author": "Filippo Bovo <hello@filippobovo.com>",
   "license": "MIT",
   "homepage": "https://github.com/comityjs/framework#readme",
@@ -73,6 +74,11 @@
     "access": "public"
   },
   "sideEffects": false,
+  "peerDependencies": {
+    "@comity/cache": "workspace:*",
+    "@comity/composition": "workspace:*",
+    "@comity/primitives": "workspace:*"
+  },
   "dependencies": {
     "@comity/cache": "workspace:*",
     "@comity/composition": "workspace:*",
@@ -81,11 +87,5 @@
   "devDependencies": {
     "@types/node": "^24.13.3",
     "typescript": "^5.9.3"
-  },
-  "peerDependencies": {
-    "@comity/cache": "workspace:*",
-    "@comity/composition": "workspace:*",
-    "@comity/primitives": "workspace:*"
-  },
-  "private": false
+  }
 }

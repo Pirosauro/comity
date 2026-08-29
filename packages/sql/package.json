@@ -3,6 +3,7 @@
   "version": "0.9.0",
   "description": "SQL adapter module for Comity framework.",
   "type": "module",
+  "private": false,
   "author": "Filippo Bovo <hello@filippobovo.com>",
   "license": "MIT",
   "homepage": "https://github.com/comityjs/framework#readme",
@@ -18,8 +19,8 @@
   },
   "keywords": [
     "comity",
-    "sql",
     "database",
+    "sql",
     "typescript"
   ],
   "scripts": {
@@ -85,7 +86,6 @@
     "access": "public"
   },
   "sideEffects": false,
-  "private": false,
   "dependencies": {
     "@comity/primitives": "workspace:*"
   },

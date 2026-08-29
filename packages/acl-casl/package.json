@@ -3,6 +3,7 @@
   "version": "0.9.0",
   "description": "CASL adapter for @comity/acl.",
   "type": "module",
+  "private": false,
   "author": "Filippo Bovo <hello@filippobovo.com>",
   "license": "MIT",
   "homepage": "https://github.com/comityjs/framework#readme",
@@ -16,12 +17,11 @@
   "engines": {
     "node": ">=24.0.0"
   },
-  "private": false,
   "keywords": [
     "comity",
     "acl",
-    "casl",
-    "authorization"
+    "authorization",
+    "casl"
   ],
   "scripts": {
     "build": "node ../../scripts/build.mjs",
@@ -56,6 +56,10 @@
     "access": "public"
   },
   "sideEffects": false,
+  "peerDependencies": {
+    "@comity/acl": "workspace:*",
+    "@casl/ability": "^7.0.0"
+  },
   "dependencies": {
     "@comity/acl": "workspace:*",
     "@comity/primitives": "workspace:*"
@@ -64,9 +68,5 @@
     "@casl/ability": "^7.0.1",
     "@types/node": "^24.13.3",
     "typescript": "^5.9.3"
-  },
-  "peerDependencies": {
-    "@comity/acl": "workspace:*",
-    "@casl/ability": "^7.0.0"
   }
 }

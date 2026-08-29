@@ -3,6 +3,7 @@
   "version": "0.9.0",
   "description": "Hono HTTP adapter for Comity framework applications",
   "type": "module",
+  "private": false,
   "author": "Filippo Bovo <hello@filippobovo.com>",
   "license": "MIT",
   "homepage": "https://github.com/comityjs/framework#readme",
@@ -19,10 +20,10 @@
   "keywords": [
     "comity",
     "comityjs",
-    "framework",
-    "http",
-    "hono",
     "adapter",
+    "framework",
+    "hono",
+    "http",
     "typescript"
   ],
   "scripts": {
@@ -75,7 +76,12 @@
     "access": "public"
   },
   "sideEffects": false,
-  "private": false,
+  "peerDependencies": {
+    "@comity/composition": "workspace:*",
+    "@comity/http": "workspace:*",
+    "@comity/primitives": "workspace:*",
+    "hono": "^4.12"
+  },
   "dependencies": {
     "@comity/composition": "workspace:*",
     "@comity/http": "workspace:*",
@@ -85,11 +91,5 @@
     "@types/node": "^24.13.3",
     "hono": "^4.13.5",
     "typescript": "^5.9.3"
-  },
-  "peerDependencies": {
-    "@comity/composition": "workspace:*",
-    "@comity/http": "workspace:*",
-    "@comity/primitives": "workspace:*",
-    "hono": "^4.12"
   }
 }

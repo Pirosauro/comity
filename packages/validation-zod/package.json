@@ -3,6 +3,7 @@
   "version": "0.9.0",
   "description": "Zod adapter for @comity/validation contracts.",
   "type": "module",
+  "private": false,
   "author": "Filippo Bovo <hello@filippobovo.com>",
   "license": "MIT",
   "homepage": "https://github.com/comityjs/framework#readme",
@@ -19,10 +20,10 @@
   "keywords": [
     "comity",
     "comityjs",
-    "validation",
-    "zod",
     "adapter",
-    "typescript"
+    "typescript",
+    "validation",
+    "zod"
   ],
   "scripts": {
     "build": "node ../../scripts/build.mjs",
@@ -60,6 +61,10 @@
     "access": "public"
   },
   "sideEffects": false,
+  "peerDependencies": {
+    "@comity/validation": "workspace:*",
+    "zod": "^4"
+  },
   "dependencies": {
     "@comity/primitives": "workspace:*",
     "@comity/validation": "workspace:*"
@@ -67,10 +72,5 @@
   "devDependencies": {
     "@types/node": "^24.13.3",
     "typescript": "^5.9.3"
-  },
-  "peerDependencies": {
-    "@comity/validation": "workspace:*",
-    "zod": "^4"
-  },
-  "private": false
+  }
 }

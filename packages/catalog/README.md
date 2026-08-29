@@ -2,8 +2,6 @@
 
 Product catalog domain abstractions for Comity.
 
-> **Catalog owns product definition, not commercial execution.**
-
 ---
 
 ## Purpose
@@ -41,15 +39,6 @@ This package:
 - Setup — kernel module metadata, tokens, and wiring (`@comity/catalog/setup`)
 
 No exhaustive reference; see docs for constraints.
----
-
-## Related Packages
-
-- @comity/pricing — price contracts
-- @comity/inventory — stock contracts
-- @comity/taxonomy — category/taxonomy contracts (`categoryId`)
-- @comity/storefront — page composition consuming catalog
-- @comity/search — search criteria models
 
 ---
 
@@ -59,6 +48,16 @@ No exhaustive reference; see docs for constraints.
 - docs/conventions.md
 - docs/architecture.md
 - `docs/standards/decisions/ADR-011-catalog-product-definition-only.md`
+
+---
+
+## Related Packages
+
+- @comity/pricing — price contracts
+- @comity/inventory — stock contracts
+- @comity/taxonomy — category/taxonomy contracts (`categoryId`)
+- @comity/storefront — page composition consuming catalog
+- @comity/search — search criteria models
 
 ---
 

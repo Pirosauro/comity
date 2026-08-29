@@ -3,6 +3,7 @@
   "version": "0.9.0",
   "description": "path-to-regexp adapter for Comity applications.",
   "type": "module",
+  "private": false,
   "author": "Filippo Bovo <hello@filippobovo.com>",
   "license": "MIT",
   "homepage": "https://github.com/comityjs/framework#readme",
@@ -19,11 +20,11 @@
   "keywords": [
     "comity",
     "comityjs",
+    "adapter",
     "framework",
+    "path-to-regexp",
     "router",
     "routing",
-    "path-to-regexp",
-    "adapter",
     "typescript"
   ],
   "scripts": {
@@ -59,7 +60,10 @@
     "access": "public"
   },
   "sideEffects": false,
-  "private": false,
+  "peerDependencies": {
+    "@comity/router": "workspace:*",
+    "path-to-regexp": "^8.0.0"
+  },
   "dependencies": {
     "@comity/router": "workspace:*"
   },
@@ -67,9 +71,5 @@
     "@types/node": "^24.13.3",
     "path-to-regexp": "^8.4.2",
     "typescript": "^5.9.3"
-  },
-  "peerDependencies": {
-    "@comity/router": "workspace:*",
-    "path-to-regexp": "^8.0.0"
   }
 }

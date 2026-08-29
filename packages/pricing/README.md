@@ -45,13 +45,6 @@ This package:
 
 ---
 
-## Documentation
-
-- docs/overview.md
-- docs/conventions.md
-
----
-
 ## Public API
 
 - Currency contracts — ISO 4217 currency codes with minor-unit precision
@@ -62,6 +55,13 @@ This package:
 - Error types — pricing failure reasons and metadata (`@comity/pricing/errors`)
 
 No exhaustive reference; see docs for constraints.
+
+---
+
+## Documentation
+
+- docs/overview.md
+- docs/conventions.md
 
 ---
 

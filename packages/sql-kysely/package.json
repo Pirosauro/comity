@@ -3,6 +3,7 @@
   "version": "0.9.0",
   "description": "Kysely ORM adapter for @comity/sql contracts",
   "type": "module",
+  "private": false,
   "author": "Filippo Bovo <hello@filippobovo.com>",
   "license": "MIT",
   "homepage": "https://github.com/comityjs/framework#readme",
@@ -18,9 +19,9 @@
   },
   "keywords": [
     "comity",
-    "sql",
-    "kysely",
     "adapter",
+    "kysely",
+    "sql",
     "typescript"
   ],
   "scripts": {
@@ -59,7 +60,10 @@
     "access": "public"
   },
   "sideEffects": false,
-  "private": false,
+  "peerDependencies": {
+    "@comity/sql": "workspace:*",
+    "kysely": "^0.28.0"
+  },
   "dependencies": {
     "@comity/sql": "workspace:*"
   },
@@ -67,9 +71,5 @@
     "@types/node": "^24.13.3",
     "kysely": "^0.28.17",
     "typescript": "^5.9.3"
-  },
-  "peerDependencies": {
-    "@comity/sql": "workspace:*",
-    "kysely": "^0.28.0"
   }
 }

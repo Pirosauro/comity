@@ -1,12 +1,15 @@
 import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import {
-  PACKAGE_NAME_PATTERN,
+  CANONICAL_BUGS,
+  CANONICAL_HOMEPAGE,
+  CANONICAL_REPOSITORY,
+  FORBIDDEN_SUBPATHS,
+  META_SOURCE,
   MIN_NODE_MAJOR,
   MIN_NODE_MINOR,
   MIN_NODE_PATCH,
-  FORBIDDEN_SUBPATHS,
-  META_SOURCE,
+  PACKAGE_NAME_PATTERN,
 } from "../context.mjs";
 
 export function collectExportTargets(value) {
@@ -74,7 +77,7 @@ export function validate(context) {
         message: `Package name does not follow the @comity/<name> convention: ${JSON.stringify(manifest.name)}`,
         edge: { from: name, to: "name" },
         source: META_SOURCE,
-        remediation: "Set package.json \"name\" to \"@comity/<kebab-case-name>\".",
+        remediation: 'Set package.json "name" to "@comity/<kebab-case-name>".',
       });
     }
 
@@ -84,7 +87,7 @@ export function validate(context) {
         message: `package.json "type" must be "module" (got ${JSON.stringify(manifest.type)})`,
         edge: { from: name, to: "type" },
         source: META_SOURCE,
-        remediation: "Set package.json \"type\" to \"module\".",
+        remediation: 'Set package.json "type" to "module".',
       });
     }
 
@@ -105,7 +108,66 @@ export function validate(context) {
         message: `package.json "license" is missing`,
         edge: { from: name, to: "license" },
         source: META_SOURCE,
-        remediation: "Set package.json \"license\" to a valid SPDX expression.",
+        remediation: 'Set package.json "license" to a valid SPDX expression.',
+      });
+    }
+
+    // ARCH-META-008: private must be explicitly false for publishable packages
+    if (manifest.private !== false) {
+      violations.push({
+        code: "ARCH-META-008",
+        message: `package.json "private" must be explicitly "false" for publishable packages (got ${JSON.stringify(manifest.private)})`,
+        edge: { from: name, to: "private" },
+        source: META_SOURCE,
+        remediation: 'Set package.json "private" to false.',
+      });
+    }
+
+    // ARCH-META-009: description must exist
+    if (
+      !manifest.description ||
+      typeof manifest.description !== "string" ||
+      manifest.description.trim() === ""
+    ) {
+      violations.push({
+        code: "ARCH-META-009",
+        message: `package.json "description" is missing or empty`,
+        edge: { from: name, to: "description" },
+        source: META_SOURCE,
+        remediation: 'Set package.json "description" to a concise package description.',
+      });
+    }
+
+    // ARCH-META-010: homepage must point to canonical Comity repository
+    if (manifest.homepage !== CANONICAL_HOMEPAGE) {
+      violations.push({
+        code: "ARCH-META-010",
+        message: `package.json "homepage" must be "${CANONICAL_HOMEPAGE}" (got ${JSON.stringify(manifest.homepage)})`,
+        edge: { from: name, to: "homepage" },
+        source: META_SOURCE,
+        remediation: `Set package.json "homepage" to "${CANONICAL_HOMEPAGE}".`,
+      });
+    }
+
+    // ARCH-META-011: repository must point to canonical Comity repository
+    if (!manifest.repository || manifest.repository.url !== CANONICAL_REPOSITORY) {
+      violations.push({
+        code: "ARCH-META-011",
+        message: `package.json "repository.url" must be "${CANONICAL_REPOSITORY}" (got ${JSON.stringify(manifest.repository?.url)})`,
+        edge: { from: name, to: "repository.url" },
+        source: META_SOURCE,
+        remediation: `Set package.json "repository.url" to "${CANONICAL_REPOSITORY}".`,
+      });
+    }
+
+    // ARCH-META-012: bugs must point to canonical Comity issues URL
+    if (!manifest.bugs || manifest.bugs.url !== CANONICAL_BUGS) {
+      violations.push({
+        code: "ARCH-META-012",
+        message: `package.json "bugs.url" must be "${CANONICAL_BUGS}" (got ${JSON.stringify(manifest.bugs?.url)})`,
+        edge: { from: name, to: "bugs.url" },
+        source: META_SOURCE,
+        remediation: `Set package.json "bugs.url" to "${CANONICAL_BUGS}".`,
       });
     }
 

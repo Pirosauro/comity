@@ -3,6 +3,7 @@
   "version": "0.9.0",
   "description": "Payment domain abstractions for Comity.",
   "type": "module",
+  "private": false,
   "author": "Filippo Bovo <hello@filippobovo.com>",
   "license": "MIT",
   "homepage": "https://github.com/comityjs/framework#readme",
@@ -19,8 +20,8 @@
   "keywords": [
     "comity",
     "comityjs",
-    "payment",
     "commerce",
+    "payment",
     "typescript"
   ],
   "scripts": {
@@ -49,16 +50,6 @@
         "default": "./dist/cjs/index.js"
       }
     },
-    "./setup": {
-      "import": {
-        "types": "./dist/types/setup/index.d.ts",
-        "default": "./dist/esm/setup/index.js"
-      },
-      "require": {
-        "types": "./dist/types/setup/index.d.ts",
-        "default": "./dist/cjs/setup/index.js"
-      }
-    },
     "./errors": {
       "import": {
         "types": "./dist/types/errors/index.d.ts",
@@ -69,15 +60,25 @@
         "default": "./dist/cjs/errors/index.js"
       }
     },
+    "./setup": {
+      "import": {
+        "types": "./dist/types/setup/index.d.ts",
+        "default": "./dist/esm/setup/index.js"
+      },
+      "require": {
+        "types": "./dist/types/setup/index.d.ts",
+        "default": "./dist/cjs/setup/index.js"
+      }
+    },
     "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
-      "setup": [
-        "./dist/types/setup/index.d.ts"
-      ],
       "errors": [
         "./dist/types/errors/index.d.ts"
+      ],
+      "setup": [
+        "./dist/types/setup/index.d.ts"
       ]
     }
   },
@@ -88,12 +89,11 @@
   "sideEffects": false,
   "dependencies": {
     "@comity/composition": "workspace:*",
-    "@comity/primitives": "workspace:*",
-    "@comity/pricing": "workspace:*"
+    "@comity/pricing": "workspace:*",
+    "@comity/primitives": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^24.13.3",
     "typescript": "^5.9.3"
-  },
-  "private": false
+  }
 }

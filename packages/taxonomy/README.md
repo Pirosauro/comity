@@ -28,19 +28,19 @@ This package:
 
 ---
 
-## Documentation
-
-- docs/overview.md
-- docs/conventions.md
-
----
-
 ## Public API
 
 - Category contracts — models, kinds, and read-projection repository
 - Setup — kernel module metadata, tokens, and wiring (`@comity/taxonomy/setup`)
 
 No exhaustive reference; see docs for constraints.
+
+---
+
+## Documentation
+
+- docs/overview.md
+- docs/conventions.md
 
 ---
 

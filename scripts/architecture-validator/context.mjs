@@ -1,15 +1,18 @@
+import { buildGraph, classifyFromRepository, discoverPackages } from "./graph.mjs";
 import {
-  REPO_ROOT,
+  parseRegisterEdges,
+  parseRejectedEdges,
+  validateRegisterSchema,
+} from "./rules/register.mjs";
+import { readJson, readText } from "./utils/filesystem.mjs";
+import {
+  ADR008_PATH,
   PACKAGES_DIR,
   REGISTER_PATH,
-  SCHEMA_PATH,
-  ADR008_PATH,
+  REPO_ROOT,
   REPOSITORY_PATH,
+  SCHEMA_PATH,
 } from "./utils/paths.mjs";
-import { readJson, readText } from "./utils/filesystem.mjs";
-import { classifyFromRepository, discoverPackages } from "./graph.mjs";
-import { buildGraph } from "./graph.mjs";
-import { parseRejectedEdges, validateRegisterSchema, parseRegisterEdges } from "./rules/register.mjs";
 
 export const KERNEL_PACKAGES = {
   "@comity/primitives": {
@@ -45,6 +48,10 @@ export const MIN_NODE_PATCH = 0;
 export const FORBIDDEN_SUBPATHS = ["utils", "helpers", "shared", "internal", "lazy"];
 
 export const META_SOURCE = "architecture-validation.md §8 / public-api.md §3 (docs/standards/)";
+
+export const CANONICAL_HOMEPAGE = "https://github.com/comityjs/framework#readme";
+export const CANONICAL_REPOSITORY = "https://github.com/comityjs/framework.git";
+export const CANONICAL_BUGS = "https://github.com/comityjs/framework/issues";
 
 export const REQUIRED_SECTIONS = [
   "Purpose",
@@ -82,11 +89,4 @@ export async function createContext() {
   };
 }
 
-export {
-  REPO_ROOT,
-  PACKAGES_DIR,
-  REGISTER_PATH,
-  SCHEMA_PATH,
-  ADR008_PATH,
-  REPOSITORY_PATH,
-};
+export { ADR008_PATH, PACKAGES_DIR, REGISTER_PATH, REPO_ROOT, REPOSITORY_PATH, SCHEMA_PATH };

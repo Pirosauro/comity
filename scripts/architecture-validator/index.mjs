@@ -2,30 +2,34 @@ import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { createContext } from "./context.mjs";
-import { formatReport } from "./report.mjs";
 import { buildGraph, classifyFromRepository, discoverPackages } from "./graph.mjs";
+import { formatReport } from "./report.mjs";
+import { validate as validateAdapterPeers } from "./rules/adapter-peers.mjs";
 import {
-  parseRejectedEdges,
-  validateRegisterSchema,
-  parseRegisterEdges,
-  validate as validateRegister,
-} from "./rules/register.mjs";
-import { validate as validateCore } from "./rules/core.mjs";
-import { validate as validateKernel } from "./rules/kernel.mjs";
-import {
-  validate as validateAdapters,
   analyzeAdapterCoreReferences,
+  extractImportReferences,
   isCompositionInfrastructureName,
   parseImportClause,
-  extractImportReferences,
+  validate as validateAdapters,
 } from "./rules/adapters.mjs";
+import { validate as validateCore } from "./rules/core.mjs";
+import { validate as validateErrors } from "./rules/errors.mjs";
+import { validate as validateImports } from "./rules/imports.mjs";
+import { validate as validateKernel } from "./rules/kernel.mjs";
 import {
-  validate as validateMetadata,
   collectExportTargets,
-  exportTargetExists,
   enginesNodeSatisfies,
+  exportTargetExists,
+  validate as validateMetadata,
 } from "./rules/metadata.mjs";
+import { validate as validateReadmeExports } from "./rules/readme-exports.mjs";
 import { validate as validateReadme } from "./rules/readme.mjs";
+import {
+  parseRegisterEdges,
+  parseRejectedEdges,
+  validate as validateRegister,
+  validateRegisterSchema,
+} from "./rules/register.mjs";
 
 async function buildAdapterAnalysis(context) {
   const { packages, classification, graph } = context;
@@ -51,6 +55,10 @@ export async function runValidation() {
     ...validateAdapters(context),
     ...(await validateMetadata(context)),
     ...(await validateReadme(context)),
+    ...(await validateErrors(context)),
+    ...(await validateAdapterPeers(context)),
+    ...(await validateImports(context)),
+    ...(await validateReadmeExports(context)),
   ];
 
   return { violations };
@@ -71,24 +79,28 @@ if (process.argv[1] && resolve(process.argv[1]) === __filename) {
 }
 
 export {
-  classifyFromRepository,
-  discoverPackages,
-  buildGraph,
-  parseRejectedEdges,
-  validateRegisterSchema,
-  parseRegisterEdges,
-  validateCore,
-  validateRegister,
-  validateKernel,
-  validateAdapters,
-  validateMetadata,
-  validateReadme,
   analyzeAdapterCoreReferences,
+  buildGraph,
+  classifyFromRepository,
+  collectExportTargets,
+  discoverPackages,
+  enginesNodeSatisfies,
+  exportTargetExists,
+  extractImportReferences,
+  formatReport,
   isCompositionInfrastructureName,
   parseImportClause,
-  extractImportReferences,
-  collectExportTargets,
-  exportTargetExists,
-  enginesNodeSatisfies,
-  formatReport,
+  parseRegisterEdges,
+  parseRejectedEdges,
+  validateAdapterPeers,
+  validateAdapters,
+  validateCore,
+  validateErrors,
+  validateImports,
+  validateKernel,
+  validateMetadata,
+  validateReadme,
+  validateReadmeExports,
+  validateRegister,
+  validateRegisterSchema,
 };

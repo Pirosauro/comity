@@ -3,6 +3,7 @@
   "version": "0.9.0",
   "description": "Address abstractions for Comity domain modules.",
   "type": "module",
+  "private": false,
   "author": "Filippo Bovo <hello@filippobovo.com>",
   "license": "MIT",
   "homepage": "https://github.com/comityjs/framework#readme",
@@ -16,7 +17,6 @@
   "engines": {
     "node": ">=24.0.0"
   },
-  "private": false,
   "keywords": [
     "comity",
     "address",

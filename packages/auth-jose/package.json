@@ -3,6 +3,7 @@
   "version": "0.9.0",
   "description": "JOSE-backed token service implementing @comity/auth token contracts.",
   "type": "module",
+  "private": false,
   "author": "Filippo Bovo <hello@filippobovo.com>",
   "license": "MIT",
   "homepage": "https://github.com/comityjs/framework#readme",
@@ -21,12 +22,12 @@
     "comityjs",
     "auth",
     "authentication",
-    "jwt",
     "jose",
-    "token",
+    "jwt",
     "refresh-token",
     "security",
     "session",
+    "token",
     "typescript"
   ],
   "scripts": {
@@ -55,16 +56,6 @@
         "default": "./dist/cjs/index.js"
       }
     },
-    "./observers": {
-      "import": {
-        "types": "./dist/types/observers/index.d.ts",
-        "default": "./dist/esm/observers/index.js"
-      },
-      "require": {
-        "types": "./dist/types/observers/index.d.ts",
-        "default": "./dist/cjs/observers/index.js"
-      }
-    },
     "./setup": {
       "import": {
         "types": "./dist/types/setup/index.d.ts",
@@ -79,9 +70,6 @@
   },
   "typesVersions": {
     "*": {
-      "observers": [
-        "./dist/types/observers/index.d.ts"
-      ],
       "setup": [
         "./dist/types/setup/index.d.ts"
       ]
@@ -92,6 +80,10 @@
     "access": "public"
   },
   "sideEffects": false,
+  "peerDependencies": {
+    "@comity/auth": "workspace:*",
+    "jose": "^6.0.0"
+  },
   "dependencies": {
     "@comity/auth": "workspace:*",
     "@comity/auth-tokens": "workspace:*",
@@ -103,10 +95,5 @@
     "@types/node": "^24.13.3",
     "jose": "^6.2.10",
     "typescript": "^5.9.3"
-  },
-  "peerDependencies": {
-    "@comity/auth": "workspace:*",
-    "jose": "^6.0.0"
-  },
-  "private": false
+  }
 }

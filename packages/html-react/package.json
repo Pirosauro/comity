@@ -3,6 +3,7 @@
   "version": "0.9.0",
   "description": "React module for server-rendered applications with Comity framework",
   "type": "module",
+  "private": false,
   "author": "Filippo Bovo <hello@filippobovo.com>",
   "license": "MIT",
   "homepage": "https://github.com/comityjs/framework#readme",
@@ -19,12 +20,12 @@
   "keywords": [
     "comity",
     "comityjs",
-    "http",
-    "rendering",
-    "react",
     "framework",
-    "typescript",
-    "javascript"
+    "http",
+    "javascript",
+    "react",
+    "rendering",
+    "typescript"
   ],
   "scripts": {
     "build": "node ../../scripts/build.mjs",
@@ -78,6 +79,11 @@
     "access": "public"
   },
   "sideEffects": false,
+  "peerDependencies": {
+    "@comity/html": "workspace:*",
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
   "dependencies": {
     "@comity/html": "workspace:*",
     "@comity/http": "workspace:*"
@@ -89,11 +95,5 @@
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "typescript": "^5.9.3"
-  },
-  "peerDependencies": {
-    "@comity/html": "workspace:*",
-    "react": "^18.0.0 || ^19.0.0",
-    "react-dom": "^18.0.0 || ^19.0.0"
-  },
-  "private": false
+  }
 }

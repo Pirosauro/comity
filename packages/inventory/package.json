@@ -3,6 +3,7 @@
   "version": "0.9.0",
   "description": "Inventory abstractions for Comity domain modules.",
   "type": "module",
+  "private": false,
   "author": "Filippo Bovo <hello@filippobovo.com>",
   "license": "MIT",
   "homepage": "https://github.com/comityjs/framework#readme",
@@ -19,9 +20,9 @@
   "keywords": [
     "comity",
     "comityjs",
+    "commerce",
     "inventory",
     "stock",
-    "commerce",
     "typescript"
   ],
   "scripts": {
@@ -80,6 +81,5 @@
   "devDependencies": {
     "@types/node": "^24.13.3",
     "typescript": "^5.9.3"
-  },
-  "private": false
+  }
 }

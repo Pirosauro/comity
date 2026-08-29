@@ -3,6 +3,7 @@
   "version": "0.9.0",
   "description": "Authentication and session domain contracts for Comity.",
   "type": "module",
+  "private": false,
   "author": "Filippo Bovo <hello@filippobovo.com>",
   "license": "MIT",
   "homepage": "https://github.com/comityjs/framework#readme",
@@ -22,10 +23,10 @@
     "auth",
     "authentication",
     "jwt",
-    "token",
     "refresh-token",
     "security",
     "session",
+    "token",
     "typescript"
   ],
   "scripts": {
@@ -137,6 +138,5 @@
   "devDependencies": {
     "@types/node": "^24.13.3",
     "typescript": "^5.9.3"
-  },
-  "private": false
+  }
 }

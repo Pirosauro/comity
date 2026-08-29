@@ -37,19 +37,19 @@ This package:
 
 ---
 
-## Documentation
-
-- docs/overview.md
-- docs/conventions.md
-
----
-
 ## Public API
 
 - Stock and reservation contracts — entities, value objects, and repository
 - Error types — inventory failure reasons and metadata (`@comity/inventory/errors`)
 
 No exhaustive reference; see docs for constraints.
+
+---
+
+## Documentation
+
+- docs/overview.md
+- docs/conventions.md
 
 ---
 

@@ -3,6 +3,7 @@
   "version": "0.9.0",
   "description": "Routing for Comity applications.",
   "type": "module",
+  "private": false,
   "author": "Filippo Bovo <hello@filippobovo.com>",
   "license": "MIT",
   "homepage": "https://github.com/comityjs/framework#readme",
@@ -20,9 +21,9 @@
     "comity",
     "comityjs",
     "framework",
+    "rewriting",
     "router",
     "routing",
-    "rewriting",
     "typescript"
   ],
   "scripts": {
@@ -88,7 +89,6 @@
     "access": "public"
   },
   "sideEffects": false,
-  "private": false,
   "dependencies": {
     "@comity/composition": "workspace:*",
     "@comity/http": "workspace:*",

@@ -3,6 +3,7 @@
   "version": "0.9.0",
   "description": "Fetch HTTP client adapter for Comity framework applications",
   "type": "module",
+  "private": false,
   "author": "Filippo Bovo <hello@filippobovo.com>",
   "license": "MIT",
   "homepage": "https://github.com/comityjs/framework#readme",
@@ -19,10 +20,10 @@
   "keywords": [
     "comity",
     "comityjs",
+    "adapter",
+    "fetch",
     "framework",
     "http",
-    "fetch",
-    "adapter",
     "typescript"
   ],
   "scripts": {
@@ -58,15 +59,14 @@
     "access": "public"
   },
   "sideEffects": false,
-  "private": false,
+  "peerDependencies": {
+    "@comity/http": "workspace:*"
+  },
   "dependencies": {
     "@comity/http": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^24.13.3",
     "typescript": "^5.9.3"
-  },
-  "peerDependencies": {
-    "@comity/http": "workspace:*"
   }
 }
