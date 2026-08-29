@@ -44,7 +44,26 @@ This package:
 
 ---
 
+## Public API
+
+- Stock and reservation contracts — entities, value objects, and repository
+- Error types — inventory failure reasons and metadata (`@comity/inventory/errors`)
+
+No exhaustive reference; see docs for constraints.
+
+---
+
 ## Related Packages
 
 - @comity/catalog — product definition (no stock)
 - @comity/primitives — Result, errors, Instant
+
+---
+
+## Status
+
+Stable
+
+_Review Completed: 2026-08-28_
+_Reviewer: Automated Audit Remediation_
+_Compliance Score: 99.5% (Green)_

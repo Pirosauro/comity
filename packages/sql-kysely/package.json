@@ -69,6 +69,7 @@
     "typescript": "^5.9.3"
   },
   "peerDependencies": {
+    "@comity/sql": "workspace:*",
     "kysely": "^0.28.0"
   }
 }

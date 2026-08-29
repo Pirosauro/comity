@@ -91,7 +91,9 @@
     "typescript": "^5.9.3"
   },
   "peerDependencies": {
+    "@comity/html": "workspace:*",
     "react": "^18.0.0 || ^19.0.0",
     "react-dom": "^18.0.0 || ^19.0.0"
-  }
+  },
+  "private": false
 }

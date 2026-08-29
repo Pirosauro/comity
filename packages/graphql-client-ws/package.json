@@ -70,5 +70,6 @@
   "peerDependencies": {
     "@comity/graphql-client": "workspace:*",
     "graphql-ws": "^6.0.0"
-  }
+  },
+  "private": false
 }

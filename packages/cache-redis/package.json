@@ -97,5 +97,6 @@
     "ioredis": {
       "optional": true
     }
-  }
+  },
+  "private": false
 }

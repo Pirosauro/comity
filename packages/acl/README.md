@@ -29,10 +29,9 @@ This package does NOT:
 ## Public API
 
 - Authorization contracts — context, decision, and authorizer interfaces
-- Error types — authorization failure reasons and metadata
+- Error types — authorization failure reasons and metadata (`@comity/acl/errors`)
 
 No exhaustive reference; see docs for constraints.
-
 ---
 
 ## Documentation

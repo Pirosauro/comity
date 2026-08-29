@@ -105,6 +105,8 @@
     "typescript": "^5.9.3"
   },
   "peerDependencies": {
+    "@comity/auth": "workspace:*",
     "jose": "^6.0.0"
-  }
+  },
+  "private": false
 }

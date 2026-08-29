@@ -88,5 +88,6 @@
   },
   "peerDependencies": {
     "typesafe-i18n": "^5.0.0"
-  }
+  },
+  "private": false
 }

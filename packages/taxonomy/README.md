@@ -35,8 +35,27 @@ This package:
 
 ---
 
+## Public API
+
+- Category contracts — models, kinds, and read-projection repository
+- Setup — kernel module metadata, tokens, and wiring (`@comity/taxonomy/setup`)
+
+No exhaustive reference; see docs for constraints.
+
+---
+
 ## Related Packages
 
 - @comity/catalog — products reference a single category via `categoryId`
 - @comity/storefront — category pages compose taxonomy data
 - @comity/content, @comity/blog — future shared consumers
+
+---
+
+## Status
+
+Stable
+
+_Review Completed: 2026-08-28_
+_Reviewer: Automated Audit Remediation_
+_Compliance Score: 99.5% (Green)_

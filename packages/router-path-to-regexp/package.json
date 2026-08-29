@@ -69,6 +69,7 @@
     "typescript": "^5.9.3"
   },
   "peerDependencies": {
+    "@comity/router": "workspace:*",
     "path-to-regexp": "^8.0.0"
   }
 }

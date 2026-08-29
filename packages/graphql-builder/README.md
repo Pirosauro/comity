@@ -30,9 +30,8 @@ This package does NOT:
 
 - Query builder
 - GraphQL value and node contracts
-- Serializer contracts
+- Serializer contracts — GraphQL value serialization (`@comity/graphql-builder/serializers`)
 - Variable helper
-
 
 No exhaustive reference; see docs for constraints.
 ---

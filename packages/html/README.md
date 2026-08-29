@@ -31,7 +31,8 @@ This package does NOT:
 - Contracts for HTML attributes, document state, head tags, layouts, and render results
 - Renderer pipeline primitives
 - Default document writer and layout collector
-
+- Error types — HTML rendering error types (`@comity/html/errors`)
+- Observers — passive event subscribers (`@comity/html/observers`)
 
 No exhaustive reference; see docs for constraints.
 ---

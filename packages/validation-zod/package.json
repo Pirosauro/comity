@@ -71,5 +71,6 @@
   "peerDependencies": {
     "@comity/validation": "workspace:*",
     "zod": "^4"
-  }
+  },
+  "private": false
 }

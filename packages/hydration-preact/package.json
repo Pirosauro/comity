@@ -70,6 +70,8 @@
     "typescript": "^5.9.3"
   },
   "peerDependencies": {
+    "@comity/hydration": "workspace:*",
     "preact": "^10.0.0"
-  }
+  },
+  "private": false
 }
