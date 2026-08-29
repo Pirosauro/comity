@@ -6,7 +6,7 @@ import { isSuccess } from "@comity/primitives/result";
 import { HttpFacade } from "@comity/http";
 import { HTTP_TOKEN } from "@comity/http/setup";
 import { HTTP_HONO_TOKEN } from "../constants.js";
-import module from "../index.js";
+import composition from "../composition.js";
 
 describe("http-hono module setup", () => {
   let define: ReturnType<typeof vi.fn>;
@@ -30,7 +30,7 @@ describe("http-hono module setup", () => {
     const facade = new HttpFacade(vi.fn().mockResolvedValue({ status: 200 }));
     resolve.mockReturnValue(facade);
 
-    const result = await module.setup(ctx, {});
+    const result = await composition.setup(ctx, {});
 
     expect(result.success).toBe(true);
     if (isSuccess(result)) {
@@ -46,7 +46,7 @@ describe("http-hono module setup", () => {
     const facade = new HttpFacade(vi.fn().mockResolvedValue({ status: 200 }));
     resolve.mockReturnValue(facade);
 
-    const result = await module.setup(ctx, {});
+    const result = await composition.setup(ctx, {});
 
     if (isSuccess(result)) {
       await result.value();
@@ -63,7 +63,7 @@ describe("http-hono module setup", () => {
     const facade = new HttpFacade(handler);
     resolve.mockReturnValue(facade);
 
-    const result = await module.setup(ctx, {});
+    const result = await composition.setup(ctx, {});
 
     if (isSuccess(result)) {
       await result.value();
@@ -92,7 +92,7 @@ describe("http-hono module setup", () => {
       hooks,
     } as unknown as ModuleSetupContext;
 
-    const result = await module.setup(configuredCtx, {});
+    const result = await composition.setup(configuredCtx, {});
 
     expect(result.success).toBe(true);
     if (isSuccess(result)) {
@@ -116,7 +116,7 @@ describe("http-hono module setup", () => {
       hooks,
     } as unknown as ModuleSetupContext;
 
-    const result = await module.setup(hooksCtx, {});
+    const result = await composition.setup(hooksCtx, {});
 
     if (isSuccess(result)) {
       await result.value();

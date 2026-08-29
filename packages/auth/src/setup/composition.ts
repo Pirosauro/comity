@@ -14,7 +14,7 @@ import { RevokeSession } from "../use-cases/session-revoke.js";
 import { StepUpSession } from "../use-cases/session-step-up.js";
 import { AUTH_TOKEN } from "./constants.js";
 
-const composition: ModuleMeta<AuthModuleOptions, AuthModuleContext> = {
+export default {
   name: "@comity/auth",
   version: "0.9.0",
 
@@ -117,6 +117,4 @@ const composition: ModuleMeta<AuthModuleOptions, AuthModuleContext> = {
       return success(undefined);
     });
   },
-};
-
-export default composition;
+} satisfies ModuleMeta<AuthModuleOptions, AuthModuleContext>;

@@ -9,7 +9,7 @@ import { CompositionError } from "@comity/composition/errors";
 import { AuthSessionId } from "@comity/auth";
 import { AUTH_TOKEN } from "@comity/auth/setup";
 import { AUTH_JOSE_TOKEN } from "../constants.js";
-import module from "../index.js";
+import composition from "../composition.js";
 
 const accessKey = new TextEncoder().encode("access-secret-32-bytes-length!!");
 const refreshKey = new TextEncoder().encode("refresh-secret-32-bytes-length!");
@@ -59,7 +59,7 @@ describe("auth-jose module setup", () => {
   });
 
   it("should fail when no issuer is configured", async () => {
-    const result = await module.setup(ctx, {
+    const result = await composition.setup(ctx, {
       audience: "audience",
       accessKey,
       refreshKey,
@@ -81,7 +81,7 @@ describe("auth-jose module setup", () => {
   });
 
   it("should fail when no access key is configured", async () => {
-    const result = await module.setup(ctx, {
+    const result = await composition.setup(ctx, {
       issuer: "issuer",
       audience: "audience",
       refreshKey,
@@ -100,7 +100,7 @@ describe("auth-jose module setup", () => {
   });
 
   it("should fail when no refresh key is configured", async () => {
-    const result = await module.setup(ctx, {
+    const result = await composition.setup(ctx, {
       issuer: "issuer",
       audience: "audience",
       accessKey,
@@ -122,7 +122,7 @@ describe("auth-jose module setup", () => {
     const auth = { createSession: vi.fn() } as unknown as AuthFacade;
     resolve.mockReturnValue(auth);
 
-    const result = await module.setup(ctx, {
+    const result = await composition.setup(ctx, {
       issuer: "issuer",
       audience: "audience",
       accessKey,
@@ -150,7 +150,7 @@ describe("auth-jose module setup", () => {
     } as unknown as AuthFacade;
     resolve.mockReturnValue(auth);
 
-    const result = await module.setup(ctx, {
+    const result = await composition.setup(ctx, {
       issuer: "issuer",
       audience: "audience",
       accessKey,
@@ -204,7 +204,7 @@ describe("auth-jose module setup", () => {
       hooks,
     } as unknown as ModuleSetupContext;
 
-    const result = await module.setup(configuredCtx, {});
+    const result = await composition.setup(configuredCtx, {});
 
     expect(result.success).toBe(true);
     if (isSuccess(result)) {
@@ -228,7 +228,7 @@ describe("auth-jose module setup", () => {
       hooks,
     } as unknown as ModuleSetupContext;
 
-    const result = await module.setup(hooksCtx, {
+    const result = await composition.setup(hooksCtx, {
       issuer: "issuer",
       audience: "audience",
       accessKey,

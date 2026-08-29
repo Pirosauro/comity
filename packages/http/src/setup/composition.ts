@@ -8,7 +8,7 @@ import { HttpFacade } from "../facade.js";
 import { createHttpHandler } from "../handler.js";
 import { HTTP_TOKEN } from "./constants.js";
 
-const composition: ModuleMeta<HttpModuleOptions, HttpModuleContext> = {
+export default {
   name: "@comity/http",
   version: "0.9.0",
 
@@ -64,6 +64,4 @@ const composition: ModuleMeta<HttpModuleOptions, HttpModuleContext> = {
       return success(undefined);
     });
   },
-};
-
-export default composition;
+} satisfies ModuleMeta<HttpModuleOptions, HttpModuleContext>;

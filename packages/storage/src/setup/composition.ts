@@ -6,7 +6,7 @@ import { failure, success } from "@comity/primitives/result";
 import { DefaultStorage } from "../facade.js";
 import { STORAGE_TOKEN } from "./constants.js";
 
-const composition: ModuleMeta<StorageModuleOptions, StorageModuleContext> = {
+export default {
   name: "@comity/storage",
   version: "0.9.0",
 
@@ -44,6 +44,4 @@ const composition: ModuleMeta<StorageModuleOptions, StorageModuleContext> = {
       return success(undefined);
     });
   },
-};
-
-export default composition;
+} satisfies ModuleMeta<StorageModuleOptions, StorageModuleContext>;

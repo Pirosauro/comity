@@ -9,7 +9,7 @@ import { CompositionError } from "@comity/composition/errors";
 import { AuthSessionId } from "../../value-objects/auth-session-id.js";
 import { MemoryAuthSessionRepository } from "../../repositories/memory.js";
 import { AUTH_TOKEN } from "../constants.js";
-import module from "../index.js";
+import composition from "../composition.js";
 
 function sessionId(value: string): AuthSessionId {
   const result = AuthSessionId.create(value);
@@ -58,7 +58,7 @@ describe("auth module setup", () => {
   });
 
   it("should fail when no repository is configured", async () => {
-    const result = await module.setup(ctx, { evaluator: createEvaluator() });
+    const result = await composition.setup(ctx, { evaluator: createEvaluator() });
 
     expect(result.success).toBe(true);
     if (isSuccess(result)) {
@@ -75,7 +75,7 @@ describe("auth module setup", () => {
   });
 
   it("should fail when no evaluator is configured", async () => {
-    const result = await module.setup(ctx, { repository: new MemoryAuthSessionRepository() });
+    const result = await composition.setup(ctx, { repository: new MemoryAuthSessionRepository() });
 
     expect(result.success).toBe(true);
     if (isSuccess(result)) {
@@ -89,7 +89,7 @@ describe("auth module setup", () => {
   });
 
   it("should succeed and define the auth facade service", async () => {
-    const result = await module.setup(ctx, createOptions());
+    const result = await composition.setup(ctx, createOptions());
 
     expect(result.success).toBe(true);
     if (isSuccess(result)) {
@@ -112,7 +112,7 @@ describe("auth module setup", () => {
       hooks,
     } as unknown as ModuleSetupContext;
 
-    const result = await module.setup(configuredCtx, {});
+    const result = await composition.setup(configuredCtx, {});
 
     expect(result.success).toBe(true);
     if (isSuccess(result)) {
@@ -134,7 +134,7 @@ describe("auth module setup", () => {
       hooks,
     } as unknown as ModuleSetupContext;
 
-    const result = await module.setup(hooksCtx, createOptions());
+    const result = await composition.setup(hooksCtx, createOptions());
 
     if (isSuccess(result)) {
       await result.value();
@@ -145,7 +145,7 @@ describe("auth module setup", () => {
 
   it("should return a working auth facade that creates sessions", async () => {
     const repository = new MemoryAuthSessionRepository();
-    const result = await module.setup(ctx, { ...createOptions(), repository });
+    const result = await composition.setup(ctx, { ...createOptions(), repository });
 
     if (isSuccess(result)) {
       await result.value();
@@ -174,7 +174,7 @@ describe("auth module setup", () => {
   });
 
   it("should emit session_created when creating a session", async () => {
-    const result = await module.setup(ctx, createOptions());
+    const result = await composition.setup(ctx, createOptions());
 
     if (isSuccess(result)) {
       await result.value();

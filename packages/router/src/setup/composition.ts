@@ -6,7 +6,7 @@ import { success } from "@comity/primitives/result";
 import { createRouterHttpHandler } from "../create-route-handler.js";
 import { RouterPipeline } from "../pipeline.js";
 
-const composition: ModuleMeta<RouterModuleOptions, RouterModuleContext & HttpModuleContext> = {
+export default {
   name: "@comity/router",
   version: "0.9.0",
 
@@ -35,6 +35,4 @@ const composition: ModuleMeta<RouterModuleOptions, RouterModuleContext & HttpMod
       return success(undefined);
     });
   },
-};
-
-export default composition;
+} satisfies ModuleMeta<RouterModuleOptions, RouterModuleContext & HttpModuleContext>;

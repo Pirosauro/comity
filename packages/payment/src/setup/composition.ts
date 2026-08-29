@@ -1,22 +1,16 @@
 import type { ModuleMeta } from "@comity/composition/setup";
-import type { ModuleSetupContext, ModuleSetupFn } from "@comity/composition/setup";
-import type { PaymentProvider } from "../contracts/payment-provider.js";
 import { success } from "@comity/primitives/result";
+import type { PaymentProvider } from "../contracts/payment-provider.js";
 
 import { PAYMENT_PROVIDER_TOKEN } from "./constants.js";
-import type {
-  PaymentModuleContext,
-  PaymentModuleEvents,
-  PaymentModuleHooks,
-  PaymentModuleServices,
-} from "./types.js";
+import type { PaymentModuleContext, PaymentModuleServices } from "./types.js";
 
 export type PaymentModuleOptions = {
   /** The payment provider to use. Required for production. */
   provider?: PaymentProvider;
 };
 
-const composition: ModuleMeta<PaymentModuleOptions, PaymentModuleContext> = {
+export default {
   name: "@comity/payment",
   version: "0.1.0",
 
@@ -24,10 +18,7 @@ const composition: ModuleMeta<PaymentModuleOptions, PaymentModuleContext> = {
   incompatibleWith: [],
 
   /** @inheritdoc */
-  setup: async (
-    ctx: PaymentModuleContext,
-    options?: PaymentModuleOptions
-  ) => {
+  setup: async (ctx: PaymentModuleContext, options?: PaymentModuleOptions) => {
     const initial: PaymentModuleOptions = {
       ...(options ?? {}),
     };
@@ -51,6 +42,4 @@ const composition: ModuleMeta<PaymentModuleOptions, PaymentModuleContext> = {
       return success(undefined);
     });
   },
-};
-
-export default composition;
+} satisfies ModuleMeta<PaymentModuleOptions, PaymentModuleContext>;

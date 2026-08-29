@@ -5,7 +5,7 @@ import type { KvCacheModuleContext, KvCacheModuleOptions } from "./types.js";
 import { success } from "@comity/primitives/result";
 import { KvCacheStore } from "../store.js";
 
-const composition: ModuleMeta<KvCacheModuleOptions, KvCacheModuleContext & CacheModuleContext> = {
+export default {
   name: "@comity/cache-kv",
   version: "0.9.0",
 
@@ -27,6 +27,4 @@ const composition: ModuleMeta<KvCacheModuleOptions, KvCacheModuleContext & Cache
 
     return success(async () => success(undefined));
   },
-};
-
-export default composition;
+} satisfies ModuleMeta<KvCacheModuleOptions, KvCacheModuleContext & CacheModuleContext>;

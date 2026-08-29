@@ -5,7 +5,7 @@ import type { ModuleSetupContext } from "@comity/composition/setup";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { DefaultHookBus } from "@comity/primitives/lifecycle";
 import { isSuccess } from "@comity/primitives/result";
-import module from "../index.js";
+import composition from "../composition.js";
 
 function createContext(): HttpContext {
   return {
@@ -41,7 +41,7 @@ describe("router module setup", () => {
   });
 
   it("should succeed with default configuration", async () => {
-    const result = await module.setup(ctx, {});
+    const result = await composition.setup(ctx, {});
 
     expect(result.success).toBe(true);
     if (isSuccess(result)) {
@@ -52,7 +52,7 @@ describe("router module setup", () => {
   });
 
   it("should register an http:configuring hook that provides a router handler", async () => {
-    const result = await module.setup(ctx, {});
+    const result = await composition.setup(ctx, {});
 
     expect(result.success).toBe(true);
     if (isSuccess(result)) {
@@ -76,7 +76,7 @@ describe("router module setup", () => {
       }),
     };
 
-    const result = await module.setup(ctx, { routers: [router] });
+    const result = await composition.setup(ctx, { routers: [router] });
 
     if (isSuccess(result)) {
       await result.value();
@@ -101,7 +101,7 @@ describe("router module setup", () => {
       match: vi.fn().mockResolvedValue(null),
     };
 
-    const result = await module.setup(ctx, { routers: [router] });
+    const result = await composition.setup(ctx, { routers: [router] });
 
     if (isSuccess(result)) {
       await result.value();
@@ -127,7 +127,7 @@ describe("router module setup", () => {
       rewrite: vi.fn().mockResolvedValue(new URL("https://example.com/rewritten")),
     };
 
-    const result = await module.setup(ctx, { routers: [router], rewriters: [rewriter] });
+    const result = await composition.setup(ctx, { routers: [router], rewriters: [rewriter] });
 
     if (isSuccess(result)) {
       await result.value();
@@ -160,7 +160,7 @@ describe("router module setup", () => {
       hooks,
     } as unknown as ModuleSetupContext;
 
-    const result = await module.setup(configuredCtx, {});
+    const result = await composition.setup(configuredCtx, {});
 
     expect(result.success).toBe(true);
     if (isSuccess(result)) {
@@ -189,7 +189,7 @@ describe("router module setup", () => {
       hooks,
     } as unknown as ModuleSetupContext;
 
-    const result = await module.setup(hooksCtx, {});
+    const result = await composition.setup(hooksCtx, {});
 
     if (isSuccess(result)) {
       await result.value();

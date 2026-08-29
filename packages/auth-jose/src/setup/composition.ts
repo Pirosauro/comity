@@ -4,14 +4,14 @@ import type { AuthJoseEventObserver } from "../observers/observer.js";
 import type { JoseAuthTokenServiceOptions } from "../types.js";
 import type { JoseAuthModuleContext, JoseAuthModuleOptions } from "./types.js";
 
-import { AUTH_TOKEN } from "@comity/auth/setup";
 import { DefaultAuthTokenFacade } from "@comity/auth-tokens";
+import { AUTH_TOKEN } from "@comity/auth/setup";
 import { CompositionError } from "@comity/composition/errors";
 import { failure, success } from "@comity/primitives/result";
 import { JoseAuthTokenService } from "../auth-token.js";
 import { AUTH_JOSE_TOKEN } from "./constants.js";
 
-const composition: ModuleMeta<JoseAuthModuleOptions, JoseAuthModuleContext & AuthModuleContext> = {
+export default {
   name: "@comity/auth-jose",
   version: "0.9.0",
 
@@ -67,8 +67,7 @@ const composition: ModuleMeta<JoseAuthModuleOptions, JoseAuthModuleContext & Aut
 
       const observer: AuthJoseEventObserver = {
         /** @inheritdoc */
-        onTokenVerified: (payload) =>
-          ctx.events.emit("@comity/auth-jose:token_verified", payload),
+        onTokenVerified: (payload) => ctx.events.emit("@comity/auth-jose:token_verified", payload),
 
         /** @inheritdoc */
         onTokenInvalid: (payload) => ctx.events.emit("@comity/auth-jose:token_invalid", payload),
@@ -83,6 +82,4 @@ const composition: ModuleMeta<JoseAuthModuleOptions, JoseAuthModuleContext & Aut
       return success(undefined);
     });
   },
-};
-
-export default composition;
+} satisfies ModuleMeta<JoseAuthModuleOptions, JoseAuthModuleContext & AuthModuleContext>;

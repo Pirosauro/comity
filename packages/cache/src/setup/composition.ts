@@ -6,7 +6,7 @@ import { failure, success } from "@comity/primitives/result";
 import { DefaultCache } from "../facade.js";
 import { CACHE_TOKEN } from "./constants.js";
 
-const composition: ModuleMeta<CacheModuleOptions, CacheModuleContext> = {
+export default {
   name: "@comity/cache",
   version: "0.9.0",
 
@@ -44,6 +44,4 @@ const composition: ModuleMeta<CacheModuleOptions, CacheModuleContext> = {
       return success(undefined);
     });
   },
-};
-
-export default composition;
+} satisfies ModuleMeta<CacheModuleOptions, CacheModuleContext>;

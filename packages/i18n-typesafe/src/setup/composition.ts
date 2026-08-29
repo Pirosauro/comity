@@ -7,7 +7,7 @@ import { failure, success } from "@comity/primitives/result";
 import { createTypesafeFactory } from "../factory.js";
 import { TypesafeI18nLoader } from "../loader.js";
 
-const composition: ModuleMeta<I18nTypesafeModuleOptions, I18nModuleContext> = {
+export default {
   name: "@comity/i18n-typesafe",
   version: "0.9.0",
 
@@ -48,6 +48,4 @@ const composition: ModuleMeta<I18nTypesafeModuleOptions, I18nModuleContext> = {
 
     return success(async () => success(undefined));
   },
-};
-
-export default composition;
+} satisfies ModuleMeta<I18nTypesafeModuleOptions, I18nModuleContext>;

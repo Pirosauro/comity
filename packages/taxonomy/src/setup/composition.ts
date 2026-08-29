@@ -1,17 +1,11 @@
 import type { ModuleMeta } from "@comity/composition/setup";
 import { success } from "@comity/primitives/result";
 
-import { TAXONOMY_REPOSITORY_TOKEN } from "./constants.js";
-import type {
-  TaxonomyModuleContext,
-  TaxonomyModuleEvents,
-  TaxonomyModuleHooks,
-  TaxonomyModuleServices,
-} from "./types.js";
+import type { TaxonomyModuleContext } from "./types.js";
 
 export type TaxonomyModuleOptions = {};
 
-const composition: ModuleMeta<TaxonomyModuleOptions, TaxonomyModuleContext> = {
+export default {
   name: "@comity/taxonomy",
   version: "0.1.0",
 
@@ -20,6 +14,4 @@ const composition: ModuleMeta<TaxonomyModuleOptions, TaxonomyModuleContext> = {
 
   /** @inheritdoc */
   setup: async () => success(async () => success(undefined)),
-};
-
-export default composition;
+} satisfies ModuleMeta<TaxonomyModuleOptions, TaxonomyModuleContext>;

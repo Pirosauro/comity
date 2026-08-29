@@ -6,7 +6,7 @@ import { DefaultHookBus } from "@comity/primitives/lifecycle";
 import { isSuccess } from "@comity/primitives/result";
 import { DefaultCache } from "../../facade.js";
 import { CACHE_TOKEN } from "../constants.js";
-import module from "../index.js";
+import composition from "../composition.js";
 import { MemoryCacheStore } from "../../stores/memory.js";
 
 function createContext() {
@@ -26,7 +26,7 @@ describe("cache module setup", () => {
   it("should fail when no store is configured", async () => {
     const { ctx } = createContext();
 
-    const result = await module.setup(ctx, {});
+    const result = await composition.setup(ctx, {});
 
     expect(result.success).toBe(true);
     if (isSuccess(result)) {
@@ -46,7 +46,7 @@ describe("cache module setup", () => {
     const store = new MemoryCacheStore();
     const { ctx, define } = createContext();
 
-    const result = await module.setup(ctx, { store });
+    const result = await composition.setup(ctx, { store });
 
     expect(result.success).toBe(true);
     if (isSuccess(result)) {
@@ -65,7 +65,7 @@ describe("cache module setup", () => {
 
     ctx.hooks.define("@comity/cache:configuring", (cfg) => ({ ...cfg, store }));
 
-    const result = await module.setup(ctx, {});
+    const result = await composition.setup(ctx, {});
 
     expect(result.success).toBe(true);
     if (isSuccess(result)) {
@@ -79,7 +79,7 @@ describe("cache module setup", () => {
     const store = new MemoryCacheStore();
     const { ctx, define } = createContext();
 
-    const result = await module.setup(ctx, { store });
+    const result = await composition.setup(ctx, { store });
 
     if (isSuccess(result)) {
       await result.value();

@@ -9,7 +9,7 @@ import { Hono } from "hono/quick";
 import { httpHonoAdapter } from "../adapter.js";
 import { HTTP_HONO_TOKEN } from "./constants.js";
 
-const composition: ModuleMeta<HttpHonoModuleOptions, HttpHonoModuleContext & HttpModuleContext> = {
+export default {
   name: "@comity/http-hono",
   version: "0.9.0",
 
@@ -39,6 +39,4 @@ const composition: ModuleMeta<HttpHonoModuleOptions, HttpHonoModuleContext & Htt
       return success(undefined);
     });
   },
-};
-
-export default composition;
+} satisfies ModuleMeta<HttpHonoModuleOptions, HttpHonoModuleContext & HttpModuleContext>;

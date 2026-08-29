@@ -7,7 +7,7 @@ import { failure, success } from "@comity/primitives/result";
 import { DefaultI18n } from "../facade.js";
 import { I18N_TOKEN } from "./constants.js";
 
-const composition: ModuleMeta<I18nModuleOptions, I18nModuleContext> = {
+export default {
   name: "@comity/i18n",
   version: "0.9.0",
 
@@ -56,6 +56,4 @@ const composition: ModuleMeta<I18nModuleOptions, I18nModuleContext> = {
       return success(undefined);
     });
   },
-};
-
-export default composition;
+} satisfies ModuleMeta<I18nModuleOptions, I18nModuleContext>;

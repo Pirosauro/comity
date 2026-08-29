@@ -1,10 +1,10 @@
 import type { ModuleSetupContext } from "@comity/composition/setup";
 
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import { DefaultHookBus } from "@comity/primitives/lifecycle";
 import { isSuccess } from "@comity/primitives/result";
-import module from "../index.js";
-import { I18N_TOKEN } from "../index.js";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import composition from "../composition.js";
+import { I18N_TOKEN } from "../constants.js";
 
 describe("i18n module setup", () => {
   let define: ReturnType<typeof vi.fn>;
@@ -21,7 +21,7 @@ describe("i18n module setup", () => {
   });
 
   it("should succeed and define the i18n service", async () => {
-    const result = await module.setup(ctx, {
+    const result = await composition.setup(ctx, {
       loader: { load: vi.fn() },
       factory: vi.fn(),
     });
@@ -36,7 +36,7 @@ describe("i18n module setup", () => {
   });
 
   it("should fail when no loader is configured", async () => {
-    const result = await module.setup(ctx, { factory: vi.fn() });
+    const result = await composition.setup(ctx, { factory: vi.fn() });
 
     expect(result.success).toBe(true);
     if (isSuccess(result)) {
@@ -55,7 +55,7 @@ describe("i18n module setup", () => {
   });
 
   it("should fail when no translator factory is configured", async () => {
-    const result = await module.setup(ctx, { loader: { load: vi.fn() } });
+    const result = await composition.setup(ctx, { loader: { load: vi.fn() } });
 
     expect(result.success).toBe(true);
     if (isSuccess(result)) {
@@ -86,7 +86,7 @@ describe("i18n module setup", () => {
       hooks,
     } as unknown as ModuleSetupContext;
 
-    const result = await module.setup(configuredCtx, { loader, factory });
+    const result = await composition.setup(configuredCtx, { loader, factory });
 
     expect(result.success).toBe(true);
     if (isSuccess(result)) {

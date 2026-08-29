@@ -4,13 +4,13 @@ import { DefaultHookBus } from "@comity/primitives/lifecycle";
 import { isSuccess } from "@comity/primitives/result";
 
 import { describe, expect, it, vi } from "vitest";
-import module from "../index.js";
+import composition from "../composition.js";
 
 describe("catalog module setup", () => {
   it("should expose module metadata", () => {
-    expect(module.name).toBe("@comity/catalog");
-    expect(module.version).toBe("0.1.0");
-    expect(module.dependsOn).toEqual({});
+    expect(composition.name).toBe("@comity/catalog");
+    expect(composition.version).toBe("0.1.0");
+    expect(composition.dependsOn).toEqual({});
   });
 
   it("should succeed with a no-op initializer", async () => {
@@ -20,7 +20,7 @@ describe("catalog module setup", () => {
       hooks: new DefaultHookBus<any>(),
     } as unknown as ModuleSetupContext;
 
-    const result = await module.setup(ctx, undefined);
+    const result = await composition.setup(ctx, undefined);
 
     expect(isSuccess(result)).toBe(true);
     if (isSuccess(result)) {

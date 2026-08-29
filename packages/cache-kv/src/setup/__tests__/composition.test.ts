@@ -3,8 +3,8 @@ import type { ModuleSetupContext } from "@comity/composition/setup";
 import { describe, expect, it, vi } from "vitest";
 import { DefaultHookBus } from "@comity/primitives/lifecycle";
 import { isSuccess } from "@comity/primitives/result";
-import module from "../index.js";
-import { RedisCacheStore } from "../../store.js";
+import composition from "../composition.js";
+import { KvCacheStore } from "../../store.js";
 
 function createContext() {
   const hooks = new DefaultHookBus<any>();
@@ -17,29 +17,29 @@ function createContext() {
   return { ctx, hooks };
 }
 
-describe("cache-redis module setup", () => {
-  it("should succeed even without a client", async () => {
+describe("cache-kv module setup", () => {
+  it("should succeed even without a namespace", async () => {
     const { ctx } = createContext();
 
-    const result = await module.setup(ctx, undefined);
+    const result = await composition.setup(ctx, undefined);
 
     expect(result.success).toBe(true);
   });
 
-  it("should define the configuring hook when a client is provided", async () => {
-    const client = {
+  it("should define the configuring hook when a namespace is provided", async () => {
+    const ns = {
       get: vi.fn(),
-      set: vi.fn(),
-      del: vi.fn(),
+      put: vi.fn(),
+      delete: vi.fn(),
     };
     const { ctx, hooks } = createContext();
 
-    const result = await module.setup(ctx, { client: client as any });
+    const result = await composition.setup(ctx, { ns: ns as any });
 
     expect(result.success).toBe(true);
 
     const cfg = await hooks.execute("@comity/cache:configuring", {});
 
-    expect(cfg.store).toBeInstanceOf(RedisCacheStore);
+    expect(cfg.store).toBeInstanceOf(KvCacheStore);
   });
 });

@@ -3,7 +3,7 @@ import type { ModuleSetupContext } from "@comity/composition/setup";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { DefaultHookBus } from "@comity/primitives/lifecycle";
 import { isSuccess } from "@comity/primitives/result";
-import module from "../index.js";
+import composition from "../composition.js";
 
 describe("i18n-typesafe module setup", () => {
   let ctx: ModuleSetupContext;
@@ -20,7 +20,7 @@ describe("i18n-typesafe module setup", () => {
     const loadLocaleAsync = vi.fn(async () => ({}));
     const createI18n = vi.fn(() => ({ t: () => "" }));
 
-    const result = await module.setup(ctx, { loadLocaleAsync, createI18n });
+    const result = await composition.setup(ctx, { loadLocaleAsync, createI18n });
 
     expect(result.success).toBe(true);
     if (isSuccess(result)) {
@@ -30,7 +30,7 @@ describe("i18n-typesafe module setup", () => {
   });
 
   it("should fail when the async loader is missing", async () => {
-    const result = await module.setup(ctx, { createI18n: vi.fn() } as never);
+    const result = await composition.setup(ctx, { createI18n: vi.fn() } as never);
 
     expect(result.success).toBe(false);
     if (!result.success) {
@@ -44,7 +44,7 @@ describe("i18n-typesafe module setup", () => {
   });
 
   it("should fail when the i18n factory is missing", async () => {
-    const result = await module.setup(ctx, { loadLocaleAsync: vi.fn() } as never);
+    const result = await composition.setup(ctx, { loadLocaleAsync: vi.fn() } as never);
 
     expect(result.success).toBe(false);
     if (!result.success) {
@@ -68,7 +68,7 @@ describe("i18n-typesafe module setup", () => {
       hooks,
     } as unknown as ModuleSetupContext;
 
-    const result = await module.setup(wiredCtx, { loadLocaleAsync, createI18n });
+    const result = await composition.setup(wiredCtx, { loadLocaleAsync, createI18n });
 
     expect(result.success).toBe(true);
 

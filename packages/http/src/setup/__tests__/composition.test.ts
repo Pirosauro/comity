@@ -9,7 +9,7 @@ import { DefaultHookBus } from "@comity/primitives/lifecycle";
 import { isSuccess } from "@comity/primitives/result";
 import { CompositionError } from "@comity/composition/errors";
 import { HTTP_TOKEN } from "../constants.js";
-import module from "../index.js";
+import composition from "../composition.js";
 
 function createRequest(): HttpRequest {
   return {
@@ -51,7 +51,7 @@ describe("http module setup", () => {
   });
 
   it("should fail when no HTTP handler is provided", async () => {
-    const result = await module.setup(ctx, {});
+    const result = await composition.setup(ctx, {});
 
     expect(result.success).toBe(true);
     if (isSuccess(result)) {
@@ -68,7 +68,7 @@ describe("http module setup", () => {
 
   it("should succeed and define the HTTP facade service", async () => {
     const handler = vi.fn();
-    const result = await module.setup(ctx, { handler });
+    const result = await composition.setup(ctx, { handler });
 
     expect(result.success).toBe(true);
     if (isSuccess(result)) {
@@ -91,7 +91,7 @@ describe("http module setup", () => {
       hooks,
     } as unknown as ModuleSetupContext;
 
-    const result = await module.setup(configuredCtx, {});
+    const result = await composition.setup(configuredCtx, {});
 
     expect(result.success).toBe(true);
     if (isSuccess(result)) {
@@ -114,7 +114,7 @@ describe("http module setup", () => {
       hooks,
     } as unknown as ModuleSetupContext;
 
-    const result = await module.setup(hooksCtx, { handler });
+    const result = await composition.setup(hooksCtx, { handler });
 
     if (isSuccess(result)) {
       await result.value();
@@ -126,7 +126,7 @@ describe("http module setup", () => {
   it("should return a working facade from the service factory", async () => {
     const response: HttpResponse = { status: 200, body: "ok" };
     const handler = vi.fn().mockResolvedValue(response);
-    const result = await module.setup(ctx, { handler });
+    const result = await composition.setup(ctx, { handler });
 
     if (isSuccess(result)) {
       await result.value();
@@ -141,7 +141,7 @@ describe("http module setup", () => {
   it("should emit request lifecycle events through the event bus", async () => {
     const response: HttpResponse = { status: 200, body: "ok" };
     const handler = vi.fn().mockResolvedValue(response);
-    const result = await module.setup(ctx, { handler });
+    const result = await composition.setup(ctx, { handler });
 
     if (isSuccess(result)) {
       await result.value();
@@ -176,7 +176,7 @@ describe("http module setup", () => {
     });
 
     const options: HttpModuleOptions = { middleware: [middleware], handler };
-    const result = await module.setup(ctx, options);
+    const result = await composition.setup(ctx, options);
 
     if (isSuccess(result)) {
       await result.value();
@@ -192,7 +192,7 @@ describe("http module setup", () => {
 
   it("should emit request-failed when the handler throws", async () => {
     const handler = vi.fn().mockRejectedValue(new Error("boom"));
-    const result = await module.setup(ctx, { handler });
+    const result = await composition.setup(ctx, { handler });
 
     if (isSuccess(result)) {
       await result.value();

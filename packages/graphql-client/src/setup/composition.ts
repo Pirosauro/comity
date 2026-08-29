@@ -6,7 +6,7 @@ import { failure, success } from "@comity/primitives/result";
 import { DefaultGraphqlRegistry } from "../registry.js";
 import { GRAPHQL_CLIENT_TOKEN } from "./constants.js";
 
-const composition: ModuleMeta<GraphqlClientModuleOptions, GraphqlClientModuleContext> = {
+export default {
   name: "@comity/graphql-client",
   version: "0.9.0",
 
@@ -24,7 +24,8 @@ const composition: ModuleMeta<GraphqlClientModuleOptions, GraphqlClientModuleCon
     ctx.services.define(GRAPHQL_CLIENT_TOKEN, () => registry!);
 
     return success(async () => {
-      const cfg = (await ctx.hooks.execute("@comity/graphql-client:configuring", initial)) ?? initial;
+      const cfg =
+        (await ctx.hooks.execute("@comity/graphql-client:configuring", initial)) ?? initial;
 
       if (typeof cfg !== "object" || Object.keys(cfg).length === 0) {
         return failure(
@@ -44,6 +45,4 @@ const composition: ModuleMeta<GraphqlClientModuleOptions, GraphqlClientModuleCon
       return success(undefined);
     });
   },
-};
-
-export default composition;
+} satisfies ModuleMeta<GraphqlClientModuleOptions, GraphqlClientModuleContext>;

@@ -6,7 +6,7 @@ import { isSuccess } from "@comity/primitives/result";
 import { CompositionError } from "@comity/composition/errors";
 import { GraphqlClient } from "../../client.js";
 import { GRAPHQL_CLIENT_TOKEN } from "../constants.js";
-import module from "../index.js";
+import composition from "../composition.js";
 
 function createClient(): GraphqlClient {
   return new GraphqlClient({
@@ -33,7 +33,7 @@ describe("graphql-client module setup", () => {
   });
 
   it("should fail when no transport is configured", async () => {
-    const result = await module.setup(ctx, {});
+    const result = await composition.setup(ctx, {});
 
     expect(result.success).toBe(true);
     if (isSuccess(result)) {
@@ -51,7 +51,7 @@ describe("graphql-client module setup", () => {
 
   it("should succeed and define the graphql registry service", async () => {
     const client = createClient();
-    const result = await module.setup(ctx, { catalog: client });
+    const result = await composition.setup(ctx, { catalog: client });
 
     expect(result.success).toBe(true);
     if (isSuccess(result)) {
@@ -64,7 +64,7 @@ describe("graphql-client module setup", () => {
 
   it("should return a registry exposing the configured clients", async () => {
     const client = createClient();
-    const result = await module.setup(ctx, { catalog: client });
+    const result = await composition.setup(ctx, { catalog: client });
 
     if (isSuccess(result)) {
       await result.value();
@@ -90,7 +90,7 @@ describe("graphql-client module setup", () => {
       hooks,
     } as unknown as ModuleSetupContext;
 
-    const result = await module.setup(configuredCtx, {});
+    const result = await composition.setup(configuredCtx, {});
 
     expect(result.success).toBe(true);
     if (isSuccess(result)) {
@@ -113,7 +113,7 @@ describe("graphql-client module setup", () => {
       hooks,
     } as unknown as ModuleSetupContext;
 
-    const result = await module.setup(hooksCtx, { catalog: client });
+    const result = await composition.setup(hooksCtx, { catalog: client });
 
     if (isSuccess(result)) {
       await result.value();

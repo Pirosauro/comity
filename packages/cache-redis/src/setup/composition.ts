@@ -5,10 +5,7 @@ import type { RedisCacheModuleContext, RedisCacheModuleOptions } from "./types.j
 import { success } from "@comity/primitives/result";
 import { RedisCacheStore } from "../store.js";
 
-const composition: ModuleMeta<
-  RedisCacheModuleOptions,
-  RedisCacheModuleContext & CacheModuleContext
-> = {
+export default {
   name: "@comity/cache-redis",
   version: "0.9.0",
 
@@ -30,6 +27,4 @@ const composition: ModuleMeta<
 
     return success(async () => success(undefined));
   },
-};
-
-export default composition;
+} satisfies ModuleMeta<RedisCacheModuleOptions, RedisCacheModuleContext & CacheModuleContext>;
