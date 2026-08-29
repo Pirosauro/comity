@@ -1,8 +1,9 @@
 {
   "name": "@comity/storefront",
   "version": "0.1.0",
-  "description": "Generic storefront contracts composed from Comity domain modules.",
+  "description": "Storefront page composition capability module for Comity.",
   "type": "module",
+  "private": false,
   "author": "Filippo Bovo <hello@filippobovo.com>",
   "license": "MIT",
   "homepage": "https://github.com/comityjs/framework#readme",
@@ -19,9 +20,9 @@
   "keywords": [
     "comity",
     "comityjs",
-    "storefront",
     "e-commerce",
     "ecommerce",
+    "storefront",
     "typescript"
   ],
   "scripts": {
@@ -50,6 +51,16 @@
         "default": "./dist/cjs/index.js"
       }
     },
+    "./errors": {
+      "import": {
+        "types": "./dist/types/errors/index.d.ts",
+        "default": "./dist/esm/errors/index.js"
+      },
+      "require": {
+        "types": "./dist/types/errors/index.d.ts",
+        "default": "./dist/cjs/errors/index.js"
+      }
+    },
     "./setup": {
       "import": {
         "types": "./dist/types/setup/index.d.ts",
@@ -64,6 +75,9 @@
   },
   "typesVersions": {
     "*": {
+      "errors": [
+        "./dist/types/errors/index.d.ts"
+      ],
       "setup": [
         "./dist/types/setup/index.d.ts"
       ]
@@ -78,12 +92,7 @@
     "@comity/catalog": "workspace:*",
     "@comity/composition": "workspace:*",
     "@comity/content": "workspace:*",
-    "@comity/customer": "workspace:*",
-    "@comity/address": "workspace:*",
     "@comity/http": "workspace:*",
-    "@comity/order": "workspace:*",
-    "@comity/payment": "workspace:*",
-    "@comity/pricing": "workspace:*",
     "@comity/primitives": "workspace:*",
     "@comity/search": "workspace:*",
     "@comity/taxonomy": "workspace:*"

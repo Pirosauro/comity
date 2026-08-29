@@ -418,6 +418,8 @@ requires an explicit decision when a real requirement arrives.
   worth remembering."
 - `docs/standards/decisions/ADR-019-product-purchasability-policy-boundary.md`
   — `PurchasePolicy` as Application-owned commercial eligibility.
+- `docs/standards/decisions/ADR-021-capability-vs-workflow.md` — general
+  capability-vs-workflow principle; this ADR is a specific instance.
 - `packages/inventory/src/entities/stock.ts`,
   `packages/inventory/src/value-objects/reservation.ts`,
   `packages/inventory/src/value-objects/availability.ts`,

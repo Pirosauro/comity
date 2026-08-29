@@ -43,21 +43,21 @@ export type StorefrontModuleEvents = {};
  * Services exposed by the module
  */
 export type StorefrontModuleServices = {
-  /** Storefront context resolver token */
+  /** Category page composer token */
   [CATEGORY_PAGE_COMPOSER_TOKEN]: CategoryPageComposer;
 
-  /** Storefront context resolver token */
+  /** Content page composer token */
   [CONTENT_PAGE_COMPOSER_TOKEN]: ContentPageComposer;
 
-  /** Storefront context resolver token */
+  /** Product page composer token */
   [PRODUCT_PAGE_COMPOSER_TOKEN]: ProductPageComposer;
 
-  /** Storefront context resolver token */
+  /** Search page composer token */
   [SEARCH_PAGE_COMPOSER_TOKEN]: SearchPageComposer;
 };
 
 /**
- * Context provided to the Magento catalog module setup function.
+ * Context provided to the storefront module setup function.
  */
 export interface StorefrontModuleContext extends ModuleSetupContext<
   StorefrontModuleServices,
@@ -66,6 +66,15 @@ export interface StorefrontModuleContext extends ModuleSetupContext<
 > {}
 
 /**
- * Options for setting up the Magento catalog module.
+ * Options for setting up the storefront module.
  */
-export interface StorefrontModuleOptions extends Record<string, unknown> {}
+export interface StorefrontModuleOptions extends Record<string, unknown> {
+  /** Product repository for page composition */
+  readonly productRepository?: import("@comity/catalog").ProductRepository;
+
+  /** Taxonomy repository for category page composition */
+  readonly taxonomyRepository?: import("@comity/taxonomy").TaxonomyRepository;
+
+  /** Page repository for content page composition */
+  readonly pageRepository?: import("@comity/content").PageRepository;
+}

@@ -148,6 +148,24 @@ Comity does not enforce application architecture beyond its boundaries.
 
 ---
 
+11. Capability vs Workflow
+
+Comity provides capabilities; Applications and Integration Adapters compose
+capabilities into workflows.
+
+- A Core Module provides a reusable, transport-independent capability or
+  contract (pricing, inventory, payment, order, customer, address, catalog,
+  storefront page composition).
+- A Workflow is a sequence/orchestration of multiple capabilities that reflects
+  application- or platform-specific business decisions.
+
+Capabilities belong to Core Modules. Workflow composition belongs to Applications
+and Integration Adapters. A Core Module must not prescribe cross-Core workflow
+orchestration and must not become a workflow owner merely because it consumes
+multiple capabilities.
+
+---
+
 If a future design decision conflicts with these principles,
 the conflict must be explicit and justified.
 

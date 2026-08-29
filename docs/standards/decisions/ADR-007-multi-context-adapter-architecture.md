@@ -168,3 +168,5 @@ This ADR does NOT concern:
 - `docs/standards/layering-policy.md` §2.3 — Adapters "MAY depend on one Core Module".
 - `docs/standards/adapters.md` — Adapter responsibilities and boundaries.
 - `docs/standards/public-api.md` §1, §2.2 — Package classification and adapter root barrel rules.
+- `docs/standards/decisions/ADR-021-capability-vs-workflow.md` — capability-vs-workflow
+  principle; Integration Adapters own platform-specific orchestration.

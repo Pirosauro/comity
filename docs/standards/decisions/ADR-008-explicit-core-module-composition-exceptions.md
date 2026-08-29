@@ -162,8 +162,6 @@ Dependencies that fail one or more acceptance criteria and SHOULD be removed or 
 | Dependency             | Import kind                                                     | Justification                                                                                                                           |
 | ---------------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | `auth-tokens → auth`   | Value (`AuthError`) + type                                      | Token facade error surface normalizes `AuthError` at runtime.                                                                           |
-| `storefront → catalog` | Value (`PRODUCT_REPOSITORY_TOKEN`) | These are DI wiring constants only. They do not expose catalog implementation details and are required during module setup composition. |
-| `storefront → taxonomy` | Value (`TAXONOMY_REPOSITORY_TOKEN`) | DI wiring constant only. Required during module setup composition; does not expose taxonomy implementation details.                     |
 
 ### Ownership notes
 

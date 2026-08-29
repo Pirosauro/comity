@@ -103,7 +103,7 @@ ADR-008 is the single source of truth for the register. This standard does not d
 
 ### 5.3 Multi-category Edges
 
-An edge may carry both type imports and value imports (e.g. `storefront → catalog` registers type-only in Capability Exceptions and DI-token wiring in Value-Import Exceptions). Both classifications belong to the same register entry. Value imports require explicit justification in ADR-008.
+An edge may carry both type imports and value imports (e.g. `auth-tokens → auth` registers an error-surface value import; a capability edge may also carry a value import when DI wiring requires it). Both classifications belong to the same register entry. Value imports require explicit justification in ADR-008.
 
 ---
 

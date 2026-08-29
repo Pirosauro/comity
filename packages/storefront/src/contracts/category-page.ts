@@ -1,8 +1,8 @@
 import type { ProductProjection } from "@comity/catalog";
-import type { CategoryModel } from "@comity/taxonomy";
 import type { BreadcrumbModel } from "@comity/content";
 import type { RepositoryError } from "@comity/primitives/errors";
 import type { Result } from "@comity/primitives/result";
+import type { CategoryModel } from "@comity/taxonomy";
 import type { StorefrontContext } from "./context.js";
 import type { StorefrontPageModel } from "./page.js";
 

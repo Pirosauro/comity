@@ -33,7 +33,7 @@
 | `@comity/i18n`            | Internationalization: translator, locale, loader, resolver                                     |
 | `@comity/sql`             | SQL abstraction: client, query, transaction, result                                            |
 | `@comity/storage`         | Storage contracts: store interface with error types and setup                                  |
-| `@comity/storefront`      | Storefront architecture: PageModel, composers, handler contracts                               |
+| `@comity/storefront`      | Storefront page-composition capability: page models, composers, enrichers, `StorefrontContext` |
 | `@comity/graphql-builder` | Zero-dependency GraphQL query builder                                                          |
 | `@comity/graphql-client`  | GraphQL client contracts: transport, registry, request, response                               |
 | `@comity/address`         | Address domain: `Address`, `AddressId`, `AddressLine`, `AddressRepository`, `AddressValidator` |

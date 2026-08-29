@@ -1,3 +1,3 @@
-export type { PurchaseErrorMeta, PurchaseErrorReason } from "./purchase-error.js";
+export type { StorefrontErrorMeta, StorefrontErrorReason } from "./storefront-error.js";
 
-export { PurchaseError } from "./purchase-error.js";
+export { StorefrontError } from "./storefront-error.js";

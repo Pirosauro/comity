@@ -8,21 +8,21 @@
       "from": "@comity/storefront",
       "to": "@comity/catalog",
       "layer": "core-to-core",
-      "categories": ["capability", "value-import"],
-      "importKind": "mixed",
+      "categories": ["capability"],
+      "importKind": "type-only",
       "lifecycle": "approved",
-      "justification": "Storefront references catalog domain contracts and models; DI wiring constants (PRODUCT_REPOSITORY_TOKEN) are required during module setup composition.",
-      "adrReference": "ADR-008 — Dependency Register, Capability Exceptions and Value-Import Exceptions"
+      "justification": "Storefront page composition references catalog domain contracts and models.",
+      "adrReference": "ADR-008 — Dependency Register, Capability Exceptions"
     },
     {
       "from": "@comity/storefront",
       "to": "@comity/taxonomy",
       "layer": "core-to-core",
-      "categories": ["capability", "value-import"],
-      "importKind": "mixed",
+      "categories": ["capability"],
+      "importKind": "type-only",
       "lifecycle": "approved",
-      "justification": "Storefront category composer references taxonomy domain contracts and models; DI wiring constant (TAXONOMY_REPOSITORY_TOKEN) is required during module setup composition.",
-      "adrReference": "ADR-008 — Dependency Register, Capability Exceptions and Value-Import Exceptions"
+      "justification": "Storefront category page composition references taxonomy domain contracts and models.",
+      "adrReference": "ADR-008 — Dependency Register, Capability Exceptions"
     },
     {
       "from": "@comity/storefront",

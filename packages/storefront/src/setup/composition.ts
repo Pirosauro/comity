@@ -17,22 +17,7 @@ import {
   SEARCH_PAGE_COMPOSER_TOKEN,
 } from "./constants.js";
 
-export type {
-  StorefrontModuleContext,
-  StorefrontModuleEvents,
-  StorefrontModuleHooks,
-  StorefrontModuleOptions,
-  StorefrontModuleServices,
-} from "./types.js";
-
-export {
-  CATEGORY_PAGE_COMPOSER_TOKEN,
-  CONTENT_PAGE_COMPOSER_TOKEN,
-  PRODUCT_PAGE_COMPOSER_TOKEN,
-  SEARCH_PAGE_COMPOSER_TOKEN,
-} from "./constants.js";
-
-export const module: ModuleMeta<StorefrontModuleOptions, StorefrontModuleContext> = {
+export default {
   name: "@comity/storefront",
   version: "0.9.0",
 
@@ -86,6 +71,4 @@ export const module: ModuleMeta<StorefrontModuleOptions, StorefrontModuleContext
       return success(undefined);
     });
   },
-};
-
-export default module;
+} satisfies ModuleMeta<StorefrontModuleOptions, StorefrontModuleContext>;
