@@ -32,9 +32,9 @@ This package does NOT:
 
 - Contracts — request, context, result, middleware, pipeline, transport
 - Facade — lifecycle-aware orchestrator that executes the pipeline
-- Lifecycle — request lifecycle events
-- Setup — kernel module metadata and setup function
-
+- Lifecycle — request lifecycle events (`@comity/http/observers`)
+- Error types (`@comity/http/errors`)
+- Setup — kernel module metadata and setup function (`@comity/http/setup`)
 
 No exhaustive reference; see docs for constraints.
 ---

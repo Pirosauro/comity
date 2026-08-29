@@ -5,7 +5,7 @@ import { CompositionError } from "@comity/composition/errors";
 import { DefaultHookBus } from "@comity/primitives/lifecycle";
 import { isSuccess } from "@comity/primitives/result";
 import { STORAGE_TOKEN } from "../constants.js";
-import { module } from "../index.js";
+import module from "../index.js";
 import { MemoryStorageStore } from "../../stores/memory.js";
 
 function createContext() {

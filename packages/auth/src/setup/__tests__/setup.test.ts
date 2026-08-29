@@ -9,7 +9,7 @@ import { CompositionError } from "@comity/composition/errors";
 import { AuthSessionId } from "../../value-objects/auth-session-id.js";
 import { MemoryAuthSessionRepository } from "../../repositories/memory.js";
 import { AUTH_TOKEN } from "../constants.js";
-import { module } from "../index.js";
+import module from "../index.js";
 
 function sessionId(value: string): AuthSessionId {
   const result = AuthSessionId.create(value);

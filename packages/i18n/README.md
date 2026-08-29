@@ -33,8 +33,8 @@ This package does NOT:
 - `I18nLoader`, `Translator` — translation loading and translation contracts
 - `I18nLocaleResolver`, `I18nResolveContext` — locale resolution contracts
 - `I18N_TOKEN` — DI token for the i18n service
-- `error` subpath — error types
-- `setup` subpath — module wiring tokens
+- Error types (`@comity/i18n/errors`)
+- Setup — module wiring tokens (`@comity/i18n/setup`)
 
 No exhaustive reference; see docs for constraints.
 

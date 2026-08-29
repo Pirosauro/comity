@@ -6,7 +6,7 @@ import { isSuccess } from "@comity/primitives/result";
 import { HttpFacade } from "@comity/http";
 import { HTTP_TOKEN } from "@comity/http/setup";
 import { HTTP_HONO_TOKEN } from "../constants.js";
-import { module } from "../index.js";
+import module from "../index.js";
 
 describe("http-hono module setup", () => {
   let define: ReturnType<typeof vi.fn>;

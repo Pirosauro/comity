@@ -30,8 +30,7 @@ This package does NOT:
 
 - `PreactStaticHtmlRenderer`
 - `useLayout`
-- streaming renderer entrypoints
-
+- Streaming renderer entrypoints (`@comity/html-preact/streaming`)
 
 No exhaustive reference; see docs for constraints.
 ---

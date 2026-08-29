@@ -31,8 +31,9 @@ This package does NOT:
 - Hydration contracts
 - Hydration controller
 - Island serializer
-- Lifecycle support
-
+- Client factory (`@comity/hydration/client`)
+- Error types (`@comity/hydration/errors`)
+- Lifecycle hooks (`@comity/hydration/lifecycle`)
 
 No exhaustive reference; see docs for constraints.
 ---

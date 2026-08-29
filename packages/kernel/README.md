@@ -30,7 +30,9 @@ This package does NOT:
 
 - Kernel — orchestrator with lifecycle control and context
 - Module — metadata, resolver, and loader contracts
-
+- Observer contracts (`@comity/kernel/observers`)
+- Error types (`@comity/kernel/errors`)
+- Setup — module metadata and context types (`@comity/kernel/setup`)
 
 No exhaustive reference; see docs for constraints.
 ---

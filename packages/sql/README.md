@@ -33,8 +33,8 @@ This package does NOT:
 - `SqlTransaction` — transaction contract
 - `SqlQuery` — query contract
 - `SqlResult`, `SqlOperationResult` — typed result contracts
-- `error` subpath — SQL-specific error types
-- `observers` subpath — SQL lifecycle observability
+- Error types (`@comity/sql/errors`)
+- Observers — SQL lifecycle observability (`@comity/sql/observers`)
 
 No exhaustive reference; see docs for constraints.
 

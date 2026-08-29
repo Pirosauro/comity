@@ -34,10 +34,9 @@ This package does NOT:
 - `DefaultStorage` — standard CRUD implementation
 - Storage options — type handle for create, read, update, delete, and signed URL parameters
 - `STORAGE_TOKEN` — DI token for storage wiring
-- `error` subpath — typed storage error types
-- `hooks` subpath — module hooks
-- `setup` subpath — module wiring tokens
-- `stores` subpath — store implementations
+- Error types (`@comity/storage/errors`)
+- Setup — module wiring tokens (`@comity/storage/setup`)
+- Store implementations (`@comity/storage/stores`)
 
 No exhaustive reference; see docs for constraints.
 

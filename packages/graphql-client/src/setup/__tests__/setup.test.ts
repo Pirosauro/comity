@@ -6,7 +6,7 @@ import { isSuccess } from "@comity/primitives/result";
 import { CompositionError } from "@comity/composition/errors";
 import { GraphqlClient } from "../../client.js";
 import { GRAPHQL_CLIENT_TOKEN } from "../constants.js";
-import { module } from "../index.js";
+import module from "../index.js";
 
 function createClient(): GraphqlClient {
   return new GraphqlClient({

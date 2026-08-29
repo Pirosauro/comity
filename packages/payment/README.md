@@ -31,8 +31,8 @@ This package does NOT:
 ## Public API
 
 - Payment contracts — request, outcome, status, and provider interfaces
-- Error types — payment failure reasons and metadata
-- Setup tokens — module wiring and configuration
+- Error types (`@comity/payment/errors`)
+- Setup — module wiring and configuration (`@comity/payment/setup`)
 
 No exhaustive reference; see docs for constraints.
 

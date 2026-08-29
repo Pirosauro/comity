@@ -31,8 +31,7 @@ This package does NOT:
 - `httpHonoAdapter`
 - `module`
 - `HTTP_HONO_TOKEN`
-- adapter setup types
-
+- Setup — adapter configuration types (`@comity/http-hono/setup`)
 
 No exhaustive reference; see docs for constraints.
 ---

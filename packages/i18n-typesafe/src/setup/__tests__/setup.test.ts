@@ -3,7 +3,7 @@ import type { ModuleSetupContext } from "@comity/composition/setup";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { DefaultHookBus } from "@comity/primitives/lifecycle";
 import { isSuccess } from "@comity/primitives/result";
-import { module } from "../index.js";
+import module from "../index.js";
 
 describe("i18n-typesafe module setup", () => {
   let ctx: ModuleSetupContext;

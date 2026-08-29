@@ -9,7 +9,7 @@ import { CompositionError } from "@comity/composition/errors";
 import { AuthSessionId } from "@comity/auth";
 import { AUTH_TOKEN } from "@comity/auth/setup";
 import { AUTH_JOSE_TOKEN } from "../constants.js";
-import { module } from "../index.js";
+import module from "../index.js";
 
 const accessKey = new TextEncoder().encode("access-secret-32-bytes-length!!");
 const refreshKey = new TextEncoder().encode("refresh-secret-32-bytes-length!");

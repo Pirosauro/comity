@@ -27,8 +27,7 @@ This package does NOT:
 
 ## Public API
 
-- Typed setup interfaces — module context, events, hooks, options, and services
-- `setup` subpath — typed module metadata and setup
+- Typed setup interfaces — module context, events, hooks, options, and services (`@comity/i18n-typesafe/setup`)
 
 No exhaustive reference; see docs for constraints.
 

@@ -30,10 +30,11 @@ This package does NOT:
 
 Disciplined, concept-first surface divided into domains:
 
-- errors: BaseError and concrete error types
-- lifecycle: EventBus and HookBus contracts and implementations
-- di: minimal container for service wiring
-- result: success/failure factories and contracts
+- Dependency injection — minimal container for service wiring (`@comity/primitives/di`)
+- Error primitives — BaseError and concrete error types (`@comity/primitives/errors`)
+- Lifecycle — EventBus and HookBus contracts and implementations (`@comity/primitives/lifecycle`)
+- Result — success/failure factories and contracts (`@comity/primitives/result`)
+- Time — Instant and temporal primitives (`@comity/primitives/time`)
 
 No exhaustive reference; see docs for constraints.
 

@@ -32,7 +32,9 @@ This package does NOT:
 - Cache store contract
 - Default cache facade
 - Cache key serialization
-- Module setup contracts
+- Cache store implementations (`@comity/cache/stores`)
+- Error types (`@comity/cache/errors`)
+- Module setup contracts (`@comity/cache/setup`)
 
 
 No exhaustive reference; see docs for constraints.

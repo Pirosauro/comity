@@ -9,7 +9,7 @@ import { DefaultHookBus } from "@comity/primitives/lifecycle";
 import { isSuccess } from "@comity/primitives/result";
 import { CompositionError } from "@comity/composition/errors";
 import { HTTP_TOKEN } from "../constants.js";
-import { module } from "../index.js";
+import module from "../index.js";
 
 function createRequest(): HttpRequest {
   return {

@@ -30,7 +30,7 @@ This package does NOT:
 
 - `ReactStaticHtmlRenderer` — entrypoint for static React rendering
 - `useLayout` — React hook for layout management
-- `streaming` subpath — streaming React rendering utilities
+- Streaming renderer utilities (`@comity/html-react/streaming`)
 
 No exhaustive reference; see docs for constraints.
 

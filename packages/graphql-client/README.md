@@ -31,11 +31,11 @@ This package does NOT:
 - `GraphqlClient` — canonical, transport-independent client facade (root)
 - `GraphqlClientOptions` — client construction options (root)
 - Request, response, and transport contracts
-- GraphQL error contract
-- Module setup contracts
+- GraphQL error contract (`@comity/graphql-client/errors`)
+- Transport contracts (`@comity/graphql-client/transports`)
+- Module setup contracts (`@comity/graphql-client/setup`)
 
 The client is a composition facade: it depends only on `GraphqlTransport`, `GraphqlRequest`, and `GraphqlResponse`. Technology-bound transport implementations (WebSocket, fetch, HTTP-specific) live in adapter packages; `GraphqlTransport` is the replaceable boundary.
-
 
 No exhaustive reference; see docs for constraints.
 ---

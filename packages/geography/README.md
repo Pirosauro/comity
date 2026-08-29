@@ -32,8 +32,7 @@ This package does NOT:
 - `GeographyProvider` — provider contract for resolving geographic metadata
 - `CountryMetadata` / `SubdivisionMetadata` — resolved metadata types
 - `GeographicInput` / `GeographicContext` — resolution input and context types
-- `errors` subpath — `GeographyError` and error reasons
-
+- Error types (`@comity/geography/errors`)
 
 No exhaustive reference; see docs for constraints.
 ---

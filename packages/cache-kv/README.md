@@ -28,7 +28,7 @@ This package does NOT:
 ## Public API
 
 - `module` — kernel module metadata and setup function
-- Setup types — configuration types for the KV adapter
+- Setup — configuration types for the KV adapter (`@comity/cache-kv/setup`)
 
 No exhaustive reference; see docs for constraints.
 

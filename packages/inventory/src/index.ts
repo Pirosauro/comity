@@ -1,13 +1,13 @@
 export type { InventorySnapshot } from "./contracts/inventory-snapshot.js";
-export type { StockCreate, StockData, StockSnapshot, StockState } from "./contracts/stock.js";
 export type {
   StockRepository,
   StockSearchCriteria,
   StockSearchResult,
 } from "./contracts/stock-repository.js";
+export type { StockCreate, StockData, StockSnapshot, StockState } from "./contracts/stock.js";
+export type { InventoryErrorMeta, InventoryErrorReason } from "./errors/inventory.js";
 
 export { Stock } from "./entities/stock.js";
-export type { InventoryErrorMeta, InventoryErrorReason } from "./errors/inventory.js";
 export { InventoryError } from "./errors/inventory.js";
 export { Availability } from "./value-objects/availability.js";
 export { Quantity } from "./value-objects/quantity.js";

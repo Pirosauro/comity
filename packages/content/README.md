@@ -31,7 +31,7 @@ This package does NOT:
 - Page, block, breadcrumb, and navigation contracts
 - Repository context contract
 - Repository tokens
-
+- Setup — module metadata and repository wiring (`@comity/content/setup`)
 
 No exhaustive reference; see docs for constraints.
 ---

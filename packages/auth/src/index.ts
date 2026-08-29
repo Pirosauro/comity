@@ -11,11 +11,11 @@ export type {
   AuthSessionAssuranceContext,
   AuthSessionAssuranceScore,
 } from "./contracts/session-assurance.js";
-export type { AuthSessionRefreshPolicy } from "./contracts/session-refresh-policy.js";
 export type {
   AuthSessionCommands,
   AuthSessionRevocation,
 } from "./contracts/session-commands.js";
+export type { AuthSessionRefreshPolicy } from "./contracts/session-refresh-policy.js";
 export type { AuthSessionRepository } from "./contracts/session-repository.js";
 export type { AuthSessionRevocationPolicy } from "./contracts/session-revocation-policy.js";
 export type { AuthSessionTransport } from "./contracts/session-transport.js";

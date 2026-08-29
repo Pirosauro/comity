@@ -31,7 +31,7 @@ This package does NOT:
 - `JoseAuthTokenService` — JOSE-backed token creation and verification
 - `JoseAuthTokenServiceOptions` — configuration for the token service
 - `AUTH_JOSE_TOKEN` — service token for dependency injection
-- Setup types — module context, events, hooks, and service types
+- Setup — module context, events, hooks, and service types (`@comity/auth-jose/setup`)
 
 No exhaustive reference; see docs for constraints.
 

@@ -32,8 +32,8 @@ This package does NOT:
 - URL rewriter contract
 - Router pipeline
 - HTTP handler factory
-- Module setup contracts
-
+- Router implementations (`@comity/router/routers`)
+- Module setup contracts (`@comity/router/setup`)
 
 No exhaustive reference; see docs for constraints.
 ---

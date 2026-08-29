@@ -31,6 +31,8 @@ This package does NOT:
 - Module contracts — metadata and setup function types
 - Loader — module loading primitive
 - Resolver — dependency resolution
+- Error types (`@comity/composition/errors`)
+- Setup — module metadata and context types (`@comity/composition/setup`)
 
 No exhaustive reference; see docs for constraints.
 

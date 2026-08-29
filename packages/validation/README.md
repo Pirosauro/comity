@@ -28,7 +28,7 @@ This package does NOT:
 ## Public API
 
 - Contracts — Validator and ValidationResult types
-- Errors — ValidationError with structured issue details, error metadata, and module error codes
+- Error types (`@comity/validation/errors`)
 
 No exhaustive reference; see docs for constraints.
 

@@ -6,7 +6,7 @@ import { DefaultHookBus } from "@comity/primitives/lifecycle";
 import { isSuccess } from "@comity/primitives/result";
 import { DefaultCache } from "../../facade.js";
 import { CACHE_TOKEN } from "../constants.js";
-import { module } from "../index.js";
+import module from "../index.js";
 import { MemoryCacheStore } from "../../stores/memory.js";
 
 function createContext() {

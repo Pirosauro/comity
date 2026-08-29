@@ -4,7 +4,7 @@ import { DefaultHookBus } from "@comity/primitives/lifecycle";
 import { isSuccess } from "@comity/primitives/result";
 
 import { describe, expect, it, vi } from "vitest";
-import { module } from "../index.js";
+import module from "../index.js";
 
 describe("catalog module setup", () => {
   it("should expose module metadata", () => {

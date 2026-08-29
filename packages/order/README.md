@@ -35,7 +35,7 @@ This package does NOT:
 - `OrderRepository` — persistence-boundary contract (`getById`, `search`, `save`)
 - `OrderState`, `OrderCreate`, `OrderUpdate`, `OrderSnapshot`, `OrderData`, `OrderStatus` — domain contracts
 - `OrderItem`, `OrderProductSnapshot` (with `OrderVariantSnapshot`, `OrderProductAttribute`, `OrderProductOption`) — embedded item value structures
-- `errors` subpath — structured error types for the order domain
+- Error types (`@comity/order/errors`)
 
 The product data in an order is an **owned, immutable snapshot**
 (`OrderProductSnapshot`): it is self-contained and never references the

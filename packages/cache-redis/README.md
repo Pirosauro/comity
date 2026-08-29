@@ -30,7 +30,7 @@ This package does NOT:
 
 - `RedisCacheStore` — Redis implementation of the CacheStore contract
 - `module` — kernel module metadata and setup function
-- Setup types — configuration, context, events, hooks, and services
+- Setup — configuration, context, events, hooks, and services (`@comity/cache-redis/setup`)
 
 No exhaustive reference; see docs for constraints.
 
