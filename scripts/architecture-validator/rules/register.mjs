@@ -147,13 +147,21 @@ export function parseRejectedEdges(markdown) {
   const sectionStart = markdown.indexOf("### Explicitly NOT registered");
   if (sectionStart === -1) return [];
 
-  const section = markdown
-    .slice(sectionStart)
-    .split(/\r?\n/)
-    .filter((line) => line.startsWith("|"));
+  const afterSection = markdown.slice(sectionStart);
+  const lines = afterSection.split(/\r?\n/);
+
+  const sectionLines = [];
+  for (const line of lines) {
+    if (line.startsWith("###") && !line.startsWith("### Explicitly NOT registered")) {
+      break;
+    }
+    sectionLines.push(line);
+  }
+
+  const tableLines = sectionLines.filter((line) => line.startsWith("|"));
   const rejected = [];
 
-  for (const line of section) {
+  for (const line of tableLines) {
     const cells = line.match(/`[^`]+`/g) ?? [];
     for (const cell of cells) {
       const edge = cell.slice(1, -1).match(/^([a-z0-9-]+)\s*→\s*(.+)$/);

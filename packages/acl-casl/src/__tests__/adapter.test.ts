@@ -2,7 +2,7 @@ import { Ability, createMongoAbility } from "@casl/ability";
 import { isFailure, isSuccess } from "@comity/primitives/result";
 import { describe, expect, it, vi } from "vitest";
 
-import { AuthorizationError } from "@comity/acl";
+import { AuthorizationError } from "@comity/acl/errors";
 import { CaslAuthorizer } from "../adapter.js";
 
 function makeAbility(rules?: Parameters<typeof Ability>[0]) {

@@ -4,6 +4,7 @@ import type { TaxonomyRepository } from "@comity/taxonomy";
 import type { PageRepository } from "@comity/content";
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { DefaultHookBus } from "@comity/primitives/lifecycle";
 import { isSuccess } from "@comity/primitives/result";
 import {
   CATEGORY_PAGE_COMPOSER_TOKEN,
@@ -11,7 +12,7 @@ import {
   PRODUCT_PAGE_COMPOSER_TOKEN,
   SEARCH_PAGE_COMPOSER_TOKEN,
 } from "../constants.js";
-import { module } from "../index.js";
+import composition from "../composition.js";
 
 describe("storefront module setup", () => {
   let define: ReturnType<typeof vi.fn>;
@@ -25,7 +26,7 @@ describe("storefront module setup", () => {
     ctx = {
       services: { define, resolve },
       events: {},
-      hooks: { define: vi.fn(), execute: vi.fn(), executeAll: vi.fn() },
+      hooks: new DefaultHookBus<any>(),
     } as unknown as ModuleSetupContext;
   });
 
@@ -41,8 +42,18 @@ describe("storefront module setup", () => {
     return define.mock.calls.map((call) => call[0]);
   }
 
+  it("should expose module metadata", () => {
+    expect(composition.name).toBe("@comity/storefront");
+    expect(composition.version).toBe("0.9.0");
+    expect(composition.dependsOn).toEqual({
+      "@comity/catalog": { optional: false },
+      "@comity/taxonomy": { optional: false },
+      "@comity/content": { optional: false },
+    });
+  });
+
   it("should succeed and define composer services", async () => {
-    const result = await module.setup(ctx, baseOptions());
+    const result = await composition.setup(ctx, baseOptions());
 
     expect(isSuccess(result)).toBe(true);
     if (isSuccess(result)) {
@@ -61,7 +72,7 @@ describe("storefront module setup", () => {
     const taxonomyRepository = { getById: vi.fn().mockResolvedValue({ success: true, value: null }) };
     const pageRepository = { getById: vi.fn().mockResolvedValue({ success: true, value: null }) };
 
-    const result = await module.setup(ctx, {
+    const result = await composition.setup(ctx, {
       productRepository: productRepository as unknown as ProductRepository,
       taxonomyRepository: taxonomyRepository as unknown as TaxonomyRepository,
       pageRepository: pageRepository as unknown as PageRepository,
@@ -91,23 +102,43 @@ describe("storefront module setup", () => {
   });
 
   it("should execute configuring hook to allow enricher customization", async () => {
-    const result = await module.setup(ctx, baseOptions());
+    const configuring = vi.fn().mockImplementation((value) => value);
+    const hooks = new DefaultHookBus<any>();
+    hooks.define("@comity/storefront:configuring", configuring);
+
+    const configuredCtx = {
+      services: { define, resolve },
+      events: {},
+      hooks,
+    } as unknown as ModuleSetupContext;
+
+    const result = await composition.setup(configuredCtx, baseOptions());
 
     expect(isSuccess(result)).toBe(true);
     if (isSuccess(result)) {
       const init = await result.value();
       expect(init.success).toBe(true);
-      expect(ctx.hooks.execute).toHaveBeenCalledWith("@comity/storefront:configuring", expect.any(Object));
+      expect(configuring).toHaveBeenCalledTimes(1);
     }
   });
 
   it("should execute initialized hook on teardown", async () => {
-    const result = await module.setup(ctx, baseOptions());
+    const initialized = vi.fn();
+    const hooks = new DefaultHookBus<any>();
+    hooks.define("@comity/storefront:initialized", initialized);
+
+    const hooksCtx = {
+      services: { define, resolve },
+      events: {},
+      hooks,
+    } as unknown as ModuleSetupContext;
+
+    const result = await composition.setup(hooksCtx, baseOptions());
 
     expect(isSuccess(result)).toBe(true);
     if (isSuccess(result)) {
       await result.value();
-      expect(ctx.hooks.execute).toHaveBeenCalledWith("@comity/storefront:initialized", undefined);
+      expect(initialized).toHaveBeenCalled();
     }
   });
 });

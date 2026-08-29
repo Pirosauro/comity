@@ -1,10 +1,6 @@
 import type { MongoAbility } from "@casl/ability";
-import type {
-  AuthorizationContext,
-  AuthorizationDecision,
-  Authorizer,
-} from "@comity/acl";
-import type { AuthorizationError, AuthorizationErrorMeta, AuthorizationErrorReason } from "@comity/acl/errors";
+import type { AuthorizationContext, AuthorizationDecision, Authorizer } from "@comity/acl";
+import type { AuthorizationError } from "@comity/acl/errors";
 import type { Result } from "@comity/primitives/result";
 
 import { AuthorizationError as AuthorizationErrorClass } from "@comity/acl/errors";
