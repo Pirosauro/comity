@@ -9,7 +9,10 @@
     "types": ["node"],
     "moduleResolution": "bundler",
     "module": "es2022",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "@casl/ability": ["./node_modules/@casl/ability/dist/types"]
+    }
   },
   "exclude": ["node_modules", "dist", "**/__tests__/**"],
   "include": ["src/**/*"]
