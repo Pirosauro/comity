@@ -16,6 +16,7 @@ const TECHNOLOGY_ADAPTERS = new Set([
   "@comity/graphql-client-fetch",
   "@comity/http-fetch",
   "@comity/validation-zod",
+  "@comity/cli-commander",
 ]);
 
 const ADAPTER_CORE_MODULE_MAP = new Map([
@@ -34,6 +35,7 @@ const ADAPTER_CORE_MODULE_MAP = new Map([
   ["@comity/graphql-client-fetch", "@comity/graphql-client"],
   ["@comity/http-fetch", "@comity/http"],
   ["@comity/validation-zod", "@comity/validation"],
+  ["@comity/cli-commander", "@comity/cli"],
 ]);
 
 const TECHNOLOGY_DEPENDENCIES = new Set([
@@ -50,6 +52,7 @@ const TECHNOLOGY_DEPENDENCIES = new Set([
   "graphql",
   "graphql-ws",
   "typesafe-i18n",
+  "commander",
 ]);
 
 const KERNEL_PACKAGES = new Set(["@comity/primitives", "@comity/kernel", "@comity/composition"]);

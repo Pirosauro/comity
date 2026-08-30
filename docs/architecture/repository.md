@@ -1,6 +1,6 @@
 # Repository Overview
 
-## Package Inventory (45 packages)
+## Package Inventory (47 packages)
 
 ### Kernel / Primitives (3)
 
@@ -10,7 +10,7 @@
 | `@comity/kernel`      | Runtime engine: module lifecycle, service registration, event dispatching, hook execution, module initialization |
 | `@comity/composition` | Module loader, resolver, shared services, runtime orchestrator                                                   |
 
-### Core Modules (25)
+### Core Modules (26)
 
 | Package                   | Description                                                                                    |
 | ------------------------- | ---------------------------------------------------------------------------------------------- |
@@ -39,8 +39,9 @@
 | `@comity/address`         | Address domain: `Address`, `AddressId`, `AddressLine`, `AddressRepository`, `AddressValidator` |
 | `@comity/geography`       | Geography contracts: `GeographyProvider`, country/subdivision metadata, `GeographyError`       |
 | `@comity/identity`        | Identity domain: `User`, `UserId`, `UserValidator`                                             |
+| `@comity/cli`             | CLI core capability: command/plugin/hook/config contracts, `CliContext`, `defineConfig`        |
 
-### Adapters (15)
+### Adapters (16)
 
 | Package                         | Implements               | External Library                      |
 | ------------------------------- | ------------------------ | ------------------------------------- |
@@ -58,6 +59,7 @@
 | `@comity/graphql-client-fetch`  | `@comity/graphql-client` | Fetch API                             |
 | `@comity/http-fetch`            | `@comity/http`           | Fetch API                             |
 | `@comity/validation-zod`        | `@comity/validation`     | `zod` (peer)                          |
+| `@comity/cli-commander`         | `@comity/cli`            | `commander` (peer)                    |
 
 ### Draft Packages (excluded from analysis)
 

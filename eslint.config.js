@@ -26,6 +26,16 @@ const IGNORED_GLOBS = [
 ];
 
 export default defineConfig([
+  // Ignore test files and other generated files globally
+  {
+    ignores: [
+      ...IGNORED_GLOBS,
+      "scripts/**",
+      "**/*.mjs",
+      "**/*.cjs",
+      ".pnpm-store/**",
+    ],
+  },
   /**
    * BASE - common configuration
    */

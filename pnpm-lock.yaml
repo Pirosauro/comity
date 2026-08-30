@@ -341,6 +341,38 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
 
+  packages/cli:
+    dependencies:
+      '@comity/primitives':
+        specifier: workspace:*
+        version: link:../primitives
+    devDependencies:
+      '@types/node':
+        specifier: ^24.13.3
+        version: 24.13.3
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+
+  packages/cli-commander:
+    dependencies:
+      '@comity/cli':
+        specifier: workspace:*
+        version: link:../cli
+      '@comity/primitives':
+        specifier: workspace:*
+        version: link:../primitives
+    devDependencies:
+      '@types/node':
+        specifier: ^24.13.3
+        version: 24.13.3
+      commander:
+        specifier: ^14.0.0
+        version: 14.0.3
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+
   packages/composition:
     dependencies:
       '@comity/kernel':
@@ -736,9 +768,6 @@ importers:
 
   packages/order:
     dependencies:
-      '@comity/customer':
-        specifier: workspace:*
-        version: link:../customer
       '@comity/organization':
         specifier: workspace:*
         version: link:../organization
@@ -910,12 +939,6 @@ importers:
 
   packages/storefront:
     dependencies:
-      '@comity/acl':
-        specifier: workspace:*
-        version: link:../acl
-      '@comity/address':
-        specifier: workspace:*
-        version: link:../address
       '@comity/catalog':
         specifier: workspace:*
         version: link:../catalog
@@ -925,27 +948,9 @@ importers:
       '@comity/content':
         specifier: workspace:*
         version: link:../content
-      '@comity/customer':
-        specifier: workspace:*
-        version: link:../customer
       '@comity/http':
         specifier: workspace:*
         version: link:../http
-      '@comity/inventory':
-        specifier: workspace:*
-        version: link:../inventory
-      '@comity/order':
-        specifier: workspace:*
-        version: link:../order
-      '@comity/organization':
-        specifier: workspace:*
-        version: link:../organization
-      '@comity/payment':
-        specifier: workspace:*
-        version: link:../payment
-      '@comity/pricing':
-        specifier: workspace:*
-        version: link:../pricing
       '@comity/primitives':
         specifier: workspace:*
         version: link:../primitives
@@ -2430,6 +2435,10 @@ packages:
 
   comma-separated-tokens@2.0.3:
     resolution: {integrity: sha512-Fu4hJdvzeylCfQPp9SGWidpzrMs7tTrlu6Vb8XGaRGck8QSNZJJp538Wrb60Lax4fPwR64ViY468OIUTbRlGZg==}
+
+  commander@14.0.3:
+    resolution: {integrity: sha512-H+y0Jo/T1RZ9qPP4Eh1pkcQcLRglraJaSLoyOtHxu6AapkjWVCy2Sit1QQ4x3Dng8qDlSsZEet7g5Pq06MvTgw==}
+    engines: {node: '>=20'}
 
   comment-parser@1.4.6:
     resolution: {integrity: sha512-ObxuY6vnbWTN6Od72xfwN9DbzC7Y2vv8u1Soi9ahRKL37gb6y1qk6/dgjs+3JWuXJHWvsg3BXIwzd/rkmAwavg==}
@@ -5597,6 +5606,8 @@ snapshots:
   color-name@1.1.4: {}
 
   comma-separated-tokens@2.0.3: {}
+
+  commander@14.0.3: {}
 
   comment-parser@1.4.6: {}
 
