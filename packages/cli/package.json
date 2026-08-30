@@ -1,7 +1,7 @@
 {
   "name": "@comity/cli",
   "version": "0.9.0",
-  "description": "CLI abstraction module for Comity framework applications",
+  "description": "Runtime-agnostic CLI core contracts and composition for Comity framework applications",
   "type": "module",
   "private": false,
   "author": "Filippo Bovo <hello@filippobovo.com>",
@@ -50,10 +50,24 @@
         "default": "./dist/cjs/index.js"
       }
     },
+    "./errors": {
+      "import": {
+        "types": "./dist/types/errors/index.d.ts",
+        "default": "./dist/esm/errors/index.js"
+      },
+      "require": {
+        "types": "./dist/types/errors/index.d.ts",
+        "default": "./dist/cjs/errors/index.js"
+      }
+    },
     "./package.json": "./package.json"
   },
   "typesVersions": {
-    "*": {}
+    "*": {
+      "errors": [
+        "./dist/types/errors/index.d.ts"
+      ]
+    }
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org",

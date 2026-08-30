@@ -32,13 +32,14 @@ This package does NOT:
 ## Public API
 
 No exhaustive reference; see docs for constraints.
+
 ```typescript
 interface CommanderAdapterOptions {
-  name: string;                    // CLI program name
-  version: string;                 // CLI program version
-  context: CliContext;             // Core CliContext instance
-  configLoader?: CliConfigLoader;  // Optional config loader (default: FS loader)
-  logger?: Logger;                 // Optional logger override
+  name: string; // CLI program name
+  version: string; // CLI program version
+  context: CliContext; // Core CliContext instance
+  configLoader?: CliConfigLoader; // Optional config loader (default: FS loader)
+  logger?: Logger; // Optional logger override
 }
 
 function createCommanderAdapter(options: CommanderAdapterOptions): {
@@ -71,11 +72,11 @@ await adapter.run(); // Uses process.argv.slice(2) by default
 
 ### Exit Codes
 
-| Code | Meaning |
-|------|---------|
-| 0 | Success |
-| 1 | Command error / exception |
-| 2 | Unknown command / usage error |
+| Code | Meaning                       |
+| ---- | ----------------------------- |
+| 0    | Success                       |
+| 1    | Command error / exception     |
+| 2    | Unknown command / usage error |
 
 ---
 

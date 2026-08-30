@@ -66,8 +66,7 @@
     "commander": "^14 || ^15"
   },
   "dependencies": {
-    "@comity/cli": "workspace:*",
-    "@comity/primitives": "workspace:*"
+    "@comity/cli": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^24.13.3",
