@@ -39,7 +39,7 @@
 | `@comity/address`         | Address domain: `Address`, `AddressId`, `AddressLine`, `AddressRepository`, `AddressValidator` |
 | `@comity/geography`       | Geography contracts: `GeographyProvider`, country/subdivision metadata, `GeographyError`       |
 | `@comity/identity`        | Identity domain: `User`, `UserId`, `UserValidator`                                             |
-| `@comity/cli`             | CLI core capability: command/plugin/hook/config contracts, `CliContext`, `defineConfig`        |
+| `@comity/cli`             | CLI core capability: command/hook contracts, `CommandRegistry`, `CliExecutionFacade`, `createCliExecutionFacade` |
 
 ### Adapters (16)
 

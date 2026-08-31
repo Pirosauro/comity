@@ -1,4 +1,4 @@
-import type { Cli, CliCommand } from "@comity/cli";
+import type { CliExecutionFacade, CliCommand } from "@comity/cli";
 import type { Command } from "commander";
 
 import { formatCommandError, mapActionArgs, toCommanderFlags } from "./mapping.js";
@@ -7,24 +7,24 @@ import { formatCommandError, mapActionArgs, toCommanderFlags } from "./mapping.j
  * Translates a Core command into a Commander subcommand.
  *
  * @typeParam Context - Application-defined context shape supplied at
- *   composition time through `createCli`.
+ *   composition time through the CLI execution facade.
  *
  * @param command - Core command definition
  * @param program - Application-owned Commander program
- * @param cli - Core CLI facade used to execute the command
+ * @param facade - Core CLI execution facade used to execute the command
  *
  * @returns The configured Commander subcommand
  *
  * @remarks
  * Pure translation: Core declarations become Commander declarations, and the
- * action delegates execution back to the Core `Cli` facade. Commander
+ * action delegates execution back to the Core `CliExecutionFacade`. Commander
  * failures are routed through the program's error output; the adapter holds
  * no command registration or business logic.
  */
 export function toCommanderCommand<Context>(
   command: CliCommand<Context>,
   program: Command,
-  cli: Cli<Context>
+  facade: CliExecutionFacade<Context>
 ): Command {
   const cmd = program.command(command.name);
 
@@ -59,7 +59,7 @@ export function toCommanderCommand<Context>(
 
   cmd.action(async (...actionArgs: unknown[]) => {
     const args = mapActionArgs(command, actionArgs);
-    const result = await cli.execute(command.name, args);
+    const result = await facade.execute(command.name, args);
 
     if (!result.success) {
       program.error(formatCommandError(result.error), { exitCode: 1 });

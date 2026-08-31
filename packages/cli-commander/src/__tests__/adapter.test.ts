@@ -1,9 +1,11 @@
 import type { CliCommandArgs } from "@comity/cli";
 
-import { createCli } from "@comity/cli";
+import { createCliExecutionFacade, CommandRegistry } from "@comity/cli";
 import { Command } from "commander";
 import { describe, expect, it, vi } from "vitest";
 import { createCommanderAdapter } from "../adapter.js";
+import { DefaultHookBus } from "@comity/primitives/lifecycle";
+import { DefaultEventBus } from "@comity/primitives/lifecycle";
 
 interface AppContext {
   config: {
@@ -15,6 +17,22 @@ const CONTEXT: AppContext = { config: { apiUrl: "https://api.example.com" } };
 
 function createProgram(): Command {
   return new Command().name("my-cli").version("1.0.0");
+}
+
+function createFacadeWithHooks(hooks?: any, commands: any[] = []) {
+  const actualHooks = hooks ?? new DefaultHookBus<any>();
+  const registry = new CommandRegistry<AppContext>();
+  for (const command of commands) {
+    registry.register(command);
+  }
+  const events = new DefaultEventBus<any>();
+  const facade = createCliExecutionFacade(registry, actualHooks, new DefaultEventBus<any>(), CONTEXT);
+  return { facade, registry, hooks: actualHooks };
+}
+
+function createFacade(commands: any[] = []) {
+  const hooks = new DefaultHookBus<any>();
+  return createFacadeWithHooks(hooks, commands);
 }
 
 function captureErrorOutput(program: Command): string[] {
@@ -30,9 +48,10 @@ function captureErrorOutput(program: Command): string[] {
 }
 
 describe("createCommanderAdapter", () => {
-  it("creates an adapter with a run function", () => {
-    const cli = createCli({ context: CONTEXT });
-    const adapter = createCommanderAdapter({ program: createProgram(), cli });
+  it("creates an adapter with a run function", async () => {
+    const { facade } = createFacade();
+
+    const adapter = createCommanderAdapter({ program: createProgram(), facade });
 
     expect(adapter).toHaveProperty("run");
     expect(typeof adapter.run).toBe("function");
@@ -40,11 +59,9 @@ describe("createCommanderAdapter", () => {
 
   it("executes a simple command and returns exit code 0", async () => {
     const action = vi.fn();
-    const cli = createCli({ context: CONTEXT });
+    const { facade } = createFacade([{ name: "build", action }]);
 
-    cli.command({ name: "build", action });
-
-    const adapter = createCommanderAdapter({ program: createProgram(), cli });
+    const adapter = createCommanderAdapter({ program: createProgram(), facade });
 
     const exitCode = await adapter.run(["build"]);
 
@@ -55,15 +72,13 @@ describe("createCommanderAdapter", () => {
 
   it("translates option values into neutral Core argument keys", async () => {
     const action = vi.fn();
-    const cli = createCli({ context: CONTEXT });
-
-    cli.command({
+    const { facade } = createFacade([{
       name: "build",
       options: [{ name: "env", value: true }, { name: "verbose" }],
       action,
-    });
+    }]);
 
-    const adapter = createCommanderAdapter({ program: createProgram(), cli });
+    const adapter = createCommanderAdapter({ program: createProgram(), facade });
 
     const exitCode = await adapter.run(["build", "--env", "production", "--verbose"]);
 
@@ -76,18 +91,16 @@ describe("createCommanderAdapter", () => {
 
   it("applies Commander option defaults and maps kebab-case names back", async () => {
     const action = vi.fn();
-    const cli = createCli({ context: CONTEXT });
-
-    cli.command({
+    const { facade } = createFacade([{
       name: "build",
       options: [
         { name: "dry-run", aliases: ["d"], value: false, default: false },
         { name: "env", value: true, default: "development" },
       ],
       action,
-    });
+    }]);
 
-    const adapter = createCommanderAdapter({ program: createProgram(), cli });
+    const adapter = createCommanderAdapter({ program: createProgram(), facade });
 
     const exitCode = await adapter.run(["build"]);
 
@@ -100,15 +113,13 @@ describe("createCommanderAdapter", () => {
 
   it("provides the short alias when only the long name is used", async () => {
     const action = vi.fn();
-    const cli = createCli({ context: CONTEXT });
-
-    cli.command({
+    const { facade } = createFacade([{
       name: "build",
       options: [{ name: "force", aliases: ["f"] }],
       action,
-    });
+    }]);
 
-    const adapter = createCommanderAdapter({ program: createProgram(), cli });
+    const adapter = createCommanderAdapter({ program: createProgram(), facade });
 
     const exitCode = await adapter.run(["build", "-f"]);
 
@@ -118,16 +129,14 @@ describe("createCommanderAdapter", () => {
 
   it("maps positional arguments under their declared names", async () => {
     const action = vi.fn();
-    const cli = createCli({ context: CONTEXT });
-
-    cli.command({
+    const { facade } = createFacade([{
       name: "build",
       arguments: [{ name: "target", required: true }, { name: "mode" }],
       options: [{ name: "env", value: true }],
       action,
-    });
+    }]);
 
-    const adapter = createCommanderAdapter({ program: createProgram(), cli });
+    const adapter = createCommanderAdapter({ program: createProgram(), facade });
 
     const exitCode = await adapter.run(["build", "dist", "release", "--env", "staging"]);
 
@@ -144,17 +153,15 @@ describe("createCommanderAdapter", () => {
 
   it("returns exit code 1 when a required argument is missing", async () => {
     const action = vi.fn();
-    const cli = createCli({ context: CONTEXT });
-
-    cli.command({
+    const { facade } = createFacade([{
       name: "build",
       arguments: [{ name: "target", required: true }],
       action,
-    });
+    }]);
 
     const program = createProgram();
     const lines = captureErrorOutput(program);
-    const adapter = createCommanderAdapter({ program, cli });
+    const adapter = createCommanderAdapter({ program, facade });
 
     const exitCode = await adapter.run(["build"]);
 
@@ -165,17 +172,15 @@ describe("createCommanderAdapter", () => {
 
   it("returns exit code 1 when a required option is missing", async () => {
     const action = vi.fn();
-    const cli = createCli({ context: CONTEXT });
-
-    cli.command({
+    const { facade } = createFacade([{
       name: "build",
       options: [{ name: "env", value: true, required: true }],
       action,
-    });
+    }]);
 
     const program = createProgram();
     const lines = captureErrorOutput(program);
-    const adapter = createCommanderAdapter({ program, cli });
+    const adapter = createCommanderAdapter({ program, facade });
 
     const exitCode = await adapter.run(["build"]);
 
@@ -186,24 +191,24 @@ describe("createCommanderAdapter", () => {
 
   it("executes Core lifecycle hooks around a command", async () => {
     const calls: string[] = [];
-    const cli = createCli({ context: CONTEXT });
+    const { facade, hooks } = createFacadeWithHooks();
 
-    cli.hook("beforeCommand", async (run) => {
+    hooks.define("beforeCommand", async (run) => {
       calls.push(`before:${run.name}`);
       return run;
     });
-    cli.hook("afterCommand", async (run) => {
+    hooks.define("afterCommand", async (run) => {
       calls.push(`after:${run.name}`);
       return run;
     });
-    cli.command({
+    const { facade: facadeWithHooks } = createFacadeWithHooks(hooks, [{
       name: "build",
       action: async () => {
         calls.push("action");
       },
-    });
+    }]);
 
-    const adapter = createCommanderAdapter({ program: createProgram(), cli });
+    const adapter = createCommanderAdapter({ program: createProgram(), facade: facadeWithHooks });
 
     const exitCode = await adapter.run(["build"]);
 
@@ -215,11 +220,9 @@ describe("createCommanderAdapter", () => {
     const action = vi.fn((_args: CliCommandArgs, ctx: AppContext) => {
       expect(ctx.config.apiUrl).toBe("https://api.example.com");
     });
-    const cli = createCli({ context: CONTEXT });
+    const { facade } = createFacade([{ name: "build", action }]);
 
-    cli.command({ name: "build", action });
-
-    const adapter = createCommanderAdapter({ program: createProgram(), cli });
+    const adapter = createCommanderAdapter({ program: createProgram(), facade });
 
     const exitCode = await adapter.run(["build"]);
 
@@ -228,18 +231,16 @@ describe("createCommanderAdapter", () => {
   });
 
   it("maps a failed command action to exit code 1 and surfaces the cause", async () => {
-    const cli = createCli({ context: CONTEXT });
-
-    cli.command({
+    const { facade } = createFacade([{
       name: "build",
       action: async () => {
         throw new Error("build exploded");
       },
-    });
+    }]);
 
     const program = createProgram();
     const lines = captureErrorOutput(program);
-    const adapter = createCommanderAdapter({ program, cli });
+    const adapter = createCommanderAdapter({ program, facade });
 
     const exitCode = await adapter.run(["build"]);
 
@@ -248,8 +249,9 @@ describe("createCommanderAdapter", () => {
   });
 
   it("returns exit code 1 for an unknown command", async () => {
-    const cli = createCli({ context: CONTEXT });
-    const adapter = createCommanderAdapter({ program: createProgram(), cli });
+    const { facade } = createFacade();
+
+    const adapter = createCommanderAdapter({ program: createProgram(), facade });
 
     const exitCode = await adapter.run(["nope"]);
 
@@ -257,19 +259,16 @@ describe("createCommanderAdapter", () => {
   });
 
   it("returns exit code 0 for help and version (application policy)", async () => {
-    const cli = createCli({ context: CONTEXT });
-    const helpAdapter = createCommanderAdapter({ program: createProgram(), cli });
-    const versionAdapter = createCommanderAdapter({ program: createProgram(), cli });
+    const { facade } = createFacade();
+    const helpAdapter = createCommanderAdapter({ program: createProgram(), facade });
+    const versionAdapter = createCommanderAdapter({ program: createProgram(), facade });
 
     expect(await helpAdapter.run(["--help"])).toBe(0);
     expect(await versionAdapter.run(["--version"])).toBe(0);
   });
 
   it("maps unexpected parse errors to exit code 1", async () => {
-    const cli = createCli({ context: CONTEXT });
-
-    cli.command({ name: "build", action: async () => {} });
-
+    const { facade } = createFacade([{ name: "build", action: async () => {} }]);
     const program = new Command().name("my-cli").version("1.0.0");
 
     program.hook("preAction", () => {
@@ -277,7 +276,7 @@ describe("createCommanderAdapter", () => {
     });
 
     const lines = captureErrorOutput(program);
-    const adapter = createCommanderAdapter({ program, cli });
+    const adapter = createCommanderAdapter({ program, facade });
 
     const exitCode = await adapter.run(["build"]);
 
@@ -289,15 +288,50 @@ describe("createCommanderAdapter", () => {
     const action = vi.fn(async () => {
       await Promise.resolve();
     });
-    const cli = createCli({ context: CONTEXT });
+    const { facade } = createFacade([{ name: "build", action }]);
 
-    cli.command({ name: "build", action });
-
-    const adapter = createCommanderAdapter({ program: createProgram(), cli });
+    const adapter = createCommanderAdapter({ program: createProgram(), facade });
 
     const exitCode = await adapter.run(["build"]);
 
     expect(exitCode).toBe(0);
     expect(action).toHaveBeenCalledTimes(1);
   });
+
+  it("maps command_failed error from Core to exit code 1", async () => {
+    const { facade } = createFacade([{
+      name: "build",
+      action: async () => {
+        throw new Error("core action failed");
+      },
+    }]);
+
+    const program = createProgram();
+    const lines = captureErrorOutput(program);
+    const adapter = createCommanderAdapter({ program, facade });
+
+    const exitCode = await adapter.run(["build"]);
+
+    expect(exitCode).toBe(1);
+    expect(lines.some((line) => line.includes("core action failed"))).toBe(true);
+  });
+
+  it("maps hook_failed error from Core to exit code 1", async () => {
+    const { facade, hooks } = createFacadeWithHooks();
+
+    hooks.define("beforeCommand", async () => {
+      throw new Error("hook exploded");
+    });
+    const { facade: facadeWithHooks } = createFacadeWithHooks(hooks, [{ name: "build", action: async () => {} }]);
+
+    const program = createProgram();
+    const lines = captureErrorOutput(program);
+    const adapter = createCommanderAdapter({ program, facade: facadeWithHooks });
+
+    const exitCode = await adapter.run(["build"]);
+
+    expect(exitCode).toBe(1);
+    expect(lines.some((line) => line.includes("hook exploded"))).toBe(true);
+  });
 });
+

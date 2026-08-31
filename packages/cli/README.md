@@ -6,7 +6,7 @@ CLI abstraction module for Comity framework applications.
 
 ## Purpose
 
-Defines the core CLI abstraction for Comity applications. Provides contracts for command registration, plugin composition, hook-based lifecycle, and configuration management. This package contains no Commander.js or process/runtime dependencies — it is a pure TypeScript abstraction.
+Defines the core CLI abstraction for Comity applications. Provides contracts for command registration, hook-based lifecycle, event-based observability, and execution context. This package contains no Commander.js or process/runtime dependencies — it is a pure TypeScript abstraction.
 
 ---
 
@@ -14,10 +14,13 @@ Defines the core CLI abstraction for Comity applications. Provides contracts for
 
 This package:
 
-- ✅ defines `CliCommand`, `CliPlugin`, `CliHook`, `CliConfig` contracts
-- ✅ provides `CliContext` for command/hook/plugin registration and execution
-- ✅ provides `defineConfig` for type-safe configuration
-- ✅ provides `CliConfigLoader` interface for configuration loading
+- ✅ defines `CliCommand`, `CliOption`, `CliArgument`, `CliCommandContext`, `CliCommandArgs` contracts
+- ✅ provides `CliRegistrationFacade` for command registration during setup
+- ✅ provides `CommandRegistry` for command storage and validation
+- ✅ provides `CliExecutionFacade` for command execution
+- ✅ provides `createCliExecutionFacade` factory
+- ✅ provides `CliError` for error handling
+- ✅ defines `CliLifecycle` hooks (`beforeCommand`, `afterCommand`)
 
 This package does NOT:
 
@@ -26,89 +29,131 @@ This package does NOT:
 - ❌ include filesystem config discovery
 - ❌ provide executable/bin entry point
 - ❌ include concrete logger implementation
+- ❌ define a persistent CLI lifecycle (no `start`/`stop`/`seal`)
 
 ---
 
 ## Public API
-No exhaustive reference; see docs for constraints.
 
 No exhaustive reference; see docs for constraints.
 
-### Types
+### Contracts
 
 ```typescript
 // Command definition
-type CliCommand = {
+type CliCommand<Context = {}> = {
   name: string;
   description?: string;
-  action: (args: CliCommandArgs, context: CliCommandContext) => void | Promise<void>;
-  options?: CliOption[];
+  arguments?: readonly CliArgument[];
+  options?: readonly CliOption[];
+  action: (args: CliCommandArgs, context: CliCommandContext<Context>) => void | Promise<void> | Result<void, BaseError>;
 };
 
-type CliOption = { flags: string; description?: string; default?: unknown };
+type CliArgument = { name: string; description?: string; required?: boolean };
+type CliOption = { name: string; aliases?: readonly string[]; description?: string; required?: boolean; value?: boolean; default?: string | number | boolean };
 type CliCommandArgs = Record<string, unknown>;
-type CliCommandContext = { config: CliConfig; logger: Logger };
+type CliCommandContext<Context = {}> = Readonly<Context>;
 
 // Hooks
-type CliHook = (context: HookContext) => void | Promise<void>;
-type HookContext = { commandName: string; args: CliCommandArgs; config: CliConfig; logger: Logger };
+type CliCommandRun<Context = {}> = { name: string; args: CliCommandArgs; context: CliCommandContext<Context> };
+type CliLifecycle<Context = {}> = { beforeCommand: CliCommandRun<Context>; afterCommand: CliCommandRun<Context> };
+type CliHookHandler<Context = {}> = HookHandler<CliCommandRun<Context>>;
 
-// Plugins
-type CliPlugin = { name: string; version: string; commands?: CliCommand[]; hooks?: Record<string, CliHook> };
-
-// Configuration
-interface CliConfig { logger?: Logger; plugins?: CliPlugin[]; hooks?: Record<string, CliHook>; workingDirectory?: string; }
-interface Logger { info(message: string, meta?: Record<string, unknown>): void; error(message: string, meta?: Record<string, unknown>): void; debug(message: string, meta?: Record<string, unknown>): void; }
-
-// Context interface
-interface CliContextInterface {
-  registerCommand(command: CliCommand): void;
-  registerHook(name: string, hook: CliHook): void;
-  executeHook(name: string, context: HookContext): Promise<void>;
-  getCommand(name: string): CliCommand | undefined;
-  getAllCommands(): CliCommand[];
+// Registration
+interface CliRegistrationFacade<Context = {}> {
+  registerCommand(command: CliCommand<Context>): void;
+  commands(): readonly CliCommand<Context>[];
 }
 
-// Configuration loader abstraction
-interface CliConfigLoader { load(): Promise<CliConfig>; }
+// Errors
+class CliError extends BaseError { ... }
+type CliErrorReason = "command_not_found" | "hook_failed" | "command_failed" | "usage";
+type CliErrorMeta = { details?: Record<string, unknown>; cause?: unknown };
 ```
 
-### Core Implementation
+### Facade & Registry
 
 ```typescript
-class CliContext implements CliContextInterface {
-  registerCommand(command: CliCommand): void;
-  registerHook(name: string, hook: CliHook): void;
-  async executeHook(name: string, context: HookContext): Promise<void>;
-  getCommand(name: string): CliCommand | undefined;
-  getAllCommands(): CliCommand[];
+class CommandRegistry<Context = {}> {
+  register(command: CliCommand<Context>): void;
+  get(name: string): CliCommand<Context> | undefined;
+  all(): readonly CliCommand<Context>[];
+  has(name: string): boolean;
 }
 
-function defineConfig<T extends CliConfig>(config: T): T;
+class CliExecutionFacade<Context = {}> {
+  constructor(registry: CommandRegistry<Context>, hooks: HookBus<CliLifecycle<Context>>, events: EventBus<CliEvents<Context>>, context: Context);
+  commands(): readonly CliCommand<Context>[];
+  execute(name: string, args: CliCommandArgs): Promise<Result<void, CliError>>;
+}
+
+function createCliExecutionFacade<Context = {}>(
+  registry: CommandRegistry<Context>,
+  hooks: HookBus<CliLifecycle<Context>>,
+  events: EventBus<CliEvents<Context>>,
+  context: Context
+): CliExecutionFacade<Context>;
 ```
 
-### Plugin Registration
-
-Plugins bundle commands and hooks:
+### Events
 
 ```typescript
-const plugin = {
-  name: "my-plugin",
-  version: "1.0.0",
-  commands: [{ name: "cmd", action: async () => {} }],
-  hooks: { beforeCommand: async (ctx) => {} },
-};
-context.registerPlugin(plugin);
+interface CliEvents<Context = {}> {
+  "cli.command.started": { name: string; args: CliCommandArgs; context: CliCommandContext<Context> };
+  "cli.command.completed": { name: string; args: CliCommandArgs; context: CliCommandContext<Context>; durationMs: number };
+  "cli.command.failed": { name: string; args: CliCommandArgs; context: CliCommandContext<Context>; error: Error; durationMs: number };
+}
 ```
 
-### Configuration
+### Errors
+
+Error primitives and CLI-specific error types exported from `@comity/cli/errors`:
 
 ```typescript
-const config = defineConfig<CliConfig>({
-  logger: myLogger,
-  plugins: [myPlugin],
-  hooks: { beforeCommand: async (ctx) => {} },
-});
+class CliError extends BaseError { ... }
+type CliErrorReason = "command_not_found" | "hook_failed" | "command_failed" | "usage";
+type CliErrorMeta = { details?: Record<string, unknown>; cause?: unknown };
+```
+
+---
+
+## Usage Pattern
+
+The Application owns CLI composition:
+
+```typescript
+// cli.ts — Application layer
+import { createApplication } from "./modules.js";
+import { CommandRegistry, CliExecutionFacade } from "@comity/cli";
+import { createCommanderAdapter } from "@comity/cli-commander";
+
+async function main() {
+  const kernel = await createApplication();
+
+  // 1. Create registry
+  const registry = new CommandRegistry<AppContext>();
+
+  // 2. Explicitly invoke module CLI capabilities
+  for (const module of [ordersModule, usersModule]) {
+    module.registerCliCommands?.(registry);
+  }
+
+  // 3. Create execution context
+  const appContext = createAppContext(kernel);
+
+  // 4. Adapt shared Kernel buses to CLI-specific contracts
+  const cliHooks = kernel.hooks as HookBus<CliLifecycle<AppContext>>;
+  const cliEvents = kernel.events as EventBus<CliEvents>;
+
+  // 5. Create execution facade
+  const cli = new CliExecutionFacade(registry, cliHooks, cliEvents, appContext);
+
+  // 6. Run via Commander adapter
+  const adapter = createCommanderAdapter({ program, facade: cli });
+  await adapter.run(process.argv.slice(2));
+
+  await kernel.stop();
+}
 ```
 
 ---
@@ -122,7 +167,7 @@ const config = defineConfig<CliConfig>({
 
 ## Related Packages
 
-- `@comity/primitives` — Result, Error, HookBus, DI primitives
+- `@comity/primitives` — Result, Error, HookBus, EventBus, DI primitives
 - `@comity/cli-commander` — Commander.js Technology Adapter
 - Application layer — owns bin entry point and composition
 
@@ -131,6 +176,8 @@ const config = defineConfig<CliConfig>({
 ## Status
 
 Stable
+
+_Implementation: 2026-08-31 (ADR-025)_
 
 _Review Completed: 2026-08-30_
 _Compliance Score: 100% (Green)_

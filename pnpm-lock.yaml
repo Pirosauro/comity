@@ -343,6 +343,9 @@ importers:
 
   packages/cli:
     dependencies:
+      '@comity/composition':
+        specifier: workspace:*
+        version: link:../composition
       '@comity/primitives':
         specifier: workspace:*
         version: link:../primitives
@@ -359,10 +362,13 @@ importers:
       '@comity/cli':
         specifier: workspace:*
         version: link:../cli
+    devDependencies:
+      '@comity/kernel':
+        specifier: workspace:*
+        version: link:../kernel
       '@comity/primitives':
         specifier: workspace:*
         version: link:../primitives
-    devDependencies:
       '@types/node':
         specifier: ^24.13.3
         version: 24.13.3

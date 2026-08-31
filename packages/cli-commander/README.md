@@ -18,7 +18,6 @@ This package:
 - ✅ provides `createCommanderAdapter` factory
 - ✅ handles argv parsing, option mapping, help/version
 - ✅ manages process integration (exit codes, signals)
-- ✅ implements filesystem config loader (`CliConfigLoader`)
 - ✅ executes Core hooks around command execution
 
 This package does NOT:
@@ -34,40 +33,39 @@ This package does NOT:
 No exhaustive reference; see docs for constraints.
 
 ```typescript
-interface CommanderAdapterOptions {
-  name: string; // CLI program name
-  version: string; // CLI program version
-  context: CliContext; // Core CliContext instance
-  configLoader?: CliConfigLoader; // Optional config loader (default: FS loader)
-  logger?: Logger; // Optional logger override
+interface CommanderAdapterOptions<Context = {}> {
+  /** Application-owned Commander program (name, version, help, output) */
+  program: Command;
+
+  /** Core CLI execution facade to translate and execute */
+  facade: CliExecutionFacade<Context>;
 }
 
-function createCommanderAdapter(options: CommanderAdapterOptions): {
-  run: (argv?: string[]) => Promise<number>;
+function createCommanderAdapter<Context = {}>(options: CommanderAdapterOptions<Context>): {
+  run(argv?: string[]): Promise<number>;
 };
-
-// Convenience factory with default filesystem config loader
-function createCommanderAdapterWithDefaults(
-  options: Omit<CommanderAdapterOptions, "configLoader"> & { context: CliContext }
-): ReturnType<typeof createCommanderAdapter>;
 ```
 
 ### Usage
 
 ```typescript
-import { CliContext } from "@comity/cli";
+import { Command } from "commander";
+import { CommandRegistry, CliExecutionFacade } from "@comity/cli";
 import { createCommanderAdapter } from "@comity/cli-commander";
 
-const context = new CliContext(config);
-context.registerCommand({ name: "build", action: async () => {} });
+const registry = new CommandRegistry<AppContext>();
+// ... register commands via module.registerCliCommands(registry) ...
 
-const adapter = createCommanderAdapter({
-  name: "my-cli",
-  version: "1.0.0",
-  context,
-});
+const cliHooks = kernel.hooks as HookBus<CliLifecycle<AppContext>>;
+const cliEvents = kernel.events as EventBus<CliEvents>;
+const appContext = createAppContext(kernel);
 
-await adapter.run(); // Uses process.argv.slice(2) by default
+const facade = new CliExecutionFacade(registry, cliHooks, cliEvents, appContext);
+
+const program = new Command().name("myapp").version("1.0.0");
+const adapter = createCommanderAdapter({ program, facade });
+
+await adapter.run(process.argv.slice(2));
 ```
 
 ### Exit Codes
@@ -98,6 +96,8 @@ await adapter.run(); // Uses process.argv.slice(2) by default
 ## Status
 
 Stable
+
+_Implementation: 2026-08-31 (ADR-025)_
 
 _Review Completed: 2026-08-30_
 _Compliance Score: 100% (Green)_
