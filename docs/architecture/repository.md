@@ -1,6 +1,6 @@
 # Repository Overview
 
-## Package Inventory (47 packages)
+## Package Inventory (52 packages)
 
 ### Kernel / Primitives (3)
 
@@ -10,7 +10,7 @@
 | `@comity/kernel`      | Runtime engine: module lifecycle, service registration, event dispatching, hook execution, module initialization |
 | `@comity/composition` | Module loader, resolver, shared services, runtime orchestrator                                                   |
 
-### Core Modules (26)
+### Core Modules (31)
 
 | Package                   | Description                                                                                    |
 | ------------------------- | ---------------------------------------------------------------------------------------------- |
@@ -40,33 +40,33 @@
 | `@comity/geography`       | Geography contracts: `GeographyProvider`, country/subdivision metadata, `GeographyError`       |
 | `@comity/identity`        | Identity domain: `User`, `UserId`, `UserValidator`                                             |
 | `@comity/cli`             | CLI core capability: command/hook contracts, `CommandRegistry`, `CliExecutionFacade`, `createCliExecutionFacade` |
+| `@comity/acl`             | Authorization capability: `Authorizer`, `AuthorizationContext`, `AuthorizationDecision`        |
+| `@comity/organization`    | Shared organization identifiers: `ChannelId`, `TenantId`                                       |
+| `@comity/payment`         | Payment domain abstractions: `PaymentProvider`, `PaymentRequest`, `PaymentOutcome`             |
+| `@comity/customer`        | Customer domain: `Customer`, `CustomerRepository`, `CustomerId`, classification               |
+| `@comity/validation`      | Validation contracts: `Validator`, `ValidationError`, `ValidationResult`                       |
 
-### Adapters (16)
+### Adapters (18)
 
-| Package                         | Implements               | External Library                      |
-| ------------------------------- | ------------------------ | ------------------------------------- |
-| `@comity/http-hono`             | `@comity/http`           | `hono` (peer)                         |
-| `@comity/router-path-to-regexp` | `@comity/router`         | `path-to-regexp`                      |
-| `@comity/html-react`            | `@comity/html`           | `react`, `react-dom` (peer)           |
-| `@comity/html-preact`           | `@comity/html`           | `preact` (peer)                       |
-| `@comity/hydration-react`       | `@comity/hydration`      | `react`, `react-dom` (peer)           |
-| `@comity/hydration-preact`      | `@comity/hydration`      | `preact` (peer)                       |
-| `@comity/auth-jose`             | `@comity/auth`           | `jose`                                |
-| `@comity/cache-kv`              | `@comity/cache`          | — (KV store adapter)                  |
-| `@comity/cache-redis`           | `@comity/cache`          | `ioredis` or `redis` (peer, optional) |
-| `@comity/i18n-typesafe`         | `@comity/i18n`           | `typesafe-i18n` (peer)                |
-| `@comity/sql-kysely`            | `@comity/sql`            | `kysely`                              |
-| `@comity/graphql-client-fetch`  | `@comity/graphql-client` | Fetch API                             |
-| `@comity/http-fetch`            | `@comity/http`           | Fetch API                             |
-| `@comity/validation-zod`        | `@comity/validation`     | `zod` (peer)                          |
-| `@comity/cli-commander`         | `@comity/cli`            | `commander` (peer)                    |
-
-### Draft Packages (excluded from analysis)
-
-| Package              | Description                  |
-| -------------------- | ---------------------------- |
-| `@comity/customer`   | Customer domain (draft)      |
-| `@comity/validation` | Validation utilities (draft) |
+| Package                         | Implements                    | External Library                      |
+| ------------------------------- | ----------------------------- | ------------------------------------- |
+| `@comity/http-hono`             | `@comity/http`                | `hono` (peer)                         |
+| `@comity/router-path-to-regexp` | `@comity/router`              | `path-to-regexp`                      |
+| `@comity/html-react`            | `@comity/html`                | `react`, `react-dom` (peer)           |
+| `@comity/html-preact`           | `@comity/html`                | `preact` (peer)                       |
+| `@comity/hydration-react`       | `@comity/hydration`           | `react`, `react-dom` (peer)           |
+| `@comity/hydration-preact`      | `@comity/hydration`           | `preact` (peer)                       |
+| `@comity/auth-jose`             | `@comity/auth`                | `jose`                                |
+| `@comity/cache-kv`              | `@comity/cache`               | — (KV store adapter)                  |
+| `@comity/cache-redis`           | `@comity/cache`               | `ioredis` or `redis` (peer, optional) |
+| `@comity/i18n-typesafe`         | `@comity/i18n`                | `typesafe-i18n` (peer)                |
+| `@comity/sql-kysely`            | `@comity/sql`                 | `kysely`                              |
+| `@comity/graphql-client-fetch`  | `@comity/graphql-client`      | Fetch API                             |
+| `@comity/http-fetch`            | `@comity/http`                | Fetch API                             |
+| `@comity/validation-zod`        | `@comity/validation`          | `zod` (peer)                          |
+| `@comity/cli-commander`         | `@comity/cli`                 | `commander` (peer)                    |
+| `@comity/acl-casl`              | `@comity/acl`                 | `@casl/ability` (peer)                |
+| `@comity/graphql-client-ws`     | `@comity/graphql-client`      | `graphql-ws` (peer)                   |
 
 ---
 
@@ -124,7 +124,7 @@ File: [turbo.json](../../turbo.json)
 
 **Build inputs tracked for cache**: `src/**/*.ts`, `src/**/*.tsx`, `tsconfig.json`, `package.json`
 
-**Excluded from build**: `./packages/customer`, `./packages/validation`
+**Excluded from build**: none
 
 ### TypeScript Configuration
 

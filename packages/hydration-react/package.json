@@ -6,6 +6,10 @@
   "private": false,
   "author": "Filippo Bovo <hello@filippobovo.com>",
   "license": "MIT",
+  "comity": {
+    "layer": "technology-adapter",
+    "implements": "@comity/hydration"
+  },
   "homepage": "https://github.com/comityjs/framework#readme",
   "repository": {
     "type": "git",

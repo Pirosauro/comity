@@ -25,7 +25,9 @@ During repository review, several Core-to-Core dependencies were identified in t
 | `content → seo`         | Type-only                  |
 | `address → validation`  | Type-only                  |
 | `customer → validation` | Type-only                  |
+| `customer → organization` | Type-only                |
 | `identity → validation` | Type-only                  |
+| `order → organization`  | Type-only                  |
 | `auth-tokens → auth`    | Value (`AuthError`) + type |
 | `html → http`           | Type-only                  |
 | `router → http`         | Type-only                  |
@@ -143,8 +145,10 @@ Dependencies that fail one or more acceptance criteria and SHOULD be removed or 
 | `content → seo`         | Type-only   | Content pages reference `SeoModel`.                                 |
 | `taxonomy → media`      | Type-only   | Taxonomy models reference `MediaModel` for category image.          |
 | `order → pricing`       | Type-only   | Order items reference `Price` / `PriceModifier` / `Money`.            |
+| `order → organization`  | Type-only   | Order contracts reference `ChannelId` for commercial channel scoping. |
 | `address → validation`  | Type-only   | Address validator consumes the shared `Validator` contract.         |
 | `customer → validation` | Type-only   | Customer validator consumes the shared `Validator` contract.        |
+| `customer → organization` | Type-only | Customer repository requires `TenantId` for multi-tenant isolation. |
 | `identity → validation` | Type-only   | Identity validator consumes the shared `Validator` contract.        |
 
 ### Infrastructure Contract Exceptions

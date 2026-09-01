@@ -3,6 +3,15 @@ import { join } from "node:path";
 import { PACKAGE_NAME_REGEX } from "./utils/paths.mjs";
 import { readJson } from "./utils/filesystem.mjs";
 
+const VALID_LAYERS = new Set([
+  "primitives",
+  "kernel",
+  "composition",
+  "core",
+  "technology-adapter",
+  "integration-adapter",
+]);
+
 export function classifyFromRepository(markdown) {
   const result = new Map();
   let currentSection = null;
@@ -28,6 +37,29 @@ export function classifyFromRepository(markdown) {
       category = "integration-adapter";
     }
     result.set(names[0], category);
+  }
+
+  return result;
+}
+
+export function classifyFromPackageJson(packages) {
+  const result = new Map();
+  const missing = [];
+
+  for (const pkg of packages) {
+    const meta = pkg.manifest?.comity;
+    if (!meta || !meta.layer) {
+      missing.push(pkg.name);
+      continue;
+    }
+    if (!VALID_LAYERS.has(meta.layer)) {
+      throw new Error(`Invalid layer "${meta.layer}" for package ${pkg.name}. Valid layers: ${Array.from(VALID_LAYERS).join(", ")}`);
+    }
+    result.set(pkg.name, meta.layer);
+  }
+
+  if (missing.length > 0) {
+    throw new Error(`The following @comity/* packages are missing layer classification in package.json: ${missing.join(", ")}`);
   }
 
   return result;
@@ -68,7 +100,7 @@ export function buildGraph(packages, classification) {
     packages
       .filter((pkg) => {
         const category = classification.get(pkg.name);
-        return category === "core" || category === "draft";
+        return category === "core";
       })
       .map((pkg) => pkg.name)
   );

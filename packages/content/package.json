@@ -5,6 +5,9 @@
   "type": "module",
   "private": false,
   "license": "MIT",
+  "comity": {
+    "layer": "core"
+  },
   "homepage": "https://github.com/comityjs/framework#readme",
   "repository": {
     "type": "git",

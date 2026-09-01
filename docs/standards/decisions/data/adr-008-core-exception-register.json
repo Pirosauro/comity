@@ -147,6 +147,36 @@
       "adrReference": "ADR-008 — Dependency Register, Capability Exceptions"
     },
     {
+      "from": "@comity/order",
+      "to": "@comity/organization",
+      "layer": "core-to-core",
+      "categories": ["capability"],
+      "importKind": "type-only",
+      "lifecycle": "approved",
+      "justification": "Order contracts reference ChannelId for commercial channel scoping.",
+      "adrReference": "ADR-008 — Dependency Register, Capability Exceptions"
+    },
+    {
+      "from": "@comity/customer",
+      "to": "@comity/validation",
+      "layer": "core-to-core",
+      "categories": ["capability"],
+      "importKind": "type-only",
+      "lifecycle": "approved",
+      "justification": "Customer validator consumes the shared Validator contract.",
+      "adrReference": "ADR-008 — Dependency Register, Capability Exceptions"
+    },
+    {
+      "from": "@comity/customer",
+      "to": "@comity/organization",
+      "layer": "core-to-core",
+      "categories": ["capability"],
+      "importKind": "type-only",
+      "lifecycle": "approved",
+      "justification": "Customer repository requires TenantId for multi-tenant isolation.",
+      "adrReference": "ADR-008 — Dependency Register, Capability Exceptions"
+    },
+    {
       "from": "@comity/address",
       "to": "@comity/validation",
       "layer": "core-to-core",

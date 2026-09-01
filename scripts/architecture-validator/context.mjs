@@ -1,4 +1,4 @@
-import { buildGraph, classifyFromRepository, discoverPackages } from "./graph.mjs";
+import { buildGraph, classifyFromPackageJson, classifyFromRepository, discoverPackages } from "./graph.mjs";
 import {
   parseRegisterEdges,
   parseRejectedEdges,
@@ -70,8 +70,8 @@ export async function createContext() {
     readText(ADR008_PATH),
   ]);
 
-  const classification = classifyFromRepository(repositoryMarkdown);
   const packages = await discoverPackages(PACKAGES_DIR);
+  const classification = classifyFromPackageJson(packages);
   const graph = buildGraph(packages, classification);
   const rejectedEdges = parseRejectedEdges(adr008Markdown);
 
