@@ -43,12 +43,11 @@ Every `@comity/*` package belongs to exactly one category (per `public-api.md §
 | Category                 | Packages                                                                                                                                                                                                                                                                                                                                                                                                                        | Characteristics                                                       |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
 | **Kernel / Primitives**  | `@comity/primitives`, `@comity/kernel`, `@comity/composition`                                                                                                                                                                                                                                                                                                                                                                   | Foundational building blocks and the runtime engine.                  |
-| **Core Modules**         | `@comity/http`, `@comity/router`, `@comity/html`, `@comity/hydration`, `@comity/auth`, `@comity/auth-tokens`, `@comity/cache`, `@comity/catalog`, `@comity/order`, `@comity/content`, `@comity/media`, `@comity/search`, `@comity/seo`, `@comity/i18n`, `@comity/sql`, `@comity/storage`, `@comity/storefront`, `@comity/graphql-builder`, `@comity/graphql-client`, `@comity/address`, `@comity/geography`, `@comity/identity` | Business abstractions and contracts.                                  |
-| **Technology Adapters**  | `@comity/http-hono`, `@comity/router-path-to-regexp`, `@comity/html-react`, `@comity/html-preact`, `@comity/hydration-react`, `@comity/hydration-preact`, `@comity/auth-jose`, `@comity/cache-kv`, `@comity/cache-redis`, `@comity/i18n-typesafe`, `@comity/sql-kysely`, `@comity/graphql-client-ws`, `@comity/graphql-client-fetch`, `@comity/http-fetch`, `@comity/validation-zod`                                            | One Core Module to one interchangeable technology.                    |
+| **Core Modules**         | `@comity/acl`, `@comity/address`, `@comity/auth`, `@comity/auth-tokens`, `@comity/cache`, `@comity/catalog`, `@comity/cli`, `@comity/content`, `@comity/customer`, `@comity/geography`, `@comity/graphql-builder`, `@comity/graphql-client`, `@comity/html`, `@comity/http`, `@comity/hydration`, `@comity/i18n`, `@comity/identity`, `@comity/inventory`, `@comity/media`, `@comity/order`, `@comity/organization`, `@comity/payment`, `@comity/pricing`, `@comity/router`, `@comity/search`, `@comity/seo`, `@comity/sql`, `@comity/storage`, `@comity/storefront`, `@comity/taxonomy`, `@comity/validation` | Business abstractions and contracts.                                  |
+| **Technology Adapters**  | `@comity/acl-casl`, `@comity/auth-jose`, `@comity/cache-kv`, `@comity/cache-redis`, `@comity/cli-commander`, `@comity/graphql-client-fetch`, `@comity/graphql-client-ws`, `@comity/html-preact`, `@comity/html-react`, `@comity/http-fetch`, `@comity/http-hono`, `@comity/hydration-preact`, `@comity/hydration-react`, `@comity/i18n-typesafe`, `@comity/router-path-to-regexp`, `@comity/sql-kysely`, `@comity/validation-zod`                                            | One Core Module to one interchangeable technology.                    |
 | **Integration Adapters** | None in this repository                                                                                                                                                                                                                                                                                                                                                                                                         | One external platform to one or more Core Module contracts (ADR-007). |
-| **Draft Packages**       | `@comity/customer`, `@comity/validation`                                                                                                                                                                                                                                                                                                                                                                                        | Core Modules in draft state; same rules as Core Modules.              |
 
-Classification is decided by architectural review and recorded in `public-api.md` and `docs/architecture/repository.md`, not inferred from version numbers.
+Classification is determined by the `comity.layer` field in each package's `package.json` (ADR-026). This is the single authoritative source. The `docs/architecture/repository.md` inventory reflects this classification.
 
 ---
 
@@ -229,17 +228,17 @@ Rules:
 
 ## 11. Current Repository Conformance
 
-Verified state (2026-08-15):
+Verified state (2026-09-02):
 
 | Rule                                                                                                   | Status                                               |
 | ------------------------------------------------------------------------------------------------------ | ---------------------------------------------------- |
 | Kernel layer dependencies (primitives/kernel/composition)                                              | Conform                                              |
-| All Core-to-Core edges registered in ADR-008                                                           | Conform (16 edges verified)                          |
-| Adapter classification (15 Technology)                                                                 | Conform                                              |
+| All Core-to-Core edges registered in ADR-008                                                           | Conform (20 edges verified)                          |
+| Adapter classification (17 Technology)                                                                 | Conform                                              |
 | Adapter → Adapter edges                                                                                | None present                                         |
-| `type: module`, `engines.node >= 24.0.0`, `license`                                                    | Conform (all 42 packages)                            |
+| `type: module`, `engines.node >= 24.0.0`, `license`                                                    | Conform (all 51 packages)                            |
 | README date format `YYYY-MM-DD`                                                                        | **Non-conforming** (35 READMEs use non-ISO dates)    |
-| README `## Public API` "No exhaustive reference" line                                                  | **Non-conforming** (23 of 42 packages missing)       |
+| README `## Public API` "No exhaustive reference" line                                                  | **Non-conforming** (23 of 51 packages missing)       |
 | Adapter peerDependency/devDependency pairing (`adapters.md §12`)                                       | **Non-conforming** (`cache-redis`, `validation-zod`) |
 | Dead internal dependencies (`auth-jose` → `kernel`; `graphql-client-ws` → `composition`, `primitives`) | **Non-conforming**                                   |
 
@@ -249,7 +248,7 @@ Non-conformances listed above constitute the migration backlog. Closing them is 
 
 ## Future Enforcement
 
-The architecture validator is implemented as a read-only conformance checker.
+The architecture validator is implemented as a read-only conformance checker and is integrated into the repository workflows.
 
 The validator:
 
@@ -263,13 +262,12 @@ The validator is not an architectural authority:
 - ADR-009 remains the authority for register serialization;
 - standards remain the authority for architectural rules.
 
-Future integration into repository workflows is intentionally a separate decision.
+### Current State (implemented)
 
-### Target State
-
-- An architecture validator runs as part of CI and MUST fail on architecture violations.
+- The architecture validator runs as part of CI (`.github/workflows/release.yml`) and MUST fail on architecture violations.
+- The architecture validator regression suite runs as part of `pnpm test` via the root Vitest project configuration.
 - The validator builds the dependency graph from `packages/*/package.json` and evaluates the rules in Sections 4–10.
-- The ADR-008 exception register is consumed in machine-readable form (a future serialization of ADR-008) so that registered edges are checked automatically and unregistered edges fail.
+- The ADR-008 exception register is consumed in machine-readable form (ADR-009 schema) so that registered edges are checked automatically and unregistered edges fail.
 
 ### Scope of Validator
 

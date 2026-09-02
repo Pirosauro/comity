@@ -47,7 +47,6 @@ function exec(command, args, options = {}) {
 async function fileExists(path) {
   try {
     await access(path);
-
     return true;
   } catch {
     return false;
@@ -83,11 +82,6 @@ async function buildPackage(options = {}) {
     console.log(`👀 Starting watch mode on ${relative(ROOT, CWD)}...`);
     
     await typeCheck(tsconfig);
-
-    if (options.swc) {
-      return watchBuildWithSWC(tsconfig);
-    }
-
     return watchBuildWithTSC(tsconfig);
   }
 
@@ -99,11 +93,7 @@ async function buildPackage(options = {}) {
   await typeCheck(tsconfig);
 
   // 3. ESM + CJS + DTS build
-  if (options.swc) {
-    await buildWithSWC(tsconfig);
-  } else {
-    await buildWithTSC(tsconfig);
-  }
+  await buildWithTSC(tsconfig);
 
   console.log("Build completed\n");
 }
@@ -150,10 +140,6 @@ async function buildWithTSC(tsconfig) {
     "--emitDeclarationOnly", true,
     "--sourceMap", process.env.NODE_ENV !== "production",
   ]);
-}
-
-async function buildWithSWC(tsconfig) {
-  console.log('SWC build is not yet implemented.');
 }
 
 /**
@@ -224,17 +210,12 @@ async function watchBuildWithTSC(tsconfig) {
   }
 }
 
-async function watchBuildWithSWC(tsconfig) {
-  console.log('SWC watch build is not yet implemented.');
-}
-
 // CLI entry point
 async function main() {
   const args = process.argv.slice(2);
 
   // Flags parsing
   const flags = {
-    swc: args.includes("--swc"),
     watch: args.includes("--watch"),
   };
 

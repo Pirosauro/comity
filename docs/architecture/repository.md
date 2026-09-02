@@ -1,6 +1,6 @@
 # Repository Overview
 
-## Package Inventory (52 packages)
+## Package Inventory (51 packages)
 
 ### Kernel / Primitives (3)
 
@@ -46,7 +46,7 @@
 | `@comity/customer`        | Customer domain: `Customer`, `CustomerRepository`, `CustomerId`, classification               |
 | `@comity/validation`      | Validation contracts: `Validator`, `ValidationError`, `ValidationResult`                       |
 
-### Adapters (18)
+### Technology Adapters (17)
 
 | Package                         | Implements                    | External Library                      |
 | ------------------------------- | ----------------------------- | ------------------------------------- |

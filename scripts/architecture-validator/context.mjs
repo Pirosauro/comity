@@ -1,4 +1,4 @@
-import { buildGraph, classifyFromPackageJson, classifyFromRepository, discoverPackages } from "./graph.mjs";
+import { buildGraph, classifyFromPackageJson, discoverPackages } from "./graph.mjs";
 import {
   parseRegisterEdges,
   parseRejectedEdges,
@@ -10,7 +10,6 @@ import {
   PACKAGES_DIR,
   REGISTER_PATH,
   REPO_ROOT,
-  REPOSITORY_PATH,
   SCHEMA_PATH,
 } from "./utils/paths.mjs";
 
@@ -36,7 +35,7 @@ export const KERNEL_SOURCE =
   "layering-policy.md §2.1 / dependency-graph-policy.md (docs/standards/)";
 
 export const COMPOSITION_INFRASTRUCTURE_NAME =
-  /^(?:Default|create|make|build)[A-Z]|(?:Facade|Factory|Writer|Builder|Composer|Resolver)$/;
+  /^(?:Default|create|make|build)[A-Z].*$|^.*(?:Facade|Factory|Writer|Builder|Composer|Resolver)$/;
 
 export const IMPORT_STATEMENT_RE = /import\s+(type\s+)?([^'"]*?)\s*from\s+['"]([^'"]+)['"]/g;
 export const IMPLEMENTS_RE = /implements\s+([^\{]+)/g;
@@ -63,8 +62,7 @@ export const REQUIRED_SECTIONS = [
 ];
 
 export async function createContext() {
-  const [repositoryMarkdown, register, schema, adr008Markdown] = await Promise.all([
-    readText(REPOSITORY_PATH),
+  const [register, schema, adr008Markdown] = await Promise.all([
     readJson(REGISTER_PATH),
     readJson(SCHEMA_PATH),
     readText(ADR008_PATH),
@@ -89,4 +87,4 @@ export async function createContext() {
   };
 }
 
-export { ADR008_PATH, PACKAGES_DIR, REGISTER_PATH, REPO_ROOT, REPOSITORY_PATH, SCHEMA_PATH };
+export { ADR008_PATH, PACKAGES_DIR, REGISTER_PATH, REPO_ROOT, SCHEMA_PATH };

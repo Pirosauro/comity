@@ -150,6 +150,7 @@ Dependencies that fail one or more acceptance criteria and SHOULD be removed or 
 | `customer → validation` | Type-only   | Customer validator consumes the shared `Validator` contract.        |
 | `customer → organization` | Type-only | Customer repository requires `TenantId` for multi-tenant isolation. |
 | `identity → validation` | Type-only   | Identity validator consumes the shared `Validator` contract.        |
+| `payment → pricing`     | Type-only   | Payment module uses `Money` value object from pricing for amount representation in `PaymentRequest` and `PaymentOutcome`. |
 
 ### Infrastructure Contract Exceptions
 
@@ -219,11 +220,6 @@ dependency graph documents compile-time module edges, not temporal
 orchestration sequence.
 
 ---
-The only registered Core-to-Core dependency edge is:
-
-| Dependency              | Import kind | Justification                                                                                                                          |
-| ----------------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `order → pricing`       | Type-only   | Order items reference `Price` / `PriceModifier` / `Money`. Registered in ADR-008.                                                       |
 
 ## Forbidden Patterns (unchanged)
 

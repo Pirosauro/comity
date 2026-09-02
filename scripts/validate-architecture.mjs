@@ -7,7 +7,6 @@ const __filename = fileURLToPath(import.meta.url);
 const ROOT = dirname(__filename);
 
 export {
-  classifyFromRepository,
   discoverPackages,
   buildGraph,
   parseRejectedEdges,

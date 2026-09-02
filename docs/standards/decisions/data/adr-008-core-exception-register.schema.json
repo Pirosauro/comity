@@ -28,7 +28,8 @@
       "description": "Closed list of approved Core-to-Core dependency exceptions.",
       "items": {
         "$ref": "#/$defs/dependencyEdge"
-      }
+      },
+      "uniqueItems": true
     }
   },
   "$defs": {

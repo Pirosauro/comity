@@ -187,16 +187,6 @@
       "adrReference": "ADR-008 — Dependency Register, Capability Exceptions"
     },
     {
-      "from": "@comity/customer",
-      "to": "@comity/validation",
-      "layer": "core-to-core",
-      "categories": ["capability"],
-      "importKind": "type-only",
-      "lifecycle": "approved",
-      "justification": "Customer validator consumes the shared Validator contract.",
-      "adrReference": "ADR-008 — Dependency Register, Capability Exceptions"
-    },
-    {
       "from": "@comity/identity",
       "to": "@comity/validation",
       "layer": "core-to-core",

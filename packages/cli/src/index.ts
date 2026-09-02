@@ -4,5 +4,5 @@ export type { CliLifecycle, CliCommandRun, CliHookHandler } from "./contracts/ho
 export type { CliErrorReason, CliErrorMeta } from "./errors/cli.js";
 
 export { CliError } from "./errors/cli.js";
-export { CommandRegistry } from "./internal/command-registry.js";
 export { CliExecutionFacade, createCliExecutionFacade } from "./internal/cli-execution-facade.js";
+export { CommandRegistry } from "./internal/command-registry.js";

@@ -18,6 +18,5 @@ export const ADR008_PATH = join(
   REPO_ROOT,
   "docs/standards/decisions/ADR-008-explicit-core-module-composition-exceptions.md"
 );
-export const REPOSITORY_PATH = join(REPO_ROOT, "docs/architecture/repository.md");
 
 export const PACKAGE_NAME_REGEX = /@comity\/[a-z0-9-]+/g;

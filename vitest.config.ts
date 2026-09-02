@@ -2,7 +2,10 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
-    projects: ["packages/*/vitest.config.{ts,js,mjs}"],
+    projects: [
+      "packages/*/vitest.config.{ts,js,mjs}",
+      "scripts/architecture-validator/vitest.config.mjs"
+    ],
 
     environment: "node",
     globals: true,

@@ -16,6 +16,7 @@ const CANONICAL_TOP_LEVEL_ORDER = [
   "private",
   "author",
   "license",
+  "comity",
   "homepage",
   "repository",
   "bugs",

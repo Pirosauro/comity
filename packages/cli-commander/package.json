@@ -73,9 +73,9 @@
     "@comity/cli": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^24.13.3",
     "@comity/kernel": "workspace:*",
     "@comity/primitives": "workspace:*",
+    "@types/node": "^24.13.3",
     "commander": "^14.0.0",
     "typescript": "^5.9.3"
   }

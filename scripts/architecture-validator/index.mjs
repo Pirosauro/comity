@@ -2,7 +2,7 @@ import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { createContext } from "./context.mjs";
-import { buildGraph, classifyFromRepository, discoverPackages } from "./graph.mjs";
+import { buildGraph, discoverPackages } from "./graph.mjs";
 import { formatReport } from "./report.mjs";
 import { validate as validateAdapterPeers } from "./rules/adapter-peers.mjs";
 import {
@@ -15,6 +15,7 @@ import {
 import { validate as validateCore } from "./rules/core.mjs";
 import { validate as validateErrors } from "./rules/errors.mjs";
 import { validate as validateImports } from "./rules/imports.mjs";
+import { validate as validateImplements } from "./rules/implements.mjs";
 import { validate as validateKernel } from "./rules/kernel.mjs";
 import {
   collectExportTargets,
@@ -44,8 +45,8 @@ async function buildAdapterAnalysis(context) {
   return analysis;
 }
 
-export async function runValidation() {
-  const context = await createContext();
+export async function runValidation(contextOverride = null) {
+  const context = contextOverride ?? (await createContext());
   context.adapterAnalysis = await buildAdapterAnalysis(context);
 
   const violations = [
@@ -53,6 +54,7 @@ export async function runValidation() {
     ...validateCore(context),
     ...validateKernel(context),
     ...validateAdapters(context),
+    ...validateImplements(context),
     ...(await validateMetadata(context)),
     ...(await validateReadme(context)),
     ...(await validateErrors(context)),
@@ -81,7 +83,6 @@ if (process.argv[1] && resolve(process.argv[1]) === __filename) {
 export {
   analyzeAdapterCoreReferences,
   buildGraph,
-  classifyFromRepository,
   collectExportTargets,
   discoverPackages,
   enginesNodeSatisfies,
@@ -96,6 +97,7 @@ export {
   validateAdapters,
   validateCore,
   validateErrors,
+  validateImplements,
   validateImports,
   validateKernel,
   validateMetadata,

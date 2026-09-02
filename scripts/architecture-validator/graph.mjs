@@ -12,36 +12,6 @@ const VALID_LAYERS = new Set([
   "integration-adapter",
 ]);
 
-export function classifyFromRepository(markdown) {
-  const result = new Map();
-  let currentSection = null;
-
-  for (const line of markdown.split(/\r?\n/)) {
-    const trimmed = line.trim();
-
-    if (trimmed.startsWith("###")) {
-      if (trimmed.includes("Kernel / Primitives")) currentSection = "kernel-primitives";
-      else if (trimmed.includes("Core Modules")) currentSection = "core";
-      else if (trimmed.includes("Adapters")) currentSection = "technology-adapter";
-      else if (trimmed.includes("Draft Packages")) currentSection = "draft";
-      else currentSection = null;
-      continue;
-    }
-
-    if (currentSection === null || !trimmed.startsWith("|")) continue;
-    const names = trimmed.match(PACKAGE_NAME_REGEX);
-    if (!names) continue;
-
-    let category = currentSection;
-    if (currentSection === "technology-adapter" && trimmed.includes("Integration Adapter")) {
-      category = "integration-adapter";
-    }
-    result.set(names[0], category);
-  }
-
-  return result;
-}
-
 export function classifyFromPackageJson(packages) {
   const result = new Map();
   const missing = [];
