@@ -1,5 +1,6 @@
 # ADR-012 — Standard Domain Modeling for Core Modules
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/decisions/ADR-012-standard-domain-modeling.md`
 **Status:** Accepted
 
 ## Context

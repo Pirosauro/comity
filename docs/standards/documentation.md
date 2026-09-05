@@ -1,5 +1,6 @@
 # Documentation Standards
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/documentation.md`
 This document defines the official documentation standards for the Comity monorepo.
 
 All packages MUST comply with these rules. Any deviation must be intentional, explicit, and justified.

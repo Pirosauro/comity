@@ -1,5 +1,6 @@
 # Comity Coding Standards — Modules
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/modules.md`
 This document defines the **module model** in Comity and clarifies the distinction between
 **Application Authors** and **Module Authors**.
 

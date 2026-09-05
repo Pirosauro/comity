@@ -1,5 +1,6 @@
 # ADR-007 — Multi-Context Adapter Architecture for Platform Integrations
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/decisions/ADR-007-multi-context-adapter-architecture.md`
 **Status:** Accepted
 
 ## Context

@@ -1,0 +1,16 @@
+{
+  "repository": {
+    "name": "community",
+    "type": "community"
+  },
+  "packages": {
+    "roots": ["packages"]
+  },
+  "validation": {
+    "rules": {},
+    "exceptions": {
+      "dependencyEdges": [],
+      "layerOverrides": []
+    }
+  }
+}

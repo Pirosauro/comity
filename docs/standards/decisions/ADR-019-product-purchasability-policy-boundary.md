@@ -1,5 +1,6 @@
 # ADR-019 — Product Purchasability Policy Boundary
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/decisions/ADR-019-product-purchasability-policy-boundary.md`
 **Status:** Proposed
 
 ## Context

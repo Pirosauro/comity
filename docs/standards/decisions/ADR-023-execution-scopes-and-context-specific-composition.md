@@ -1,5 +1,6 @@
 # ADR-023 — Execution Scopes and Context Contributions
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/decisions/ADR-023-execution-scopes-and-context-specific-composition.md`
 **Status:** Proposed
 
 ## Context

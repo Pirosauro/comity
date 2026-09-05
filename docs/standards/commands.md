@@ -1,5 +1,6 @@
 # Comity Coding Standards — Commands (Imperative Operations Model)
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/commands.md`
 This document defines the official **Command Pattern policy** for Comity.
 
 Commands complement Events.

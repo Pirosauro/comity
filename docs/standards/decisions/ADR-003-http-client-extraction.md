@@ -1,5 +1,6 @@
 # ADR-003 — HTTP Client Extraction from @comity/http
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/decisions/ADR-003-http-client-extraction.md`
 **Status:** Accepted
 
 ## Context

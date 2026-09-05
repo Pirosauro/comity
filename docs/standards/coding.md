@@ -1,5 +1,6 @@
 # Comity Coding Standards — Class Design
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/coding.md`
 This document defines the **official class design and construction standards** for all Comity packages.
 
 These rules apply to:

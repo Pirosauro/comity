@@ -1,5 +1,6 @@
 # ADR-026 — Architecture Validator Authoritative Package Classification
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/decisions/ADR-026-architecture-validator-authoritative-classification.md`
 **Status:** Accepted
 
 ## Context

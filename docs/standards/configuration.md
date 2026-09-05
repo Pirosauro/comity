@@ -1,5 +1,6 @@
 # Comity Coding Standards — Configuration Model
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/configuration.md`
 This document defines the official configuration strategy for Comity applications.
 
 Configuration is an application concern.

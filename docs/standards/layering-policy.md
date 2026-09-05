@@ -1,5 +1,6 @@
 # Comity Coding Standards — Official Layering Policy
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/layering-policy.md`
 This document formalizes the **official layering model** of Comity.
 
 Layering is not optional. It is a structural constraint that guarantees:

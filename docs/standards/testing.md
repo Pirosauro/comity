@@ -1,5 +1,6 @@
 # Comity Coding Standards — Testing
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/testing.md`
 This document defines how testing is approached across the Comity ecosystem.
 
 Testing in Comity is **structural**, **layer-aware**, and **boundary-conscious**.

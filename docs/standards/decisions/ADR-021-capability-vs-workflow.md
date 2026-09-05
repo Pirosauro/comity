@@ -1,5 +1,6 @@
 # ADR-021 — Capability vs Workflow Boundary
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/decisions/ADR-021-capability-vs-workflow.md`
 **Status:** Accepted
 
 ## Context

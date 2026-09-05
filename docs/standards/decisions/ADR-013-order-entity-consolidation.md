@@ -1,5 +1,6 @@
 # ADR-013 — Order Entity Consolidation
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/decisions/ADR-013-order-entity-consolidation.md`
 **Status:** Accepted
 
 ## Context

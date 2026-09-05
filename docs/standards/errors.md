@@ -1,5 +1,6 @@
 # Comity Coding Standards — Errors
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/errors.md`
 This document defines the **official error model** for all Comity packages.
 
 These rules apply to:

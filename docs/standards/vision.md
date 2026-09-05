@@ -1,5 +1,6 @@
 # Comity Coding Standards — Vision
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/vision.md`
 Comity was born from a simple frustration:
 backend systems that are either too heavy, too magical, or too fragile.
 

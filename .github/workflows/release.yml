@@ -10,10 +10,23 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout Community
         uses: actions/checkout@v4
         with:
+          repository: ${{ github.repository }}
+          path: community
           fetch-depth: 0
+
+      # The Community package manifest declares five `@comity-dev/*`
+      # packages with `link:../development/packages/*`. That sibling
+      # checkout must be created explicitly here so that pnpm's `link:`
+      # resolution and the `comity-validate` CLI script can resolve.
+      - name: Checkout Development
+        uses: actions/checkout@v4
+        with:
+          repository: comityjs/development
+          path: development
+          fetch-depth: 1
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
@@ -26,13 +39,31 @@ jobs:
           node-version: 24
           cache: "pnpm"
 
-      - name: Install dependencies
+      # Build the Development tooling from source before invoking the
+      # Community validator. The Community CI consumes Development
+      # through `link:../development/packages/*` (pnpm `link:` protocol),
+      # and the `comity-validate` script resolves to
+      # `../development/packages/validate/dist/bin/comity-validate.js`.
+      # That compiled artifact is produced here; CI does not rely on a
+      # developer machine, on cached `dist/`, or on registry publication.
+      - name: Install Development dependencies
+        working-directory: development
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Development
+        working-directory: development
+        run: pnpm build
+
+      - name: Install Community dependencies
+        working-directory: community
         run: pnpm install --frozen-lockfile
 
       - name: Architecture validation
+        working-directory: community
         run: pnpm architecture:validate
 
       - name: Build packages
+        working-directory: community
         run: pnpm turbo run build
 
       - name: Upload build artifacts
@@ -40,7 +71,7 @@ jobs:
         with:
           name: dist-packages
           path: |
-            packages/*/dist/
+            community/packages/*/dist/
             !**/*.map
           retention-days: 7
 
@@ -49,10 +80,19 @@ jobs:
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout Community
         uses: actions/checkout@v4
         with:
+          repository: ${{ github.repository }}
+          path: community
           fetch-depth: 0 # Required for changesets
+
+      - name: Checkout Development
+        uses: actions/checkout@v4
+        with:
+          repository: comityjs/development
+          path: development
+          fetch-depth: 1
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
@@ -65,10 +105,20 @@ jobs:
           node-version: 24
           registry-url: "https://registry.npmjs.org"
 
-      - name: Install dependencies
+      - name: Install Development dependencies
+        working-directory: development
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Development
+        working-directory: development
+        run: pnpm build
+
+      - name: Install Community dependencies
+        working-directory: community
         run: pnpm install --frozen-lockfile
 
       - name: Architecture validation
+        working-directory: community
         run: pnpm architecture:validate
 
       - name: Create Release Pull Request or Publish
@@ -80,7 +130,7 @@ jobs:
           version: pnpm run version
           publish: pnpm run release
         env:
-          # Token for GitHub (to create PR/Release)
+          # Token for GitHub (only for PRs/Releases)
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Token for npm (only for publish)
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

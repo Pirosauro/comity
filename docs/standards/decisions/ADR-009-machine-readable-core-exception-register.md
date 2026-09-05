@@ -1,5 +1,6 @@
 # ADR-009 — Machine-Readable Core Exception Register
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/decisions/ADR-009-machine-readable-core-exception-register.md`
 **Status:** Accepted
 
 ## Context

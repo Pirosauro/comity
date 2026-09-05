@@ -1,5 +1,6 @@
 # ADR-014 — Pricing Domain Model
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/decisions/ADR-014-pricing-domain-model.md`
 **Status:** Proposed
 
 ## Context

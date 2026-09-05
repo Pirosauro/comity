@@ -1,5 +1,6 @@
 # ADR-024 — Execution Context Composition via Typed Facades
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/decisions/ADR-024-execution-context-composition-via-typed-facades.md`
 - **Status:** Accepted
 - **Date:** 2026-08-31
 - **Supersedes:** ADR-023

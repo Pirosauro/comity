@@ -34,21 +34,21 @@ Kernel / Primitives
 
 ### Layer Responsibilities
 
-| Layer | Responsibility | Key Rule |
-|-------|---------------|----------|
-| **Primitives** | Foundational types, `Result`, DI container, error base class | No runtime state, no infrastructure, no business logic |
-| **Kernel** | Module lifecycle, service registration, event dispatching, hooks | No HTTP, no Router, no HTML, no infrastructure |
-| **Core Modules** | Business abstractions. Define contracts (interfaces), never implementations | Must not depend on Adapters or Application |
-| **Adapters** | Integrate external technologies (Hono, React, Kysely, Preact, Jose, etc.) | Depend on one Core Module + external library. Must remain replaceable |
-| **Application** | Configuration, routing, presenters, business orchestration | May depend on every lower layer |
+| Layer            | Responsibility                                                              | Key Rule                                                              |
+| ---------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| **Primitives**   | Foundational types, `Result`, DI container, error base class                | No runtime state, no infrastructure, no business logic                |
+| **Kernel**       | Module lifecycle, service registration, event dispatching, hooks            | No HTTP, no Router, no HTML, no infrastructure                        |
+| **Core Modules** | Business abstractions. Define contracts (interfaces), never implementations | Must not depend on Adapters or Application                            |
+| **Adapters**     | Integrate external technologies (Hono, React, Kysely, Preact, Jose, etc.)   | Depend on one Core Module + external library. Must remain replaceable |
+| **Application**  | Configuration, routing, presenters, business orchestration                  | May depend on every lower layer                                       |
 
 ### Package Identification
 
-| Type | Dependencies | Has external lib? | Has `contracts/` folder? |
-|------|-------------|-------------------|--------------------------|
-| Core Module | Only `@comity/*` (primitives, kernel, other cores) | No | Yes |
-| Adapter | Core Module(s) + external library (peerDependency) | Yes | Rarely |
-| Kernel/Primitives | Nothing or only `@comity/primitives` | No | Sometimes |
+| Type              | Dependencies                                       | Has external lib? | Has `contracts/` folder? |
+| ----------------- | -------------------------------------------------- | ----------------- | ------------------------ |
+| Core Module       | Only `@comity/*` (primitives, kernel, other cores) | No                | Yes                      |
+| Adapter           | Core Module(s) + external library (peerDependency) | Yes               | Rarely                   |
+| Kernel/Primitives | Nothing or only `@comity/primitives`               | No                | Sometimes                |
 
 ### Key Design Principles
 
@@ -66,12 +66,12 @@ For a complete list of all 36 packages with descriptions, see `docs/architecture
 
 ### Folder Naming
 
-| Element | Form | Example |
-|---------|------|---------|
-| Errors | Singular | `src/error/` |
-| Contracts | Plural | `src/contracts/` |
-| Hooks | Plural | `src/hooks/` |
-| Setup | Singular | `src/setup/` |
+| Element   | Form     | Example          |
+| --------- | -------- | ---------------- |
+| Errors    | Singular | `src/error/`     |
+| Contracts | Plural   | `src/contracts/` |
+| Hooks     | Plural   | `src/hooks/`     |
+| Setup     | Singular | `src/setup/`     |
 
 ### Folder Structure (Standard Package)
 
@@ -111,21 +111,22 @@ Every package MUST document its public API with JSDoc. ESLint requires `@descrip
 
 ### Development Commands
 
-| Command | Purpose |
-|---------|---------|
-| `pnpm install` | Install dependencies (pnpm only, enforced via preinstall) |
-| `pnpm dev` | Watch mode across all packages |
-| `pnpm build` | Full build via Turborepo (excludes draft packages) |
-| `pnpm build:single @comity/http` | Build a single package and its deps |
-| `pnpm type-check` | TypeScript type checking across all packages |
-| `pnpm test` | Run all tests (Vitest workspace mode) |
-| `pnpm test:watch` | Watch mode for tests |
-| `pnpm test:coverage` | Run tests with 80% minimum coverage |
-| `pnpm changeset` | Create a versioning changeset |
+| Command                          | Purpose                                                   |
+| -------------------------------- | --------------------------------------------------------- |
+| `pnpm install`                   | Install dependencies (pnpm only, enforced via preinstall) |
+| `pnpm dev`                       | Watch mode across all packages                            |
+| `pnpm build`                     | Full build via Turborepo (excludes draft packages)        |
+| `pnpm build:single @comity/http` | Build a single package and its deps                       |
+| `pnpm type-check`                | TypeScript type checking across all packages              |
+| `pnpm test`                      | Run all tests (Vitest workspace mode)                     |
+| `pnpm test:watch`                | Watch mode for tests                                      |
+| `pnpm test:coverage`             | Run tests with 80% minimum coverage                       |
+| `pnpm changeset`                 | Create a versioning changeset                             |
 
 ### Build Pipeline
 
 Turborepo (`turbo.json`) coordinates builds:
+
 - `build` tasks depends on `^build` (build dependencies first)
 - Cache enabled for builds, tracked by `src/**/*.ts` + `tsconfig.json` + `package.json`
 - Output: `dist/` with dual ESM/CJS bundles
@@ -133,6 +134,7 @@ Turborepo (`turbo.json`) coordinates builds:
 ### Testing
 
 Vitest workspace mode: each package declares its own `vitest.config.ts`. Root config sets:
+
 - Environment: `node`
 - Coverage thresholds: **80%** (lines, functions, branches, statements)
 - Timeout: 10s
@@ -211,13 +213,13 @@ Follow this sequence:
 
 ## Do / Don't
 
-| Do | Don't |
-|----|------|
-| Start from "who owns this responsibility?" | Start from "where can I put this?" |
-| Define contracts in Core Modules | Put implementations in Core Modules |
-| Expose only the minimum public API | Create convenience short cuts that leak implementation |
-| Register services lazily | Construct eagerly |
-| Use `Result<T, E>` for failures | Throw for business logic |
-| Preserve folder naming conventions | Use singular for `contracts/` or plural for `error/` |
-| Align exports with physical folders | Export subpaths for non-existent directories |
-| Justify every abstraction | Create abstraction "just in case" |
+| Do                                         | Don't                                                  |
+| ------------------------------------------ | ------------------------------------------------------ |
+| Start from "who owns this responsibility?" | Start from "where can I put this?"                     |
+| Define contracts in Core Modules           | Put implementations in Core Modules                    |
+| Expose only the minimum public API         | Create convenience short cuts that leak implementation |
+| Register services lazily                   | Construct eagerly                                      |
+| Use `Result<T, E>` for failures            | Throw for business logic                               |
+| Preserve folder naming conventions         | Use singular for `contracts/` or plural for `error/`   |
+| Align exports with physical folders        | Export subpaths for non-existent directories           |
+| Justify every abstraction                  | Create abstraction "just in case"                      |

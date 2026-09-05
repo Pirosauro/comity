@@ -1,5 +1,7 @@
 # Comity Coding Standards — Architecture Validation
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide architecture validation standard is now maintained in [`comity-development/docs/standards/architecture-validation.md`](../../../comity-development/docs/standards/architecture-validation.md). This file retains Community-specific conformance state (Section 11) and implementation details (Future Enforcement > Current State).
+
 This document defines the **normative architecture rules** for the Comity repository. It states what the architecture requires, independent of whether an automated tool enforces it today.
 
 > Scope: architectural rules only. The future automated enforcement layer is described separately in the "Future Enforcement" section and in the migration plan — it does not exist yet.

@@ -1,5 +1,6 @@
 # Comity Coding Standards — Module Promotion Criteria
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/module-promotion-criteria.md`
 This document defines when an Extension should be promoted to a Core Module.
 
 Promotion is rare.

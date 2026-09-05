@@ -1,5 +1,6 @@
 # Comity Coding Standards — Adapters
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/adapters.md`
 This document defines what **adapters** are in Comity, what they are responsible for,
 and how they must interact with the kernel and modules.
 

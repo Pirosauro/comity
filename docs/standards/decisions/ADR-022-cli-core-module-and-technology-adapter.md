@@ -1,5 +1,6 @@
 # ADR-022 — CLI Core Module and Technology Adapter Architecture
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/decisions/ADR-022-cli-core-module-and-technology-adapter.md`
 **Status:** Accepted
 
 ## Context

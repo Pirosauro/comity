@@ -1,5 +1,6 @@
 # Comity Coding Standards — Architecture Principles
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/architecture-principles.md`
 This document defines the structural rules that guide Comity’s design decisions.
 
 These are constraints, not suggestions.

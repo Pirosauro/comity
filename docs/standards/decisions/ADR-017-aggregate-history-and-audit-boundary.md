@@ -1,5 +1,6 @@
 # ADR-017 — Aggregate History and Audit Boundary
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/decisions/ADR-017-aggregate-history-and-audit-boundary.md`
 **Status:** Proposed
 
 ## Context

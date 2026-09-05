@@ -1,5 +1,6 @@
 # README Standards — Comity Framework
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/read-me.md`
 Document that defines the structure, tone, and conventions for all `README.md` files across Comity packages.
 
 ---

@@ -1,5 +1,6 @@
 # Comity Coding Standards — Events
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/events.md`
 This document defines the **official event model** for all Comity packages.
 
 Events are a first-class concept in Comity and enable:

@@ -1,5 +1,6 @@
 # ADR-011 — Catalog Owns Product Definition, Not Commercial Execution
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/decisions/ADR-011-catalog-product-definition-only.md`
 **Status:** Accepted
 
 ## Context

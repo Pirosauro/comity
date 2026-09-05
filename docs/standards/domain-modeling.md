@@ -1,5 +1,6 @@
 # Comity Standard — Domain Modeling & Repository Conventions
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/domain-modeling.md`
 ## Status
 
 **Approved**

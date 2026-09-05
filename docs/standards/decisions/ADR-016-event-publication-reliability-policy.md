@@ -1,5 +1,6 @@
 # ADR-016 — Event Publication Reliability Policy
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/decisions/ADR-016-event-publication-reliability-policy.md`
 **Status:** Proposed
 
 ## Context

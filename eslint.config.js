@@ -4,6 +4,8 @@ import boundaries from "eslint-plugin-boundaries";
 import importPlugin from "eslint-plugin-import";
 import jsdoc from "eslint-plugin-jsdoc";
 import { defineConfig } from "eslint/config";
+import comityPlugin from "@comity-dev/eslint-plugin";
+import { recommended as comityRecommended } from "@comity-dev/eslint-plugin/recommended";
 
 const IGNORED_GLOBS = [
   // Build output
@@ -35,6 +37,19 @@ export default defineConfig([
       "**/*.cjs",
       ".pnpm-store/**",
     ],
+  },
+  /**
+   * SHARED PLUGIN — Development-owned `@comity-dev/eslint-plugin`.
+   * The recommended ruleset is applied at the recommended severity; this
+   * block is the canonical hook so Community does NOT duplicate shared
+   * source-code policy.
+   */
+  {
+    files: ["**/*.ts"],
+    plugins: {
+      "@comity-dev": comityPlugin,
+    },
+    rules: comityRecommended.rules,
   },
   /**
    * BASE - common configuration

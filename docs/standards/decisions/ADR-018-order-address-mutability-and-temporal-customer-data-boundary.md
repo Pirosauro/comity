@@ -1,5 +1,6 @@
 # ADR-018 — Shipping Destination Mutability and Application-Owned Temporal History
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/decisions/ADR-018-order-address-mutability-and-temporal-customer-data-boundary.md`
 **Status:** Proposed
 
 > This ADR supersedes the previous Proposed draft of ADR-018 ("Order Address

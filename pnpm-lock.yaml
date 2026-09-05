@@ -11,6 +11,21 @@ importers:
       '@changesets/cli':
         specifier: ^2.31.1
         version: 2.31.1(@types/node@25.9.5)
+      '@comity-dev/dependency-rules':
+        specifier: link:../development/packages/dependency-rules
+        version: link:../development/packages/dependency-rules
+      '@comity-dev/eslint-plugin':
+        specifier: link:../development/packages/eslint-plugin
+        version: link:../development/packages/eslint-plugin
+      '@comity-dev/schemas':
+        specifier: link:../development/packages/schemas
+        version: link:../development/packages/schemas
+      '@comity-dev/semgrep-rules':
+        specifier: link:../development/packages/semgrep-rules
+        version: link:../development/packages/semgrep-rules
+      '@comity-dev/validate':
+        specifier: link:../development/packages/validate
+        version: link:../development/packages/validate
       '@typescript-eslint/eslint-plugin':
         specifier: ^8.68.0
         version: 8.68.0(@typescript-eslint/parser@8.68.0(eslint@9.39.5)(typescript@5.9.3))(eslint@9.39.5)(typescript@5.9.3)
@@ -343,9 +358,6 @@ importers:
 
   packages/cli:
     dependencies:
-      '@comity/composition':
-        specifier: workspace:*
-        version: link:../composition
       '@comity/primitives':
         specifier: workspace:*
         version: link:../primitives

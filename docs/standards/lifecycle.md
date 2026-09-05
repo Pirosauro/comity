@@ -1,5 +1,6 @@
 # Comity Coding Standards — Lifecycle
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/lifecycle.md`
 This document defines the **Lifecycle model** used across Comity packages and clarifies the
 **difference between Events and Hooks**, when to use each, and why both exist.
 

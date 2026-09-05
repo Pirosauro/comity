@@ -1,5 +1,6 @@
 # Comity Coding Standards — Dependency Graph Policy
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/dependency-graph-policy.md`
 Comity follows a strict layered architecture.
 
 ## Layers

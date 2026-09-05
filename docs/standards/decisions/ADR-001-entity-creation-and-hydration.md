@@ -1,5 +1,6 @@
 # ADR-001 — Entity Creation and Hydration via Constructor with Supplied Persistence State
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/decisions/ADR-001-entity-creation-and-hydration.md`
 **Status:** Accepted
 
 ## Context

@@ -1,5 +1,6 @@
 # ADR-025 — Execution Context Composition via Application-Owned Wiring
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/decisions/ADR-025-execution-context-composition-via-application-owned-wiring.md`
 - **Status:** Accepted / Implemented
 - **Date:** 2026-08-31
 - **Supersedes:** ADR-024, ADR-023

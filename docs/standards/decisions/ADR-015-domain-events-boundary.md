@@ -1,5 +1,6 @@
 # ADR-015 — Domain Events Boundary
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/decisions/ADR-015-domain-events-boundary.md`
 **Status:** Proposed
 
 ## Context

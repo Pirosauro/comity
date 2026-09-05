@@ -1,5 +1,6 @@
 # Public API Export Policy — @comity/*
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/public-api.md`
 This document defines **mandatory rules** for public APIs in Comity packages.
 
 > Scope: normative rules only. Migration of non-conforming packages is tracked in `docs/migrations/public-api.md`.

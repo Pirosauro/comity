@@ -1,5 +1,6 @@
 # ADR-020 — Inventory Capability Boundary and Checkout Workflow Independence
 
+> **Note:** This is the Community-specific transitional copy. The canonical Comity-wide version is maintained in `comity-development/docs/standards/decisions/ADR-020-inventory-capability-boundary-and-checkout-workflow-independence.md`
 **Status:** Accepted
 
 ## Context
