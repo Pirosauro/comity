@@ -1,12 +1,14 @@
 # Public API Migration Plan — @comity/*
 
 This document tracks the migration of existing `@comity/*` packages toward the
-normative rules defined in `docs/standards/public-api.md`.
+normative rules defined in the canonical Comity-wide standard
+[`comity-development/docs/standards/public-api.md`](../development/docs/standards/public-api.md).
 
 It does **not** redefine the standard. It records which packages are not yet
 compliant, the severity of each gap, and the required action.
 
-Normative rules: see `docs/standards/public-api.md`.
+Normative rules: see the canonical Comity-wide standard in
+[`comity-development/docs/standards/public-api.md`](../development/docs/standards/public-api.md).
 
 ---
 
@@ -92,7 +94,7 @@ Approved architectural decisions (out of scope here):
 
 ## 8. Hooks → Observers Migration
 
-Rule reference: `docs/standards/public-api.md` §5.
+Rule reference: [`public-api.md`](../development/docs/standards/public-api.md) §5.
 
 | Old Path       | New Path           | Status  |
 | -------------- | ------------------ | ------- |
@@ -115,7 +117,7 @@ observer pattern.
 | `@comity/cache-kv`    | `KvCacheStore`       |
 | `@comity/cache-redis` | `RedisCacheStore`    |
 
-Rule reference: `docs/standards/public-api.md` §2 (Adapters MUST export the concrete implementation of the Core Module contract).
+Rule reference: [`public-api.md`](../development/docs/standards/public-api.md) §2 (Adapters MUST export the concrete implementation of the Core Module contract).
 
 ---
 
@@ -126,7 +128,7 @@ Rule reference: `docs/standards/public-api.md` §2 (Adapters MUST export the con
 | `@comity/auth-tokens` | Topic types             | `export` | `export type` |
 | Various               | TypeScript-only exports | `export` | `export type` |
 
-Rule reference: `docs/standards/public-api.md` §8.
+Rule reference: [`public-api.md`](../development/docs/standards/public-api.md) §8.
 
 ---
 
