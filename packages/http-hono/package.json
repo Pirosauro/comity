@@ -93,7 +93,7 @@
   },
   "devDependencies": {
     "@types/node": "^24.13.3",
-    "hono": "^4.13.5",
+    "hono": "^4.13.7",
     "typescript": "^5.9.3"
   }
 }

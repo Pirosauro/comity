@@ -272,8 +272,8 @@ This ADR does NOT concern:
 
 ## References
 
-- Canonical [`layering-policy.md`](../development/docs/standards/layering-policy.md) §2.2 — Core Modules MUST NOT depend on other Core Modules unless explicitly allowed.
-- Canonical [`dependency-graph-policy.md`](../development/docs/standards/layering-policy.md) §8 (consolidated into `layering-policy.md`) — Layered dependency model and forbidden edges. The rendering/HTTP rule has been amended to allow registered type-only HTTP contract references (see Revision 2.1 coordinated change).
-- Canonical [`public-api.md`](../development/docs/standards/public-api.md) §1 — Package classification.
+- Canonical [`layering-policy.md`](../../../../development/docs/standards/layering-policy.md) §2.2 — Core Modules MUST NOT depend on other Core Modules unless explicitly allowed.
+- Canonical [`dependency-graph-policy.md`](../../../../development/docs/standards/layering-policy.md) §8 (consolidated into `layering-policy.md`) — Layered dependency model and forbidden edges. The rendering/HTTP rule has been amended to allow registered type-only HTTP contract references (see Revision 2.1 coordinated change).
+- Canonical [`public-api.md`](../../../../development/docs/standards/public-api.md) §1 — Package classification.
 - Package manifests and `src/` import graph — dependency evidence (`packages/*/package.json`, `packages/*/src/**/*.ts`).
 - ADR-007 — Integration Adapter category (unchanged; Integration Adapter dependencies are governed by ADR-007, not this ADR).
