@@ -1,5 +1,8 @@
-> [!NOTE]
-> Version 1.0 is coming soon (Q1/2026). Stay tuned!
+> [!IMPORTANT]
+> **This project has moved!**
+> The Comity framework is now developed at **[github.com/comityjs/framework](https://github.com/comityjs/framework)**.
+> This repository (`Pirosauro/comity`) is no longer maintained and will be archived.
+> Please update your bookmarks, forks, and references to point to the new location.
 
 # 🪷 Comity: Greener Framework for the Web
 
